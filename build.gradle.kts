@@ -7,3 +7,8 @@ buildscript {
         classpath("dev.slne.surf:surf-api-gradle-plugin:1.21.4+")
     }
 }
+
+allprojects {
+    group = "dev.slne"
+    version = "2.0.0-1.21.4+"
+}

@@ -17,4 +17,6 @@ interface ChatUserModel {
 
     fun hasOpenPms(): Boolean
     fun togglePm(): Boolean
+
+    fun moveToChannel(channel: ChannelModel)
 }

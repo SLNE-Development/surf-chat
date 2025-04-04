@@ -13,6 +13,7 @@ interface ChannelModel {
     fun promote(user: ChatUserModel)
     fun demote(user: ChatUserModel)
 
+    fun kick(user: ChatUserModel)
     fun ban(user: ChatUserModel)
     fun unban(user: ChatUserModel)
     fun isBanned(user: ChatUserModel): Boolean

@@ -7,9 +7,9 @@ import java.util.UUID
 interface DatabaseService {
     fun connect()
 
-    fun getUser(uuid: UUID): ChatUserModel
-    fun loadUser(uuid: UUID): ChatUserModel
-    fun saveUser(uuid: UUID)
+    suspend fun getUser(uuid: UUID): ChatUserModel
+    suspend fun loadUser(uuid: UUID): ChatUserModel
+    suspend fun saveUser(user: ChatUserModel)
 
     companion object {
         val INSTANCE = requiredService<DatabaseService>()

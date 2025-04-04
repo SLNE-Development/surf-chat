@@ -7,6 +7,8 @@ interface ChatFormatModel {
     val globalFormat: String
     val privateFormat: String
     val channelFormat: String
+    val replyToFormat: String
+    val replyFromFormat: String
     val teamFormat: String
 
     fun formatMessage(rawMessage: Component, sender: ChatUserModel, viewer: ChatUserModel, messageType: ChatMessageType)

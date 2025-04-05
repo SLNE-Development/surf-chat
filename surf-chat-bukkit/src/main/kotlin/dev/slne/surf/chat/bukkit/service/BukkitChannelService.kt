@@ -51,4 +51,8 @@ class BukkitChannelService(): ChannelService {
     override fun unregister(channel: ChannelModel) {
         channels.remove(channel)
     }
+
+    override fun move(player: ChatUserModel, channel: ChannelModel) {
+        TODO("Not yet implemented")
+    }
 }

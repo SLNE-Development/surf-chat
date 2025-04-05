@@ -9,6 +9,7 @@ import dev.slne.surf.chat.core.service.ChannelService
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import org.bukkit.OfflinePlayer
+import org.bukkit.command.CommandSender
 
 class BukkitChannelService(): ChannelService {
     private val channels = ObjectArraySet<ChannelModel>()
@@ -31,8 +32,12 @@ class BukkitChannelService(): ChannelService {
         return channels.find { it.name == name }
     }
 
-    override fun getChannel(player: OfflinePlayer): ChannelModel? {
-        return channels.find { it -> it.members.keys.any { it.uuid == player.uniqueId } }
+    override fun getChannel(player: CommandSender): ChannelModel? {
+        if(player is OfflinePlayer) {
+            return channels.find { it -> it.members.keys.any { it.uuid == player.uniqueId } }
+        }
+
+        return null
     }
 
     override fun getAllChannels(): ObjectSet<ChannelModel> {

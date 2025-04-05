@@ -1,49 +1,56 @@
-package dev.slne.surf.social.chat.command.channel
+package dev.slne.surf.chat.bukkit.command.channel
 
 import dev.jorel.commandapi.CommandAPICommand
-import dev.jorel.commandapi.arguments.IntegerArgument
-import dev.jorel.commandapi.executors.CommandArguments
-import dev.jorel.commandapi.executors.PlayerCommandExecutor
 import dev.jorel.commandapi.kotlindsl.integerArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.social.chat.SurfChat
-import dev.slne.surf.social.chat.`object`.Channel
-import dev.slne.surf.social.chat.util.MessageBuilder
-import dev.slne.surf.social.chat.util.PageableMessageBuilder
-import org.bukkit.Bukkit
-import org.bukkit.OfflinePlayer
-import org.bukkit.entity.Player
+
+import dev.slne.surf.chat.api.model.ChannelModel
+import dev.slne.surf.chat.api.surfChatApi
+import dev.slne.surf.chat.bukkit.util.PageableMessageBuilder
+import dev.slne.surf.chat.core.service.channelService
+import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 
 class ChannelMembersCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         integerArgument("page", 1, Int.MAX_VALUE, true)
         playerExecutor { player, args ->
-            val message = PageableMessageBuilder()
             val page = args.getOrDefaultUnchecked("page", 1)
-            val channel: Channel? = Channel.getChannel(player)
+            val channel: ChannelModel? = channelService.getChannel(player)
 
             if (channel == null) {
-                SurfChat.send(player, MessageBuilder().error("Du bist in keinem Nachrichtenkanal."))
+                surfChatApi.sendText(player, buildText {
+                    error("Du bist in keinem Nachrichtenkanal.")
+                })
                 return@playerExecutor
             }
 
-            var index = 1
-            val owner = channel.owner ?: return@playerExecutor
-            val ownerPlayer = Bukkit.getOfflinePlayer(owner)
+            PageableMessageBuilder {
+                pageCommand = "/channel members %page%"
 
-            message.setPageCommand("/channel members " + channel.name + " %page%")
-            message.addLine(MessageBuilder().variableValue("$index. ").primary(ownerPlayer.name ?: ownerPlayer.uniqueId.toString()).darkSpacer(" (Besitzer)").build())
+                title {
+                    primary("Kanal-Mitglieder von ")
+                    info(channel.name)
+                }
 
-            for (moderator in channel.moderators) {
-                index++
-                message.addLine(MessageBuilder().variableValue("$index. ").primary(ownerPlayer.name ?: ownerPlayer.uniqueId.toString()).darkSpacer(" (Moderator)").build())
-            }
+                line {
+                    primary(channel.getOwner().name)
+                    darkSpacer(" (Besitzer)")
+                }
 
-            for (member in channel.members) {
-                index++
-                message.addLine(MessageBuilder().variableValue("$index. ").primary(ownerPlayer.name ?: ownerPlayer.uniqueId.toString()).darkSpacer(" (Mitglied)").build())
-            }
-            message.send(player, page)
+                channel.getModerators().forEach {
+                    line {
+                        primary(it.name)
+                        darkSpacer(" (Moderator)")
+                    }
+                }
+
+                channel.getOnlyMembers().forEach {
+                    line {
+                        primary(it.name)
+                        darkSpacer(" (Mitglied)")
+                    }
+                }
+            }.send(player, page)
         }
     }
 }

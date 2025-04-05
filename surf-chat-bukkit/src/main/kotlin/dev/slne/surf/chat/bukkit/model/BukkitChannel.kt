@@ -14,11 +14,19 @@ import org.bukkit.entity.Player
 
 class BukkitChannel (
     override val name: String,
-    override val status: ChannelStatusType = ChannelStatusType.PRIVATE,
+    override var status: ChannelStatusType = ChannelStatusType.PRIVATE,
     override val members: Object2ObjectMap<ChatUserModel, ChannelRoleType> = Object2ObjectOpenHashMap(),
     override val bannedPlayers: ObjectSet<ChatUserModel> = ObjectArraySet(),
     override val invites: ObjectSet<ChatUserModel> = ObjectArraySet()
 ): ChannelModel {
+    override fun join(user: ChatUserModel, silent: Boolean) {
+        members[user] = ChannelRoleType.MEMBER
+    }
+
+    override fun leave(user: ChatUserModel, silent: Boolean) {
+        members.remove(user)
+    }
+
     override fun isInvited(user: ChatUserModel): Boolean {
         return invites.contains(user)
     }
@@ -82,6 +90,10 @@ class BukkitChannel (
         return members.keys
     }
 
+    override fun getOnlyMembers(): ObjectSet<ChatUserModel> {
+        return members.entries.filter { it.value == ChannelRoleType.MEMBER }.map { it.key }.toObjectSet()
+    }
+
     override fun getModerators(): ObjectSet<ChatUserModel> {
         return members.entries.filter { it.value == ChannelRoleType.MODERATOR }.map { it.key }.toObjectSet()
     }
@@ -107,5 +119,9 @@ class BukkitChannel (
             return members.keys.any { it.uuid == user.uniqueId }
         }
         return false
+    }
+
+    override fun isMember(user: Player): Boolean {
+        return members.keys.any { it.uuid == user.uniqueId }
     }
 }

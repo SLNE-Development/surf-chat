@@ -2,7 +2,7 @@ package dev.slne.surf.social.chat.command.channel
 
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.subcommand
-import dev.slne.surf.chat.bukkit.command.channel.ChannelBanCommand
+import dev.slne.surf.chat.bukkit.command.channel.*
 
 class ChannelCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
@@ -17,7 +17,7 @@ class ChannelCommand(commandName: String) : CommandAPICommand(commandName) {
         subcommand(ChannelListCommand("list"))
         subcommand(ChannelJoinCommand("join"))
         subcommand(ChannelLeaveCommand("leave"))
-        subcommand(ChannelStateToggleCommand("toggleState"))
+        subcommand(ChannelPrivacyModeCommand("toggleState"))
         subcommand(ChannelBanCommand("ban"))
         subcommand(ChannelUnBanCommand("unban"))
         subcommand(ChannelDemoteCommand("demote"))

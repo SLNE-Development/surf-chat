@@ -28,6 +28,14 @@ class BukkitChatUser (
         TODO("Not yet implemented")
     }
 
+    override fun acceptInvite(channel: ChannelModel) {
+        TODO("Not yet implemented")
+    }
+
+    override fun declineInvite(channel: ChannelModel) {
+        TODO("Not yet implemented")
+    }
+
     override fun hasOpenPms(): Boolean {
         TODO("Not yet implemented")
     }

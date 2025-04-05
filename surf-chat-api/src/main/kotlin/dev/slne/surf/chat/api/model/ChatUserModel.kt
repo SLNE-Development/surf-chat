@@ -15,6 +15,9 @@ interface ChatUserModel {
     fun unIgnore(target: UUID)
     fun toggleIgnore(target: UUID): Boolean
 
+    fun acceptInvite(channel: ChannelModel)
+    fun declineInvite(channel: ChannelModel)
+
     fun hasOpenPms(): Boolean
     fun togglePm(): Boolean
 

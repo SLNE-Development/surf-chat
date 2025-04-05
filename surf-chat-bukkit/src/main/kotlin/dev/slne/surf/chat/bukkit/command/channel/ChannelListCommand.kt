@@ -1,63 +1,64 @@
-package dev.slne.surf.social.chat.command.channel
+package dev.slne.surf.chat.bukkit.command.channel
 
 import dev.jorel.commandapi.CommandAPICommand
-import dev.jorel.commandapi.arguments.IntegerArgument
-import dev.jorel.commandapi.executors.CommandArguments
-import dev.jorel.commandapi.executors.PlayerCommandExecutor
 import dev.jorel.commandapi.kotlindsl.integerArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.social.chat.`object`.Channel
-import dev.slne.surf.social.chat.provider.ChannelProvider
-import dev.slne.surf.social.chat.util.MessageBuilder
-import dev.slne.surf.social.chat.util.PageableMessageBuilder
+import dev.slne.surf.chat.api.model.ChannelModel
+import dev.slne.surf.chat.api.type.ChannelStatusType
+import dev.slne.surf.chat.bukkit.util.PageableMessageBuilder
+import dev.slne.surf.chat.core.service.channelService
+import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import net.kyori.adventure.text.Component
-import org.bukkit.Bukkit
-import org.bukkit.OfflinePlayer
-import org.bukkit.entity.Player
+import net.kyori.adventure.text.event.HoverEvent
 
 class ChannelListCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
-        integerArgument("page", 1, Int.MAX_VALUE, true)
+        integerArgument("page", min = 1, optional = true)
         playerExecutor { player, args ->
-            val message = PageableMessageBuilder()
             val page = args.getOrDefaultUnchecked("page", 1)
 
-            var index = 0
+            PageableMessageBuilder {
+                pageCommand = "/channel list %page%"
+                title {
+                    primary("Kanalübersicht")
+                }
 
-            message.setPageCommand("/channel list %page%")
-
-            for (channel in ChannelProvider.channels.values) {
-                index++
-
-                message.addLine(
-                    MessageBuilder().variableValue("$index. ").primary(channel.name)
-                        .darkSpacer(" (")
-                        .info((channel.members.size + channel.moderators.size + 1).toString())
-                        .darkSpacer(")").build().hoverEvent(
-                            this.createInfoMessage(channel)
-                        )
-                )
-            }
-            message.send(player, page)
+                channelService.getAllChannels().forEach {
+                    line {
+                        spacer(" - ")
+                        variableValue("${it.name} ")
+                        darkSpacer("(")
+                        variableValue(when(it.status) {
+                            ChannelStatusType.PUBLIC -> "Öffentlich"
+                            ChannelStatusType.PRIVATE -> "Privat"
+                        })
+                        darkSpacer(") ")
+                        hoverEvent(HoverEvent.showText(createInfoMessage(it)))
+                    }
+                }
+            }.send(player, page)
         }
     }
 
-    private fun createInfoMessage(channel: Channel): Component {
-        val owner = channel.owner ?: return MessageBuilder().error("Ein Fehler ist aufgetreten.").build()
-        val ownerPlayer = Bukkit.getOfflinePlayer(owner)
-        return MessageBuilder()
-            .primary("Kanalinformation: ").info(channel.name).newLine()
-            .darkSpacer("   - ").variableKey("Beschreibung: ").variableValue(channel.description)
-            .newLine()
-            .darkSpacer("   - ").variableKey("Besitzer: ").variableValue(ownerPlayer.name ?: ownerPlayer.uniqueId.toString())
-            .newLine()
-            .darkSpacer("   - ").variableKey("Status: ")
-            .variableValue(if (channel.closed) "Geschlossen" else "Offen").newLine()
-            .darkSpacer("   - ").variableKey("Mitglieder: ")
-            .variableValue((channel.members.size + channel.moderators.size + 1).toString())
-            .newLine()
-            .darkSpacer("   - ").variableKey("Einladungen: ")
-            .variableValue(channel.invites.size.toString()).newLine()
-            .build()
+    private fun createInfoMessage(channel: ChannelModel): Component {
+        return buildText {
+            primary("Kanalinformation: ").info(channel.name)
+            appendNewline()
+            darkSpacer("   - ").variableKey("Besitzer: ")
+            variableValue(channel.getOwner().name)
+            appendNewline()
+            darkSpacer("   - ").variableKey("Status: ")
+            variableValue(when(channel.status) {
+                ChannelStatusType.PUBLIC -> "Öffentlich"
+                ChannelStatusType.PRIVATE -> "Privat"
+            })
+            appendNewline()
+            darkSpacer("   - ").variableKey("Mitglieder: ")
+            variableValue(channel.members.size.toString())
+            appendNewline()
+            darkSpacer("   - ").variableKey("Einladungen: ")
+            variableValue(channel.invites.size.toString())
+            appendNewline()
+        }
     }
 }

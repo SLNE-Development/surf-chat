@@ -5,14 +5,18 @@ import dev.slne.surf.chat.api.type.ChannelStatusType
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 
 interface ChannelModel {
     val name: String
-    val status: ChannelStatusType
+    var status: ChannelStatusType
 
     val members: Object2ObjectMap<ChatUserModel, ChannelRoleType>
     val bannedPlayers: ObjectSet<ChatUserModel>
     val invites: ObjectSet<ChatUserModel>
+
+    fun join(user: ChatUserModel, silent: Boolean = false)
+    fun leave(user: ChatUserModel, silent: Boolean = false)
 
     fun isInvited(user: ChatUserModel): Boolean
     fun isInvited(user: CommandSender): Boolean
@@ -31,6 +35,7 @@ interface ChannelModel {
 
     fun getOwner(): ChatUserModel
     fun getMembers(): ObjectSet<ChatUserModel>
+    fun getOnlyMembers(): ObjectSet<ChatUserModel>
     fun getModerators(): ObjectSet<ChatUserModel>
     fun getBannedPlayers(): ObjectSet<ChatUserModel>
 
@@ -38,4 +43,5 @@ interface ChannelModel {
     fun isModerator(user: ChatUserModel): Boolean
     fun isMember(user: ChatUserModel): Boolean
     fun isMember(user: CommandSender): Boolean
+    fun isMember(user: Player): Boolean
 }

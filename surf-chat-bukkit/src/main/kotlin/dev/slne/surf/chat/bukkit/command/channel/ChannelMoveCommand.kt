@@ -1,28 +1,48 @@
-package dev.slne.surf.social.chat.command.channel
+package dev.slne.surf.chat.bukkit.command.channel
 
+import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
-import dev.jorel.commandapi.kotlindsl.offlinePlayerArgument
+import dev.jorel.commandapi.kotlindsl.playerArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.social.chat.SurfChat
+import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.bukkit.command.argument.ChannelArgument
-import dev.slne.surf.social.chat.`object`.Channel
-import dev.slne.surf.social.chat.util.MessageBuilder
-import org.bukkit.OfflinePlayer
+import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.bukkit.util.sendText
+import dev.slne.surf.chat.core.service.channelService
+import dev.slne.surf.chat.core.service.databaseService
+import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import org.bukkit.entity.Player
 
 class ChannelMoveCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
-        offlinePlayerArgument("player")
-        withOptionalArguments(ChannelArgument("channel"))
+        playerArgument("player")
+        withArguments(ChannelArgument("channel"))
         withPermission("surf.chat.command.channel.move")
 
         playerExecutor { player, args ->
-            val target = args.getUnchecked<OfflinePlayer>("player") ?: return@playerExecutor
-            val channel = args.getUnchecked<Channel>("channel") ?: return@playerExecutor
+            val target = args.getUnchecked<Player>("player") ?: return@playerExecutor
+            val channel = args.getUnchecked<ChannelModel>("channel") ?: return@playerExecutor
 
-            channel.move(target.uniqueId, channel)
+            plugin.launch {
+                val user = databaseService.getUser(player.uniqueId)
+                val targetUser = databaseService.getUser(target.uniqueId)
 
-            SurfChat.send(player, MessageBuilder().primary("Du hast ").info(target.name ?: target.uniqueId.toString()).primary(" in den Nachrichtenkanal ").info(channel.name).success(" verschoben."))
-            SurfChat.send(target, MessageBuilder().primary("Du wurdest in den Nachrichtenkanal ").info(channel.name).success(" verschoben."))
+                channelService.move(targetUser, channel)
+
+                user.sendText(buildText {
+                    primary("Du hast ")
+                    info(targetUser.name)
+                    primary(" in den Nachrichtenkanal ")
+                    info(channel.name)
+                    success(" verschoben.")
+                })
+
+                targetUser.sendText(buildText {
+                    primary("Du wurdest in den Nachrichtenkanal ")
+                    info(channel.name)
+                    success(" verschoben.")
+                })
+            }
         }
     }
 }

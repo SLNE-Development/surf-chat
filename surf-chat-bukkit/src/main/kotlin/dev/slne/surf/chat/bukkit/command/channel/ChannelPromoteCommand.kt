@@ -1,40 +1,54 @@
-package dev.slne.surf.social.chat.command.channel
+package dev.slne.surf.chat.bukkit.command.channel
 
+import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
-import dev.jorel.commandapi.executors.CommandArguments
-import dev.jorel.commandapi.executors.PlayerCommandExecutor
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.social.chat.SurfChat
-import dev.slne.surf.social.chat.command.argument.ChannelMembersArgument
-import dev.slne.surf.social.chat.`object`.Channel
-import dev.slne.surf.social.chat.util.MessageBuilder
+import dev.slne.surf.chat.api.model.ChannelModel
+import dev.slne.surf.chat.bukkit.command.argument.ChannelMembersArgument
+import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.bukkit.util.sendText
+import dev.slne.surf.chat.core.service.channelService
+import dev.slne.surf.chat.core.service.databaseService
+import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import org.bukkit.OfflinePlayer
-import org.bukkit.entity.Player
 
 class ChannelPromoteCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withArguments(ChannelMembersArgument("player"))
         playerExecutor { player, args ->
-            val channel: Channel? = Channel.getChannel(player)
+            val channel: ChannelModel? = channelService.getChannel(player)
             val target = args.getUnchecked<OfflinePlayer>("player") ?: return@playerExecutor
 
-            if(channel == null) {
-                SurfChat.send(player, MessageBuilder().error("Du bist in keinem Nachrichtenkanal."))
-                return@playerExecutor
+            plugin.launch {
+                val user = databaseService.getUser(player.uniqueId)
+                val targetUser = databaseService.getUser(target.uniqueId)
+
+                if(channel == null) {
+                    user.sendText(buildText {
+                        error("Du bist in keinem Nachrichtenkanal.")
+                    })
+                    return@launch
+                }
+
+                if(!channel.isOwner(user)) {
+                    user.sendText(buildText {
+                        error("Du bist nicht der Besitzer des Nachrichtenkanals.")
+                    })
+                    return@launch
+                }
+
+                channel.promote(targetUser)
+
+                user.sendText(buildText {
+                    primary("Du hast ")
+                    info(target.name ?: target.uniqueId.toString())
+                    primary(" befördert.")
+                })
+
+                targetUser.sendText(buildText {
+                    primary("Du wurdest befördert.")
+                })
             }
-
-            if (!channel.isOwner(player)) {
-                SurfChat.send(
-                    player,
-                    MessageBuilder().error("Du bist nicht der Besitzer des Nachrichtenkanals.")
-                )
-                return@playerExecutor
-            }
-
-            channel.promote(target.uniqueId)
-
-            SurfChat.send(player, MessageBuilder().primary("Du hast den Spieler ").info(target.name ?: target.uniqueId.toString()).success(" befördert."))
-            SurfChat.send(target, MessageBuilder().primary("Du wurdest ").success("befördert"))
         }
     }
 }

@@ -70,6 +70,9 @@ class BukkitChatFormat: ChatFormatModel {
                     append(rawMessage)
                 }
             }
+
+            ChatMessageType.PRIVATE_GENERAL -> TODO()
+            ChatMessageType.INTERNAL -> TODO()
         }
     }
 }

@@ -5,9 +5,9 @@ import java.util.UUID
 
 interface HistoryEntryModel {
    val id: UUID
-   val user: UUID
-   val userName: String
+   val uuid: UUID
+   val type: String
 
-   val message: Component
    val timestamp: Long
+   val message: Component
 }

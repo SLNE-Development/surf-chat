@@ -7,7 +7,6 @@ import net.kyori.adventure.text.Component
 
 class BukkitMessageValidator(): MessageValidatorModel {
     override fun validate(message: Component, type: ChatMessageType): MessageValidationError {
-
         return MessageValidationError.SUCCESS
     }
 }

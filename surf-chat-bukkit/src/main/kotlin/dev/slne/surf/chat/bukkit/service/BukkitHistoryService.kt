@@ -1,6 +1,7 @@
 package dev.slne.surf.chat.bukkit.service
 
 import com.github.benmanes.caffeine.cache.Caffeine
+import com.github.shynixn.mccoroutine.folia.launch
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.model.ChatUserModel
 import dev.slne.surf.chat.api.model.HistoryEntryModel
@@ -8,6 +9,7 @@ import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.bukkit.model.BukkitHistoryEntry
 import dev.slne.surf.chat.api.util.history.HistoryPair
 import dev.slne.surf.chat.api.util.history.LoggedMessage
+import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.service.HistoryService
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.bukkit.api.util.forEachPlayer
@@ -42,14 +44,19 @@ class BukkitHistoryService(): HistoryService, Fallback {
         chatHistory[HistoryPair(messageID, timestamp)] = message
     }
 
-    override fun deleteMessage(player: UUID, messageID: UUID) {
+    override fun deleteMessage(player: UUID, name: String, messageID: UUID) {
         val chatHistory = historyCache.getIfPresent(player) ?: return
         val key = chatHistory.keys.find { it.messageID == messageID }
 
         if (key != null) {
             chatHistory.remove(key)
+
+            plugin.launch {
+                databaseService.markMessageDeleted(name, messageID)
+            }
         }
     }
+
 
     override fun resendMessages(player: UUID) {
         val chatHistory = historyCache.getIfPresent(player) ?: return

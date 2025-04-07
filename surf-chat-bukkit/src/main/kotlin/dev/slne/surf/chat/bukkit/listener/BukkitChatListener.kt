@@ -9,6 +9,7 @@ import dev.slne.surf.chat.bukkit.util.toDisplayUser
 import dev.slne.surf.chat.core.service.historyService
 import io.papermc.paper.event.player.AsyncChatEvent
 import org.bukkit.Bukkit
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import java.util.UUID
@@ -22,8 +23,8 @@ class BukkitChatListener(): Listener {
 
         val formattedMessage = plugin.chatFormat.formatMessage(
             message,
-            player.toDisplayUser(),
-            player.toDisplayUser(),
+            player,
+            player,
             ChatMessageType.GLOBAL,
             "N/A",
             messageID
@@ -37,8 +38,15 @@ class BukkitChatListener(): Listener {
             surfChatApi.logMessage(player.uniqueId, ChatMessageType.GLOBAL, message)
         }
 
-        event.renderer { _, _, _, _ ->
-            formattedMessage
+        event.renderer { _, _, _, viewer ->
+            plugin.chatFormat.formatMessage(
+                message,
+                player,
+                if(viewer is Player) viewer else player,
+                ChatMessageType.GLOBAL,
+                "N/A",
+                messageID
+            )
         }
     }
 }

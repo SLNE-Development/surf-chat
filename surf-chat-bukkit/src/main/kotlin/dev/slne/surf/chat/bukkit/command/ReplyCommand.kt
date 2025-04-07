@@ -56,8 +56,8 @@ class ReplyCommand(commandName: String) : CommandAPICommand(commandName) {
                 val messageComponent = Component.text(message)
 
                 plugin.messageValidator.parse(messageComponent, ChatMessageType.PRIVATE_TO, user) {
-                    targetUser.sendRawText(plugin.chatFormat.formatMessage(messageComponent, player.toDisplayUser(), target.toDisplayUser(), ChatMessageType.PRIVATE_FROM, "", UUID.randomUUID()))
-                    user.sendRawText(plugin.chatFormat.formatMessage(messageComponent, player.toDisplayUser(), target.toDisplayUser(), ChatMessageType.PRIVATE_TO, "", UUID.randomUUID()))
+                    targetUser.sendRawText(plugin.chatFormat.formatMessage(messageComponent, player, target, ChatMessageType.PRIVATE_FROM, "", UUID.randomUUID()))
+                    user.sendRawText(plugin.chatFormat.formatMessage(messageComponent, player, target, ChatMessageType.PRIVATE_TO, "", UUID.randomUUID()))
 
                     plugin.launch {
                         surfChatApi.logMessage(player.uniqueId, ChatMessageType.PRIVATE_TO, messageComponent)

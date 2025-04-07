@@ -15,6 +15,7 @@ interface DatabaseService {
     suspend fun loadUser(uuid: UUID): ChatUserModel
     suspend fun saveUser(user: ChatUserModel)
     suspend fun handleDisconnect(user: UUID)
+    suspend fun markMessageDeleted(deleter: String, messageID: UUID)
 
     suspend fun loadHistory(uuid: UUID): ObjectList<HistoryEntryModel>
     suspend fun insertHistoryEntry(user: UUID, entry: HistoryEntryModel)

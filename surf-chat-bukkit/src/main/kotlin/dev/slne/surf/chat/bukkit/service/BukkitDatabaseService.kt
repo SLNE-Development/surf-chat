@@ -2,7 +2,6 @@ package dev.slne.surf.chat.bukkit.service
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.google.auto.service.AutoService
-import com.google.gson.reflect.TypeToken
 import com.sksamuel.aedile.core.asLoadingCache
 import com.sksamuel.aedile.core.expireAfterWrite
 import com.sksamuel.aedile.core.withRemovalListener
@@ -14,9 +13,7 @@ import dev.slne.surf.chat.bukkit.model.BukkitHistoryEntry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.service.DatabaseService
 import dev.slne.surf.database.DatabaseProvider
-import dev.slne.surf.surfapi.core.api.util.emptyObjectList
 import dev.slne.surf.surfapi.core.api.util.toObjectList
-import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import it.unimi.dsi.fastutil.objects.ObjectList
 import kotlinx.coroutines.Dispatchers
@@ -55,6 +52,8 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
         val type = text("type")
         val timeStamp = long("timeStamp")
         val message = text("message")
+        val deleted = bool("deleted").default(false)
+        val deletedBy = varchar("deletedBy", 16)
 
         override val primaryKey = PrimaryKey(id)
     }
@@ -106,6 +105,21 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
         dataCache.invalidate(user)
     }
 
+    override suspend fun markMessageDeleted(deleter: String, messageID: UUID) {
+        withContext(Dispatchers.IO) {
+            newSuspendedTransaction {
+                ChatHistory.update({ ChatHistory.id eq messageID }) {
+                    println("Marking message as deleted: $messageID by $deleter")
+
+                    it[deleted] = true
+                    it[deletedBy] = deleter
+
+                    println("Marked message as deleted: $messageID by $deleter")
+                }
+            }
+        }
+    }
+
     override suspend fun loadHistory(uuid: UUID): ObjectList<HistoryEntryModel> {
         return withContext(Dispatchers.IO) {
             newSuspendedTransaction {
@@ -117,8 +131,10 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
                         uuid = it[ChatHistory.uuid],
                         type = it[ChatHistory.type],
                         timestamp = it[ChatHistory.timeStamp],
-                        message = it[ChatHistory.message]
-                    )
+                        message = it[ChatHistory.message],
+                        deleted = it[ChatHistory.deleted],
+                        deletedBy = it[ChatHistory.deletedBy],
+                        )
                 }
             }.toObjectList()
         }
@@ -133,6 +149,8 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
                     it[type] = entry.type
                     it[timeStamp] = entry.timestamp
                     it[message] = entry.message
+                    it[deleted] = entry.deleted
+                    it[deletedBy] = entry.deletedBy
                 }
             }
         }

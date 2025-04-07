@@ -8,13 +8,14 @@ import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
+import org.bukkit.entity.Player
 import java.util.UUID
 
 class BukkitChatFormat: ChatFormatModel {
     override fun formatMessage(
         rawMessage: Component,
-        sender: DisplayUser,
-        viewer: DisplayUser,
+        sender: Player,
+        viewer: Player,
         messageType: ChatMessageType,
         channel: String,
         messageID: UUID
@@ -22,8 +23,8 @@ class BukkitChatFormat: ChatFormatModel {
         return when(messageType) {
             ChatMessageType.GLOBAL -> {
                 buildText {
-                    append(components.getDeleteComponent(messageID))
-                    append(components.getTeleportComponent(sender.name))
+                    append(components.getDeleteComponent(messageID, viewer))
+                    append(components.getTeleportComponent(sender.name, viewer))
                     primary(sender.name)
                     darkSpacer(" >> ")
                     append(rawMessage)

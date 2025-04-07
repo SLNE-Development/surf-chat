@@ -17,9 +17,12 @@ import org.bukkit.OfflinePlayer
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName) {
-    private val timeFormatter = DateTimeFormatter.ofPattern("hh:mm:ss dd.MM.yyyy")
+    private val timeFormatter: DateTimeFormatter = DateTimeFormatter
+        .ofPattern("HH:mm:ss, dd.MM.yyyy", Locale.GERMANY)
+        .withZone(ZoneId.of("Europe/Berlin"))
 
     init {
         withPermission("surf.chat.command.lookup")
@@ -41,7 +44,7 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
 
                 val history = databaseService.loadHistory(target.uniqueId).sortedBy { it.timestamp }
 
-                if(history.isEmpty()) {
+                if (history.isEmpty()) {
                     user.sendText(buildText {
                         error("Es sind keine Chat-Daten für diesen Spieler vorhanden.")
                     })
@@ -56,6 +59,11 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
                             darkSpacer(" - ")
                             variableValue(it.message)
                             spacer(" (${it.type})")
+
+                            if(it.deleted) {
+                                darkSpacer("(Gelöscht von ${it.deletedBy})")
+                            }
+
                             hoverEvent(HoverEvent.showText(buildText {
                                 primary("von: ")
                                 info(target.name ?: target.uniqueId.toString())
@@ -83,5 +91,7 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
         }
     }
 
-    private fun getString(unix: Long): String = timeFormatter.format(Instant.ofEpochSecond(unix).atZone(ZoneId.of("GMT+2")))
+    private fun getString(unixMillis: Long): String {
+        return timeFormatter.format(Instant.ofEpochMilli(unixMillis))
+    }
 }

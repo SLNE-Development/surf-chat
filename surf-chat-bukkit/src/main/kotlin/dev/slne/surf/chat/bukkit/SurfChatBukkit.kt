@@ -12,8 +12,11 @@ import dev.slne.surf.chat.bukkit.model.BukkitChatFormat
 import dev.slne.surf.chat.bukkit.model.BukkitMessageValidator
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.social.chat.command.channel.ChannelCommand
+import dev.slne.surf.surfapi.core.api.util.toObjectSet
+import it.unimi.dsi.fastutil.objects.ObjectSet
 
 import org.bukkit.Bukkit
+import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 
 class SurfChatBukkit(): SuspendingJavaPlugin() {
@@ -36,6 +39,7 @@ class SurfChatBukkit(): SuspendingJavaPlugin() {
         PrivateMessageCommand("msg").register()
         ReplyCommand("reply").register()
         TogglePmCommand("togglepm").register()
+        TeamChatCommand("teamchat").register()
 
         /**
          * Register all listeners.
@@ -49,6 +53,8 @@ class SurfChatBukkit(): SuspendingJavaPlugin() {
 
         databaseService.connect()
     }
+
+    fun getTeamMembers(): ObjectSet<Player> = Bukkit.getOnlinePlayers().filter { it.hasPermission("surf.chat.command.teamchat") }.toObjectSet()
 }
 
 val plugin = JavaPlugin.getPlugin(SurfChatBukkit::class.java)

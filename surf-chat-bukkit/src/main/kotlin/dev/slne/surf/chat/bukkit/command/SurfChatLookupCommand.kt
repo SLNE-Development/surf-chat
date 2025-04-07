@@ -65,6 +65,8 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
                                 appendNewline()
                                 primary("Datum: ")
                                 info(getString(it.timestamp))
+                                appendNewline()
+                                darkSpacer("Klicke, um die Nachricht zu kopieren.")
                             }))
                             clickEvent(ClickEvent.copyToClipboard(it.message))
                         }

@@ -71,8 +71,36 @@ class BukkitChatFormat: ChatFormatModel {
                 }
             }
 
-            ChatMessageType.PRIVATE_GENERAL -> TODO()
-            ChatMessageType.INTERNAL -> TODO()
+            /**
+             * This is a special case for private messages,
+             * no message should be sent with this type.
+             */
+
+            ChatMessageType.PRIVATE_GENERAL -> {
+                buildText {
+                    darkSpacer(">> ")
+                    append(Component.text("PM", Colors.RED))
+                    darkSpacer(" | ")
+                    variableValue("Dir ")
+                    darkSpacer(" >> ")
+                    append(rawMessage)
+                }
+            }
+
+            /**
+             * This is a special case for internal messages,
+             * which are not sent to players but are logged
+             */
+            ChatMessageType.INTERNAL -> {
+                buildText {
+                    darkSpacer(">> ")
+                    append(Component.text("INTERNAL", Colors.DARK_RED))
+                    darkSpacer(" | ")
+                    variableValue(sender.name)
+                    darkSpacer(" >> ")
+                    append(rawMessage)
+                }
+            }
         }
     }
 }

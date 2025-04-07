@@ -8,6 +8,7 @@ import dev.slne.surf.chat.api.model.ChatFormatModel
 import dev.slne.surf.chat.api.model.MessageValidatorModel
 import dev.slne.surf.chat.bukkit.command.*
 import dev.slne.surf.chat.bukkit.listener.BukkitChatListener
+import dev.slne.surf.chat.bukkit.listener.BukkitConnectionListener
 import dev.slne.surf.chat.bukkit.model.BukkitChatFormat
 import dev.slne.surf.chat.bukkit.model.BukkitMessageValidator
 import dev.slne.surf.chat.core.service.databaseService
@@ -46,6 +47,7 @@ class SurfChatBukkit(): SuspendingJavaPlugin() {
          */
 
         Bukkit.getPluginManager().registerEvents(BukkitChatListener(), this)
+        Bukkit.getPluginManager().registerEvents(BukkitConnectionListener(), this)
 
         /**
          * Handle & start services.

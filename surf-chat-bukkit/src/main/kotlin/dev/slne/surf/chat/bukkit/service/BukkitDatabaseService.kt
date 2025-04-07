@@ -108,6 +108,25 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
         }
     }
 
+    override suspend fun saveOrUpdateUser(user: ChatUserModel) {
+        withContext(Dispatchers.IO) {
+            newSuspendedTransaction {
+                val empty = Users.select (Users.uuid eq user.uuid).empty()
+                if (!empty) {
+                    Users.insert {
+                        it[uuid] = user.uuid
+                        it[name] = user.name
+                        it[ignoreList] = user.ignoreList
+                        it[pmToggled] = user.pmToggled
+
+                        println("User ${user.name} (${user.uuid}) inserted")
+                    }
+                }
+            }
+        }
+    }
+
+
     override suspend fun loadHistory(uuid: UUID): ObjectList<HistoryEntryModel> {
         return withContext(Dispatchers.IO) {
             newSuspendedTransaction {

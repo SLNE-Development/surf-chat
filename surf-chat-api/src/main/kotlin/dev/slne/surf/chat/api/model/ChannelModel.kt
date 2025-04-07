@@ -37,7 +37,6 @@ interface ChannelModel {
     fun getMembers(): ObjectSet<ChatUserModel>
     fun getOnlyMembers(): ObjectSet<ChatUserModel>
     fun getModerators(): ObjectSet<ChatUserModel>
-    fun getBannedPlayers(): ObjectSet<ChatUserModel>
 
     fun isOwner(user: ChatUserModel): Boolean
     fun isModerator(user: ChatUserModel): Boolean

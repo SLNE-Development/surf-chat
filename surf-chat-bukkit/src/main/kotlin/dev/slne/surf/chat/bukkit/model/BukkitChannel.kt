@@ -98,10 +98,6 @@ class BukkitChannel (
         return members.entries.filter { it.value == ChannelRoleType.MODERATOR }.map { it.key }.toObjectSet()
     }
 
-    override fun getBannedPlayers(): ObjectSet<ChatUserModel> {
-        return bannedPlayers
-    }
-
     override fun isOwner(user: ChatUserModel): Boolean {
         return members[user] == ChannelRoleType.OWNER
     }

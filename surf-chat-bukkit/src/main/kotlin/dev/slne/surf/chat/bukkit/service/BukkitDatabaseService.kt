@@ -71,6 +71,8 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
 
     override fun connect() {
         DatabaseProvider(plugin.dataPath, plugin.dataPath).connect()
+
+        SchemaUtils.create(Users, ChatHistory)
     }
 
     override suspend fun getUser(uuid: UUID): ChatUserModel {

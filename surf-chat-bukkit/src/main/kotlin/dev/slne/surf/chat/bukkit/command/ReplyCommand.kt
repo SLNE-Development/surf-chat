@@ -4,8 +4,14 @@ import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.greedyStringArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
+import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.bukkit.util.sendText
+import dev.slne.surf.chat.bukkit.util.toDisplayUser
+import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.chat.core.service.replyService
+import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Bukkit
 
@@ -18,67 +24,38 @@ class ReplyCommand(commandName: String) : CommandAPICommand(commandName) {
             plugin.launch {
                 val message = args.getUnchecked<String>("message") ?: return@launch
                 val uuid = replyService.getLast(player.uniqueId)
+                val user = databaseService.getUser(player.uniqueId)
 
                 if(uuid == null) {
-                    SurfChat.send(player, MessageBuilder().error("Du hast niemanden, dem du antworten kannst."))
+                    user.sendText(buildText {
+                        error("Du hast niemanden, dem du antworten kannst.")
+                    })
                     return@launch
                 }
 
+                val targetUser = databaseService.getUser(uuid)
                 val target = Bukkit.getPlayer(uuid)
 
                 if(target == null) {
-                    SurfChat.send(player, MessageBuilder().error("Du hast niemanden, dem du antworten kannst."))
+                    user.sendText(buildText {
+                        error("Du hast niemanden, dem du antworten kannst.")
+                    })
                     return@launch
                 }
 
                 if(target == player) {
-                    SurfChat.send(player, MessageBuilder().error("Du kannst dir nicht selbst schreiben."))
+                    user.sendText(buildText {
+                        error("Du kannst dir nicht selbst schreiben.")
+                    })
                     return@launch
                 }
 
-                val targetUser: ChatUser = ChatUser.getUser(uuid)
-                val user: ChatUser = ChatUser.getUser(player.uniqueId)
+                val messageComponent = Component.text(message)
 
-                if (ChatFilterService.containsLink(MiniMessage.miniMessage().deserialize(message))) {
-                    SurfChat.send(player, MessageBuilder().error("Bitte sende keine Links!"))
-                    return@launch
+                plugin.messageValidator.parse(messageComponent, ChatMessageType.PRIVATE_TO, user) {
+                    user.sendText(plugin.chatFormat.formatMessage(messageComponent, player.toDisplayUser(), target.toDisplayUser(), ChatMessageType.PRIVATE_FROM, ""))
+                    targetUser.sendText(plugin.chatFormat.formatMessage(messageComponent, player.toDisplayUser(), target.toDisplayUser(), ChatMessageType.PRIVATE_TO, ""))
                 }
-
-                if (ChatFilterService.containsBlocked(MiniMessage.miniMessage().deserialize(message))) {
-                    SurfChat.send(player, MessageBuilder().error("Bitte achte auf deine Wortwahl!"))
-                    return@launch
-                }
-
-                if (ChatFilterService.isSpamming(player.uniqueId)) {
-                    SurfChat.send(player, MessageBuilder().error("Mal ganz ruhig hier, spam bitte nicht!"))
-                    return@launch
-                }
-
-                if (!ChatFilterService.isValidInput(message)) {
-                    SurfChat.send(player, MessageBuilder().error("Bitte verwende keine unerlaubten Zeichen!"))
-                    return@launch
-                }
-
-                if (BasicPunishApi.isMuted(player)) {
-                    SurfChat.send(player, MessageBuilder().error("Du bist gemuted und kannst nicht chatten."))
-                    return@launch
-                }
-
-                if (targetUser.toggledPM) {
-                    SurfChat.send(player, MessageBuilder().error("Der Spieler hat Privatnachrichten deaktiviert."))
-                    return@launch
-                }
-
-                if(user.isIgnoring(targetUser.uuid)) {
-                    SurfChat.send(player, MessageBuilder().error("Du ignorierst den Spieler."))
-                    return@launch
-                }
-
-                if(!targetUser.isIgnoring(player.uniqueId)) {
-                    SurfChat.send(Bukkit.getPlayer(uuid) ?: return@launch, MessageBuilder().suggest(MessageBuilder().darkSpacer(">>").error(" PM ").darkSpacer("| ").variableValue(player.name).darkSpacer(" ->").variableValue(" Dich: ").white(message), MessageBuilder().primary("Clicke, um anzuworten."), "/msg " + player.name + " "))
-                }
-
-                SurfChat.send(player, MessageBuilder().suggest(MessageBuilder().darkSpacer(">>").error(" PM ").darkSpacer("| ").variableValue("Du").darkSpacer(" -> ").variableValue(target.name + ": ").white(message), MessageBuilder().primary("Clicke, um anzuworten."), "/msg " + target.name + " "))
             }
         }
     }

@@ -30,6 +30,7 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
                 val targetUser = databaseService.getUser(target.uniqueId)
 
                 plugin.messageValidator.parse(messageComponent, ChatMessageType.PRIVATE_TO, user){
+                    user.sendText(plugin.chatFormat.formatMessage(messageComponent, player.toDisplayUser(), target.toDisplayUser(), ChatMessageType.PRIVATE_FROM, ""))
                     targetUser.sendText(plugin.chatFormat.formatMessage(messageComponent, player.toDisplayUser(), target.toDisplayUser(), ChatMessageType.PRIVATE_TO, ""))
                 }
             }

@@ -9,6 +9,7 @@ import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.toDisplayUser
 import net.kyori.adventure.text.Component
+import java.util.*
 
 class TeamChatCommand(commandName: String): CommandAPICommand(commandName) {
     init {
@@ -19,7 +20,7 @@ class TeamChatCommand(commandName: String): CommandAPICommand(commandName) {
             val message = args.getUnchecked<String>("message") ?: return@playerExecutor
 
             plugin.getTeamMembers().forEach {
-                surfChatApi.sendRawText(it, plugin.chatFormat.formatMessage(Component.text(message), player.toDisplayUser(), it.toDisplayUser(), ChatMessageType.TEAM, ""))
+                surfChatApi.sendRawText(it, plugin.chatFormat.formatMessage(Component.text(message), player.toDisplayUser(), it.toDisplayUser(), ChatMessageType.TEAM, "", UUID.randomUUID()))
             }
 
             plugin.launch {

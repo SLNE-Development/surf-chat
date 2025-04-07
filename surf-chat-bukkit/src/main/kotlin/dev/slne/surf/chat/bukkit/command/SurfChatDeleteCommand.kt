@@ -6,6 +6,7 @@ import dev.jorel.commandapi.kotlindsl.stringArgument
 import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import org.bukkit.Bukkit
 import java.util.*
 
 class SurfChatDeleteCommand(commandName: String) : CommandAPICommand(commandName) {
@@ -15,8 +16,10 @@ class SurfChatDeleteCommand(commandName: String) : CommandAPICommand(commandName
         playerExecutor { player, args ->
             val messageID = args.getUnchecked<String>("messageID") ?: return@playerExecutor
 
-            historyService.deleteMessage(player.uniqueId, UUID.fromString(messageID))
-            historyService.resendMessages(player.uniqueId)
+            Bukkit.getOnlinePlayers().forEach {
+                historyService.deleteMessage(it.uniqueId, UUID.fromString(messageID))
+                historyService.resendMessages(it.uniqueId)
+            }
 
             surfChatApi.sendText(player, buildText {
                 primary("Die Nachricht mit der ID ")

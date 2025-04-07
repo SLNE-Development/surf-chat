@@ -26,6 +26,7 @@ class BukkitChatListener(): Listener {
             player.toDisplayUser(),
             ChatMessageType.GLOBAL,
             "N/A",
+            messageID
         )
 
         Bukkit.getOnlinePlayers().forEach {

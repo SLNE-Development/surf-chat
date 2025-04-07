@@ -18,6 +18,7 @@ import dev.slne.surf.chat.core.service.replyService
 
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
+import java.util.*
 
 class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
@@ -36,8 +37,8 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
                 val targetUser = databaseService.getUser(target.uniqueId)
 
                 plugin.messageValidator.parse(messageComponent, ChatMessageType.PRIVATE_TO, user) {
-                    targetUser.sendRawText(plugin.chatFormat.formatMessage(messageComponent, player.toDisplayUser(), target.toDisplayUser(), ChatMessageType.PRIVATE_FROM, ""))
-                    user.sendRawText(plugin.chatFormat.formatMessage(messageComponent, player.toDisplayUser(), target.toDisplayUser(), ChatMessageType.PRIVATE_TO, ""))
+                    targetUser.sendRawText(plugin.chatFormat.formatMessage(messageComponent, player.toDisplayUser(), target.toDisplayUser(), ChatMessageType.PRIVATE_FROM, "", UUID.randomUUID()))
+                    user.sendRawText(plugin.chatFormat.formatMessage(messageComponent, player.toDisplayUser(), target.toDisplayUser(), ChatMessageType.PRIVATE_TO, "", UUID.randomUUID()))
 
                     replyService.updateLast(player.uniqueId, target.uniqueId)
                     replyService.updateLast(target.uniqueId, player.uniqueId)

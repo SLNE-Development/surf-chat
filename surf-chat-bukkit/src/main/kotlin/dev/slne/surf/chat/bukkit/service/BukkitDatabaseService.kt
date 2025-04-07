@@ -43,32 +43,28 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
         .asLoadingCache<UUID, ChatUserModel> { loadUser(it) }
 
     object Users : Table() {
-        val uuid = text("uuid").transform({ UUID.fromString(it) }, { it.toString() })
+        val uuid = varchar("uuid", 36).transform({ UUID.fromString(it) }, { it.toString() })
         val name = text("name")
-        val ignoreList = text("ignoreList").transform( {
+        val ignoreList = text("ignoreList").transform({
             gson.fromJson(it, ObjectArraySet<UUID>().toObjectSet().javaClass)
         }, {
             gson.toJson(it)
         })
-
         val pmToggled = bool("pmToggled")
 
         override val primaryKey = PrimaryKey(uuid)
     }
 
     object ChatHistory : Table() {
-        val id = text("id").transform({ UUID.fromString(it) }, { it.toString() })
-        val uuid = text("uuid").transform({ UUID.fromString(it) }, { it.toString() })
+        val id = varchar("id", 36).transform({ UUID.fromString(it) }, { it.toString() })
+        val uuid = varchar("uuid", 36).transform({ UUID.fromString(it) }, { it.toString() })
         val type = text("type")
         val timeStamp = long("timeStamp")
-        val message = text("message").transform( {
-            gson.fromJson(it, Component::class.java)
-        }, {
-            gson.toJson(it)
-        })
+        val message = text("message")
 
         override val primaryKey = PrimaryKey(id)
     }
+
 
     override fun connect() {
         DatabaseProvider(plugin.dataPath, plugin.dataPath).connect()

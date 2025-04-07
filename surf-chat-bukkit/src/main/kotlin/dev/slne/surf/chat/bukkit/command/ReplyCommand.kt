@@ -7,6 +7,7 @@ import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.bukkit.util.sendRawText
 import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.bukkit.util.toDisplayUser
 import dev.slne.surf.chat.core.service.databaseService
@@ -54,11 +55,11 @@ class ReplyCommand(commandName: String) : CommandAPICommand(commandName) {
                 val messageComponent = Component.text(message)
 
                 plugin.messageValidator.parse(messageComponent, ChatMessageType.PRIVATE_TO, user) {
-                    user.sendText(plugin.chatFormat.formatMessage(messageComponent, player.toDisplayUser(), target.toDisplayUser(), ChatMessageType.PRIVATE_FROM, ""))
-                    targetUser.sendText(plugin.chatFormat.formatMessage(messageComponent, player.toDisplayUser(), target.toDisplayUser(), ChatMessageType.PRIVATE_TO, ""))
+                    targetUser.sendRawText(plugin.chatFormat.formatMessage(messageComponent, player.toDisplayUser(), target.toDisplayUser(), ChatMessageType.PRIVATE_FROM, ""))
+                    user.sendRawText(plugin.chatFormat.formatMessage(messageComponent, player.toDisplayUser(), target.toDisplayUser(), ChatMessageType.PRIVATE_TO, ""))
 
                     plugin.launch {
-                        surfChatApi.logMessage(player.uniqueId, ChatMessageType.INTERNAL, messageComponent)
+                        surfChatApi.logMessage(player.uniqueId, ChatMessageType.PRIVATE_TO, messageComponent)
                     }
                 }
             }

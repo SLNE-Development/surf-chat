@@ -2,6 +2,7 @@ package dev.slne.surf.chat.bukkit
 
 import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
 import com.google.gson.Gson
+import dev.jorel.commandapi.CommandAPI
 
 import dev.slne.surf.chat.api.model.ChatFormatModel
 import dev.slne.surf.chat.api.model.MessageValidatorModel
@@ -24,6 +25,10 @@ class SurfChatBukkit(): SuspendingJavaPlugin() {
         /**
          * Register all commands.
          */
+
+        CommandAPI.unregister("msg")
+        CommandAPI.unregister("tell")
+        CommandAPI.unregister("w")
 
         ChannelCommand("channel").register()
         SurfChatCommand("surfchat").register()

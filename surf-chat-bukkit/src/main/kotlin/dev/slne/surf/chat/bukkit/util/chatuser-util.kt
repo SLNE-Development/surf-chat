@@ -28,6 +28,11 @@ fun ChatUserModel.sendText(text: Component) {
     surfChatApi.sendText(player, text)
 }
 
+fun ChatUserModel.sendRawText(text: Component) {
+    val player = Bukkit.getPlayer(this.uuid) ?: return
+    surfChatApi.sendRawText(player, text)
+}
+
 fun ChatUserModel.toPlayer(): Player? {
     return Bukkit.getPlayer(this.uuid)
 }

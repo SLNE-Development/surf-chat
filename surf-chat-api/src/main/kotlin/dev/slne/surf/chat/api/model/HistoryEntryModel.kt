@@ -9,5 +9,5 @@ interface HistoryEntryModel {
    val type: String
 
    val timestamp: Long
-   val message: Component
+   val message: String
 }

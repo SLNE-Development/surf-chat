@@ -5,7 +5,7 @@ import net.kyori.adventure.text.Component
 import java.util.*
 
 class BukkitHistoryEntry (
-    override val message: Component,
+    override val message: String,
     override val timestamp: Long,
     override val uuid: UUID,
     override val type: String,

@@ -15,6 +15,7 @@ import dev.slne.surf.surfapi.core.api.util.mutableObject2ObjectMapOf
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap
 import it.unimi.dsi.fastutil.objects.ObjectList
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.kyori.adventure.util.Services.Fallback
 import java.util.*
 
@@ -26,7 +27,7 @@ class BukkitHistoryService(): HistoryService, Fallback {
 
     override suspend fun write(user: UUID, type: ChatMessageType, message: Component) {
         databaseService.insertHistoryEntry(user, BukkitHistoryEntry(
-            message, System.currentTimeMillis(), user, type.toString(), UUID.randomUUID()
+            PlainTextComponentSerializer.plainText().serialize(message), System.currentTimeMillis(), user, type.toString(), UUID.randomUUID()
         ))
     }
 

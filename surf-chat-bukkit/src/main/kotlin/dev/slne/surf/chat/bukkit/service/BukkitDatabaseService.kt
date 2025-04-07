@@ -2,6 +2,7 @@ package dev.slne.surf.chat.bukkit.service
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.google.auto.service.AutoService
+import com.google.gson.reflect.TypeToken
 import com.sksamuel.aedile.core.asLoadingCache
 import com.sksamuel.aedile.core.expireAfterWrite
 import com.sksamuel.aedile.core.withRemovalListener
@@ -42,7 +43,7 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
     object Users : Table() {
         val uuid = varchar("uuid", 36).transform({ UUID.fromString(it) }, { it.toString() })
         val name = text("name")
-        val ignoreList = text("ignoreList").transform({ gson.fromJson(it, ObjectArraySet<UUID>().toObjectSet().javaClass) }, { gson.toJson(it) })
+        val ignoreList = text("ignoreList").transform({ gson.fromJson(it, ObjectArraySet<UUID>().javaClass) }, { gson.toJson(it) })
         val pmToggled = bool("pmToggled")
 
         override val primaryKey = PrimaryKey(uuid)

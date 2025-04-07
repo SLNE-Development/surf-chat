@@ -35,7 +35,7 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
                 user.sendText(buildText {
                     primary("Die Daten von ")
                     info(target.name ?: target.uniqueId.toString())
-                    primary(" wird geladen...")
+                    primary(" werden geladen...")
                 })
 
                 val history = databaseService.loadHistory(target.uniqueId).sortedBy { it.timestamp }

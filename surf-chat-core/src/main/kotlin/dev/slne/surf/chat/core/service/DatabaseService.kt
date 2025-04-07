@@ -17,7 +17,6 @@ interface DatabaseService {
     suspend fun handleDisconnect(user: UUID)
 
     suspend fun loadHistory(uuid: UUID): ObjectList<HistoryEntryModel>
-    suspend fun loadLastHistory(last: Int): ObjectList<HistoryEntryModel>
     suspend fun insertHistoryEntry(user: UUID, entry: HistoryEntryModel)
 
     companion object {

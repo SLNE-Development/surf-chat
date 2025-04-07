@@ -1,7 +1,6 @@
 package dev.slne.surf.chat.bukkit.service
 
 import com.github.benmanes.caffeine.cache.Caffeine
-import com.github.retrooper.packetevents.protocol.player.User
 import com.google.auto.service.AutoService
 import com.sksamuel.aedile.core.asLoadingCache
 import com.sksamuel.aedile.core.expireAfterWrite
@@ -12,17 +11,14 @@ import dev.slne.surf.chat.bukkit.gson
 import dev.slne.surf.chat.bukkit.model.BukkitChatUser
 import dev.slne.surf.chat.bukkit.model.BukkitHistoryEntry
 import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.bukkit.service.BukkitDatabaseService.Users.transform
 import dev.slne.surf.chat.core.service.DatabaseService
 import dev.slne.surf.database.DatabaseProvider
 import dev.slne.surf.surfapi.core.api.util.toObjectList
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import it.unimi.dsi.fastutil.objects.ObjectList
-import it.unimi.dsi.fastutil.objects.ObjectSet
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import net.kyori.adventure.text.Component
 import net.kyori.adventure.util.Services.Fallback
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -111,27 +107,11 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
     override suspend fun loadHistory(uuid: UUID): ObjectList<HistoryEntryModel> {
         return withContext(Dispatchers.IO) {
             newSuspendedTransaction {
-                val selected = ChatHistory.select(ChatHistory.uuid eq uuid)
+                val selected = ChatHistory.select(ChatHistory.uuid eq uuid).filterNotNull()
 
-                return@newSuspendedTransaction selected.map {
-                    BukkitHistoryEntry(
-                        id = it[ChatHistory.id],
-                        uuid = it[ChatHistory.uuid],
-                        type = it[ChatHistory.type],
-                        timestamp = it[ChatHistory.timeStamp],
-                        message = it[ChatHistory.message]
-                    )
-                }.toObjectList()
-            }
-        }
-    }
-
-    override suspend fun loadLastHistory(last: Int): ObjectList<HistoryEntryModel> {
-        return withContext(Dispatchers.IO) {
-            newSuspendedTransaction {
-                val selected = ChatHistory.selectAll()
-                    .orderBy(ChatHistory.timeStamp, SortOrder.DESC)
-                    .limit(last)
+                selected.forEach {
+                    println("Available keys: ${it.fieldIndex.keys}")
+                }
 
                 return@newSuspendedTransaction selected.map {
                     BukkitHistoryEntry(

@@ -54,6 +54,7 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
                         line {
                             darkSpacer(" - ")
                             variableValue(it.message)
+                            spacer(" (${it.type})")
                             hoverEvent(HoverEvent.showText(buildText {
                                 primary("von: ")
                                 info(target.name ?: target.uniqueId.toString())

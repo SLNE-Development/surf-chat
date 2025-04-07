@@ -3,12 +3,9 @@ package dev.slne.surf.chat.bukkit.util
 import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.clickRunsCommand
-import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.surfapi.core.api.messages.builder.SurfComponentBuilder
 import dev.slne.surf.surfapi.core.api.util.mutableObjectListOf
-import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.entity.Player
 import kotlin.math.ceil
 import kotlin.math.min
@@ -38,10 +35,7 @@ class PageableMessageBuilder(private val linesPerPage: Int = 10) {
     }
 
     fun send(sender: Player, page: Int) {
-        val totalPages = ceil(lines.size.toDouble() / linesPerPage).toInt()
-        val start = (page - 1) * linesPerPage
-        val end = min(start + linesPerPage, lines.size)
-
+        val totalPages = ceil(lines.size.toDouble() / linesPerPage).toInt().coerceAtLeast(1)
         if (page < 1 || page > totalPages) {
             surfChatApi.sendText(sender, buildText {
                 error("Seite ")
@@ -51,58 +45,42 @@ class PageableMessageBuilder(private val linesPerPage: Int = 10) {
             return
         }
 
+        val start = (page - 1) * linesPerPage
+        val end = min(start + linesPerPage, lines.size)
+
         surfChatApi.sendRawText(sender, buildText {
             appendNewline()
-            append {
-                title
-            }
-            appendNewline()
-
-            for (i in start..<end) {
-                append {
-                    append(lines[i])
-                    appendNewline()
-                    decoration(TextDecoration.BOLD, false).build()
-                }
+            if (!title.equals(Component.empty())) {
+                append(title)
+                appendNewline()
             }
 
-            append(getComponent(page, totalPages))
+            for (i in start until end) {
+                append(lines[i])
+                appendNewline()
+            }
+
+            append(paginationComponent(page, totalPages))
         })
     }
 
-    private fun getComponent(page: Int, totalPages: Int): Component {
+    private fun paginationComponent(page: Int, totalPages: Int): Component {
         return buildText {
-            append {
-                if (page > 1) {
-                    success("[<<] ")
-                    clickRunsCommand(pageCommand.replace("%page%", "1"))
+            fun navButton(label: String, targetPage: Int, enabled: Boolean) {
+                if (enabled) {
+                    success(label)
+                    clickRunsCommand(pageCommand.replace("%page%", targetPage.toString()))
                 } else {
-                    error("[<<] ")
+                    error(label)
                 }
-
-                if (page > 1) {
-                    success("[<] ")
-                    clickRunsCommand(pageCommand.replace("%page%", (page - 1).toString()))
-                } else {
-                    error("[<] ")
-                }
-
-                darkSpacer("Seite $page von $totalPages")
-
-                if (page < totalPages) {
-                    success(" [>] ")
-                    clickRunsCommand(pageCommand.replace("%page%", (page + 1).toString()))
-                } else {
-                    error(" [>] ")
-                }
-
-                if (page < totalPages) {
-                    success(" [>>]")
-                    clickRunsCommand(pageCommand.replace("%page%", totalPages.toString()))
-                } else {
-                    error(" [>>]")
-                }.build()
             }
+
+            navButton("[<<] ", 1, page > 1)
+            navButton("[<] ", page - 1, page > 1)
+            darkSpacer("Seite $page von $totalPages")
+            navButton(" [>] ", page + 1, page < totalPages)
+            navButton(" [>>]", totalPages, page < totalPages)
         }
     }
 }
+

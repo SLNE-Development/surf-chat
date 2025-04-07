@@ -1,15 +1,15 @@
 package dev.slne.surf.chat.bukkit.command
 
 import dev.jorel.commandapi.CommandAPICommand
-import dev.jorel.commandapi.kotlindsl.integerArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
+import dev.jorel.commandapi.kotlindsl.stringArgument
 import dev.slne.surf.chat.core.service.historyService
 import java.util.*
 
 class SurfChatDeleteCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission("surf.chat.command.surf-chat.delete")
-        integerArgument("messageID")
+        stringArgument("messageID")
         playerExecutor { player, args ->
             val messageID = args.getUnchecked<String>("messageID") ?: return@playerExecutor
 

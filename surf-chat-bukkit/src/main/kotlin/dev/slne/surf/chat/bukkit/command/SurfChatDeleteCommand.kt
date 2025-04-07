@@ -22,9 +22,7 @@ class SurfChatDeleteCommand(commandName: String) : CommandAPICommand(commandName
             }
 
             surfChatApi.sendText(player, buildText {
-                primary("Die Nachricht mit der ID ")
-                info(messageID)
-                primary(" wurde gelöscht.")
+                primary("Die Nachricht wurde gelöscht.")
             })
         }
     }

@@ -45,11 +45,7 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
     object Users : Table() {
         val uuid = varchar("uuid", 36).transform({ UUID.fromString(it) }, { it.toString() })
         val name = text("name")
-        val ignoreList = text("ignoreList").transform({
-            gson.fromJson(it, ObjectArraySet<UUID>().toObjectSet().javaClass)
-        }, {
-            gson.toJson(it)
-        })
+        val ignoreList = text("ignoreList").transform({ gson.fromJson(it, ObjectArraySet<UUID>().toObjectSet().javaClass) }, { gson.toJson(it) })
         val pmToggled = bool("pmToggled")
 
         override val primaryKey = PrimaryKey(uuid)
@@ -108,29 +104,14 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
         }
     }
 
-    override suspend fun saveOrUpdateUser(user: ChatUserModel) {
-        withContext(Dispatchers.IO) {
-            newSuspendedTransaction {
-                val empty = Users.select (Users.uuid eq user.uuid).empty()
-                if (!empty) {
-                    Users.insert {
-                        it[uuid] = user.uuid
-                        it[name] = user.name
-                        it[ignoreList] = user.ignoreList
-                        it[pmToggled] = user.pmToggled
-
-                        println("User ${user.name} (${user.uuid}) inserted")
-                    }
-                }
-            }
-        }
+    override suspend fun handleDisconnect(user: UUID) {
+        dataCache.invalidate(user)
     }
-
 
     override suspend fun loadHistory(uuid: UUID): ObjectList<HistoryEntryModel> {
         return withContext(Dispatchers.IO) {
             newSuspendedTransaction {
-                val selected = ChatHistory.select(Users.uuid eq uuid)
+                val selected = ChatHistory.select(ChatHistory.uuid eq uuid)
 
                 return@newSuspendedTransaction selected.map {
                     BukkitHistoryEntry(

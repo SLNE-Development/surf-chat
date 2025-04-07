@@ -2,6 +2,8 @@ package dev.slne.surf.chat.bukkit.model
 
 import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.api.model.ChatUserModel
+import dev.slne.surf.chat.bukkit.util.toPlayer
+import dev.slne.surf.chat.core.service.channelService
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import java.util.*
@@ -13,38 +15,48 @@ class BukkitChatUser (
     override var pmToggled: Boolean = false
 ): ChatUserModel {
     override fun isIgnoring(target: UUID): Boolean {
-        TODO("Not yet implemented")
+        return ignoreList.contains(target)
     }
 
     override fun ignore(target: UUID) {
-        TODO("Not yet implemented")
+        ignoreList.add(target)
     }
 
     override fun unIgnore(target: UUID) {
-        TODO("Not yet implemented")
+        ignoreList.remove(target)
     }
 
     override fun toggleIgnore(target: UUID): Boolean {
-        TODO("Not yet implemented")
+        if(ignoreList.contains(target)) {
+            ignoreList.remove(target)
+            return false
+        } else {
+            ignoreList.add(target)
+            return true
+        }
     }
 
     override fun acceptInvite(channel: ChannelModel) {
-        TODO("Not yet implemented")
+        channel.join(this)
+        channel.invites.remove(this)
     }
 
     override fun declineInvite(channel: ChannelModel) {
-        TODO("Not yet implemented")
+        channel.invites.remove(this)
     }
 
     override fun hasOpenPms(): Boolean {
-        TODO("Not yet implemented")
+        return pmToggled
     }
 
     override fun togglePm(): Boolean {
-        TODO("Not yet implemented")
+        pmToggled = !pmToggled
+        return pmToggled
     }
 
     override fun moveToChannel(channel: ChannelModel) {
-        TODO("Not yet implemented")
+        val player = this.toPlayer() ?: return
+
+        channelService.move(player, channel)
     }
 }

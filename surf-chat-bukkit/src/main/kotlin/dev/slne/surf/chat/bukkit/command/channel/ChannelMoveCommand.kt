@@ -27,7 +27,7 @@ class ChannelMoveCommand(commandName: String) : CommandAPICommand(commandName) {
                 val user = databaseService.getUser(player.uniqueId)
                 val targetUser = databaseService.getUser(target.uniqueId)
 
-                channelService.move(targetUser, channel)
+                channelService.move(target, channel)
 
                 user.sendText(buildText {
                     primary("Du hast ")

@@ -1,17 +1,23 @@
 package dev.slne.surf.chat.bukkit.service
 
+import com.github.shynixn.mccoroutine.folia.launch
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.api.model.ChatUserModel
 import dev.slne.surf.chat.api.type.ChannelRoleType
 import dev.slne.surf.chat.bukkit.model.BukkitChannel
+import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.edit
+import dev.slne.surf.chat.bukkit.util.toChatUser
+import dev.slne.surf.chat.bukkit.util.toPlayer
 import dev.slne.surf.chat.core.service.ChannelService
+import dev.slne.surf.chat.core.service.channelService
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.util.Services.Fallback
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 
 @AutoService(ChannelService::class)
 class BukkitChannelService(): ChannelService, Fallback {
@@ -55,7 +61,16 @@ class BukkitChannelService(): ChannelService, Fallback {
         channels.remove(channel)
     }
 
-    override fun move(player: ChatUserModel, channel: ChannelModel) {
-        TODO("Not yet implemented")
+    override fun move(player: Player, channel: ChannelModel) {
+        val currentChannel = channelService.getChannel(player) ?: return
+
+        if (currentChannel == channel) {
+            return
+        }
+
+        plugin.launch {
+            currentChannel.leave(player.toChatUser())
+            channel.join(player.toChatUser())
+        }
     }
 }

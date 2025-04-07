@@ -5,6 +5,7 @@ import dev.slne.surf.chat.api.model.ChatUserModel
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 
 interface ChannelService {
     /**
@@ -66,7 +67,7 @@ interface ChannelService {
      * @param player The player to move.
      * @param channel The channel to move the player to.
      */
-    fun move(player: ChatUserModel, channel: ChannelModel)
+    fun move(player: Player, channel: ChannelModel)
 
     companion object {
         val INSTANCE = requiredService<ChannelService>()

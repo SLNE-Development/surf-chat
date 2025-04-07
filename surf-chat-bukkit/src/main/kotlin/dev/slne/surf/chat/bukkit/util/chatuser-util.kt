@@ -7,6 +7,7 @@ import dev.slne.surf.chat.core.service.databaseService
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
+import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import java.util.*
 
@@ -25,4 +26,8 @@ fun Audience.toDisplayUser(): DisplayUser {
 fun ChatUserModel.sendText(text: Component) {
     val player = Bukkit.getPlayer(this.uuid) ?: return
     surfChatApi.sendText(player, text)
+}
+
+fun ChatUserModel.toPlayer(): Player? {
+    return Bukkit.getPlayer(this.uuid)
 }

@@ -6,7 +6,9 @@ import dev.jorel.commandapi.kotlindsl.subcommand
 class SurfChatCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission("surf.chat.command.surf-chat")
+        withAliases("sc")
         subcommand(SurfChatDeleteCommand("delete"))
         subcommand(SurfChatChatClearCommand("clear"))
+        subcommand(SurfChatLookupCommand("lookup"))
     }
 }

@@ -7,6 +7,7 @@ import dev.slne.surf.chat.bukkit.util.components
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.TextDecoration
 
 class BukkitChatFormat: ChatFormatModel {
     override fun formatMessage(
@@ -63,7 +64,7 @@ class BukkitChatFormat: ChatFormatModel {
             ChatMessageType.TEAM -> {
                 buildText {
                     darkSpacer(">> ")
-                    append(Component.text("TEAM", Colors.DARK_RED))
+                    append(Component.text("TEAM", Colors.RED).decorate(TextDecoration.BOLD))
                     darkSpacer(" | ")
                     variableValue(sender.name)
                     darkSpacer(" >> ")

@@ -4,6 +4,7 @@ import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.greedyStringArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
+import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.sendText
@@ -55,6 +56,10 @@ class ReplyCommand(commandName: String) : CommandAPICommand(commandName) {
                 plugin.messageValidator.parse(messageComponent, ChatMessageType.PRIVATE_TO, user) {
                     user.sendText(plugin.chatFormat.formatMessage(messageComponent, player.toDisplayUser(), target.toDisplayUser(), ChatMessageType.PRIVATE_FROM, ""))
                     targetUser.sendText(plugin.chatFormat.formatMessage(messageComponent, player.toDisplayUser(), target.toDisplayUser(), ChatMessageType.PRIVATE_TO, ""))
+
+                    plugin.launch {
+                        surfChatApi.logMessage(player.uniqueId, ChatMessageType.INTERNAL, messageComponent)
+                    }
                 }
             }
         }

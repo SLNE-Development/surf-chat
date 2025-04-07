@@ -27,6 +27,7 @@ import net.kyori.adventure.util.Services.Fallback
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 import kotlin.time.Duration.Companion.minutes
 
@@ -72,7 +73,9 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
     override fun connect() {
         DatabaseProvider(plugin.dataPath, plugin.dataPath).connect()
 
-        SchemaUtils.create(Users, ChatHistory)
+        transaction {
+            SchemaUtils.create(Users, ChatHistory)
+        }
     }
 
     override suspend fun getUser(uuid: UUID): ChatUserModel {

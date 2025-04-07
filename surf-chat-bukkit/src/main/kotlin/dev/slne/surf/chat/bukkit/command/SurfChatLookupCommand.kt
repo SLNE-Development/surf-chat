@@ -47,12 +47,7 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
                     return@launch
                 }
 
-                PageableMessageBuilder {
-                    title {
-                        primary("Chat Daten von ")
-                        info(target.name ?: target.uniqueId.toString())
-                    }
-
+                val builder = PageableMessageBuilder {
                     pageCommand = "/surfchat lookup ${target.name ?: target.uniqueId} %page%"
 
                     history.forEach {
@@ -71,7 +66,14 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
                             }))
                         }
                     }
-                }.send(player, page)
+                }
+
+                builder.title {
+                    primary("Chat Daten von ")
+                    info(target.name ?: target.uniqueId.toString())
+                }
+
+                builder.send(player, page)
             }
         }
     }

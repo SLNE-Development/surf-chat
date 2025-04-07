@@ -11,6 +11,7 @@ import dev.slne.surf.chat.bukkit.util.PageableMessageBuilder
 import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import org.bukkit.OfflinePlayer
 import java.time.Instant
@@ -65,6 +66,7 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
                                 primary("Datum: ")
                                 info(getString(it.timestamp))
                             }))
+                            clickEvent(ClickEvent.copyToClipboard(it.message))
                         }
                     }
                 }
@@ -79,5 +81,5 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
         }
     }
 
-    private fun getString(unix: Long): String = timeFormatter.format(Instant.ofEpochSecond(unix).atZone(ZoneId.of("UTC+2")))
+    private fun getString(unix: Long): String = timeFormatter.format(Instant.ofEpochSecond(unix).atZone(ZoneId.of("GMT+2")))
 }

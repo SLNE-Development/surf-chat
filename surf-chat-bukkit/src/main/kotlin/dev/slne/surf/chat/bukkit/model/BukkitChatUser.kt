@@ -5,13 +5,12 @@ import dev.slne.surf.chat.api.model.ChatUserModel
 import dev.slne.surf.chat.bukkit.util.toPlayer
 import dev.slne.surf.chat.core.service.channelService
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
-import it.unimi.dsi.fastutil.objects.ObjectSet
 import java.util.*
 
 class BukkitChatUser (
     override val uuid: UUID,
     override val name: String = "Unknown",
-    override val ignoreList: ObjectSet<UUID> = ObjectArraySet(),
+    override val ignoreList: ObjectArraySet<UUID> = ObjectArraySet(),
     override var pmToggled: Boolean = false
 ): ChatUserModel {
     override fun isIgnoring(target: UUID): Boolean {

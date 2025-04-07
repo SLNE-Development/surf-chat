@@ -23,7 +23,7 @@ interface SurfChatApi {
      * @param message The message to send.
      * @param uuid The UUID of the message.
      */
-    fun sendText(player: Player, message: Component, uuid: UUID = UUID.randomUUID())
+    fun sendText(player: Player, message: Component, messageID: UUID = UUID.randomUUID())
 
     /**
      * Sends a text message without a prefix to a specific player and logs it.
@@ -32,7 +32,7 @@ interface SurfChatApi {
      * @param message The message to send.
      * @param uuid The UUID of the message.
      */
-    fun sendRawText(player: Player, message: Component, uuid: UUID = UUID.randomUUID())
+    fun sendRawText(player: Player, message: Component, messageID: UUID = UUID.randomUUID())
 
     companion object {
         val INSTANCE = requiredService<SurfChatApi>()

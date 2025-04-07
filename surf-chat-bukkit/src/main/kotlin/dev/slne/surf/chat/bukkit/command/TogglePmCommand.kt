@@ -1,29 +1,33 @@
-package dev.slne.surf.social.chat.command
+package dev.slne.surf.chat.bukkit.command
 
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
-import dev.jorel.commandapi.executors.CommandArguments
-import dev.jorel.commandapi.executors.PlayerCommandExecutor
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.social.chat.SurfChat
-import dev.slne.surf.social.chat.`object`.ChatUser
-import dev.slne.surf.social.chat.util.MessageBuilder
-import org.bukkit.entity.Player
+import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.bukkit.util.sendText
+import dev.slne.surf.chat.core.service.databaseService
+import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import net.kyori.adventure.text.format.TextDecoration
 
 class TogglePmCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission("surf.chat.command.toggle")
+        playerExecutor { player, _ ->
+            plugin.launch {
+                val user = databaseService.getUser(player.uniqueId)
+                val ignoring = user.togglePm()
 
-        playerExecutor{ player, _ ->
-            SurfChat.instance.launch {
-                val user: ChatUser = ChatUser.getUser(player.uniqueId)
-
-                if (user.toggledPM) {
-                    user.toggledPM = false
-                    SurfChat.send(player, MessageBuilder().primary("Du hast privat Nachrichten ").success("aktiviert."))
+                if(ignoring) {
+                    user.sendText(buildText {
+                        primary("Du ignorierst jetzt ")
+                        success("privaten Nachrichten. ")
+                        spacer("(Freunde können diese Sperre umgehen)").decorate(TextDecoration.ITALIC)
+                    })
                 } else {
-                    user.toggledPM = true
-                    SurfChat.send(player, MessageBuilder().primary("Du hast privat Nachrichten ").error("deaktiviert."))
+                    user.sendText(buildText {
+                        primary("Du ignorierst ")
+                        success("keine privaten Nachrichten mehr.")
+                    })
                 }
             }
         }

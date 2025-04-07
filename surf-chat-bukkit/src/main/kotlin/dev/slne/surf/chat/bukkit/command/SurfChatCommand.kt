@@ -1,4 +1,4 @@
-package dev.slne.surf.social.chat.command
+package dev.slne.surf.chat.bukkit.command
 
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.subcommand
@@ -8,7 +8,5 @@ class SurfChatCommand(commandName: String) : CommandAPICommand(commandName) {
         withPermission("surf.chat.command.surf-chat")
         subcommand(SurfChatDeleteCommand("delete"))
         subcommand(SurfChatChatClearCommand("clear"))
-        subcommand(SurfChatSaveCommand("saveUsers"))
-        subcommand(SurfChatPlayerChatLimitCommand("setPlayerChatLimit"))
     }
 }

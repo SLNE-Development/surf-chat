@@ -1,15 +1,18 @@
 package dev.slne.surf.chat.bukkit.service
 
+import com.google.auto.service.AutoService
 import dev.slne.surf.chat.core.service.FilterService
 import dev.slne.surf.surfapi.core.api.util.*
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
+import net.kyori.adventure.util.Services.Fallback
 import java.util.*
 import kotlin.time.Duration.Companion.seconds
 
 private const val MESSAGE_LIMIT = 5
 
-class BukkitFilterService(): FilterService {
+@AutoService(FilterService::class)
+class BukkitFilterService(): FilterService, Fallback {
     override fun find(message: Component): Boolean {
         TODO("Not yet implemented")
     }

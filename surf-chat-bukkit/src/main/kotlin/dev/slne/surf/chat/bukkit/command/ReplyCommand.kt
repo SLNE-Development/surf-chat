@@ -1,19 +1,11 @@
-package dev.slne.surf.social.chat.command
+package dev.slne.surf.chat.bukkit.command
 
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
-import dev.jorel.commandapi.arguments.GreedyStringArgument
-import dev.jorel.commandapi.executors.CommandArguments
-import dev.jorel.commandapi.executors.PlayerCommandExecutor
 import dev.jorel.commandapi.kotlindsl.greedyStringArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.social.chat.SurfChat
-import dev.slne.surf.social.chat.external.BasicPunishApi
-import dev.slne.surf.social.chat.`object`.ChatUser
-import dev.slne.surf.social.chat.plugin
-import dev.slne.surf.social.chat.service.ChatFilterService
-import dev.slne.surf.social.chat.service.ChatReplyService
-import dev.slne.surf.social.chat.util.MessageBuilder
+import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.core.service.replyService
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Bukkit
 
@@ -22,10 +14,10 @@ class ReplyCommand(commandName: String) : CommandAPICommand(commandName) {
         withPermission("surf.chat.command.reply")
         withAliases("r")
         greedyStringArgument("message")
-        playerExecutor{ player, args ->
+        playerExecutor { player, args ->
             plugin.launch {
                 val message = args.getUnchecked<String>("message") ?: return@launch
-                val uuid = ChatReplyService.get(player.uniqueId)
+                val uuid = replyService.getLast(player.uniqueId)
 
                 if(uuid == null) {
                     SurfChat.send(player, MessageBuilder().error("Du hast niemanden, dem du antworten kannst."))

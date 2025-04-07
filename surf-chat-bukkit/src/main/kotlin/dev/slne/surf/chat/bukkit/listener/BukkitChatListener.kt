@@ -1,5 +1,7 @@
 package dev.slne.surf.chat.bukkit.listener
 
+import com.github.shynixn.mccoroutine.folia.launch
+import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.toDisplayUser
@@ -15,14 +17,20 @@ class BukkitChatListener(): Listener {
         val message = event.message()
         val messageID = UUID.randomUUID()
 
-        event.renderer { source, _, _, viewer ->
-            plugin.chatFormat.formatMessage(
-                event.message(),
-                source.toDisplayUser(),
-                viewer.toDisplayUser(),
-                ChatMessageType.GLOBAL,
-                "N/A",
-            )
+        val formattedMessage = plugin.chatFormat.formatMessage(
+            message,
+            player.toDisplayUser(),
+            player.toDisplayUser(),
+            ChatMessageType.GLOBAL,
+            "N/A",
+        )
+
+        plugin.launch {
+            surfChatApi.logMessage(player.uniqueId, ChatMessageType.INTERNAL, message)
+        }
+
+        event.renderer { _, _, _, _ ->
+            formattedMessage
         }
     }
 }

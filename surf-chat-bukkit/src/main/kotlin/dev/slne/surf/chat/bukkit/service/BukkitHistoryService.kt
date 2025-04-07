@@ -1,6 +1,7 @@
 package dev.slne.surf.chat.bukkit.service
 
 import com.github.benmanes.caffeine.cache.Caffeine
+import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.model.ChatUserModel
 import dev.slne.surf.chat.api.model.HistoryEntryModel
 import dev.slne.surf.chat.api.type.ChatMessageType
@@ -14,11 +15,12 @@ import dev.slne.surf.surfapi.core.api.util.mutableObject2ObjectMapOf
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap
 import it.unimi.dsi.fastutil.objects.ObjectList
 import net.kyori.adventure.text.Component
-import org.bukkit.Bukkit
+import net.kyori.adventure.util.Services.Fallback
 import java.util.*
 
-class BukkitHistoryService(): HistoryService {
-    val historyCache = Caffeine.newBuilder()
+@AutoService(HistoryService::class)
+class BukkitHistoryService(): HistoryService, Fallback {
+    private val historyCache = Caffeine.newBuilder()
         .maximumSize(1000)
         .build<UUID, Object2ObjectMap<HistoryPair, LoggedMessage>>()
 

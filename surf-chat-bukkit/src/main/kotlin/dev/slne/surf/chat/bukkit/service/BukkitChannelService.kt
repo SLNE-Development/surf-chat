@@ -1,5 +1,6 @@
 package dev.slne.surf.chat.bukkit.service
 
+import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.api.model.ChatUserModel
 import dev.slne.surf.chat.api.type.ChannelRoleType
@@ -8,10 +9,12 @@ import dev.slne.surf.chat.bukkit.util.edit
 import dev.slne.surf.chat.core.service.ChannelService
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import it.unimi.dsi.fastutil.objects.ObjectSet
+import net.kyori.adventure.util.Services.Fallback
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 
-class BukkitChannelService(): ChannelService {
+@AutoService(ChannelService::class)
+class BukkitChannelService(): ChannelService, Fallback {
     private val channels = ObjectArraySet<ChannelModel>()
     override fun createChannel(name: String, owner: ChatUserModel): ChannelModel {
         val channel = BukkitChannel(name)

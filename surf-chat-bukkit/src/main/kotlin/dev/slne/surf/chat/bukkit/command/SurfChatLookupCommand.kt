@@ -10,7 +10,9 @@ import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.PageableMessageBuilder
 import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.core.service.databaseService
+import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.TextDecoration
@@ -58,11 +60,12 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
                     history.forEach {
                         line {
                             darkSpacer(" - ")
-                            variableValue(it.message)
+                            append(Component.text(it.message, Colors.WHITE))
                             spacer(" (${it.type})")
 
                             if(it.deleted) {
-                                darkSpacer(" (Gelöscht von ${it.deletedBy})").decorate(TextDecoration.ITALIC)
+                                appendNewline()
+                                spacer("     (Gelöscht von ${it.deletedBy})").decorate(TextDecoration.ITALIC)
                             }
 
                             hoverEvent(HoverEvent.showText(buildText {

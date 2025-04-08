@@ -66,7 +66,7 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
                 }
 
                 val builder = PageableMessageBuilder {
-                    pageCommand = "/surfchat lookup ${parsed.toFlagString()} %page%"
+                    pageCommand = "/surfchat lookup ${parsed.toFlagString()} --page %page%"
 
                     history.forEach {
                         line {

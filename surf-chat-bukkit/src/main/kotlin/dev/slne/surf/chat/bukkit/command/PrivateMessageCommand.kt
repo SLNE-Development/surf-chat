@@ -44,7 +44,7 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
                     replyService.updateLast(target.uniqueId, player.uniqueId)
 
                     plugin.launch {
-                        surfChatApi.logMessage(player.uniqueId, ChatMessageType.PRIVATE_GENERAL, messageComponent)
+                        surfChatApi.logMessage(player.uniqueId, ChatMessageType.PRIVATE_GENERAL, messageComponent, UUID.randomUUID())
                     }
                 }
             }

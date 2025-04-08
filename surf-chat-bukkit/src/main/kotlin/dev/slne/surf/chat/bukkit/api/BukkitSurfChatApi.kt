@@ -17,8 +17,8 @@ import java.util.*
 
 @AutoService(SurfChatApi::class)
 class BukkitSurfChatApi(): SurfChatApi, Fallback {
-    override suspend fun logMessage(player: UUID, type: ChatMessageType, message: Component) {
-        historyService.write(player, type, message)
+    override suspend fun logMessage(player: UUID, type: ChatMessageType, message: Component, messageID: UUID) {
+        historyService.write(player, type, message, messageID)
     }
 
     override fun sendText(player: Player, message: Component, messageID: UUID) {

@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    api(libs.paper.api)
+    compileOnly(libs.paper.api)
 }

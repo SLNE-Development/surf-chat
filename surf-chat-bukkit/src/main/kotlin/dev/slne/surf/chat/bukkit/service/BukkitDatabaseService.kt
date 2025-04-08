@@ -109,12 +109,9 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
         withContext(Dispatchers.IO) {
             newSuspendedTransaction {
                 ChatHistory.update({ ChatHistory.id eq messageID }) {
-                    println("Marking message as deleted: $messageID by $deleter")
 
                     it[deleted] = true
                     it[deletedBy] = deleter
-
-                    println("Marked message as deleted: $messageID by $deleter")
                 }
             }
         }

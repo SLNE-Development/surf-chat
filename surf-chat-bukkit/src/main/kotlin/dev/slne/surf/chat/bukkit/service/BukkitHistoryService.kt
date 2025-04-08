@@ -27,9 +27,9 @@ class BukkitHistoryService(): HistoryService, Fallback {
         .maximumSize(1000)
         .build<UUID, Object2ObjectMap<HistoryPair, LoggedMessage>>()
 
-    override suspend fun write(user: UUID, type: ChatMessageType, message: Component) {
+    override suspend fun write(user: UUID, type: ChatMessageType, message: Component, messageID: UUID) {
         databaseService.insertHistoryEntry(user, BukkitHistoryEntry(
-            PlainTextComponentSerializer.plainText().serialize(message), System.currentTimeMillis(), user, type.toString(), UUID.randomUUID()
+            PlainTextComponentSerializer.plainText().serialize(message), System.currentTimeMillis(), user, type.toString(), messageID
         ))
     }
 

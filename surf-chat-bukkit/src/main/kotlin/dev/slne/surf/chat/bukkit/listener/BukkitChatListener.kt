@@ -35,7 +35,7 @@ class BukkitChatListener(): Listener {
         }
 
         plugin.launch {
-            surfChatApi.logMessage(player.uniqueId, ChatMessageType.GLOBAL, message)
+            surfChatApi.logMessage(player.uniqueId, ChatMessageType.GLOBAL, message, messageID)
         }
 
         event.renderer { _, _, _, viewer ->

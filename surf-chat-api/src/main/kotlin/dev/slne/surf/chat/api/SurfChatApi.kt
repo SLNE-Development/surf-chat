@@ -14,7 +14,7 @@ interface SurfChatApi {
      * @param type The type of chat message.
      * @param message The message to log.
      */
-    suspend fun logMessage(player: UUID, type: ChatMessageType, message: Component)
+    suspend fun logMessage(player: UUID, type: ChatMessageType, message: Component, messageID: UUID)
 
     /**
      * Sends a text message with prefix to a specific player and logs it.

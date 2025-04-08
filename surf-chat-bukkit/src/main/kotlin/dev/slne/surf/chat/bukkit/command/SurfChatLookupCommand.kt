@@ -13,6 +13,7 @@ import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
+import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.OfflinePlayer
 import java.time.Instant
 import java.time.ZoneId
@@ -61,7 +62,7 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
                             spacer(" (${it.type})")
 
                             if(it.deleted) {
-                                darkSpacer("(Gelöscht von ${it.deletedBy})")
+                                darkSpacer(" (Gelöscht von ${it.deletedBy})").decorate(TextDecoration.ITALIC)
                             }
 
                             hoverEvent(HoverEvent.showText(buildText {

@@ -11,7 +11,7 @@ import net.kyori.adventure.text.Component
 import java.util.UUID
 
 interface HistoryService {
-    suspend fun write(user: UUID, type: ChatMessageType, message: Component)
+    suspend fun write(user: UUID, type: ChatMessageType, message: Component, messageID: UUID)
     suspend fun getHistory(user: ChatUserModel): ObjectList<HistoryEntryModel>
 
     fun logCaching(player: UUID, message: LoggedMessage, messageID: UUID)

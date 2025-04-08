@@ -60,7 +60,7 @@ class ReplyCommand(commandName: String) : CommandAPICommand(commandName) {
                     user.sendRawText(plugin.chatFormat.formatMessage(messageComponent, player, target, ChatMessageType.PRIVATE_TO, "", UUID.randomUUID()))
 
                     plugin.launch {
-                        surfChatApi.logMessage(player.uniqueId, ChatMessageType.PRIVATE_TO, messageComponent)
+                        surfChatApi.logMessage(player.uniqueId, ChatMessageType.PRIVATE_TO, messageComponent, UUID.randomUUID())
                     }
                 }
             }

@@ -4,4 +4,5 @@ plugins {
 
 dependencies {
     api(project(":surf-chat-api"))
+    compileOnly(libs.paper.api)
 }

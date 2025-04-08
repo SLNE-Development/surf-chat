@@ -10,7 +10,7 @@ import org.bukkit.entity.Player
 
 class ChannelMembersArgument(nodeName: String) : CustomArgument<Player, String>(StringArgument(nodeName), { info ->
             val player = Bukkit.getPlayer(info.input()) ?: throw CustomArgumentException.fromMessageBuilder(MessageBuilder("Der Spieler ${info.input} wurde nicht gefunden."))
-            val channel = channelService.getChannel(info.input) ?: throw CustomArgumentException.fromMessageBuilder(MessageBuilder("Du bist in keinem Kanal, oder dieser ist invalid."))
+            val channel = channelService.getChannel(player) ?: throw CustomArgumentException.fromMessageBuilder(MessageBuilder("Du bist in keinem Kanal, oder dieser ist invalid."))
 
             if (!channel.isMember(player)) {
                 throw CustomArgumentException.fromMessageBuilder(MessageBuilder("Der Spieler ${player.name} ist kein Mitglied in deinem Nachrichtenkanal."))

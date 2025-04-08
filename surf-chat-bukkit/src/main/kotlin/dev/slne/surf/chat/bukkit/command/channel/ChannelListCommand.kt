@@ -22,6 +22,8 @@ class ChannelListCommand(commandName: String) : CommandAPICommand(commandName) {
                 surfChatApi.sendText(player, buildText {
                     error("Es sind keine Kanäle vorhanden.")
                 })
+
+                return@playerExecutor
             }
 
             PageableMessageBuilder {

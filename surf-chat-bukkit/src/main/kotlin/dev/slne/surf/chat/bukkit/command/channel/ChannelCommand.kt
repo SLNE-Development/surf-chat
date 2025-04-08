@@ -1,4 +1,4 @@
-package dev.slne.surf.social.chat.command.channel
+package dev.slne.surf.chat.bukkit.command.channel
 
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.subcommand

@@ -7,12 +7,13 @@ import dev.jorel.commandapi.CommandAPI
 import dev.slne.surf.chat.api.model.ChatFormatModel
 import dev.slne.surf.chat.api.model.MessageValidatorModel
 import dev.slne.surf.chat.bukkit.command.*
+import dev.slne.surf.chat.bukkit.extension.LuckPermsExtension
 import dev.slne.surf.chat.bukkit.listener.BukkitChatListener
 import dev.slne.surf.chat.bukkit.listener.BukkitConnectionListener
 import dev.slne.surf.chat.bukkit.model.BukkitChatFormat
 import dev.slne.surf.chat.bukkit.model.BukkitMessageValidator
 import dev.slne.surf.chat.core.service.databaseService
-import dev.slne.surf.social.chat.command.channel.ChannelCommand
+import dev.slne.surf.chat.bukkit.command.channel.ChannelCommand
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectSet
 
@@ -54,6 +55,7 @@ class SurfChatBukkit(): SuspendingJavaPlugin() {
          */
 
         databaseService.connect()
+        LuckPermsExtension.loadApi()
     }
 
     fun getTeamMembers(): ObjectSet<Player> = Bukkit.getOnlinePlayers().filter { it.hasPermission("surf.chat.command.teamchat") }.toObjectSet()

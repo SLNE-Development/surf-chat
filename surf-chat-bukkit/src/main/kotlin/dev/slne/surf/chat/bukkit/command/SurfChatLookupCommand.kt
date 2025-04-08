@@ -2,10 +2,9 @@ package dev.slne.surf.chat.bukkit.command
 
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
-import dev.jorel.commandapi.kotlindsl.getValue
-import dev.jorel.commandapi.kotlindsl.integerArgument
-import dev.jorel.commandapi.kotlindsl.offlinePlayerArgument
-import dev.jorel.commandapi.kotlindsl.playerExecutor
+import dev.jorel.commandapi.arguments.OfflinePlayerArgument
+import dev.jorel.commandapi.arguments.SafeSuggestions
+import dev.jorel.commandapi.kotlindsl.*
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.PageableMessageBuilder
 import dev.slne.surf.chat.bukkit.util.sendText
@@ -16,6 +15,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.TextDecoration
+import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import java.time.Instant
 import java.time.ZoneId
@@ -29,7 +29,9 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
 
     init {
         withPermission("surf.chat.command.lookup")
-        offlinePlayerArgument("target")
+        withArguments(OfflinePlayerArgument("target").replaceSafeSuggestions(SafeSuggestions.suggest {
+            Bukkit.getOnlinePlayers().toTypedArray()
+        }))
         integerArgument("page", min = 1, optional = true)
 
         playerExecutor { player, args ->
@@ -65,7 +67,7 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
 
                             if(it.deleted) {
                                 appendNewline()
-                                spacer("     (Gelöscht von ${it.deletedBy})").decorate(TextDecoration.ITALIC)
+                                spacer("    (Gelöscht von ${it.deletedBy})").decorate(TextDecoration.ITALIC)
                             }
 
                             hoverEvent(HoverEvent.showText(buildText {

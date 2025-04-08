@@ -1,28 +1,9 @@
 [versions]
-velocity-api = "3.4.0-SNAPSHOT"
-velocity-annotation = "3.4.0-SNAPSHOT"
 paper-api = "1.21.4-R0.1-SNAPSHOT"
 surf-database = "1.0.4-SNAPSHOT"
-fast-util = "8.2.1"
-mccoroutine-velocity-api = "2.21.0"
-mccoroutine-velocity-core = "2.21.0"
-kotlin-coroutines = "1.10.1"
-caffeine-coroutines = "2.0.0"
-caffeine-api = "3.2.0"
-commandapi-velocity = "9.7.1-SNAPSHOT"
+luckperms-api = "5.4"
 
 [libraries]
-velocity-api = { module = "com.velocitypowered:velocity-api", version.ref = "velocity-api" }
-velocity-annotation = { module = "com.velocitypowered:velocity-api", version.ref = "velocity-annotation" }
 surf-database = { module = "dev.slne.surf:surf-database", version.ref = "surf-database" }
-fast-util = { module = "it.unimi.dsi:fastutil", version.ref = "fast-util" }
-mccoroutine-velocity-api = { module = "com.github.shynixn.mccoroutine:mccoroutine-velocity-api", version.ref = "mccoroutine-velocity-api" }
-mccoroutine-velocity-core = { module = "com.github.shynixn.mccoroutine:mccoroutine-velocity-core", version.ref = "mccoroutine-velocity-core" }
-kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
-caffeine-coroutines = { module = "dev.hsbrysk:caffeine-coroutines", version.ref = "caffeine-coroutines" }
-caffeine-api = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine-api" }
-commandapi-velocity = { module = "dev.jorel:commandapi-velocity-shade", version.ref = "commandapi-velocity" }
 paper-api = { module = "io.papermc.paper:paper-api", version.ref = "paper-api" }
-
-[bundles]
-mccoroutine-velocity = ["mccoroutine-velocity-api", "mccoroutine-velocity-core"]
+luckperms-api = { module = "net.luckperms:api", version.ref = "luckperms-api" }

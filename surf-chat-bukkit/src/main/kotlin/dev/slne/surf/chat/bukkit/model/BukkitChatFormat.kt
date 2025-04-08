@@ -49,7 +49,7 @@ class BukkitChatFormat: ChatFormatModel {
                     darkSpacer(" | ")
                     variableValue("Du")
                     darkSpacer(" -> ")
-                    append(MiniMessage.miniMessage().deserialize(LuckPermsExtension.getPrefix(sender) + viewer.name))
+                    append(MiniMessage.miniMessage().deserialize(LuckPermsExtension.getPrefix(viewer) + viewer.name))
                     darkSpacer(" >> ")
                     append(rawMessage)
                 }

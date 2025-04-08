@@ -109,6 +109,21 @@ class BukkitChatFormat: ChatFormatModel {
                     append(rawMessage)
                 }
             }
+
+            /**
+             * This is a special case for private messages,
+             * no message should be sent with this type.
+             */
+            ChatMessageType.REPLY -> {
+                buildText {
+                    darkSpacer(">> ")
+                    append(Component.text("Antwort", Colors.RED))
+                    darkSpacer(" | ")
+                    variableValue("Dir ")
+                    darkSpacer(" >> ")
+                    append(rawMessage)
+                }
+            }
         }
     }
 }

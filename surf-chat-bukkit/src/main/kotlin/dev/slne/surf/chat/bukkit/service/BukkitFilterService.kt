@@ -1,11 +1,13 @@
 package dev.slne.surf.chat.bukkit.service
 
 import com.google.auto.service.AutoService
+import dev.slne.surf.chat.api.type.MessageValidationError
 import dev.slne.surf.chat.core.service.FilterService
 import dev.slne.surf.surfapi.core.api.util.*
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.kyori.adventure.util.Services.Fallback
+import org.bukkit.entity.Player
 import java.util.*
 import kotlin.time.Duration.Companion.seconds
 
@@ -13,8 +15,24 @@ private const val MESSAGE_LIMIT = 5
 
 @AutoService(FilterService::class)
 class BukkitFilterService(): FilterService, Fallback {
-    override fun find(message: Component): Boolean {
-        TODO("Not yet implemented")
+    override fun find(message: Component, sender: Player): MessageValidationError {
+        if(containsBlocked(message)) {
+            return MessageValidationError.FAILED_BAD_WORD
+        }
+
+        if(containsLink(message)) {
+            return MessageValidationError.FAILED_BAD_LINK
+        }
+
+        if(!isValidInput(message)) {
+            return MessageValidationError.FAILED_BAD_CHARACTER
+        }
+
+        if(isSpamming(sender.uniqueId)) {
+            return MessageValidationError.FAILED_SPAM
+        }
+
+        return MessageValidationError.SUCCESS
     }
 
     private val allowedDomains = mutableObjectSetOf<String>()
@@ -27,14 +45,14 @@ class BukkitFilterService(): FilterService, Fallback {
     private val urlRegex = "((http|https|ftp)://)?([\\w-]+\\.)+[\\w-]+(/[\\w- ./?%&=]*)?".toRegex(RegexOption.IGNORE_CASE)
 
 
-    fun containsBlocked(message: Component) = blockedPatterns.any {
+    private fun containsBlocked(message: Component) = blockedPatterns.any {
         it.containsMatchIn(
             PlainTextComponentSerializer.plainText().serialize(message)
         )
     }
 
 
-    fun containsLink(message: Component): Boolean {
+    private fun containsLink(message: Component): Boolean {
         val plainMessage = PlainTextComponentSerializer.plainText().serialize(message)
 
         return urlRegex.findAll(plainMessage).any { result ->
@@ -43,7 +61,7 @@ class BukkitFilterService(): FilterService, Fallback {
         }
     }
 
-    fun isValidInput(input: Component): Boolean {
+    private fun isValidInput(input: Component): Boolean {
         return validCharactersRegex.matches(PlainTextComponentSerializer.plainText().serialize(input))
     }
 

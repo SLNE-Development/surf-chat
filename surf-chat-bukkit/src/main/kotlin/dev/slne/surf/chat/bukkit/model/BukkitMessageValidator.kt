@@ -6,16 +6,19 @@ import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.api.type.MessageValidationError
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.sendText
+import dev.slne.surf.chat.bukkit.util.toPlayer
+import dev.slne.surf.chat.core.service.filterService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import net.kyori.adventure.text.Component
+import org.bukkit.entity.Player
 
 class BukkitMessageValidator(): MessageValidatorModel {
-    override fun validate(message: Component, type: ChatMessageType): MessageValidationError {
-        return MessageValidationError.SUCCESS
+    override fun validate(message: Component, type: ChatMessageType, sender: Player): MessageValidationError {
+        return filterService.find(message, sender)
     }
 
     override fun parse(message: Component, type: ChatMessageType, player: ChatUserModel, onSuccess: () -> Unit) {
-        when(plugin.messageValidator.validate(message, ChatMessageType.PRIVATE_GENERAL)) {
+        when(plugin.messageValidator.validate(message, ChatMessageType.PRIVATE_GENERAL, player.toPlayer() ?: return)) {
             MessageValidationError.SUCCESS -> {
                 onSuccess()
             }

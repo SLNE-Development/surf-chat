@@ -2,10 +2,12 @@ package dev.slne.surf.chat.bukkit.command
 
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
-import dev.jorel.commandapi.arguments.OfflinePlayerArgument
-import dev.jorel.commandapi.arguments.SafeSuggestions
+import dev.jorel.commandapi.arguments.ArgumentSuggestions
+import dev.jorel.commandapi.arguments.GreedyStringArgument
+import dev.jorel.commandapi.arguments.StringArgument
 import dev.jorel.commandapi.kotlindsl.*
 import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.bukkit.util.LookupFlags
 import dev.slne.surf.chat.bukkit.util.PageableMessageBuilder
 import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.core.service.databaseService
@@ -15,8 +17,6 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.TextDecoration
-import org.bukkit.Bukkit
-import org.bukkit.OfflinePlayer
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -29,35 +29,42 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
 
     init {
         withPermission("surf.chat.command.lookup")
-        withArguments(OfflinePlayerArgument("target").replaceSafeSuggestions(SafeSuggestions.suggest {
-            Bukkit.getOnlinePlayers().toTypedArray()
-        }))
-        integerArgument("page", min = 1, optional = true)
 
-        playerExecutor { player, args ->
-            val target: OfflinePlayer by args
-            val page = args.getOrDefaultUnchecked("page", 1)
+        argument(GreedyStringArgument("flags")
+            .replaceSuggestions(ArgumentSuggestions.strings("--user", "--type", "--range", "--message", "--deleted", "--deletedBy", "--page"))
+            .setOptional(true)
+        )
+
+        playerExecutor { sender, args ->
+            val flagString = args["flags"] as? String ?: ""
+            val parsed = LookupFlags.parse(flagString)
+            val page = parsed.page ?: 1
 
             plugin.launch {
-                val user = databaseService.getUser(player.uniqueId)
+                val user = databaseService.getUser(sender.uniqueId)
 
                 user.sendText(buildText {
-                    primary("Die Daten von ")
-                    info(target.name ?: target.uniqueId.toString())
-                    primary(" werden geladen...")
+                    primary("Chat-Daten werden geladen...")
                 })
 
-                val history = databaseService.loadHistory(target.uniqueId).sortedBy { it.timestamp }
+                val history = databaseService.loadHistory(
+                    uuid = parsed.target?.uniqueId,
+                    type = parsed.type,
+                    rangeMillis = parsed.range,
+                    message = parsed.message,
+                    deleted = parsed.deleted,
+                    deletedBy = parsed.deletedBy
+                ).sortedBy { it.timestamp }
 
                 if (history.isEmpty()) {
                     user.sendText(buildText {
-                        error("Es sind keine Chat-Daten für diesen Spieler vorhanden.")
+                        error("Keine passenden Chat-Daten gefunden.")
                     })
                     return@launch
                 }
 
                 val builder = PageableMessageBuilder {
-                    pageCommand = "/surfchat lookup ${target.name ?: target.uniqueId} %page%"
+                    pageCommand = "/surfchat lookup ${parsed.toFlagString()} %page%"
 
                     history.forEach {
                         line {
@@ -65,14 +72,14 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
                             append(Component.text(it.message, Colors.WHITE))
                             spacer(" (${it.type})")
 
-                            if(it.deleted) {
+                            if (it.deleted) {
                                 appendNewline()
                                 spacer("    (Gelöscht von ${it.deletedBy})").decorate(TextDecoration.ITALIC)
                             }
 
                             hoverEvent(HoverEvent.showText(buildText {
                                 primary("von: ")
-                                info(target.name ?: target.uniqueId.toString())
+                                info(it.uuid.toString())
                                 appendNewline()
                                 primary("Typ: ")
                                 info(it.type)
@@ -82,17 +89,21 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
                                 appendNewline()
                                 darkSpacer("Klicke, um die Nachricht zu kopieren.")
                             }))
+
                             clickEvent(ClickEvent.copyToClipboard(it.message))
                         }
                     }
                 }
 
                 builder.title {
-                    primary("Chat Daten von ")
-                    info(target.name ?: target.uniqueId.toString())
+                    primary("Chat-Daten")
+                    parsed.target?.let {
+                        primary(" von ")
+                        info(it.name ?: it.uniqueId.toString())
+                    }
                 }
 
-                builder.send(player, page)
+                builder.send(sender, page)
             }
         }
     }

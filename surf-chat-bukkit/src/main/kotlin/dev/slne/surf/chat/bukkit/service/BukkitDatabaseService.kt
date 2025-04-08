@@ -20,7 +20,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.kyori.adventure.util.Services.Fallback
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.greaterEq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
@@ -117,12 +120,52 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
         }
     }
 
-    override suspend fun loadHistory(uuid: UUID): ObjectList<HistoryEntryModel> {
+    override suspend fun loadHistory(
+        uuid: UUID?,
+        type: String?,
+        rangeMillis: Long?,
+        message: String?,
+        deleted: Boolean?,
+        deletedBy: String?
+    ): ObjectList<HistoryEntryModel> {
         return withContext(Dispatchers.IO) {
             newSuspendedTransaction {
-                val selected = ChatHistory.selectAll().where(ChatHistory.uuid eq uuid)
+                val now = System.currentTimeMillis()
+                val conditions = mutableListOf<Op<Boolean>>()
 
-                return@newSuspendedTransaction selected.map {
+                if (uuid != null) {
+                    conditions += ChatHistory.uuid eq uuid
+                }
+
+                if (type != null) {
+                    conditions += ChatHistory.type eq type
+                }
+
+                if (rangeMillis != null) {
+                    val minTime = now - rangeMillis
+                    conditions += ChatHistory.timeStamp greaterEq minTime
+                }
+
+                if (message != null) {
+                    conditions += ChatHistory.message like "%$message%"
+                }
+
+                if (deleted != null) {
+                    conditions += ChatHistory.deleted eq deleted
+                }
+
+                if (deletedBy != null) {
+                    conditions += ChatHistory.deletedBy eq deletedBy
+                }
+
+                val query = if (conditions.isNotEmpty()) {
+                    ChatHistory.selectAll().where (conditions.reduce { acc, condition -> acc and condition })
+                } else {
+                    ChatHistory.selectAll()
+                }
+
+
+                return@newSuspendedTransaction query.map {
                     BukkitHistoryEntry(
                         id = it[ChatHistory.id],
                         uuid = it[ChatHistory.uuid],
@@ -130,12 +173,15 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
                         timestamp = it[ChatHistory.timeStamp],
                         message = it[ChatHistory.message],
                         deleted = it[ChatHistory.deleted],
-                        deletedBy = it[ChatHistory.deletedBy],
-                        )
-                }
-            }.toObjectList()
+                        deletedBy = it[ChatHistory.deletedBy]
+                    )
+                }.toObjectList()
+            }
         }
     }
+
+
+
 
     override suspend fun insertHistoryEntry(user: UUID, entry: HistoryEntryModel) {
         withContext(Dispatchers.IO) {

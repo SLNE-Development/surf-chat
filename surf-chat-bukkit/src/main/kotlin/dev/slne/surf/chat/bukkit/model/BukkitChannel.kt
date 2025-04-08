@@ -4,6 +4,8 @@ import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.api.model.ChatUserModel
 import dev.slne.surf.chat.api.type.ChannelRoleType
 import dev.slne.surf.chat.api.type.ChannelStatusType
+import dev.slne.surf.chat.bukkit.util.sendText
+import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
@@ -21,10 +23,28 @@ class BukkitChannel (
 ): ChannelModel {
     override fun join(user: ChatUserModel, silent: Boolean) {
         members[user] = ChannelRoleType.MEMBER
+
+        if(!silent) {
+            members.forEach {
+                it.key.sendText(buildText {
+                    variableValue(it.key.name)
+                    primary(" hat den Nachrichtenkanal betreten.")
+                })
+            }
+        }
     }
 
     override fun leave(user: ChatUserModel, silent: Boolean) {
         members.remove(user)
+
+        if(!silent) {
+            members.forEach {
+                it.key.sendText(buildText {
+                    variableValue(it.key.name)
+                    primary(" hat den Nachrichtenkanal verlassen.")
+                })
+            }
+        }
     }
 
     override fun isInvited(user: ChatUserModel): Boolean {
@@ -51,11 +71,27 @@ class BukkitChannel (
 
         members[user] = ChannelRoleType.OWNER
         members[oldOwner] = ChannelRoleType.MODERATOR
+
+        members.forEach {
+            it.key.sendText(buildText {
+                variableValue(user.name)
+                primary(" wurde zum Besitzer des Nachrichtenkanals und ")
+                variableValue(oldOwner.name)
+                primary(" wurde zum Moderator.")
+            })
+        }
     }
 
     override fun promote(user: ChatUserModel) {
         if(members[user] == ChannelRoleType.MEMBER) {
             members[user] = ChannelRoleType.MODERATOR
+        }
+
+        members.forEach {
+            it.key.sendText(buildText {
+                variableValue(user.name)
+                primary(" wurde zum Moderator befördert.")
+            })
         }
     }
 
@@ -63,14 +99,21 @@ class BukkitChannel (
         if(members[user] == ChannelRoleType.MODERATOR) {
             members[user] = ChannelRoleType.MEMBER
         }
+
+        members.forEach {
+            it.key.sendText(buildText {
+                variableValue(user.name)
+                primary(" wurde zum Mitglied degradiert.")
+            })
+        }
     }
 
     override fun kick(user: ChatUserModel) {
-        members.remove(user)
+        this.leave(user)
     }
 
     override fun ban(user: ChatUserModel) {
-        members.remove(user)
+        this.leave(user)
         bannedPlayers.add(user)
     }
 

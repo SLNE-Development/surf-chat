@@ -4,6 +4,7 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.integerArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.model.ChannelModel
+import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.ChannelStatusType
 import dev.slne.surf.chat.bukkit.util.PageableMessageBuilder
 import dev.slne.surf.chat.core.service.channelService
@@ -16,6 +17,12 @@ class ChannelListCommand(commandName: String) : CommandAPICommand(commandName) {
         integerArgument("page", min = 1, optional = true)
         playerExecutor { player, args ->
             val page = args.getOrDefaultUnchecked("page", 1)
+
+            if(channelService.getAllChannels().isEmpty()) {
+                surfChatApi.sendText(player, buildText {
+                    error("Es sind keine Kanäle vorhanden.")
+                })
+            }
 
             PageableMessageBuilder {
                 pageCommand = "/channel list %page%"

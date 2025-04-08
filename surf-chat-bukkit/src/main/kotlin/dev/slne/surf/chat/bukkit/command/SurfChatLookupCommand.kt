@@ -30,13 +30,16 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
     init {
         withPermission("surf.chat.command.lookup")
 
-        argument(GreedyStringArgument("flags")
-            .replaceSuggestions(ArgumentSuggestions.strings("--user", "--type", "--range", "--message", "--deleted", "--deletedBy", "--page"))
+        argument(GreedyStringArgument("filters")
+            .replaceSuggestions (
+                ArgumentSuggestions.strings("--user", "--type", "--range", "--message", "--deleted", "--deletedBy", "--page")
+            )
             .setOptional(true)
         )
 
+
         playerExecutor { sender, args ->
-            val flagString = args["flags"] as? String ?: ""
+            val flagString = args.getOrDefaultUnchecked("filters", "")
             val parsed = LookupFlags.parse(flagString)
             val page = parsed.page ?: 1
 

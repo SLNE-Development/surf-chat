@@ -1,0 +1,12 @@
+chat-message-of-the-day-enabled: false
+chat-message-of-the-day:
+  lines:
+    - "<darK_gray>*--------------------------------------------------*"
+    - " "
+    - "<white>Willkommen auf dem <#f9c353><st>CastCrafter Community Server</st><white>!"
+    - " "
+    - "<#96CFE8>Alle Informationen, inklusive der Serverregeln, findest du auf:"
+    - "<#4BB9F9>https://castcrafter.de/server"
+    - " "
+    - " "
+    - "<dark_gray>*--------------------------------------------------*"

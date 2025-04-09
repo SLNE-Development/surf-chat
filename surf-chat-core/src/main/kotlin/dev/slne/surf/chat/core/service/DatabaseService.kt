@@ -4,8 +4,6 @@ import dev.slne.surf.chat.api.model.ChatUserModel
 import dev.slne.surf.chat.api.model.HistoryEntryModel
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectList
-import it.unimi.dsi.fastutil.objects.ObjectSet
-import org.gradle.internal.impldep.org.bouncycastle.util.Integers
 import java.util.UUID
 
 interface DatabaseService {

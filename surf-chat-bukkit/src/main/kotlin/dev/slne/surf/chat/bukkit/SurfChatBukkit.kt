@@ -54,6 +54,8 @@ class SurfChatBukkit(): SuspendingJavaPlugin() {
          * Handle & start services.
          */
 
+        plugin.saveDefaultConfig()
+
         databaseService.connect()
         LuckPermsExtension.loadApi()
     }

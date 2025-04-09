@@ -27,7 +27,7 @@ class ChannelMembersArgument(nodeName: String) : CustomArgument<Player, String>(
                 return@stringCollection emptyObjectSet()
             }
 
-            return@stringCollection members.keys.map { it.name }
+            return@stringCollection members.keys.map { it.getName() }
         })
     }
 }

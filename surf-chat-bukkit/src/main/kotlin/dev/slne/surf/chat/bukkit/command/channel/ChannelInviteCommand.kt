@@ -69,7 +69,7 @@ class ChannelInviteCommand(commandName: String) : CommandAPICommand(commandName)
                 targetUser.sendText(buildText {
                     primary("Du wurdest in den Nachrichtenkanal ")
                     info(channel.name)
-                    success(" eingeladen.")
+                    success(" eingeladen. ")
 
                     append(components.getInviteAcceptComponent(channel))
                     append(components.getInviteDeclineComponent(channel))

@@ -40,7 +40,7 @@ class ChannelUnBanCommand(commandName: String) : CommandAPICommand(commandName) 
                 if (!channel.isBanned(targetUser)) {
                     user.sendText(buildText {
                         error("Der Spieler ")
-                        info(targetUser.name)
+                        info(targetUser.getName())
                         error(" ist nicht im Nachrichtenkanal gebannt.")
                     })
                     return@launch

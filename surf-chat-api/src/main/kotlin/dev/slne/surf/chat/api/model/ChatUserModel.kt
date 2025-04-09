@@ -6,7 +6,6 @@ import java.util.UUID
 
 interface ChatUserModel {
     val uuid: UUID
-    val name: String
 
     val ignoreList: ObjectArraySet<UUID>
     var pmToggled: Boolean
@@ -23,4 +22,6 @@ interface ChatUserModel {
     fun togglePm(): Boolean
 
     fun moveToChannel(channel: ChannelModel)
+
+    fun getName(): String
 }

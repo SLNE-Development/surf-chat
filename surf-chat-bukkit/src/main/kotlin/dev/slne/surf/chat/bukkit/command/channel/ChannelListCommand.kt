@@ -54,7 +54,7 @@ class ChannelListCommand(commandName: String) : CommandAPICommand(commandName) {
             primary("Kanalinformation: ").info(channel.name)
             appendNewline()
             darkSpacer("   - ").variableKey("Besitzer: ")
-            variableValue(channel.getOwner().name)
+            variableValue(channel.getOwner().getName())
             appendNewline()
             darkSpacer("   - ").variableKey("Status: ")
             variableValue(when(channel.status) {

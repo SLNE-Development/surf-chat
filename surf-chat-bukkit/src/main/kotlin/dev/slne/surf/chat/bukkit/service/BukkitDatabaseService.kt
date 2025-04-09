@@ -42,7 +42,6 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
 
     object Users : Table() {
         val uuid = varchar("uuid", 36).transform({ UUID.fromString(it) }, { it.toString() })
-        val name = text("name")
         val ignoreList = text("ignoreList").transform({ gson.fromJson(it, ObjectArraySet<UUID>().javaClass) }, { gson.toJson(it) })
         val pmToggled = bool("pmToggled")
 
@@ -82,7 +81,6 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
                 return@newSuspendedTransaction selected.let {
                     BukkitChatUser(
                         uuid = it[Users.uuid],
-                        name = it[Users.name],
                         ignoreList = it[Users.ignoreList],
                         pmToggled = it[Users.pmToggled]
                     )
@@ -94,9 +92,8 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
     override suspend fun saveUser(user: ChatUserModel) {
         withContext(Dispatchers.IO) {
             newSuspendedTransaction {
-                Users.replace {
+                Users.upsert {
                     it[uuid] = user.uuid
-                    it[name] = user.name
                     it[ignoreList] = user.ignoreList
                     it[pmToggled] = user.pmToggled
                 }

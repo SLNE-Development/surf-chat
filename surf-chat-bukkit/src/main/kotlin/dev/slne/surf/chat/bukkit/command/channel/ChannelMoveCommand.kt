@@ -31,7 +31,7 @@ class ChannelMoveCommand(commandName: String) : CommandAPICommand(commandName) {
 
                 user.sendText(buildText {
                     primary("Du hast ")
-                    info(targetUser.name)
+                    info(targetUser.getName())
                     primary(" in den Nachrichtenkanal ")
                     info(channel.name)
                     success(" verschoben.")

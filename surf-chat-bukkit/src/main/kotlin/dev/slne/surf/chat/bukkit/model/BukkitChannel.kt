@@ -27,7 +27,7 @@ class BukkitChannel (
         if(!silent) {
             members.forEach {
                 it.key.sendText(buildText {
-                    variableValue(it.key.name)
+                    variableValue(user.getName())
                     primary(" hat den Nachrichtenkanal betreten.")
                 })
             }
@@ -40,7 +40,7 @@ class BukkitChannel (
         if(!silent) {
             members.forEach {
                 it.key.sendText(buildText {
-                    variableValue(it.key.name)
+                    variableValue(user.getName())
                     primary(" hat den Nachrichtenkanal verlassen.")
                 })
             }
@@ -74,9 +74,9 @@ class BukkitChannel (
 
         members.forEach {
             it.key.sendText(buildText {
-                variableValue(user.name)
+                variableValue(user.getName())
                 primary(" wurde zum Besitzer des Nachrichtenkanals und ")
-                variableValue(oldOwner.name)
+                variableValue(oldOwner.getName())
                 primary(" wurde zum Moderator.")
             })
         }
@@ -89,7 +89,7 @@ class BukkitChannel (
 
         members.forEach {
             it.key.sendText(buildText {
-                variableValue(user.name)
+                variableValue(user.getName())
                 primary(" wurde zum Moderator befördert.")
             })
         }
@@ -102,7 +102,7 @@ class BukkitChannel (
 
         members.forEach {
             it.key.sendText(buildText {
-                variableValue(user.name)
+                variableValue(user.getName())
                 primary(" wurde zum Mitglied degradiert.")
             })
         }

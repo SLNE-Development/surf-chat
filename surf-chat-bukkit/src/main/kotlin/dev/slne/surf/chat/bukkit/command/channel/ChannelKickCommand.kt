@@ -42,7 +42,7 @@ class ChannelKickCommand(commandName: String) : CommandAPICommand(commandName) {
                 channel.kick(targetUser)
                 user.sendText(buildText {
                     primary("Du hast ")
-                    info(targetUser.name)
+                    info(targetUser.getName())
                     primary(" aus dem Nachrichtenkanal ")
                     info(channel.name)
                     error(" geworfen.")

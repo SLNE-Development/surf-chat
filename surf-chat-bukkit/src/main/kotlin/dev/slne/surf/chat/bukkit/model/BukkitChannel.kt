@@ -1,9 +1,11 @@
 package dev.slne.surf.chat.bukkit.model
 
+import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.api.model.ChatUserModel
 import dev.slne.surf.chat.api.type.ChannelRoleType
 import dev.slne.surf.chat.api.type.ChannelStatusType
+import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
@@ -27,8 +29,10 @@ class BukkitChannel (
         if(!silent) {
             members.forEach {
                 it.key.sendText(buildText {
-                    variableValue(user.getName())
-                    primary(" hat den Nachrichtenkanal betreten.")
+                    plugin.launch {
+                        variableValue(user.getName())
+                        primary(" hat den Nachrichtenkanal betreten.")
+                    }
                 })
             }
         }
@@ -40,8 +44,10 @@ class BukkitChannel (
         if(!silent) {
             members.forEach {
                 it.key.sendText(buildText {
-                    variableValue(user.getName())
-                    primary(" hat den Nachrichtenkanal verlassen.")
+                    plugin.launch {
+                        variableValue(user.getName())
+                        primary(" hat den Nachrichtenkanal verlassen.")
+                    }
                 })
             }
         }
@@ -74,10 +80,12 @@ class BukkitChannel (
 
         members.forEach {
             it.key.sendText(buildText {
-                variableValue(user.getName())
-                primary(" wurde zum Besitzer des Nachrichtenkanals und ")
-                variableValue(oldOwner.getName())
-                primary(" wurde zum Moderator.")
+                plugin.launch {
+                    variableValue(user.getName())
+                    primary(" wurde zum Besitzer des Nachrichtenkanals und ")
+                    variableValue(oldOwner.getName())
+                    primary(" wurde zum Moderator.")
+                }
             })
         }
     }
@@ -89,8 +97,10 @@ class BukkitChannel (
 
         members.forEach {
             it.key.sendText(buildText {
-                variableValue(user.getName())
-                primary(" wurde zum Moderator befördert.")
+                plugin.launch {
+                    variableValue(user.getName())
+                    primary(" wurde zum Moderator befördert.")
+                }
             })
         }
     }
@@ -102,8 +112,10 @@ class BukkitChannel (
 
         members.forEach {
             it.key.sendText(buildText {
-                variableValue(user.getName())
-                primary(" wurde zum Mitglied degradiert.")
+                plugin.launch {
+                    variableValue(user.getName())
+                    primary(" wurde zum Mitglied degradiert.")
+                }
             })
         }
     }

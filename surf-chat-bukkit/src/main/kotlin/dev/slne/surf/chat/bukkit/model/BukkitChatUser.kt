@@ -4,6 +4,7 @@ import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.api.model.ChatUserModel
 import dev.slne.surf.chat.bukkit.util.toPlayer
 import dev.slne.surf.chat.core.service.channelService
+import dev.slne.surf.chat.core.service.databaseService
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import org.bukkit.Bukkit
 import java.util.*
@@ -59,7 +60,7 @@ class BukkitChatUser (
         channelService.move(player, channel)
     }
 
-    override fun getName(): String {
-        return Bukkit.getOfflinePlayer(uuid).name ?: uuid.toString()
+    override suspend fun getName(): String {
+        return databaseService.getName(this.uuid)
     }
 }

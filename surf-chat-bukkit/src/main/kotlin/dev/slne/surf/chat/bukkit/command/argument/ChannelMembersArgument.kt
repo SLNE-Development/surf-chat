@@ -27,7 +27,7 @@ class ChannelMembersArgument(nodeName: String) : CustomArgument<Player, String>(
                 return@stringCollection emptyObjectSet()
             }
 
-            return@stringCollection members.keys.map { it.getName() }
+            return@stringCollection members.keys.map { Bukkit.getOfflinePlayer(it.uuid).name ?: "Unknown" }
         })
     }
 }

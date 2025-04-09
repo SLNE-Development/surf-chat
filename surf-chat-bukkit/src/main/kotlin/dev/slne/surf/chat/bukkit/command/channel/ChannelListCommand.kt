@@ -1,11 +1,13 @@
 package dev.slne.surf.chat.bukkit.command.channel
 
+import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.integerArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.ChannelStatusType
+import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.PageableMessageBuilder
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
@@ -26,30 +28,36 @@ class ChannelListCommand(commandName: String) : CommandAPICommand(commandName) {
                 return@playerExecutor
             }
 
-            PageableMessageBuilder {
-                pageCommand = "/channel list %page%"
-                title {
-                    primary("Kanalübersicht")
-                }
-
-                channelService.getAllChannels().forEach {
-                    line {
-                        spacer(" - ")
-                        variableValue("${it.name} ")
-                        darkSpacer("(")
-                        variableValue(when(it.status) {
-                            ChannelStatusType.PUBLIC -> "Öffentlich"
-                            ChannelStatusType.PRIVATE -> "Privat"
-                        })
-                        darkSpacer(") ")
-                        hoverEvent(HoverEvent.showText(createInfoMessage(it)))
+            plugin.launch {
+                PageableMessageBuilder {
+                    pageCommand = "/channel list %page%"
+                    title {
+                        primary("Kanalübersicht")
                     }
-                }
-            }.send(player, page)
+
+                    channelService.getAllChannels().forEach {
+                        plugin.launch {
+                            val message = createInfoMessage(it)
+
+                            line {
+                                spacer(" - ")
+                                variableValue("${it.name} ")
+                                darkSpacer("(")
+                                variableValue(when(it.status) {
+                                    ChannelStatusType.PUBLIC -> "Öffentlich"
+                                    ChannelStatusType.PRIVATE -> "Privat"
+                                })
+                                darkSpacer(") ")
+                                hoverEvent(HoverEvent.showText(message))
+                            }
+                        }
+                    }
+                }.send(player, page)
+            }
         }
     }
 
-    private fun createInfoMessage(channel: ChannelModel): Component {
+    private suspend fun createInfoMessage(channel: ChannelModel): Component {
         return buildText {
             primary("Kanalinformation: ").info(channel.name)
             appendNewline()

@@ -19,6 +19,7 @@ import it.unimi.dsi.fastutil.objects.ObjectList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.kyori.adventure.util.Services.Fallback
+import org.bukkit.Bukkit
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -27,6 +28,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 
 @AutoService(DatabaseService::class)
@@ -39,6 +41,10 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
             }
         }
         .asLoadingCache<UUID, ChatUserModel> { loadUser(it) }
+
+    private val nameCache = Caffeine.newBuilder()
+        .expireAfterWrite(1.hours)
+        .asLoadingCache<UUID, String> { Bukkit.getOfflinePlayer(it).name ?: "Unknown" }
 
     object Users : Table() {
         val uuid = varchar("uuid", 36).transform({ UUID.fromString(it) }, { it.toString() })
@@ -194,5 +200,9 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
                 }
             }
         }
+    }
+
+    override suspend fun getName(uuid: UUID): String {
+        return nameCache.get(uuid)
     }
 }

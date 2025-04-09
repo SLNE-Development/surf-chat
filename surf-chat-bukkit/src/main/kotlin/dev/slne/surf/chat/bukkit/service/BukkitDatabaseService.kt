@@ -1,6 +1,7 @@
 package dev.slne.surf.chat.bukkit.service
 
 import com.github.benmanes.caffeine.cache.Caffeine
+import com.github.benmanes.caffeine.cache.LoadingCache
 import com.google.auto.service.AutoService
 import com.sksamuel.aedile.core.asLoadingCache
 import com.sksamuel.aedile.core.expireAfterWrite
@@ -42,9 +43,9 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
         }
         .asLoadingCache<UUID, ChatUserModel> { loadUser(it) }
 
-    private val nameCache = Caffeine.newBuilder()
+    private val nameCache: LoadingCache<UUID, String> = Caffeine.newBuilder()
         .expireAfterWrite(1.hours)
-        .asLoadingCache<UUID, String> { Bukkit.getOfflinePlayer(it).name ?: "Unknown" }
+        .build{ Bukkit.getOfflinePlayer(it).name ?: "Unknown" }
 
     object Users : Table() {
         val uuid = varchar("uuid", 36).transform({ UUID.fromString(it) }, { it.toString() })
@@ -202,7 +203,7 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
         }
     }
 
-    override suspend fun getName(uuid: UUID): String {
+    override fun getName(uuid: UUID): String {
         return nameCache.get(uuid)
     }
 }

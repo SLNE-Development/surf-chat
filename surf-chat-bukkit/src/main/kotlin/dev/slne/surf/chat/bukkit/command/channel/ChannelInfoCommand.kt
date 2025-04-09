@@ -17,13 +17,11 @@ class ChannelInfoCommand(commandName: String) : CommandAPICommand(commandName) {
         playerExecutor { player, args ->
             val channel = args.getOrDefaultUnchecked<ChannelModel?>("channel", channelService.getChannel(player)) ?: return@playerExecutor
 
-            plugin.launch {
-                player.sendMessage(createInfoMessage(channel))
-            }
+            player.sendMessage(createInfoMessage(channel))
         }
     }
 
-    private suspend fun createInfoMessage(channel: ChannelModel): Component {
+    private fun createInfoMessage(channel: ChannelModel): Component {
         return buildText {
             primary("Kanalinformation: ").info(channel.name)
             appendNewline()

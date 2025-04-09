@@ -60,7 +60,7 @@ class BukkitChatUser (
         channelService.move(player, channel)
     }
 
-    override suspend fun getName(): String {
+    override fun getName(): String {
         return databaseService.getName(this.uuid)
     }
 }

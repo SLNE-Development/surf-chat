@@ -20,7 +20,7 @@ interface DatabaseService {
 
     suspend fun insertHistoryEntry(user: UUID, entry: HistoryEntryModel)
 
-    suspend fun getName(uuid: UUID): String
+    fun getName(uuid: UUID): String
 
     companion object {
         val INSTANCE = requiredService<DatabaseService>()

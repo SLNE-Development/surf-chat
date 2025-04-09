@@ -36,20 +36,16 @@ class ChannelListCommand(commandName: String) : CommandAPICommand(commandName) {
                     }
 
                     channelService.getAllChannels().forEach {
-                        plugin.launch {
-                            val message = createInfoMessage(it)
-
-                            line {
-                                spacer(" - ")
-                                variableValue("${it.name} ")
-                                darkSpacer("(")
-                                variableValue(when(it.status) {
-                                    ChannelStatusType.PUBLIC -> "Öffentlich"
-                                    ChannelStatusType.PRIVATE -> "Privat"
-                                })
-                                darkSpacer(") ")
-                                hoverEvent(HoverEvent.showText(message))
-                            }
+                        line {
+                            spacer(" - ")
+                            variableValue("${it.name} ")
+                            darkSpacer("(")
+                            variableValue(when(it.status) {
+                                ChannelStatusType.PUBLIC -> "Öffentlich"
+                                ChannelStatusType.PRIVATE -> "Privat"
+                            })
+                            darkSpacer(") ")
+                            hoverEvent(HoverEvent.showText(createInfoMessage(it)))
                         }
                     }
                 }.send(player, page)
@@ -57,7 +53,7 @@ class ChannelListCommand(commandName: String) : CommandAPICommand(commandName) {
         }
     }
 
-    private suspend fun createInfoMessage(channel: ChannelModel): Component {
+    private fun createInfoMessage(channel: ChannelModel): Component {
         return buildText {
             primary("Kanalinformation: ").info(channel.name)
             appendNewline()

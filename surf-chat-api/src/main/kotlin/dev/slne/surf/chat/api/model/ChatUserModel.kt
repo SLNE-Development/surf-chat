@@ -23,5 +23,5 @@ interface ChatUserModel {
 
     fun moveToChannel(channel: ChannelModel)
 
-    suspend fun getName(): String
+    fun getName(): String
 }

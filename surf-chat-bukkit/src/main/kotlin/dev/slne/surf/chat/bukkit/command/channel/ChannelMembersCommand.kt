@@ -35,27 +35,21 @@ class ChannelMembersCommand(commandName: String) : CommandAPICommand(commandName
                 }
 
                 line {
-                    plugin.launch {
-                        primary(channel.getOwner().getName())
-                        darkSpacer(" (Besitzer)")
-                    }
+                    primary(channel.getOwner().getName())
+                    darkSpacer(" (Besitzer)")
                 }
 
                 channel.getModerators().forEach {
                     line {
-                        plugin.launch {
-                            primary(it.getName())
-                            darkSpacer(" (Moderator)")
-                        }
+                        primary(it.getName())
+                        darkSpacer(" (Moderator)")
                     }
                 }
 
                 channel.getOnlyMembers().forEach {
                     line {
-                        plugin.launch {
-                            primary(it.getName())
-                            darkSpacer(" (Mitglied)")
-                        }
+                        primary(it.getName())
+                        darkSpacer(" (Mitglied)")
                     }
                 }
             }.send(player, page)

@@ -2,6 +2,7 @@ package dev.slne.surf.chat.bukkit.listener
 
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -12,6 +13,7 @@ class BukkitConnectionListener(): Listener {
     fun onDisconnect(event: PlayerQuitEvent) {
         plugin.launch {
             databaseService.handleDisconnect(event.player.uniqueId)
+            channelService.handleDisconnect(event.player)
         }
     }
 }

@@ -5,8 +5,10 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.GreedyStringArgument
 import dev.jorel.commandapi.kotlindsl.*
+import dev.slne.surf.chat.bukkit.command.argument.multiOfflinePlayerArgument
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.LookupFlags
+import dev.slne.surf.chat.bukkit.util.MultiPlayerSelectorData
 import dev.slne.surf.chat.bukkit.util.PageableMessageBuilder
 import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.core.service.databaseService
@@ -29,10 +31,8 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
     init {
         withPermission("surf.chat.command.lookup")
 
-        argument(GreedyStringArgument("filters")
-            .replaceSuggestions (
-                ArgumentSuggestions.strings("--user", "--type", "--range", "--message", "--deleted", "--deletedBy", "--page")
-            )
+        multiOfflinePlayerArgument("target")
+        argument(GreedyStringArgument("filters").replaceSuggestions (ArgumentSuggestions.strings("--type", "--range", "--message", "--deleted", "--deletedBy", "--page"))
             .setOptional(true)
         )
 
@@ -42,6 +42,9 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
             val parsed = LookupFlags.parse(flagString)
             val page = parsed.page ?: 1
 
+            val target = args.getUnchecked<MultiPlayerSelectorData>("target") ?: return@playerExecutor
+
+
             plugin.launch {
                 val user = databaseService.getUser(sender.uniqueId)
 
@@ -50,7 +53,7 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
                 })
 
                 val history = databaseService.loadHistory(
-                    uuid = parsed.target?.uniqueId,
+                    uuid = target.parse(),
                     type = parsed.type,
                     rangeMillis = parsed.range,
                     message = parsed.message,
@@ -66,7 +69,7 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
                 }
 
                 val builder = PageableMessageBuilder {
-                    pageCommand = "/surfchat lookup ${parsed.toFlagString()} --page %page%"
+                    pageCommand = "/surfchat lookup ${target.getString()} ${parsed.toFlagString()} --page %page%"
 
                     history.forEach {
                         line {
@@ -99,7 +102,7 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
 
                 builder.title {
                     primary("Chat-Daten")
-                    parsed.target?.let {
+                    target.player?.let {
                         primary(" von ")
                         info(it.name ?: it.uniqueId.toString())
                     }

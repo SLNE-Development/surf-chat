@@ -1,14 +1,11 @@
 package dev.slne.surf.chat.bukkit.util
 
-import org.bukkit.Bukkit
-import org.bukkit.OfflinePlayer
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 data class LookupFlags(
-    val target: OfflinePlayer? = null,
     val type: String? = null,
     val range: Long? = null,
     val message: String? = null,
@@ -37,7 +34,6 @@ data class LookupFlags(
                 }
 
                 return LookupFlags(
-                    target = map["user"]?.let { Bukkit.getOfflinePlayer(it) },
                     type = map["type"],
                     range = parseRange(map["range"]),
                     message = map["message"],
@@ -50,7 +46,6 @@ data class LookupFlags(
 
         fun toFlagString(): String {
             val parts = mutableListOf<String>()
-            if (target != null) parts += "--user ${target.name ?: target.uniqueId}"
             if (type != null) parts += "--type $type"
             if (range != null) parts += "--range ${range / 1000 / 60 / 60 / 24}d"
             if (message != null) parts += "--message \"$message\""

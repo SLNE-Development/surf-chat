@@ -12,6 +12,7 @@ import dev.slne.surf.chat.bukkit.util.toChatUser
 import dev.slne.surf.chat.bukkit.util.toPlayer
 import dev.slne.surf.chat.core.service.ChannelService
 import dev.slne.surf.chat.core.service.channelService
+import dev.slne.surf.chat.core.service.databaseService
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.util.Services.Fallback
@@ -71,6 +72,32 @@ class BukkitChannelService(): ChannelService, Fallback {
         plugin.launch {
             currentChannel.leave(player.toChatUser())
             channel.join(player.toChatUser())
+        }
+    }
+
+    override fun handleDisconnect(player: Player) {
+        val channel = channelService.getChannel(player) ?: return
+
+        plugin.launch {
+            val user = databaseService.getUser(player.uniqueId)
+
+            if(channel.isOwner(user)) {
+                val mayBeNextOwner = channel.getMembers()
+                    .sortedWith(compareBy(
+                        { if (channel.isModerator(it)) 0 else 1 },
+                        { channel.members[it] }
+                    ))
+                    .firstOrNull()
+
+                if(mayBeNextOwner == null) {
+                    channelService.deleteChannel(channel)
+                } else {
+                    channel.transferOwnership(mayBeNextOwner)
+                }
+                return@launch
+            }
+
+            channel.leave(user)
         }
     }
 }

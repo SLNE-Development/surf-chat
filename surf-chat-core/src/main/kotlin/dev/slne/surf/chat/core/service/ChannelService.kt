@@ -69,6 +69,17 @@ interface ChannelService {
      */
     fun move(player: Player, channel: ChannelModel)
 
+    /**
+     * Handles the disconnection of a player from a specific channel.
+     *
+     * This method is called when a player disconnects from the server or leaves a channel.
+     * It ensures that any necessary cleanup or state updates related to the player's
+     * association with the channel are performed.
+     *
+     * @param player The player who is disconnecting.
+     */
+    fun handleDisconnect(player: Player)
+
     companion object {
         val INSTANCE = requiredService<ChannelService>()
     }

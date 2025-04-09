@@ -26,6 +26,21 @@ class ChannelLeaveCommand(commandName: String) : CommandAPICommand(commandName) 
                     return@launch
                 }
 
+                if(channel.isOwner(user)) {
+                    val mayBeNextOwner = channel.getMembers()
+                        .sortedWith(compareBy(
+                            { if (channel.isModerator(it)) 0 else 1 },
+                            { channel.members[it] }
+                        ))
+                        .firstOrNull()
+
+                    if(mayBeNextOwner == null) {
+                        channelService.deleteChannel(channel)
+                    } else {
+                        channel.transferOwnership(mayBeNextOwner)
+                    }
+                }
+
                 channel.leave(user)
                 user.sendText(buildText {
                     primary("Du hast den Nachrichtenkanal ")

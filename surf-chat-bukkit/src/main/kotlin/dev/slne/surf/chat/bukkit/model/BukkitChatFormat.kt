@@ -8,10 +8,14 @@ import dev.slne.surf.chat.bukkit.util.components
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.TextReplacementConfig
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.MiniMessage
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.UUID
+import java.util.regex.Pattern
 
 class BukkitChatFormat: ChatFormatModel {
     override fun formatMessage(
@@ -75,7 +79,7 @@ class BukkitChatFormat: ChatFormatModel {
                     darkSpacer(" | ")
                     append(MiniMessage.miniMessage().deserialize(LuckPermsExtension.getPrefix(sender) + sender.name))
                     darkSpacer(" >> ")
-                    append(rawMessage)
+                    append(highlightPlayers(rawMessage))
                 }
             }
 
@@ -125,5 +129,33 @@ class BukkitChatFormat: ChatFormatModel {
                 }
             }
         }
+    }
+
+
+    /**
+     *
+     * This method is currently not implemented.
+     * It has to be fixed
+     * With many players online, it could produce some performance issues.
+     *
+     */
+    private fun highlightPlayers(rawMessage: Component): Component {
+        var message = rawMessage
+
+        for (onlinePlayer in Bukkit.getOnlinePlayers()) {
+            if(!message.contains(Component.text(onlinePlayer.name))) {
+                continue
+            }
+
+            message = message.replaceText(TextReplacementConfig
+                .builder()
+                .match(Pattern.quote(onlinePlayer.name))
+                .replacement(buildText {
+                    variableValue(onlinePlayer.name)
+                })
+                .build())
+        }
+
+        return message
     }
 }

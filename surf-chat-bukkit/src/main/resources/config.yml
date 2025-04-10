@@ -1,4 +1,4 @@
-chat-message-of-the-day-enabled: false
+chat-message-of-the-day-status: false
 chat-message-of-the-day:
   lines:
     - "<darK_gray>*--------------------------------------------------*"

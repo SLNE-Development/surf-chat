@@ -14,6 +14,7 @@ import dev.slne.surf.chat.bukkit.model.BukkitChatFormat
 import dev.slne.surf.chat.bukkit.model.BukkitMessageValidator
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.chat.bukkit.command.channel.ChannelCommand
+import dev.slne.surf.chat.core.service.chatMotdService
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectSet
 
@@ -57,7 +58,12 @@ class SurfChatBukkit(): SuspendingJavaPlugin() {
         plugin.saveDefaultConfig()
 
         databaseService.connect()
+        chatMotdService.loadMotd()
         LuckPermsExtension.loadApi()
+    }
+
+    override suspend fun onDisableAsync() {
+        chatMotdService.saveMotd()
     }
 
     fun getTeamMembers(): ObjectSet<Player> = Bukkit.getOnlinePlayers().filter { it.hasPermission("surf.chat.command.teamchat") }.toObjectSet()

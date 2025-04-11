@@ -21,7 +21,9 @@ class TogglePmCommand(commandName: String) : CommandAPICommand(commandName) {
                     user.sendText(buildText {
                         primary("Du ignorierst jetzt ")
                         success("privaten Nachrichten. ")
-                        spacer("(Freunde können diese Sperre umgehen)").decorate(TextDecoration.ITALIC)
+                        append {
+                            spacer("(Freunde können diese Sperre umgehen)").decorate(TextDecoration.ITALIC)
+                        }
                     })
                 } else {
                     user.sendText(buildText {

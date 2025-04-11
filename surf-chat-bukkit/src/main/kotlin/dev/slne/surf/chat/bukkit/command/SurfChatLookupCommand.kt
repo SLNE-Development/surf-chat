@@ -106,6 +106,7 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
                         primary(" von ")
                         info(it.name ?: it.uniqueId.toString())
                     }
+                    spacer("(${history.size} Einträge)")
                 }
 
                 builder.send(sender, page)

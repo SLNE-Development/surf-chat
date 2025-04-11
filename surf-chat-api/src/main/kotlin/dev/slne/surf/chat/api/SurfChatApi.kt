@@ -36,6 +36,8 @@ interface SurfChatApi {
 
     companion object {
         val INSTANCE = requiredService<SurfChatApi>()
+
+        val messagingChannelIdentifier = "surf-chat:messaging"
     }
 }
 

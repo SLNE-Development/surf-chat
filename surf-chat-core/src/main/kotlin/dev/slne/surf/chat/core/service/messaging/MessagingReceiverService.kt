@@ -5,7 +5,7 @@ import dev.slne.surf.surfapi.core.api.util.requiredService
 import net.kyori.adventure.text.Component
 
 interface MessagingReceiverService {
-    fun handleReceive(server: String, player: String, message: Component, type: ChatMessageType, messageID: String, channel: String,)
+    fun handleReceive(server: String, player: String, target: String, message: Component, type: ChatMessageType, messageID: Long, channel: String,)
 
     companion object {
         val INSTANCE = requiredService<MessagingReceiverService>()

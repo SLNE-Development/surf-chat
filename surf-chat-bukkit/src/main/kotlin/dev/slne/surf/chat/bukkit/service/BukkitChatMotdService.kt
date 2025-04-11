@@ -32,7 +32,7 @@ class BukkitChatMotdService(): ChatMotdService, Fallback {
     }
 
     override fun saveMotd() {
-        plugin.config.set("chat-message-of-the-day.lines", chatMotdLines.map { PlainTextComponentSerializer.plainText().serialize(it) })
+        plugin.config.set("chat-message-of-the-day.lines", chatMotdLines.map { PlainTextComponentSerializer.plainText().serialize(it.value) })
         plugin.config.set("chat-message-of-the-day-status", status)
         plugin.saveConfig()
     }

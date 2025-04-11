@@ -124,7 +124,7 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
         }
     }
 
-    override suspend fun loadHistory(
+    override suspend fun loadHistory (
         uuid: UUID?,
         type: String?,
         rangeMillis: Long?,

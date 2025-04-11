@@ -11,3 +11,5 @@ A list of features is below.**
 - Channel System for creating personal channels
 - Direct Messages (DMs)
 - User mentions
+
+https://github.com/SLNE-Development/surf-social/issues/

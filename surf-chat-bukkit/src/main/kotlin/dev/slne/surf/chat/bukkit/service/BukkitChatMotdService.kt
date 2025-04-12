@@ -21,7 +21,7 @@ class BukkitChatMotdService(): ChatMotdService, Fallback {
         var line = 0
 
         lines.map {
-            MiniMessage.miniMessage().deserialize(it).appendNewline()
+            MiniMessage.miniMessage().deserialize(it)
         }.forEach {
             line++
             chatMotdLines[line] = it
@@ -56,7 +56,7 @@ class BukkitChatMotdService(): ChatMotdService, Fallback {
         var component = Component.empty()
 
         chatMotdLines.toSortedMap().values.forEach {
-            component = component.append(it)
+            component = component.append(it).appendNewline()
         }
 
         return component

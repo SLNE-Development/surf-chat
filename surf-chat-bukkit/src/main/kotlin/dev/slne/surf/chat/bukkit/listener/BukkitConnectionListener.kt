@@ -24,6 +24,8 @@ class BukkitConnectionListener(): Listener {
     fun onConnect(event: PlayerJoinEvent) {
         val player = event.player
 
-        surfChatApi.sendRawText(player, chatMotdService.getMotd())
+        if(chatMotdService.isMotdEnabled()) {
+            surfChatApi.sendRawText(player, chatMotdService.getMotd())
+        }
     }
 }

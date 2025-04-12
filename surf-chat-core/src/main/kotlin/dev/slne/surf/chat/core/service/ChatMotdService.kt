@@ -9,6 +9,7 @@ interface ChatMotdService {
 
     fun enableMotd()
     fun disableMotd()
+    fun isMotdEnabled(): Boolean
 
     fun getMotd(): Component
     fun setMotdLine(line: Int, message: String)

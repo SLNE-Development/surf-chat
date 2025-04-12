@@ -58,4 +58,8 @@ class BukkitChatMotdService(): ChatMotdService, Fallback {
     override fun setMotdLine(line: Int, message: String) {
         chatMotdLines.put(line, MiniMessage.miniMessage().deserialize(message))
     }
+
+    override fun clearMotdLine(line: Int) {
+        chatMotdLines.remove(line)
+    }
 }

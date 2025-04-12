@@ -12,6 +12,7 @@ interface ChatMotdService {
 
     fun getMotd(): Component
     fun setMotdLine(line: Int, message: String)
+    fun clearMotdLine(line: Int)
 
     companion object {
         val INSTANCE = requiredService<ChatMotdService>()

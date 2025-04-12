@@ -12,7 +12,6 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 class ChatMotdRemoveLineCommand(commandName: String): CommandAPICommand(commandName) {
     init {
         integerArgument("line", 1)
-
         playerExecutor { player, args ->
             val line: Int by args
 

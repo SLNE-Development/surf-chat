@@ -10,5 +10,6 @@ class ChatMotdCommand(commandName: String): CommandAPICommand(commandName) {
         subcommand(ChatMotdAddLineCommand("addLine"))
         subcommand(ChatMotdRemoveLineCommand("removeLine"))
         subcommand(ChatMotdListLineCommand("listLines"))
+        subcommand(ChatMotdToggleCommand("toggleStatus"))
     }
 }

@@ -3,11 +3,11 @@ package dev.slne.surf.chat.bukkit.service
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.service.ChatMotdService
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.kyori.adventure.util.Services.Fallback
-import org.gradle.internal.impldep.it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 
 @AutoService(ChatMotdService::class)
 class BukkitChatMotdService(): ChatMotdService, Fallback {

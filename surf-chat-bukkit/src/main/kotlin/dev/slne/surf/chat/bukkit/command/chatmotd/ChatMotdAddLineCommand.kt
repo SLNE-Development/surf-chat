@@ -9,7 +9,7 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 class ChatMotdAddLineCommand(commandName: String): CommandAPICommand(commandName) {
     init {
         integerArgument("line", 1)
-        greedyStringArgument("content")
+        textArgument("content")
 
         playerExecutor { player, args ->
             val line: Int by args

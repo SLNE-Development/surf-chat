@@ -32,7 +32,11 @@ class BukkitChatMotdService(): ChatMotdService, Fallback {
     }
 
     override fun saveMotd() {
-        plugin.config.set("chat-message-of-the-day.lines", chatMotdLines.map { PlainTextComponentSerializer.plainText().serialize(it.value) })
+        val sortedLines = chatMotdLines.toSortedMap()
+        plugin.config.set(
+            "chat-message-of-the-day.lines",
+            sortedLines.values.map { MiniMessage.miniMessage().serialize(it) }
+        )
         plugin.config.set("chat-message-of-the-day-status", status)
         plugin.saveConfig()
     }
@@ -48,7 +52,7 @@ class BukkitChatMotdService(): ChatMotdService, Fallback {
     override fun getMotd(): Component {
         var component = Component.empty()
 
-        this.chatMotdLines.values.forEach {
+        chatMotdLines.toSortedMap().values.forEach {
             component = component.append(it)
         }
 

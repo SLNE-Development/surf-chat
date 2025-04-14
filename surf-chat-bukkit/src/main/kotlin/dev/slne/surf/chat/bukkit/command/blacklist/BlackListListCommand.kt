@@ -4,6 +4,7 @@ import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.integerArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
+import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.PageableMessageBuilder
 import dev.slne.surf.chat.core.service.databaseService
@@ -29,6 +30,13 @@ class BlackListListCommand(commandName: String): CommandAPICommand(commandName) 
             plugin.launch {
                 val result = databaseService.loadBlacklist()
                 val page = args.getOrDefaultUnchecked("page", 1)
+
+                if(result.isEmpty()) {
+                    surfChatApi.sendText(player, buildText {
+                        error("Es sind keine Wörter auf der Blacklist.")
+                    })
+                    return@launch
+                }
 
                 PageableMessageBuilder {
                     title {

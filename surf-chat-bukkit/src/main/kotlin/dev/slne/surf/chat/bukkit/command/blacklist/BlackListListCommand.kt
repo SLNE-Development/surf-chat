@@ -20,7 +20,7 @@ import java.util.*
 
 class BlackListListCommand(commandName: String): CommandAPICommand(commandName) {
     private val timeFormatter: DateTimeFormatter = DateTimeFormatter
-        .ofPattern("HH:mm:ss, dd.MM.yyyy", Locale.GERMANY)
+        .ofPattern("dd.MM.yyyy, HH:mm:ss", Locale.GERMANY)
         .withZone(ZoneId.of("Europe/Berlin"))
 
     init {

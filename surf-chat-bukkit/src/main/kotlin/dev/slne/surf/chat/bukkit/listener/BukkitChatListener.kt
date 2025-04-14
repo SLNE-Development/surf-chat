@@ -39,6 +39,8 @@ class BukkitChatListener(): Listener {
             surfChatApi.logMessage(player.uniqueId, ChatMessageType.GLOBAL, message, messageID)
         }
 
+        var formatted = false
+
         plugin.messageValidator.parse(message, ChatMessageType.GLOBAL, player) {
             event.renderer { _, _, _, viewer ->
                 plugin.chatFormat.formatMessage (
@@ -50,6 +52,12 @@ class BukkitChatListener(): Listener {
                     messageID
                 )
             }
+
+            formatted = true
+        }
+
+        if(!formatted) {
+            event.isCancelled = true
         }
     }
 }

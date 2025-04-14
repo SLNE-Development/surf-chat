@@ -15,6 +15,7 @@ import dev.slne.surf.chat.bukkit.model.BukkitChatFormat
 import dev.slne.surf.chat.bukkit.model.BukkitMessageValidator
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.chat.bukkit.command.channel.ChannelCommand
+import dev.slne.surf.chat.core.service.blacklistService
 import dev.slne.surf.chat.core.service.chatMotdService
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectSet
@@ -60,6 +61,7 @@ class SurfChatBukkit(): SuspendingJavaPlugin() {
         plugin.saveDefaultConfig()
 
         databaseService.connect()
+        blacklistService.fetch()
         chatMotdService.loadMotd()
         LuckPermsExtension.loadApi()
     }

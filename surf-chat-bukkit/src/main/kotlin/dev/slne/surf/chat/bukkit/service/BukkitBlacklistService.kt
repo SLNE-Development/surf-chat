@@ -20,8 +20,12 @@ class BukkitBlacklistService(): BlacklistService, Fallback {
     }
 
     override fun hasBlackListed(message: Component): Boolean {
-        message.children().all {
-            return@all !isBlackListed(PlainTextComponentSerializer.plainText().serialize(it))
+        val string = PlainTextComponentSerializer.plainText().serialize(message)
+
+        string.split(" ").forEach {
+            if (blackList.contains(it)) {
+                return true
+            }
         }
 
         return false

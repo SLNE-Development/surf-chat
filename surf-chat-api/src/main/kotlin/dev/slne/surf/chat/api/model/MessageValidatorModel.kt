@@ -7,5 +7,5 @@ import org.bukkit.entity.Player
 
 interface MessageValidatorModel {
     fun validate(message: Component, type: ChatMessageType, sender: Player): MessageValidationResult
-    fun parse(message: Component, type: ChatMessageType, player: ChatUserModel, onSuccess: () -> Unit)
+    fun parse(message: Component, type: ChatMessageType, player: Player, onSuccess: () -> Unit)
 }

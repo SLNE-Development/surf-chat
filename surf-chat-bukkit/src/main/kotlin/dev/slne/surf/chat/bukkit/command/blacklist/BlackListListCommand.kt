@@ -32,7 +32,8 @@ class BlackListListCommand(commandName: String): CommandAPICommand(commandName) 
 
                 PageableMessageBuilder {
                     title {
-                        primary("Blacklist")
+                        primary("Wörter auf der Blacklist")
+                        darkSpacer(" (${result.size} Einträge)")
                     }
 
                     result.forEach {

@@ -72,13 +72,14 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
     }
 
     object BlackList : Table() {
+        val id = integer("id").autoIncrement()
         val word = text("word")
         val reason = text("reason")
 
         val addedAt = long("addedAt")
         val addedBy = varchar("addedBy", 16)
 
-        override val primaryKey = PrimaryKey(word)
+        override val primaryKey = PrimaryKey(id)
     }
 
 

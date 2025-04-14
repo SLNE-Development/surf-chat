@@ -49,8 +49,7 @@ class PageableMessageBuilder(private val linesPerPage: Int = 10) {
         val end = min(start + linesPerPage, lines.size)
 
         surfChatApi.sendRawText(sender, buildText {
-            appendNewline()
-            if (!title.equals(Component.empty())) {
+            if (title != Component.empty()) {
                 append(title)
                 appendNewline()
             }

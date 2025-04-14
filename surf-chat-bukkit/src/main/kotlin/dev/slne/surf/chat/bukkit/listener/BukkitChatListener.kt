@@ -36,20 +36,19 @@ class BukkitChatListener(): Listener {
         }
 
         plugin.launch {
-            val user = databaseService.getUser(player.uniqueId)
             surfChatApi.logMessage(player.uniqueId, ChatMessageType.GLOBAL, message, messageID)
+        }
 
-            plugin.messageValidator.parse(message, ChatMessageType.GLOBAL, user) {
-                event.renderer { _, _, _, viewer ->
-                    plugin.chatFormat.formatMessage (
-                        message,
-                        player,
-                        if(viewer is Player) viewer else player,
-                        ChatMessageType.GLOBAL,
-                        "N/A",
-                        messageID
-                    )
-                }
+        plugin.messageValidator.parse(message, ChatMessageType.GLOBAL, player) {
+            event.renderer { _, _, _, viewer ->
+                plugin.chatFormat.formatMessage (
+                    message,
+                    player,
+                    if(viewer is Player) viewer else player,
+                    ChatMessageType.GLOBAL,
+                    "N/A",
+                    messageID
+                )
             }
         }
     }

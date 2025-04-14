@@ -1,5 +1,6 @@
 package dev.slne.surf.chat.core.service
 
+import dev.slne.surf.chat.api.model.BlacklistWordModel
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import net.kyori.adventure.text.Component
 
@@ -7,8 +8,10 @@ interface BlacklistService {
     fun isBlackListed(word: String): Boolean
     fun hasBlackListed(message: Component): Boolean
 
-    fun addToBlacklist(name: String): Boolean
-    fun removeFromBlacklist(name: String): Boolean
+    suspend fun addToBlacklist(word: BlacklistWordModel): Boolean
+    suspend fun removeFromBlacklist(word: String): Boolean
+
+    suspend fun fetch()
 
     companion object {
         val INSTANCE = requiredService<BlacklistService>()

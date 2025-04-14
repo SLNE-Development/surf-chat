@@ -7,6 +7,7 @@ import dev.jorel.commandapi.CommandAPI
 import dev.slne.surf.chat.api.model.ChatFormatModel
 import dev.slne.surf.chat.api.model.MessageValidatorModel
 import dev.slne.surf.chat.bukkit.command.*
+import dev.slne.surf.chat.bukkit.command.blacklist.BlackListCommand
 import dev.slne.surf.chat.bukkit.extension.LuckPermsExtension
 import dev.slne.surf.chat.bukkit.listener.BukkitChatListener
 import dev.slne.surf.chat.bukkit.listener.BukkitConnectionListener
@@ -43,6 +44,7 @@ class SurfChatBukkit(): SuspendingJavaPlugin() {
         ReplyCommand("reply").register()
         TogglePmCommand("togglepm").register()
         TeamChatCommand("teamchat").register()
+        BlackListCommand("blacklist").register()
 
         /**
          * Register all listeners.

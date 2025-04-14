@@ -6,17 +6,21 @@ import com.google.auto.service.AutoService
 import com.sksamuel.aedile.core.asLoadingCache
 import com.sksamuel.aedile.core.expireAfterWrite
 import com.sksamuel.aedile.core.withRemovalListener
+import dev.slne.surf.chat.api.model.BlacklistWordModel
 import dev.slne.surf.chat.api.model.ChatUserModel
 import dev.slne.surf.chat.api.model.HistoryEntryModel
 import dev.slne.surf.chat.bukkit.gson
+import dev.slne.surf.chat.bukkit.model.BukkitBlacklistWord
 import dev.slne.surf.chat.bukkit.model.BukkitChatUser
 import dev.slne.surf.chat.bukkit.model.BukkitHistoryEntry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.service.DatabaseService
 import dev.slne.surf.database.DatabaseProvider
 import dev.slne.surf.surfapi.core.api.util.toObjectList
+import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import it.unimi.dsi.fastutil.objects.ObjectList
+import it.unimi.dsi.fastutil.objects.ObjectSet
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.kyori.adventure.util.Services.Fallback
@@ -67,12 +71,22 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
         override val primaryKey = PrimaryKey(id)
     }
 
+    object BlackList : Table() {
+        val word = text("word")
+        val reason = text("reason")
+
+        val addedAt = long("addedAt")
+        val addedBy = varchar("addedBy", 16)
+
+        override val primaryKey = PrimaryKey(word)
+    }
+
 
     override fun connect() {
         DatabaseProvider(plugin.dataPath, plugin.dataPath).connect()
 
         transaction {
-            SchemaUtils.create(Users, ChatHistory)
+            SchemaUtils.create(Users, ChatHistory, BlackList)
         }
     }
 
@@ -184,7 +198,54 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
         }
     }
 
+    override suspend fun loadBlacklist(): ObjectSet<BlacklistWordModel> {
+        return withContext(Dispatchers.IO) {
+            newSuspendedTransaction {
+                val selected = BlackList.selectAll()
 
+                return@newSuspendedTransaction selected.map {
+                    BukkitBlacklistWord (
+                        word = it[BlackList.word],
+                        reason = it[BlackList.reason],
+                        addedAt = it[BlackList.addedAt],
+                        addedBy = it[BlackList.addedBy]
+                    )
+                }.toObjectSet()
+            }
+
+        }
+    }
+
+    override suspend fun addToBlacklist(entry: BlacklistWordModel): Boolean {
+        return withContext(Dispatchers.IO) {
+            newSuspendedTransaction {
+                if(BlackList.selectAll().where (BlackList.word eq entry.word).empty()) {
+                    BlackList.insert {
+                        it[word] = entry.word
+                        it[reason] = entry.reason
+                        it[addedAt] = entry.addedAt
+                        it[addedBy] = entry.addedBy
+                    }
+                    return@newSuspendedTransaction true
+                } else {
+                    return@newSuspendedTransaction false
+                }
+            }
+        }
+    }
+
+    override suspend fun removeFromBlacklist(word: String): Boolean {
+        return withContext(Dispatchers.IO) {
+            newSuspendedTransaction {
+                if (BlackList.selectAll().where (BlackList.word eq word).empty()) {
+                    return@newSuspendedTransaction false
+                } else {
+                    BlackList.deleteWhere { BlackList.word eq word }
+                    return@newSuspendedTransaction true
+                }
+            }
+        }
+    }
 
 
     override suspend fun insertHistoryEntry(user: UUID, entry: HistoryEntryModel) {

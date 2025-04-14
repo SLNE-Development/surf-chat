@@ -9,5 +9,6 @@ class BlackListCommand(commandName: String): CommandAPICommand(commandName) {
 
         subcommand(BlacklistAddCommand("add"))
         subcommand(BlacklistRemoveCommand("remove"))
+        subcommand(BlackListListCommand("list"))
     }
 }

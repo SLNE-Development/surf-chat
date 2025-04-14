@@ -1,8 +1,9 @@
 package dev.slne.surf.chat.bukkit.service
 
 import com.google.auto.service.AutoService
-import dev.slne.surf.chat.api.type.MessageValidationError
+import dev.slne.surf.chat.api.type.MessageValidationResult
 import dev.slne.surf.chat.core.service.FilterService
+import dev.slne.surf.chat.core.service.blacklistService
 import dev.slne.surf.surfapi.core.api.util.*
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
@@ -15,42 +16,34 @@ private const val MESSAGE_LIMIT = 5
 
 @AutoService(FilterService::class)
 class BukkitFilterService(): FilterService, Fallback {
-    override fun find(message: Component, sender: Player): MessageValidationError {
-        if(containsBlocked(message)) {
-            return MessageValidationError.FAILED_BAD_WORD
+    override fun find(message: Component, sender: Player): MessageValidationResult {
+
+        if(blacklistService.hasBlackListed(message)) {
+            return MessageValidationResult.FAILED_BLACKLIST
         }
 
         if(containsLink(message)) {
-            return MessageValidationError.FAILED_BAD_LINK
+            return MessageValidationResult.FAILED_BAD_LINK
         }
 
         if(!isValidInput(message)) {
-            return MessageValidationError.FAILED_BAD_CHARACTER
+            return MessageValidationResult.FAILED_BAD_CHARACTER
         }
 
         if(isSpamming(sender.uniqueId)) {
-            return MessageValidationError.FAILED_SPAM
+            return MessageValidationResult.FAILED_SPAM
         }
 
-        return MessageValidationError.SUCCESS
+        return MessageValidationResult.SUCCESS
     }
 
     private val allowedDomains = mutableObjectSetOf<String>()
 
-    private val blockedPatterns = mutableObjectSetOf<Regex>()
     private val rateLimit = mutableObject2LongMapOf<UUID>().apply { defaultReturnValue(0) }.synchronize()
     private val messageCount = mutableObject2IntMapOf<UUID>().apply { defaultReturnValue(0) }.synchronize()
 
     private val validCharactersRegex = "^[a-zA-Z0-9/.:_,()%&=?!<>|#^\"²³+*~-äöü@ ]*$".toRegex()
     private val urlRegex = "((http|https|ftp)://)?([\\w-]+\\.)+[\\w-]+(/[\\w- ./?%&=]*)?".toRegex(RegexOption.IGNORE_CASE)
-
-
-    private fun containsBlocked(message: Component) = blockedPatterns.any {
-        it.containsMatchIn(
-            PlainTextComponentSerializer.plainText().serialize(message)
-        )
-    }
-
 
     private fun containsLink(message: Component): Boolean {
         val plainMessage = PlainTextComponentSerializer.plainText().serialize(message)

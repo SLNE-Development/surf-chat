@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.api.type
 
-enum class MessageValidationError {
+enum class MessageValidationResult {
     SUCCESS,
     FAILED_MUTED,
     FAILED_SPAM,

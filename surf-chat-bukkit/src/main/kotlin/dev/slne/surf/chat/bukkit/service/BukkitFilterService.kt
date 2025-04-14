@@ -65,7 +65,7 @@ class BukkitFilterService(): FilterService, Fallback {
         return validCharactersRegex.matches(PlainTextComponentSerializer.plainText().serialize(input))
     }
 
-    fun isSpamming(uuid: UUID): Boolean {
+    private fun isSpamming(uuid: UUID): Boolean {
         val currentTime = System.currentTimeMillis()
         val lastMessageTime = rateLimit.getLong(uuid)
         val count = messageCount.getInt(uuid)

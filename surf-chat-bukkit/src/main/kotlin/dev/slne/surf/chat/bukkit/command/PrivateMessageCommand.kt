@@ -15,6 +15,7 @@ import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.bukkit.util.toDisplayUser
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.chat.core.service.replyService
+import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
@@ -35,6 +36,13 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
 
                 val user = databaseService.getUser(player.uniqueId)
                 val targetUser = databaseService.getUser(target.uniqueId)
+
+                if(targetUser.uuid == user.uuid) {
+                    user.sendText(buildText {
+                        error("Du kannst dir nicht selbst eine Nachricht senden.")
+                    })
+                    return@launch
+                }
 
                 plugin.messageValidator.parse(messageComponent, ChatMessageType.PRIVATE_TO, user) {
                     targetUser.sendRawText(plugin.chatFormat.formatMessage(messageComponent, player, target, ChatMessageType.PRIVATE_FROM, "", UUID.randomUUID()))

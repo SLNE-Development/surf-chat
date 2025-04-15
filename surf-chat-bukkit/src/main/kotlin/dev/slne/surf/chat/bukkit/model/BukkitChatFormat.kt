@@ -134,12 +134,14 @@ class BukkitChatFormat: ChatFormatModel {
     }
 
     private fun Component.parseItemPlaceholder(player: Player, warn: Boolean): Component {
-        val stack = player.inventory.itemInMainHand
+        val stack = player.inventory.itemInMainHand//TODO: Fix message is send to often
 
         if (stack.type == Material.AIR) {
-            surfChatApi.sendText(player, buildText {
-                error("Du hast kein Item in der Hand!")
-            })
+            if(warn) {
+                surfChatApi.sendText(player, buildText {
+                    error("Du hast kein Item in der Hand!")
+                })
+            }
             return this
         }
 

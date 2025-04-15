@@ -6,5 +6,5 @@ import org.bukkit.entity.Player
 import java.util.*
 
 interface ChatFormatModel {
-    fun formatMessage(rawMessage: Component, sender: Player, viewer: Player, messageType: ChatMessageType, channel: String, messageID: UUID): Component
+    fun formatMessage(rawMessage: Component, sender: Player, viewer: Player, messageType: ChatMessageType, channel: String, messageID: UUID, warn: Boolean): Component
 }

@@ -28,7 +28,8 @@ class BukkitChatListener(): Listener {
             player,
             ChatMessageType.GLOBAL,
             "N/A",
-            messageID
+            messageID,
+            false
         )
 
         Bukkit.getOnlinePlayers().forEach {
@@ -49,7 +50,8 @@ class BukkitChatListener(): Listener {
                     if(viewer is Player) viewer else player,
                     ChatMessageType.GLOBAL,
                     "N/A",
-                    messageID
+                    messageID,
+                    true
                 )
             }
 

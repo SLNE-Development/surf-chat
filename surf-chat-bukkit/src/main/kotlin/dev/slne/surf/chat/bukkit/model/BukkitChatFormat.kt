@@ -3,16 +3,15 @@ package dev.slne.surf.chat.bukkit.model
 import dev.slne.surf.chat.api.model.ChatFormatModel
 import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
-import dev.slne.surf.chat.api.user.DisplayUser
 import dev.slne.surf.chat.bukkit.extension.LuckPermsExtension
 import dev.slne.surf.chat.bukkit.util.components
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import dev.slne.surf.surfapi.core.api.messages.adventure.text
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextReplacementConfig
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.MiniMessage
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -20,13 +19,14 @@ import java.util.UUID
 import java.util.regex.Pattern
 
 class BukkitChatFormat: ChatFormatModel {
-    override fun formatMessage(
+    override fun formatMessage (
         rawMessage: Component,
         sender: Player,
         viewer: Player,
         messageType: ChatMessageType,
         channel: String,
-        messageID: UUID
+        messageID: UUID,
+        warn: Boolean
     ): Component {
         return when(messageType) {
             ChatMessageType.GLOBAL -> {
@@ -36,7 +36,7 @@ class BukkitChatFormat: ChatFormatModel {
                     append(MiniMessage.miniMessage().deserialize(LuckPermsExtension.getPrefix(sender) + sender.name))
                     darkSpacer(" >> ")
                     append(rawMessage)
-                }.parseItemPlaceholder(sender)
+                }.parseItemPlaceholder(sender, warn)
             }
 
             ChatMessageType.CHANNEL -> {
@@ -45,7 +45,7 @@ class BukkitChatFormat: ChatFormatModel {
                     darkSpacer(" >> ")
                     append(components.getChannelComponent(channel))
                     append(rawMessage)
-                }.parseItemPlaceholder(sender)
+                }.parseItemPlaceholder(sender, warn)
             }
 
             ChatMessageType.PRIVATE_TO -> {
@@ -58,7 +58,7 @@ class BukkitChatFormat: ChatFormatModel {
                     append(MiniMessage.miniMessage().deserialize(LuckPermsExtension.getPrefix(viewer) + viewer.name))
                     darkSpacer(" >> ")
                     append(rawMessage)
-                }.parseItemPlaceholder(sender)
+                }.parseItemPlaceholder(sender, warn)
             }
 
             ChatMessageType.PRIVATE_FROM -> {
@@ -71,7 +71,7 @@ class BukkitChatFormat: ChatFormatModel {
                     variableValue("Dir")
                     darkSpacer(" >> ")
                     append(rawMessage)
-                }.parseItemPlaceholder(sender)
+                }.parseItemPlaceholder(sender, warn)
             }
 
             ChatMessageType.TEAM -> {
@@ -82,7 +82,7 @@ class BukkitChatFormat: ChatFormatModel {
                     append(MiniMessage.miniMessage().deserialize(LuckPermsExtension.getPrefix(sender) + sender.name))
                     darkSpacer(" >> ")
                     append(highlightPlayers(rawMessage))
-                }.parseItemPlaceholder(sender)
+                }.parseItemPlaceholder(sender, warn)
             }
 
             /**
@@ -133,7 +133,7 @@ class BukkitChatFormat: ChatFormatModel {
         }
     }
 
-    private fun Component.parseItemPlaceholder(player: Player): Component {
+    private fun Component.parseItemPlaceholder(player: Player, warn: Boolean): Component {
         val stack = player.inventory.itemInMainHand
 
         if (stack.type == Material.AIR) {
@@ -148,9 +148,9 @@ class BukkitChatFormat: ChatFormatModel {
             .replacement(when {
                 stack.amount > 1 -> buildText {
                     variableValue("${stack.amount}x ")
-                    append(stack.displayName())
+                    text(stack.displayName(), Colors.VARIABLE_VALUE)
                 }
-                else -> stack.displayName()
+                else -> text(stack.displayName(), Colors.VARIABLE_VALUE)
             })
             .build()
         )

@@ -20,7 +20,7 @@ class TeamChatCommand(commandName: String): CommandAPICommand(commandName) {
             val messageID = UUID.randomUUID()
 
             plugin.getTeamMembers().forEach {
-                surfChatApi.sendRawText(it, plugin.chatFormat.formatMessage(Component.text(message), player, it, ChatMessageType.TEAM, "", messageID))
+                surfChatApi.sendRawText(it, plugin.chatFormat.formatMessage(Component.text(message), player, it, ChatMessageType.TEAM, "", messageID, true))
             }
 
             plugin.launch {

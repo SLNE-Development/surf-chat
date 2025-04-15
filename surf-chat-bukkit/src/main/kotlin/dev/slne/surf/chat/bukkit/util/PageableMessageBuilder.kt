@@ -63,22 +63,28 @@ class PageableMessageBuilder(private val linesPerPage: Int = 10) {
         })
     }
 
-    private fun paginationComponent(page: Int, totalPages: Int): Component {
+    private fun navButton(label: String, targetPage: Int, enabled: Boolean): Component {
         return buildText {
-            fun navButton(label: String, targetPage: Int, enabled: Boolean) {
-                if (enabled) {
-                    success(label)
-                    clickRunsCommand(pageCommand.replace("%page%", targetPage.toString()))
-                } else {
-                    error(label)
-                }
-            }
+            debug("targetPage: $targetPage, label: $label, enabled: $enabled")
 
-            navButton("[<<] ", 1, page > 1)
-            navButton("[<] ", page - 1, page > 1)
-            darkSpacer("Seite $page von $totalPages")
-            navButton(" [>] ", page + 1, page < totalPages)
-            navButton(" [>>]", totalPages, page < totalPages)
+            if (enabled) {
+                success(label)
+                clickRunsCommand(pageCommand.replace("%page%", targetPage.toString()))
+            } else {
+                error(label)
+            }
+        }
+    }
+
+    private fun paginationComponent(page: Int, totalPages: Int): Component {
+        debug("page: $page, totalPages: $totalPages")
+        return buildText {
+
+            append(navButton("[<<] ", 1, page > 1))
+            append(navButton("[<] ", page - 1, page > 1))
+            append(darkSpacer("Seite $page von $totalPages"))
+            append(navButton(" [>] ", page + 1, page < totalPages))
+            append(navButton(" [>>]", totalPages, page < totalPages))
         }
     }
 }

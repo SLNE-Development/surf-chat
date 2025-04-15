@@ -1,6 +1,7 @@
 package dev.slne.surf.chat.bukkit.model
 
 import dev.slne.surf.chat.api.model.ChatFormatModel
+import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.api.user.DisplayUser
 import dev.slne.surf.chat.bukkit.extension.LuckPermsExtension
@@ -13,6 +14,7 @@ import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Bukkit
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import java.util.UUID
 import java.util.regex.Pattern
@@ -34,7 +36,7 @@ class BukkitChatFormat: ChatFormatModel {
                     append(MiniMessage.miniMessage().deserialize(LuckPermsExtension.getPrefix(sender) + sender.name))
                     darkSpacer(" >> ")
                     append(rawMessage)
-                }
+                }.parseItemPlaceholder(sender)
             }
 
             ChatMessageType.CHANNEL -> {
@@ -43,7 +45,7 @@ class BukkitChatFormat: ChatFormatModel {
                     darkSpacer(" >> ")
                     append(components.getChannelComponent(channel))
                     append(rawMessage)
-                }
+                }.parseItemPlaceholder(sender)
             }
 
             ChatMessageType.PRIVATE_TO -> {
@@ -56,7 +58,7 @@ class BukkitChatFormat: ChatFormatModel {
                     append(MiniMessage.miniMessage().deserialize(LuckPermsExtension.getPrefix(viewer) + viewer.name))
                     darkSpacer(" >> ")
                     append(rawMessage)
-                }
+                }.parseItemPlaceholder(sender)
             }
 
             ChatMessageType.PRIVATE_FROM -> {
@@ -69,7 +71,7 @@ class BukkitChatFormat: ChatFormatModel {
                     variableValue("Dir")
                     darkSpacer(" >> ")
                     append(rawMessage)
-                }
+                }.parseItemPlaceholder(sender)
             }
 
             ChatMessageType.TEAM -> {
@@ -80,7 +82,7 @@ class BukkitChatFormat: ChatFormatModel {
                     append(MiniMessage.miniMessage().deserialize(LuckPermsExtension.getPrefix(sender) + sender.name))
                     darkSpacer(" >> ")
                     append(highlightPlayers(rawMessage))
-                }
+                }.parseItemPlaceholder(sender)
             }
 
             /**
@@ -129,6 +131,29 @@ class BukkitChatFormat: ChatFormatModel {
                 }
             }
         }
+    }
+
+    private fun Component.parseItemPlaceholder(player: Player): Component {
+        val stack = player.inventory.itemInMainHand
+
+        if (stack.type == Material.AIR) {
+            surfChatApi.sendText(player, buildText {
+                error("Du hast kein Item in der Hand!")
+            })
+            return this
+        }
+
+        return this.replaceText(TextReplacementConfig.builder()
+            .matchLiteral("[item]")
+            .replacement(when {
+                stack.amount > 1 -> buildText {
+                    variableValue("${stack.amount}x ")
+                    append(stack.displayName())
+                }
+                else -> stack.displayName()
+            })
+            .build()
+        )
     }
 
 

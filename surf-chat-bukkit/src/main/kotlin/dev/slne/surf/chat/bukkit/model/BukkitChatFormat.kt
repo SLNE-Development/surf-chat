@@ -10,11 +10,14 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.text
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextReplacementConfig
+import net.kyori.adventure.text.event.ClickEvent
+import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import java.util.UUID
 import java.util.regex.Pattern
 
@@ -134,28 +137,31 @@ class BukkitChatFormat: ChatFormatModel {
     }
 
     private fun Component.parseItemPlaceholder(player: Player, warn: Boolean): Component {
-        val stack = player.inventory.itemInMainHand//TODO: Fix message is send to often
+        return this.replaceText(TextReplacementConfig.builder()
+            .matchLiteral("[item]")
+            .replacement(player.getItemComponent(warn))
+            .build()
+        )
+    }
+
+    private fun Player.getItemComponent(warn: Boolean): Component = buildText {
+        val stack = inventory.itemInMainHand
 
         if (stack.type == Material.AIR) {
             if(warn) {
-                surfChatApi.sendText(player, buildText {
+                surfChatApi.sendText(this@getItemComponent, buildText {
                     error("Du hast kein Item in der Hand!")
                 })
             }
-            return this
+            return@buildText
         }
 
-        return this.replaceText(TextReplacementConfig.builder()
-            .matchLiteral("[item]")
-            .replacement(when {
-                stack.amount > 1 -> buildText {
-                    variableValue("${stack.amount}x ")
-                    text(stack.displayName(), Colors.VARIABLE_VALUE)
-                }
-                else -> text(stack.displayName(), Colors.VARIABLE_VALUE)
-            })
-            .build()
-        )
+        if (stack.amount > 1) {
+            variableValue("${stack.amount}x ")
+        }
+
+        append(text(stack.displayName(), Colors.VARIABLE_VALUE))
+        hoverEvent(stack.asHoverEvent())
     }
 
 

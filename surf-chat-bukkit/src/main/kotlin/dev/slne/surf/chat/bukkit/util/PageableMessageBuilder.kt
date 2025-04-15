@@ -65,8 +65,6 @@ class PageableMessageBuilder(private val linesPerPage: Int = 10) {
 
     private fun navButton(label: String, targetPage: Int, enabled: Boolean): Component {
         return buildText {
-            debug("targetPage: $targetPage, label: $label, enabled: $enabled")
-
             if (enabled) {
                 success(label)
                 clickRunsCommand(pageCommand.replace("%page%", targetPage.toString()))
@@ -77,12 +75,10 @@ class PageableMessageBuilder(private val linesPerPage: Int = 10) {
     }
 
     private fun paginationComponent(page: Int, totalPages: Int): Component {
-        debug("page: $page, totalPages: $totalPages")
         return buildText {
-
             append(navButton("[<<] ", 1, page > 1))
             append(navButton("[<] ", page - 1, page > 1))
-            append(darkSpacer("Seite $page von $totalPages"))
+            darkSpacer("Seite $page von $totalPages")
             append(navButton(" [>] ", page + 1, page < totalPages))
             append(navButton(" [>>]", totalPages, page < totalPages))
         }

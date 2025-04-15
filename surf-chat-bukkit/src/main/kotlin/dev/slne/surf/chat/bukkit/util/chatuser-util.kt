@@ -6,6 +6,7 @@ import dev.slne.surf.chat.api.user.DisplayUser
 import dev.slne.surf.chat.core.service.databaseService
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
@@ -35,4 +36,8 @@ fun ChatUserModel.sendRawText(text: Component) {
 
 fun ChatUserModel.toPlayer(): Player? {
     return Bukkit.getPlayer(this.uuid)
+}
+
+fun Component.plainText(): String {
+    return PlainTextComponentSerializer.plainText().serialize(this)
 }

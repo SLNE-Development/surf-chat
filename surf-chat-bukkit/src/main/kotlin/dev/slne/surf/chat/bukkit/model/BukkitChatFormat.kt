@@ -5,19 +5,17 @@ import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.bukkit.extension.LuckPermsExtension
 import dev.slne.surf.chat.bukkit.util.components
+import dev.slne.surf.chat.bukkit.util.debug
+import dev.slne.surf.chat.bukkit.util.plainText
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
-import dev.slne.surf.surfapi.core.api.messages.adventure.text
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextReplacementConfig
-import net.kyori.adventure.text.event.ClickEvent
-import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 import java.util.UUID
 import java.util.regex.Pattern
 
@@ -33,6 +31,8 @@ class BukkitChatFormat: ChatFormatModel {
     ): Component {
         return when(messageType) {
             ChatMessageType.GLOBAL -> {
+
+                debug("1")
                 buildText {
                     append(components.getDeleteComponent(messageID, viewer))
                     append(components.getTeleportComponent(sender.name, viewer))
@@ -160,7 +160,7 @@ class BukkitChatFormat: ChatFormatModel {
             variableValue("${stack.amount}x ")
         }
 
-        append(text(stack.displayName(), Colors.VARIABLE_VALUE))
+        append(variableValue(stack.displayName().plainText()))
         hoverEvent(stack.asHoverEvent())
     }
 

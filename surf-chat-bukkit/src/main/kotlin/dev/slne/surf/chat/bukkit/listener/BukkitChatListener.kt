@@ -5,8 +5,6 @@ import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.api.util.history.LoggedMessage
 import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.bukkit.util.toDisplayUser
-import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.chat.core.service.historyService
 import io.papermc.paper.event.player.AsyncChatEvent
 import org.bukkit.Bukkit

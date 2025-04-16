@@ -48,7 +48,17 @@ class ChannelDemoteCommand(commandName: String) : CommandAPICommand(commandName)
                     return@launch
                 }
 
+                if(channel.isMember(targetUser)) {
+                    user.sendText(buildText {
+                        error("Der Spieler ")
+                        info(target.name)
+                        error(" ist bereits ein Mitglied.")
+                    })
+                    return@launch
+                }
+
                 channel.demote(targetUser)
+
                 user.sendText(buildText {
                     primary("Du hast ")
                     info(target.name)

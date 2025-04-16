@@ -38,6 +38,14 @@ class ChannelBanCommand(commandName: String) : CommandAPICommand(commandName) {
                     return@launch
                 }
 
+                if(channel.isModerator(targetUser) && channel.isModerator(user)) {
+                    user.sendText(buildText {
+                        error("Du kannst keine Spieler ")
+                        info("mit Moderator-Rechten")
+                        error(" bannen.")
+                    })
+                }
+
                 channel.ban(targetUser)
 
                 user.sendText(buildText {

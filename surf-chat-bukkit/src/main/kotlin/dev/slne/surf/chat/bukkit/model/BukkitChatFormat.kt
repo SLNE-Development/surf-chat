@@ -1,11 +1,14 @@
 package dev.slne.surf.chat.bukkit.model
 
+import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.api.model.ChatFormatModel
 import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.bukkit.extension.LuckPermsExtension
+import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.components
 import dev.slne.surf.chat.bukkit.util.toPlainText
+import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.sound
@@ -167,14 +170,6 @@ class BukkitChatFormat: ChatFormatModel {
         hoverEvent(stack.asHoverEvent())
     }
 
-
-    /**
-     *
-     * This method is currently not implemented.
-     * It has to be fixed
-     * With many players online, it could produce some performance issues.
-     *
-     */
     private fun highlightPlayers(rawMessage: Component): Component {
         var message = rawMessage
 
@@ -184,12 +179,20 @@ class BukkitChatFormat: ChatFormatModel {
 
             if (!pattern.containsMatchIn(message.toPlainText())) continue
 
-            onlinePlayer.playSound(sound {
-                type(Sound.BLOCK_NOTE_BLOCK_PLING)
-                source(net.kyori.adventure.sound.Sound.Source.PLAYER)
-                volume(0.25f)
-                pitch(2f)
-            })
+            plugin.launch {
+                val user = databaseService.getUser(onlinePlayer.uniqueId)
+
+                if(user.likesSound) {
+                    onlinePlayer.playSound(sound {
+                        type(Sound.BLOCK_NOTE_BLOCK_PLING)
+                        source(net.kyori.adventure.sound.Sound.Source.PLAYER)
+                        volume(0.25f)
+                        pitch(2f)
+                    })
+                }
+            }
+
+
 
             message = message.replaceText(TextReplacementConfig
                 .builder()

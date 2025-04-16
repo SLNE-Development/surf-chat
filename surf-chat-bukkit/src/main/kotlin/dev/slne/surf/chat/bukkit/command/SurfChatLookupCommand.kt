@@ -59,7 +59,7 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
                     message = parsed.message,
                     deleted = parsed.deleted,
                     deletedBy = parsed.deletedBy
-                ).sortedBy { it.timestamp }
+                ).sortedByDescending { it.timestamp }
 
                 if (history.isEmpty()) {
                     user.sendText(buildText {
@@ -68,8 +68,17 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
                     return@launch
                 }
 
-                val builder = PageableMessageBuilder {
+                PageableMessageBuilder {
                     pageCommand = "/surfchat lookup ${target.getString()} ${parsed.toFlagString()} --page %page%"
+
+                    title {
+                        primary("Chat-Daten")
+                        target.player?.let {
+                            primary(" von ")
+                            info(it.name ?: it.uniqueId.toString())
+                        }
+                        spacer(" (${history.size} Einträge)")
+                    }
 
                     history.forEach {
                         line {
@@ -98,18 +107,7 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
                             clickEvent(ClickEvent.copyToClipboard(it.message))
                         }
                     }
-                }
-
-                builder.title {
-                    primary("Chat-Daten")
-                    target.player?.let {
-                        primary(" von ")
-                        info(it.name ?: it.uniqueId.toString())
-                    }
-                    spacer("(${history.size} Einträge)")
-                }
-
-                builder.send(sender, page)
+                }.send(sender, page)
             }
         }
     }

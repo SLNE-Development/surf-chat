@@ -27,7 +27,7 @@ class BukkitChatListener(): Listener {
             ChatMessageType.GLOBAL,
             "N/A",
             messageID,
-            false
+            true
         )
 
         Bukkit.getOnlinePlayers().forEach {
@@ -49,7 +49,7 @@ class BukkitChatListener(): Listener {
                     ChatMessageType.GLOBAL,
                     "N/A",
                     messageID,
-                    true
+                    false
                 )
             }
 

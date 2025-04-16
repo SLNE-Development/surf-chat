@@ -31,8 +31,6 @@ class BukkitChatFormat: ChatFormatModel {
     ): Component {
         return when(messageType) {
             ChatMessageType.GLOBAL -> {
-
-                debug("1")
                 buildText {
                     append(components.getDeleteComponent(messageID, viewer))
                     append(components.getTeleportComponent(sender.name, viewer))
@@ -137,12 +135,14 @@ class BukkitChatFormat: ChatFormatModel {
     }
 
     private fun Component.parseItemPlaceholder(player: Player, warn: Boolean): Component {
-        return this.replaceText(TextReplacementConfig.builder()
-            .matchLiteral("[item]")
-            .replacement(player.getItemComponent(warn))
-            .build()
-        )
+        return this
     }
+
+    //.replaceText(TextReplacementConfig.builder()
+    //            .matchLiteral("[item]")
+    //            .replacement(player.getItemComponent(warn))
+    //            .build()
+    //        )
 
     private fun Player.getItemComponent(warn: Boolean): Component = buildText {
         val stack = inventory.itemInMainHand

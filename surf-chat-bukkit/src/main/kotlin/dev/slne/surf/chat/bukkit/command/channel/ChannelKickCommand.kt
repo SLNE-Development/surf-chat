@@ -45,6 +45,7 @@ class ChannelKickCommand(commandName: String) : CommandAPICommand(commandName) {
                         info("mit Moderator-Rechten")
                         error(" kicken.")
                     })
+                    return@launch
                 }
 
                 channel.kick(targetUser)

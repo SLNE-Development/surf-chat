@@ -44,6 +44,7 @@ class ChannelBanCommand(commandName: String) : CommandAPICommand(commandName) {
                         info("mit Moderator-Rechten")
                         error(" bannen.")
                     })
+                    return@launch
                 }
 
                 channel.ban(targetUser)

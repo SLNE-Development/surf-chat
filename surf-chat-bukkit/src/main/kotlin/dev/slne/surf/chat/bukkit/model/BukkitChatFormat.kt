@@ -195,7 +195,7 @@ class BukkitChatFormat: ChatFormatModel {
                 .builder()
                 .match(pattern.pattern)
                 .replacement(buildText {
-                    variableValue(name)
+                    append(Component.text(name))
                     decorate(TextDecoration.BOLD)
                 })
                 .build())

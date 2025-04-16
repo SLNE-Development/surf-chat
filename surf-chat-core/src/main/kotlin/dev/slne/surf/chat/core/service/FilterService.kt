@@ -23,6 +23,9 @@ interface FilterService {
     fun setMessageLimit(seconds: Int, count: Int)
     fun getMessageLimit(): Pair<Int, Int>
 
+    fun loadMessageLimit()
+    fun saveMessageLimit()
+
     companion object {
         val INSTANCE = requiredService<FilterService>()
     }

@@ -2,6 +2,7 @@ package dev.slne.surf.chat.bukkit.service
 
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.type.MessageValidationResult
+import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.toPlainText
 import dev.slne.surf.chat.core.service.FilterService
 import dev.slne.surf.chat.core.service.blacklistService
@@ -80,5 +81,20 @@ class BukkitFilterService : FilterService, Fallback {
 
     override fun getMessageLimit(): Pair<Int, Int> {
         return messageLimitCount to messageLimitSeconds
+    }
+
+    override fun loadMessageLimit() {
+        val config = plugin.config
+        messageLimitSeconds = config.getInt("spam-protection.in-seconds", 10)
+        messageLimitCount = config.getInt("spam-protection.max-messages", 5)
+    }
+
+    override fun saveMessageLimit() {
+        val config = plugin.config
+
+        config.set("spam-protection.in-seconds", messageLimitSeconds)
+        config.set("spam-protection.max-messages", messageLimitCount)
+
+        plugin.saveConfig()
     }
 }

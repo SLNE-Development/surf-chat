@@ -46,7 +46,7 @@ class ChannelUnBanCommand(commandName: String) : CommandAPICommand(commandName) 
                     return@launch
                 }
 
-                channel.unInvite(targetUser)
+                channel.unban(targetUser)
 
                 user.sendText(buildText {
                     primary("Du hast ")

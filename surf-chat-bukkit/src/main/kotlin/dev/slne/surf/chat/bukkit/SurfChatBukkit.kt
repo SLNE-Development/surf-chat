@@ -72,6 +72,7 @@ class SurfChatBukkit(): SuspendingJavaPlugin() {
     override suspend fun onDisableAsync() {
         chatMotdService.saveMotd()
         filterService.saveMessageLimit()
+        databaseService.saveAll()
     }
 
     fun getTeamMembers(): ObjectSet<Player> = Bukkit.getOnlinePlayers().filter { it.hasPermission("surf.chat.command.teamchat") }.toObjectSet()

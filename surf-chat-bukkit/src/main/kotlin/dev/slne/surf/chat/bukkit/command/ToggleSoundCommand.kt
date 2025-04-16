@@ -25,7 +25,7 @@ class ToggleSoundCommand(commandName: String) : CommandAPICommand(commandName) {
                 } else {
                     user.sendText(buildText {
                         primary("Du hörst jetzt ")
-                        success("keine Notify-Sounds mehr.")
+                        error("keine Notify-Sounds mehr.")
                     })
                 }
             }

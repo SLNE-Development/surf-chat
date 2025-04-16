@@ -268,6 +268,10 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
         }
     }
 
+    override fun saveAll() {
+        dataCache.invalidateAll()
+    }
+
     override fun getName(uuid: UUID): String {
         return nameCache.get(uuid)
     }

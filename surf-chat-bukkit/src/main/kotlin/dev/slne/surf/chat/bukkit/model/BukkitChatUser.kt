@@ -12,7 +12,8 @@ import java.util.*
 class BukkitChatUser (
     override val uuid: UUID,
     override val ignoreList: ObjectArraySet<UUID> = ObjectArraySet(),
-    override var pmToggled: Boolean = false
+    override var pmToggled: Boolean = false,
+    override val likesSound: Boolean = false
 ): ChatUserModel {
     override fun isIgnoring(target: UUID): Boolean {
         return ignoreList.contains(target)

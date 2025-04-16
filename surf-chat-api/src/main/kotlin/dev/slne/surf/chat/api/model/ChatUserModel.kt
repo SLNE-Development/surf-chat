@@ -9,6 +9,7 @@ interface ChatUserModel {
 
     val ignoreList: ObjectArraySet<UUID>
     var pmToggled: Boolean
+    val likesSound: Boolean
 
     fun isIgnoring(target: UUID): Boolean
     fun ignore(target: UUID)

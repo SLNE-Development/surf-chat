@@ -5,19 +5,22 @@ import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.bukkit.extension.LuckPermsExtension
 import dev.slne.surf.chat.bukkit.util.components
-import dev.slne.surf.chat.bukkit.util.debug
 import dev.slne.surf.chat.bukkit.util.toPlainText
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import dev.slne.surf.surfapi.core.api.messages.adventure.sound
+
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextReplacementConfig
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.MiniMessage
+
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.entity.Player
+
 import java.util.UUID
-import java.util.regex.Pattern
 
 class BukkitChatFormat: ChatFormatModel {
     override fun formatMessage (
@@ -36,7 +39,7 @@ class BukkitChatFormat: ChatFormatModel {
                     append(components.getTeleportComponent(sender.name, viewer))
                     append(MiniMessage.miniMessage().deserialize(LuckPermsExtension.getPrefix(sender) + sender.name))
                     darkSpacer(" >> ")
-                    append(rawMessage)
+                    append(highlightPlayers(rawMessage))
                 }.parseItemPlaceholder(sender, warn)
             }
 
@@ -45,7 +48,7 @@ class BukkitChatFormat: ChatFormatModel {
                     append(MiniMessage.miniMessage().deserialize(LuckPermsExtension.getPrefix(sender) + sender.name))
                     darkSpacer(" >> ")
                     append(components.getChannelComponent(channel))
-                    append(rawMessage)
+                    append(highlightPlayers(rawMessage))
                 }.parseItemPlaceholder(sender, warn)
             }
 
@@ -176,19 +179,29 @@ class BukkitChatFormat: ChatFormatModel {
         var message = rawMessage
 
         for (onlinePlayer in Bukkit.getOnlinePlayers()) {
-            if(!message.contains(Component.text(onlinePlayer.name))) {
-                continue
-            }
+            val name = onlinePlayer.name
+            val pattern = Regex("(?<!\\w)@?$name(?!\\w)")
+
+            if (!pattern.containsMatchIn(message.toPlainText())) continue
+
+            onlinePlayer.playSound(sound {
+                type(Sound.AMBIENT_CAVE)
+                source(net.kyori.adventure.sound.Sound.Source.PLAYER)
+                volume(1f)
+                pitch(1f)
+            })
 
             message = message.replaceText(TextReplacementConfig
                 .builder()
-                .match(Pattern.quote(onlinePlayer.name))
+                .match(pattern.pattern)
                 .replacement(buildText {
-                    variableValue(onlinePlayer.name)
+                    variableValue(name)
+                    decorate(TextDecoration.BOLD)
                 })
                 .build())
         }
 
         return message
     }
+
 }

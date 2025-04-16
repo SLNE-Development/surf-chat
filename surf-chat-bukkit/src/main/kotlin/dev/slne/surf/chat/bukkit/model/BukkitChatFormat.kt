@@ -185,7 +185,7 @@ class BukkitChatFormat: ChatFormatModel {
             if (!pattern.containsMatchIn(message.toPlainText())) continue
 
             onlinePlayer.playSound(sound {
-                type(Sound.AMBIENT_CAVE)
+                type(Sound.BLOCK_NOTE_BLOCK_PLING)
                 source(net.kyori.adventure.sound.Sound.Source.PLAYER)
                 volume(1f)
                 pitch(1f)

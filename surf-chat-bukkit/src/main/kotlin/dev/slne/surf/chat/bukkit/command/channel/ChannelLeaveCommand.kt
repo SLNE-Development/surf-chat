@@ -26,10 +26,9 @@ class ChannelLeaveCommand(commandName: String) : CommandAPICommand(commandName) 
                     return@launch
                 }
 
-                channel.leave(user)
-
                 if(channel.isOwner(user)) {
                     val mayBeNextOwner = channel.getMembers()
+                        .filter { it.uuid != user.uuid }
                         .sortedWith(compareBy(
                             { if (channel.isModerator(it)) 0 else 1 },
                             { channel.members[it] }
@@ -40,7 +39,10 @@ class ChannelLeaveCommand(commandName: String) : CommandAPICommand(commandName) 
                         channelService.deleteChannel(channel)
                     } else {
                         channel.transferOwnership(mayBeNextOwner)
+                        channel.leave(user)
                     }
+                } else {
+                    channel.leave(user)
                 }
 
                 user.sendText(buildText {

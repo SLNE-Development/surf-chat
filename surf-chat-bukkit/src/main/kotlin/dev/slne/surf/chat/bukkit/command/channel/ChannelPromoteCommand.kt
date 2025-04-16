@@ -37,6 +37,15 @@ class ChannelPromoteCommand(commandName: String) : CommandAPICommand(commandName
                     return@launch
                 }
 
+                if(channel.isModerator(targetUser)) {
+                    user.sendText(buildText {
+                        error("Der Spieler ")
+                        info(target.name ?: target.uniqueId.toString())
+                        error(" ist bereits Moderator.")
+                    })
+                    return@launch
+                }
+
                 channel.promote(targetUser)
 
                 user.sendText(buildText {

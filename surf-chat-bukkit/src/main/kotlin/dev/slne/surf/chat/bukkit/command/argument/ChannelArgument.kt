@@ -9,7 +9,7 @@ import dev.slne.surf.chat.core.service.channelService
 
 class ChannelArgument(nodeName: String): CustomArgument<ChannelModel, String>(StringArgument(nodeName), {
     info -> channelService.getChannel(info.input) ?: throw CustomArgumentException.fromMessageBuilder(
-            MessageBuilder("Unknown channel: ").appendArgInput()
+            MessageBuilder("Der Kanal ${info.input} existiert nicht oder ist nicht für dich zugänglich.")
         )
     }) {
     init {

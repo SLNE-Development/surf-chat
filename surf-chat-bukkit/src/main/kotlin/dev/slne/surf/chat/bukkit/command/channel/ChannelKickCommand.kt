@@ -39,6 +39,15 @@ class ChannelKickCommand(commandName: String) : CommandAPICommand(commandName) {
                     return@launch
                 }
 
+                if(channel.isModerator(targetUser) && channel.isModerator(user)) {
+                    user.sendText(buildText {
+                        error("Du kannst keine Spieler ")
+                        info("mit Moderator-Rechten")
+                        error(" kicken.")
+                    })
+                    return@launch
+                }
+
                 channel.kick(targetUser)
                 user.sendText(buildText {
                     primary("Du hast ")

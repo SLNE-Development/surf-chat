@@ -23,6 +23,7 @@ class ChannelCreateCommand(commandName: String) : CommandAPICommand(commandName)
                     user.sendText(buildText {
                         error("Du bist bereits in einem Nachrichtenkanal.")
                     })
+                    return@launch
                 }
 
                 if(channelService.getChannel(name) != null) {

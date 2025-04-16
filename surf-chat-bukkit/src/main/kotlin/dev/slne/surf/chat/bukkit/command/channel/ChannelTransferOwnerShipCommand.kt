@@ -17,7 +17,7 @@ import org.bukkit.OfflinePlayer
 class ChannelTransferOwnerShipCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withArguments(ChannelMembersArgument("member"))
-        stringArgument("confirm")
+        stringArgument("confirm", optional = true)
         playerExecutor { player, args ->
             val channel: ChannelModel? = channelService.getChannel(player)
             val target = args.getUnchecked<OfflinePlayer>("member") ?: return@playerExecutor
@@ -54,7 +54,7 @@ class ChannelTransferOwnerShipCommand(commandName: String) : CommandAPICommand(c
                     user.sendText(buildText {
                         primary("Bitte bestätige die Übertragung des Besitzes des Nachrichtenkanals an ")
                         info(targetUser.getName())
-                        primary(".")
+                        primary(". ")
                         append(components.getTransferConfirmComponent(targetUser.getName()))
                     })
                     return@launch

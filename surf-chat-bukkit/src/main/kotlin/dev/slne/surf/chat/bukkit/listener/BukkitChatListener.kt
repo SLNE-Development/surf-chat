@@ -38,11 +38,13 @@ class BukkitChatListener(): Listener {
             true
         )
 
-        val cleanedMessage = message.replaceText(TextReplacementConfig
-            .builder()
-            .match(Pattern.compile("@(?:all|a|here|everyone)\\b\n"))
-            .replacement(Component.empty())
-            .build())
+        val cleanedMessage = message.replaceText(
+            TextReplacementConfig.builder()
+                .match(Pattern.compile("^@(all|a|here|everyone)\\b\\s*", Pattern.CASE_INSENSITIVE))
+                .replacement(Component.empty())
+                .build()
+        )
+
 
         Bukkit.getOnlinePlayers().forEach {
             historyService.logCaching(it.uniqueId, LoggedMessage(player.name, "Unknown", formattedMessage), messageID)

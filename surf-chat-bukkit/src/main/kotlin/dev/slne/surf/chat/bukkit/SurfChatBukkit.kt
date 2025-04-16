@@ -45,6 +45,7 @@ class SurfChatBukkit(): SuspendingJavaPlugin() {
         PrivateMessageCommand("msg").register()
         ReplyCommand("reply").register()
         TogglePmCommand("togglepm").register()
+        ToggleSoundCommand("togglesound").register()
         TeamChatCommand("teamchat").register()
         BlackListCommand("blacklist").register()
 

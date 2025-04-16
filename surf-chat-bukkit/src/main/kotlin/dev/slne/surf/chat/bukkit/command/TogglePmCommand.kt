@@ -11,7 +11,7 @@ import net.kyori.adventure.text.format.TextDecoration
 
 class TogglePmCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
-        withPermission("surf.chat.command.toggle")
+        withPermission("surf.chat.command.toggle.pm")
         playerExecutor { player, _ ->
             plugin.launch {
                 val user = databaseService.getUser(player.uniqueId)

@@ -54,7 +54,7 @@ class ChannelTransferOwnerShipCommand(commandName: String) : CommandAPICommand(c
                     user.sendText(buildText {
                         primary("Bitte bestätige die Übertragung des Besitzes des Nachrichtenkanals an ")
                         info(targetUser.getName())
-                        primary(".")
+                        primary(". ")
                         append(components.getTransferConfirmComponent(targetUser.getName()))
                     })
                     return@launch

@@ -10,3 +10,7 @@ chat-message-of-the-day:
     - " "
     - " "
     - "<dark_gray>*--------------------------------------------------*"
+
+spam-protection:
+  max-messages: 5
+  in-seconds: 1

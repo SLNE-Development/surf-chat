@@ -9,15 +9,17 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
 class ChannelMembersArgument(nodeName: String) : CustomArgument<Player, String>(StringArgument(nodeName), { info ->
-            val player = Bukkit.getPlayer(info.input()) ?: throw CustomArgumentException.fromMessageBuilder(MessageBuilder("Der Spieler ${info.input} wurde nicht gefunden."))
-            val channel = channelService.getChannel(player) ?: throw CustomArgumentException.fromMessageBuilder(MessageBuilder("Der Spieler ist in keinem Kanal."))
+    val target = Bukkit.getPlayer(info.input()) ?: throw CustomArgumentException.fromMessageBuilder(MessageBuilder("Der Spieler ${info.input} wurde nicht gefunden."))
+    val player = info.sender as? Player ?: throw CustomArgumentException.fromMessageBuilder(MessageBuilder("Dieser Befehl kann nur von einem Spieler ausgeführt werden."))
 
-            if (!channel.isMember(player)) {
-                throw CustomArgumentException.fromMessageBuilder(MessageBuilder("Der Spieler ${player.name} ist kein Mitglied in deinem Nachrichtenkanal."))
-            }
+    val channel = channelService.getChannel(player) ?: throw CustomArgumentException.fromMessageBuilder(MessageBuilder("Du bist in keinem Kanal."))
 
-            player
-        }) {
+    if (!channel.isMember(target)) {
+        throw CustomArgumentException.fromMessageBuilder(MessageBuilder("Der Spieler ${target.name} ist kein Mitglied in deinem Nachrichtenkanal."))
+    }
+
+    target
+}) {
     init {
         this.replaceSuggestions(ArgumentSuggestions.stringCollection { info ->
             val channel = channelService.getChannel(info.sender) ?: return@stringCollection emptyObjectSet()

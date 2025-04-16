@@ -88,6 +88,7 @@ class BukkitChannelService(): ChannelService, Fallback {
 
             if(channel.isOwner(user)) {
                 val mayBeNextOwner = channel.getMembers()
+                    .filter { it.uuid != user.uuid }
                     .sortedWith(compareBy(
                         { if (channel.isModerator(it)) 0 else 1 },
                         { channel.members[it] }
@@ -98,11 +99,11 @@ class BukkitChannelService(): ChannelService, Fallback {
                     channelService.deleteChannel(channel)
                 } else {
                     channel.transferOwnership(mayBeNextOwner)
+                    channel.leave(user)
                 }
-                return@launch
+            } else {
+                channel.leave(user)
             }
-
-            channel.leave(user)
         }
     }
 }

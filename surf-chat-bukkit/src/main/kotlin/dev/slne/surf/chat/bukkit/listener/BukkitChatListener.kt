@@ -6,16 +6,22 @@ import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.api.util.history.LoggedMessage
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.sendText
+import dev.slne.surf.chat.bukkit.util.toPlainText
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.historyService
 import io.papermc.paper.event.player.AsyncChatEvent
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.TextReplacementConfig
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import java.util.UUID
+import java.util.regex.Pattern
 
 class BukkitChatListener(): Listener {
+    private val pattern = Regex("^@(all|a|here|everyone)\\b\\s*", RegexOption.IGNORE_CASE)
+
     @EventHandler
     fun onAsyncChat(event: AsyncChatEvent) {
         val player = event.player
@@ -32,11 +38,19 @@ class BukkitChatListener(): Listener {
             true
         )
 
+        val cleanedMessage = message.replaceText(TextReplacementConfig
+            .builder()
+            .match(Pattern.compile("@(?:all|a|here|everyone)\\b\n"))
+            .replacement(Component.empty())
+            .build())
+
+        Bukkit.getOnlinePlayers().forEach {
+            historyService.logCaching(it.uniqueId, LoggedMessage(player.name, "Unknown", formattedMessage), messageID)
+        }
+
         val channel = channelService.getChannel(player)
 
-        if(channel != null) {
-            event.isCancelled = true
-
+        if (channel != null && !message.toPlainText().contains(pattern)) {
             channel.getMembers().forEach {
                 it.sendText(
                     plugin.chatFormat.formatMessage(
@@ -51,23 +65,23 @@ class BukkitChatListener(): Listener {
                 )
             }
 
+            plugin.launch {
+                surfChatApi.logMessage(player.uniqueId, ChatMessageType.CHANNEL, message, messageID)
+            }
+
             return
         }
 
-        Bukkit.getOnlinePlayers().forEach {
-            historyService.logCaching(it.uniqueId, LoggedMessage(player.name, "Unknown", formattedMessage), messageID)
-        }
-
         plugin.launch {
-            surfChatApi.logMessage(player.uniqueId, ChatMessageType.GLOBAL, message, messageID)
+            surfChatApi.logMessage(player.uniqueId, ChatMessageType.GLOBAL, cleanedMessage, messageID)
         }
 
         var formatted = false
 
-        plugin.messageValidator.parse(message, ChatMessageType.GLOBAL, player) {
+        plugin.messageValidator.parse(cleanedMessage, ChatMessageType.GLOBAL, player) {
             event.renderer { _, _, _, viewer ->
                 plugin.chatFormat.formatMessage (
-                    message,
+                    cleanedMessage,
                     player,
                     if(viewer is Player) viewer else player,
                     ChatMessageType.GLOBAL,

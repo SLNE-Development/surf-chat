@@ -5,6 +5,8 @@ import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.api.util.history.LoggedMessage
 import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.bukkit.util.sendText
+import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.historyService
 import io.papermc.paper.event.player.AsyncChatEvent
 import org.bukkit.Bukkit
@@ -29,6 +31,28 @@ class BukkitChatListener(): Listener {
             messageID,
             true
         )
+
+        val channel = channelService.getChannel(player)
+
+        if(channel != null) {
+            event.isCancelled = true
+
+            channel.getMembers().forEach {
+                it.sendText(
+                    plugin.chatFormat.formatMessage(
+                        message,
+                        player,
+                        player,
+                        ChatMessageType.CHANNEL,
+                        channel.name,
+                        messageID,
+                        true
+                    )
+                )
+            }
+
+            return
+        }
 
         Bukkit.getOnlinePlayers().forEach {
             historyService.logCaching(it.uniqueId, LoggedMessage(player.name, "Unknown", formattedMessage), messageID)

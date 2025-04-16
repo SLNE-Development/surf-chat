@@ -63,14 +63,19 @@ class BukkitChannelService(): ChannelService, Fallback {
     }
 
     override fun move(player: Player, channel: ChannelModel) {
-        val currentChannel = channelService.getChannel(player) ?: return
-
-        if (currentChannel == channel) {
-            return
-        }
+        val currentChannel = channelService.getChannel(player)
 
         plugin.launch {
-            currentChannel.leave(player.toChatUser())
+            val user = player.toChatUser()
+
+            if(currentChannel != null)  {
+                if (currentChannel == channel) {
+                    return@launch
+                }
+
+                currentChannel.leave(user)
+            }
+
             channel.join(player.toChatUser())
         }
     }

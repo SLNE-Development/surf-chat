@@ -2,11 +2,11 @@ package dev.slne.surf.chat.bukkit.service
 
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.type.MessageValidationResult
+import dev.slne.surf.chat.bukkit.util.toPlainText
 import dev.slne.surf.chat.core.service.FilterService
 import dev.slne.surf.chat.core.service.blacklistService
 import dev.slne.surf.surfapi.core.api.util.*
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.kyori.adventure.util.Services.Fallback
 import org.bukkit.entity.Player
 import java.util.*
@@ -16,7 +16,17 @@ private const val MESSAGE_LIMIT = 5
 
 @AutoService(FilterService::class)
 class BukkitFilterService(): FilterService, Fallback {
+    private val allowedDomains = mutableObjectSetOf<String>()
+    private val rateLimit = mutableObject2LongMapOf<UUID>().apply { defaultReturnValue(0) }.synchronize()
+    private val messageCount = mutableObject2IntMapOf<UUID>().apply { defaultReturnValue(0) }.synchronize()
+    private val validCharactersRegex = "^[a-zA-Z0-9/.:_,()%&=?!<>|#^\"²³+*~\\-äöü@\\[\\] ]*$".toRegex()
+    private val urlRegex = "((http|https|ftp)://)?([\\w-]+\\.)+[\\w-]+(/[\\w- ./?%&=]*)?".toRegex(RegexOption.IGNORE_CASE)
+
     override fun find(message: Component, sender: Player): MessageValidationResult {
+        if(sender.hasPermission("surf.chat.filter.bypass")) {
+            return MessageValidationResult.SUCCESS
+        }
+
 
         if(blacklistService.hasBlackListed(message)) {
             return MessageValidationResult.FAILED_BLACKLIST
@@ -37,25 +47,15 @@ class BukkitFilterService(): FilterService, Fallback {
         return MessageValidationResult.SUCCESS
     }
 
-    private val allowedDomains = mutableObjectSetOf<String>()
-
-    private val rateLimit = mutableObject2LongMapOf<UUID>().apply { defaultReturnValue(0) }.synchronize()
-    private val messageCount = mutableObject2IntMapOf<UUID>().apply { defaultReturnValue(0) }.synchronize()
-
-    private val validCharactersRegex = "^[a-zA-Z0-9/.:_,()%&=?!<>|#^\"²³+*~\\-äöü@\\[\\] ]*$".toRegex()
-    private val urlRegex = "((http|https|ftp)://)?([\\w-]+\\.)+[\\w-]+(/[\\w- ./?%&=]*)?".toRegex(RegexOption.IGNORE_CASE)
-
     private fun containsLink(message: Component): Boolean {
-        val plainMessage = PlainTextComponentSerializer.plainText().serialize(message)
-
-        return urlRegex.findAll(plainMessage).any { result ->
+        return urlRegex.findAll(message.toPlainText()).any { result ->
             val domain = result.groupValues.getOrNull(3) ?: return@any false
             allowedDomains.none { domain.endsWith(it) }
         }
     }
 
     private fun isValidInput(input: Component): Boolean {
-        return validCharactersRegex.matches(PlainTextComponentSerializer.plainText().serialize(input))
+        return validCharactersRegex.matches(input.toPlainText())
     }
 
     private fun isSpamming(uuid: UUID): Boolean {

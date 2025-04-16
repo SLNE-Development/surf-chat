@@ -8,7 +8,6 @@ import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Bukkit
-import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import java.util.*
 
@@ -38,6 +37,6 @@ fun ChatUserModel.toPlayer(): Player? {
     return Bukkit.getPlayer(this.uuid)
 }
 
-fun Component.plainText(): String {
+fun Component.toPlainText(): String {
     return PlainTextComponentSerializer.plainText().serialize(this)
 }

@@ -6,7 +6,7 @@ import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.bukkit.extension.LuckPermsExtension
 import dev.slne.surf.chat.bukkit.util.components
 import dev.slne.surf.chat.bukkit.util.debug
-import dev.slne.surf.chat.bukkit.util.plainText
+import dev.slne.surf.chat.bukkit.util.toPlainText
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import net.kyori.adventure.text.Component
@@ -160,7 +160,7 @@ class BukkitChatFormat: ChatFormatModel {
             variableValue("${stack.amount}x ")
         }
 
-        append(variableValue(stack.displayName().plainText()))
+        append(variableValue(stack.displayName().toPlainText()))
         hoverEvent(stack.asHoverEvent())
     }
 

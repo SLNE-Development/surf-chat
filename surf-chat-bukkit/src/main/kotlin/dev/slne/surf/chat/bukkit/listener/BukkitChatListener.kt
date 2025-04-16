@@ -69,6 +69,8 @@ class BukkitChatListener(): Listener {
                 surfChatApi.logMessage(player.uniqueId, ChatMessageType.CHANNEL, message, messageID)
             }
 
+            event.isCancelled = true
+
             return
         }
 

@@ -187,8 +187,8 @@ class BukkitChatFormat: ChatFormatModel {
             onlinePlayer.playSound(sound {
                 type(Sound.BLOCK_NOTE_BLOCK_PLING)
                 source(net.kyori.adventure.sound.Sound.Source.PLAYER)
-                volume(1f)
-                pitch(1f)
+                volume(0.25f)
+                pitch(2f)
             })
 
             message = message.replaceText(TextReplacementConfig

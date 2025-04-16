@@ -63,7 +63,7 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
 
                 if (history.isEmpty()) {
                     user.sendText(buildText {
-                        error("Keine passenden Chat-Daten gefunden.")
+                        error("Es wurden keine passenden Chat Daten gefunden. Bitte überprüfe deinen Filter (${parsed.toFlagString()})")
                     })
                     return@launch
                 }

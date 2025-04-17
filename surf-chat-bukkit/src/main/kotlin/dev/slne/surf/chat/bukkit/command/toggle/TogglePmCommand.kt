@@ -1,4 +1,4 @@
-package dev.slne.surf.chat.bukkit.command
+package dev.slne.surf.chat.bukkit.command.toggle
 
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
@@ -9,23 +9,26 @@ import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import net.kyori.adventure.text.format.TextDecoration
 
-class ToggleSoundCommand(commandName: String) : CommandAPICommand(commandName) {
+class TogglePmCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
-        withPermission("surf.chat.command.toggle.notify")
+        withPermission("surf.chat.command.toggle.pm")
         playerExecutor { player, _ ->
             plugin.launch {
                 val user = databaseService.getUser(player.uniqueId)
-                val likesSound = user.toggleSound()
+                val ignoring = user.togglePm()
 
-                if(likesSound) {
+                if(ignoring) {
                     user.sendText(buildText {
-                        primary("Du hörst jetzt ")
-                        success("Notify-Sounds. ")
+                        primary("Du ignorierst jetzt ")
+                        success("privaten Nachrichten. ")
+                        append {
+                            spacer("(Freunde können diese Sperre umgehen)").decorate(TextDecoration.ITALIC)
+                        }
                     })
                 } else {
                     user.sendText(buildText {
-                        primary("Du hörst jetzt ")
-                        error("keine Notify-Sounds mehr.")
+                        primary("Du ignorierst ")
+                        success("keine privaten Nachrichten mehr.")
                     })
                 }
             }

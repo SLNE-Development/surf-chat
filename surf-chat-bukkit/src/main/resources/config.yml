@@ -1,3 +1,9 @@
+cross-server-messages:
+  current-server: "lobby01"
+  forward-to:
+    - "lobby02"
+    - "lobby03"
+
 chat-message-of-the-day-status: false
 chat-message-of-the-day:
   lines:

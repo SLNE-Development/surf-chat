@@ -1,4 +1,5 @@
 cross-server-messages:
+  current-server: "lobby01"
   forward-to:
     - "lobby02"
     - "lobby03"

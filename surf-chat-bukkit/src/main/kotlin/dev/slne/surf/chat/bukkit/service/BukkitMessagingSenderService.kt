@@ -18,6 +18,7 @@ class BukkitMessagingSenderService (
     override var currentServer: String
 ): MessagingSenderService, Fallback {
     override fun loadServers() {
+        this.currentServer = plugin.config.getString("cross-server-messages.current-server") ?: "Unknown"
         this.forwardingServers = ObjectArraySet(plugin.config.getStringList("cross-server-messages.forward-to"))
     }
 

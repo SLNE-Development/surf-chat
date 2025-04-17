@@ -2,6 +2,7 @@ package dev.slne.surf.chat.bukkit
 
 import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
 import com.google.gson.Gson
+
 import dev.jorel.commandapi.CommandAPI
 
 import dev.slne.surf.chat.api.model.ChatFormatModel
@@ -19,6 +20,7 @@ import dev.slne.surf.chat.core.service.blacklistService
 import dev.slne.surf.chat.core.service.chatMotdService
 import dev.slne.surf.chat.core.service.filterService
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
+
 import it.unimi.dsi.fastutil.objects.ObjectSet
 
 import org.bukkit.Bukkit
@@ -45,6 +47,7 @@ class SurfChatBukkit(): SuspendingJavaPlugin() {
         PrivateMessageCommand("msg").register()
         ReplyCommand("reply").register()
         TogglePmCommand("togglepm").register()
+        ToggleSoundCommand("togglesound").register()
         TeamChatCommand("teamchat").register()
         BlackListCommand("blacklist").register()
 
@@ -71,6 +74,7 @@ class SurfChatBukkit(): SuspendingJavaPlugin() {
     override suspend fun onDisableAsync() {
         chatMotdService.saveMotd()
         filterService.saveMessageLimit()
+        databaseService.saveAll()
     }
 
     fun getTeamMembers(): ObjectSet<Player> = Bukkit.getOnlinePlayers().filter { it.hasPermission("surf.chat.command.teamchat") }.toObjectSet()

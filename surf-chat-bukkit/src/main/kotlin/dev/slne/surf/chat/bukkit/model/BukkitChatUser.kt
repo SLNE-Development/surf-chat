@@ -12,7 +12,8 @@ import java.util.*
 class BukkitChatUser (
     override val uuid: UUID,
     override val ignoreList: ObjectArraySet<UUID> = ObjectArraySet(),
-    override var pmToggled: Boolean = false
+    override var pmToggled: Boolean = false,
+    override var likesSound: Boolean = true
 ): ChatUserModel {
     override fun isIgnoring(target: UUID): Boolean {
         return ignoreList.contains(target)
@@ -34,6 +35,11 @@ class BukkitChatUser (
             ignoreList.add(target)
             return true
         }
+    }
+
+    override fun toggleSound(): Boolean {
+        likesSound = !likesSound
+        return likesSound
     }
 
     override fun acceptInvite(channel: ChannelModel) {

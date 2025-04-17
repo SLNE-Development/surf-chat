@@ -24,6 +24,8 @@ interface DatabaseService {
 
     suspend fun insertHistoryEntry(user: UUID, entry: HistoryEntryModel)
 
+    suspend fun saveAll()
+
     fun getName(uuid: UUID): String
 
     companion object {

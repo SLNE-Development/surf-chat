@@ -54,7 +54,8 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
     object Users : Table() {
         val uuid = varchar("uuid", 36).transform({ UUID.fromString(it) }, { it.toString() })
         val ignoreList = text("ignoreList").transform({ gson.fromJson(it, ObjectArraySet<UUID>().javaClass) }, { gson.toJson(it) })
-        val pmToggled = bool("pmToggled")
+        val pmToggled = bool("pmToggled").default(false)
+        val likesSound = bool("likesSound").default(true)
 
         override val primaryKey = PrimaryKey(uuid)
     }
@@ -104,7 +105,8 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
                     BukkitChatUser(
                         uuid = it[Users.uuid],
                         ignoreList = it[Users.ignoreList],
-                        pmToggled = it[Users.pmToggled]
+                        pmToggled = it[Users.pmToggled],
+                        likesSound = it[Users.likesSound]
                     )
                 }
             }
@@ -118,6 +120,7 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
                     it[uuid] = user.uuid
                     it[ignoreList] = user.ignoreList
                     it[pmToggled] = user.pmToggled
+                    it[likesSound] = user.likesSound
                 }
             }
         }
@@ -262,6 +265,12 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
                     it[deletedBy] = entry.deletedBy
                 }
             }
+        }
+    }
+
+    override suspend fun saveAll() {
+        dataCache.asMap().forEach {
+            saveUser(it.value)
         }
     }
 

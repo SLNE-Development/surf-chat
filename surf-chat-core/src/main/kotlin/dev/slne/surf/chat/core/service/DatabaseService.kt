@@ -24,7 +24,7 @@ interface DatabaseService {
 
     suspend fun insertHistoryEntry(user: UUID, entry: HistoryEntryModel)
 
-    fun saveAll()
+    suspend fun saveAll()
 
     fun getName(uuid: UUID): String
 

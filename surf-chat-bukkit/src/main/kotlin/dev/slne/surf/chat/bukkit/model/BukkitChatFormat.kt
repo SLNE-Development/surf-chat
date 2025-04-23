@@ -6,6 +6,7 @@ import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.bukkit.extension.LuckPermsExtension
 import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.bukkit.serverPlayers
 import dev.slne.surf.chat.bukkit.util.components
 import dev.slne.surf.chat.bukkit.util.toPlainText
 import dev.slne.surf.chat.core.service.databaseService
@@ -173,7 +174,7 @@ class BukkitChatFormat: ChatFormatModel {
     private fun highlightPlayers(rawMessage: Component): Component {
         var message = rawMessage
 
-        for (onlinePlayer in Bukkit.getOnlinePlayers()) {
+        for (onlinePlayer in serverPlayers) {
             val name = onlinePlayer.name
             val pattern = Regex("(?<!\\w)@?$name(?!\\w)")
 

@@ -80,8 +80,9 @@ class SurfChatBukkit(): SuspendingJavaPlugin() {
         databaseService.saveAll()
     }
 
-    fun getTeamMembers(): ObjectSet<Player> = Bukkit.getOnlinePlayers().filter { it.hasPermission("surf.chat.command.teamchat") }.toObjectSet()
+    fun getTeamMembers(): ObjectSet<Player> = serverPlayers.filter { it.hasPermission("surf.chat.command.teamchat") }.toObjectSet()
 }
 
+val serverPlayers = Bukkit.getOnlinePlayers()
 val plugin = JavaPlugin.getPlugin(SurfChatBukkit::class.java)
 val gson = Gson()

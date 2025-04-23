@@ -32,14 +32,13 @@ class BukkitMessagingSenderService (
     ) {
         val out = ByteStreams.newDataOutput()
 
-        out.writeUTF(currentServer)
-        out.writeUTF(gson.toJson(forwardingServers))
         out.writeUTF(player)
         out.writeUTF(target)
         out.writeUTF(gson.toJson(message))
         out.writeUTF(gson.toJson(type))
         out.writeLong(messageID)
         out.writeUTF(channel)
+        out.writeUTF(gson.toJson(forwardingServers))
 
         plugin.server.sendPluginMessage(plugin, SurfChatApi.messagingChannelIdentifier, out.toByteArray())
     }

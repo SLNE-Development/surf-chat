@@ -12,6 +12,7 @@ import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.bukkit.serverPlayers
 import dev.slne.surf.chat.bukkit.util.sendRawText
 import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.bukkit.util.toDisplayUser
@@ -28,7 +29,7 @@ import java.util.*
 class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withArguments(PlayerArgument("player").replaceSuggestions(ArgumentSuggestions.stringCollection {
-            Bukkit.getOnlinePlayers().map { it.name }
+            serverPlayers.map { it.name }
         }))
         greedyStringArgument("message")
 

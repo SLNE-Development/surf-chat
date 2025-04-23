@@ -25,7 +25,7 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
         withPermission("surf.chat.command.lookup")
 
         multiOfflinePlayerArgument("target")
-        argument(GreedyStringArgument("filters").replaceSuggestions (ArgumentSuggestions.strings("--type", "--range", "--message", "--deleted", "--deletedBy", "--page"))
+        argument(GreedyStringArgument("filters").replaceSuggestions (ArgumentSuggestions.strings("--type", "--range", "--message", "--deleted", "--deletedBy", "--page", "--server"))
             .setOptional(true)
         )
 

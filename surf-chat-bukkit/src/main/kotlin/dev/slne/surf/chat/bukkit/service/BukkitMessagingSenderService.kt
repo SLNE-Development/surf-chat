@@ -41,4 +41,10 @@ class BukkitMessagingSenderService: MessagingSenderService, Fallback {
 
         plugin.server.sendPluginMessage(plugin, SurfChatApi.messagingChannelIdentifier, out.toByteArray())
     }
+
+    companion object {
+        fun getCurrentServer(): String {
+            return (MessagingSenderService.INSTANCE as BukkitMessagingSenderService).currentServer
+        }
+    }
 }

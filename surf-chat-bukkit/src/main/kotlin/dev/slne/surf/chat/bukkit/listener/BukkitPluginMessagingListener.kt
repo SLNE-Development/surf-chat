@@ -18,7 +18,6 @@ class BukkitPluginMessagingListener(): PluginMessageListener {
 
         val input = ByteStreams.newDataInput(message)
 
-        val server = input.readUTF()
         val playerName = input.readUTF()
         val targetName = input.readUTF()
         val content = gson.fromJson(input.readUTF(), Component::class.java)

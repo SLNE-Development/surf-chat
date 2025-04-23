@@ -40,3 +40,8 @@ fun ChatUserModel.toPlayer(): Player? {
 fun Component.toPlainText(): String {
     return PlainTextComponentSerializer.plainText().serialize(this)
 }
+
+fun UUID.getUsername(): String {
+    val player = Bukkit.getPlayer(this)
+    return player?.name ?: "Unknown"
+}

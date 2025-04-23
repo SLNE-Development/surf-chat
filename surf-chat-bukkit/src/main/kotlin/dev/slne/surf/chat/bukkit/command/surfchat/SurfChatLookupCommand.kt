@@ -11,6 +11,7 @@ import dev.slne.surf.chat.bukkit.util.LookupFlags
 import dev.slne.surf.chat.bukkit.util.MultiPlayerSelectorData
 import dev.slne.surf.chat.bukkit.util.PageableMessageBuilder
 import dev.slne.surf.chat.bukkit.util.formatTime
+import dev.slne.surf.chat.bukkit.util.getUsername
 import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.Colors
@@ -87,7 +88,7 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
 
                             hoverEvent(HoverEvent.showText(buildText {
                                 primary("von: ")
-                                info(it.uuid.toString())
+                                info(it.uuid.getUsername())
                                 appendNewline()
                                 primary("Typ: ")
                                 info(it.type)

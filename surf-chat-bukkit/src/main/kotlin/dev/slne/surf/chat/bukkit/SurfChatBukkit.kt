@@ -78,6 +78,7 @@ class SurfChatBukkit(): SuspendingJavaPlugin() {
         chatMotdService.saveMotd()
         filterService.saveMessageLimit()
         databaseService.saveAll()
+        chatFormat.loadServer()
     }
 
     fun getTeamMembers(): ObjectSet<Player> = serverPlayers.filter { it.hasPermission("surf.chat.command.teamchat") }.toObjectSet()

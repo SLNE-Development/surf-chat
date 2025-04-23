@@ -10,7 +10,7 @@ surfPaperPluginApi {
     authors.add("SLNE Development")
 
     serverDependencies {
-        registerSoft("LuckPerms")
+        registerRequired("LuckPerms")
     }
 
     generateLibraryLoader(false)

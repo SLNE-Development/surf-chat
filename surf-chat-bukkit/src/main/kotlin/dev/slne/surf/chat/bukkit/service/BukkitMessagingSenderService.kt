@@ -4,8 +4,8 @@ import com.google.auto.service.AutoService
 import com.google.common.io.ByteStreams
 import dev.slne.surf.chat.api.SurfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
-import dev.slne.surf.chat.bukkit.gson
 import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.bukkit.util.gson
 import dev.slne.surf.chat.core.service.messaging.MessagingSenderService
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import it.unimi.dsi.fastutil.objects.ObjectSet

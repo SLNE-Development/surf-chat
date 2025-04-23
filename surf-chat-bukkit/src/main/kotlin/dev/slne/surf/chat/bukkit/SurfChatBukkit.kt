@@ -1,7 +1,6 @@
 package dev.slne.surf.chat.bukkit
 
 import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
-import com.google.gson.Gson
 
 import dev.jorel.commandapi.CommandAPI
 

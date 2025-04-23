@@ -6,9 +6,9 @@ import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.bukkit.extension.LuckPermsExtension
 import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.bukkit.pluginConfig
-import dev.slne.surf.chat.bukkit.serverPlayers
 import dev.slne.surf.chat.bukkit.util.components
+import dev.slne.surf.chat.bukkit.util.pluginConfig
+import dev.slne.surf.chat.bukkit.util.serverPlayers
 import dev.slne.surf.chat.bukkit.util.toPlainText
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.Colors
@@ -20,7 +20,6 @@ import net.kyori.adventure.text.TextReplacementConfig
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.MiniMessage
 
-import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player

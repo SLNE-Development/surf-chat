@@ -6,23 +6,19 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.PlayerArgument
 import dev.jorel.commandapi.kotlindsl.greedyStringArgument
-import dev.jorel.commandapi.kotlindsl.playerArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 
 import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.bukkit.serverPlayers
 import dev.slne.surf.chat.bukkit.util.sendRawText
 import dev.slne.surf.chat.bukkit.util.sendText
-import dev.slne.surf.chat.bukkit.util.toDisplayUser
+import dev.slne.surf.chat.bukkit.util.serverPlayers
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.chat.core.service.replyService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
-import it.unimi.dsi.fastutil.objects.ObjectArraySet
 
 import net.kyori.adventure.text.Component
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
 

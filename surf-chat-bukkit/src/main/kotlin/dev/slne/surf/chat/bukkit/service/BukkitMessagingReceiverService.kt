@@ -1,15 +1,13 @@
 package dev.slne.surf.chat.bukkit.service
 
-import com.github.shynixn.mccoroutine.folia.launch
 import com.google.auto.service.AutoService
 import com.google.common.io.ByteStreams
 import dev.slne.surf.chat.api.SurfChatApi
-import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.api.util.history.LoggedMessage
-import dev.slne.surf.chat.bukkit.gson
 import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.bukkit.serverPlayers
+import dev.slne.surf.chat.bukkit.util.gson
+import dev.slne.surf.chat.bukkit.util.serverPlayers
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.chat.core.service.messaging.MessagingReceiverService
 import net.kyori.adventure.text.Component
@@ -19,7 +17,6 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.plugin.messaging.PluginMessageListener
 import java.util.UUID
-import kotlin.toString
 
 @AutoService(MessagingReceiverService::class)
 class BukkitMessagingReceiverService : MessagingReceiverService, PluginMessageListener, Fallback {

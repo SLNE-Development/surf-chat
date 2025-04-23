@@ -5,15 +5,14 @@ import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.api.util.history.LoggedMessage
 import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.bukkit.serverPlayers
 import dev.slne.surf.chat.bukkit.util.sendText
+import dev.slne.surf.chat.bukkit.util.serverPlayers
 import dev.slne.surf.chat.bukkit.util.toPlainText
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.historyService
 import io.papermc.paper.event.player.AsyncChatEvent
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextReplacementConfig
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener

@@ -2,8 +2,8 @@ package dev.slne.surf.chat.bukkit.command.argument
 
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.arguments.*
-import dev.slne.surf.chat.bukkit.serverPlayers
 import dev.slne.surf.chat.bukkit.util.MultiPlayerSelectorData
+import dev.slne.surf.chat.bukkit.util.serverPlayers
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import org.bukkit.Bukkit
 

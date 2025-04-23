@@ -8,15 +8,14 @@ import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.gson
 import dev.slne.surf.chat.core.service.messaging.MessagingSenderService
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
-import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.util.Services.Fallback
 
 @AutoService(MessagingSenderService::class)
-class BukkitMessagingSenderService (
-    override var forwardingServers: ObjectSet<String>,
-    override var currentServer: String
-): MessagingSenderService, Fallback {
+class BukkitMessagingSenderService: MessagingSenderService, Fallback {
+    private var currentServer: String = "Unknown"
+    private var forwardingServers = ObjectArraySet<String>()
+
     override fun loadServers() {
         this.currentServer = plugin.config.getString("cross-server-messages.current-server") ?: "Unknown"
         this.forwardingServers = ObjectArraySet(plugin.config.getStringList("cross-server-messages.forward-to"))

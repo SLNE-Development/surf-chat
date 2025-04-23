@@ -7,9 +7,6 @@ import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.text.Component
 
 interface MessagingSenderService {
-    var currentServer: String
-    var forwardingServers: ObjectSet<String>
-
     fun loadServers()
 
     fun sendData(player: String, target: String, message: Component, type: ChatMessageType, messageID: Long, channel: String)

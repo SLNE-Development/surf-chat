@@ -6,7 +6,7 @@ import net.kyori.adventure.text.Component
 import java.util.UUID
 
 interface MessagingReceiverService {
-    fun handleReceive(server: String, player: String, target: String, message: Component, type: ChatMessageType, messageID: UUID, channel: String,)
+    fun handleReceive(player: String, target: String, message: Component, type: ChatMessageType, messageID: UUID, channel: String,)
 
     companion object {
         val INSTANCE = requiredService<MessagingReceiverService>()

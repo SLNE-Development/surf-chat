@@ -42,11 +42,10 @@ class BukkitMessagingReceiverService : MessagingReceiverService, PluginMessageLi
         val chatMessage = GsonComponentSerializer.gson().deserialize(messageJson)
         val messageType = gson.fromJson(typeJson, ChatMessageType::class.java)
 
-        handleReceive(sourceServer, sender, target, chatMessage, messageType, messageId, chatChannel)
+        handleReceive(sender, target, chatMessage, messageType, messageId, chatChannel)
     }
 
     override fun handleReceive (
-        server: String,
         player: String,
         target: String,
         message: Component,

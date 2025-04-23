@@ -79,15 +79,16 @@ class SurfChatBukkit(): SuspendingJavaPlugin() {
     }
 
     override fun onDisable() {
-        val ms = measureTimeMillis {
-            runBlocking {
-                chatMotdService.saveMotd()
-                filterService.saveMessageLimit()
-                databaseService.saveAll()
-            }
+        // measureTimeMillis throws java.lang.NoClassDefFoundError: dev/slne/surf/chat/bukkit/SurfChatBukkit$onDisable$ms$1$1
+        val start = System.currentTimeMillis()
+
+        runBlocking {
+            chatMotdService.saveMotd()
+            filterService.saveMessageLimit()
+            databaseService.saveAll()
         }
 
-        logger.info { "Successfully disabled in ${ms}ms!" }
+        logger.info { "Successfully disabled in ${System.currentTimeMillis() - start}ms!" }
     }
 
     fun getTeamMembers(): ObjectSet<Player> = serverPlayers.filter { it.hasPermission("surf.chat.command.teamchat") }.toObjectSet()

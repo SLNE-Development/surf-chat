@@ -1,10 +1,10 @@
 package dev.slne.surf.chat.bukkit.model
 
-import dev.slne.surf.chat.api.model.BlacklistWordModel
+import dev.slne.surf.chat.api.model.BlacklistWordEntry
 
-data class BukkitBlacklistWord (
+data class BukkitBlacklistEntry (
     override val word: String,
     override val reason: String,
     override val addedAt: Long,
     override val addedBy: String
-): BlacklistWordModel
+): BlacklistWordEntry

@@ -9,10 +9,10 @@ import com.sksamuel.aedile.core.asLoadingCache
 import com.sksamuel.aedile.core.expireAfterWrite
 import com.sksamuel.aedile.core.withRemovalListener
 
-import dev.slne.surf.chat.api.model.BlacklistWordModel
+import dev.slne.surf.chat.api.model.BlacklistWordEntry
 import dev.slne.surf.chat.api.model.ChatUserModel
 import dev.slne.surf.chat.api.model.HistoryEntryModel
-import dev.slne.surf.chat.bukkit.model.BukkitBlacklistWord
+import dev.slne.surf.chat.bukkit.model.BukkitBlacklistEntry
 import dev.slne.surf.chat.bukkit.model.BukkitChatUser
 import dev.slne.surf.chat.bukkit.model.BukkitHistoryEntry
 import dev.slne.surf.chat.bukkit.plugin
@@ -212,13 +212,13 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
         }
     }
 
-    override suspend fun loadBlacklist(): ObjectSet<BlacklistWordModel> {
+    override suspend fun loadBlacklist(): ObjectSet<BlacklistWordEntry> {
         return withContext(Dispatchers.IO) {
             newSuspendedTransaction {
                 val selected = BlackList.selectAll()
 
                 return@newSuspendedTransaction selected.map {
-                    BukkitBlacklistWord (
+                    BukkitBlacklistEntry (
                         word = it[BlackList.word],
                         reason = it[BlackList.reason],
                         addedAt = it[BlackList.addedAt],
@@ -230,7 +230,7 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
         }
     }
 
-    override suspend fun addToBlacklist(entry: BlacklistWordModel): Boolean {
+    override suspend fun addToBlacklist(entry: BlacklistWordEntry): Boolean {
         return withContext(Dispatchers.IO) {
             newSuspendedTransaction {
                 if(BlackList.selectAll().where (BlackList.word eq entry.word).empty()) {

@@ -1,7 +1,7 @@
 package dev.slne.surf.chat.bukkit.service
 
 import com.google.auto.service.AutoService
-import dev.slne.surf.chat.api.model.BlacklistWordModel
+import dev.slne.surf.chat.api.model.BlacklistWordEntry
 import dev.slne.surf.chat.core.service.BlacklistService
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
@@ -31,7 +31,7 @@ class BukkitBlacklistService(): BlacklistService, Fallback {
         return false
     }
 
-    override suspend fun addToBlacklist(word: BlacklistWordModel): Boolean {
+    override suspend fun addToBlacklist(word: BlacklistWordEntry): Boolean {
         return databaseService.addToBlacklist(word)
     }
 

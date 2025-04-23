@@ -6,7 +6,7 @@ import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.greedyStringArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.textArgument
-import dev.slne.surf.chat.bukkit.model.BukkitBlacklistWord
+import dev.slne.surf.chat.bukkit.model.BukkitBlacklistEntry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.core.service.blacklistService
@@ -23,7 +23,7 @@ class BlacklistAddCommand(commandName: String): CommandAPICommand(commandName) {
 
             plugin.launch {
                 val user = databaseService.getUser(player.uniqueId)
-                val result = blacklistService.addToBlacklist(BukkitBlacklistWord(word, reason ?: "Kein Grund angegeben.", System.currentTimeMillis(), player.name))
+                val result = blacklistService.addToBlacklist(BukkitBlacklistEntry(word, reason ?: "Kein Grund angegeben.", System.currentTimeMillis(), player.name))
 
                 if(result) {
                     user.sendText(buildText {

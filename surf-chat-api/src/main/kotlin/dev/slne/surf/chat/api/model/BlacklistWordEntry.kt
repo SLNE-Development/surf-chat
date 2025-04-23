@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.api.model
 
-interface BlacklistWordModel {
+interface BlacklistWordEntry {
     val word: String
     val reason: String
 

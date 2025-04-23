@@ -30,10 +30,6 @@ import java.util.UUID
 class BukkitChatFormat: ChatFormatModel {
     private var currentServerNiceName: String = "Unknown"
 
-    init {
-        currentServerNiceName = pluginConfig.getString("cross-server-messages.current-server-name") ?: "Unknown"
-    }
-
     override fun formatMessage (
         rawMessage: Component,
         sender: Player,
@@ -166,6 +162,10 @@ class BukkitChatFormat: ChatFormatModel {
                 }
             }
         }
+    }
+
+    override fun loadServer() {
+        this.currentServerNiceName = pluginConfig.getString("cross-server-messages.current-server-name") ?: "Unknown"
     }
 
     private fun Component.parseItemPlaceholder(player: Player, warn: Boolean): Component {

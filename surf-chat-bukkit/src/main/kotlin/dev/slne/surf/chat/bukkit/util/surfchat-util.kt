@@ -14,7 +14,7 @@ val gson = Gson()
 val serverPlayers = Bukkit.getOnlinePlayers()
 
 val timeFormatter: DateTimeFormatter = DateTimeFormatter
-    .ofPattern("HH:mm:ss, dd.MM.yyyy", Locale.GERMANY)
+    .ofPattern("dd.MM.yyyy, HH:mm:ss", Locale.GERMANY)
     .withZone(ZoneId.of("Europe/Berlin"))
 
 fun formatTime(millis: Long): String {

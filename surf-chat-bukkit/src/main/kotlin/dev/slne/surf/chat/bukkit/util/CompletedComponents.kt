@@ -88,7 +88,7 @@ class CompletedComponents {
         variableKey("Gesendet am: ")
         variableValue(formatTime(time))
         appendNewline()
-        variableKey("Gesendet von: ")
+        variableKey("Gesendet auf: ")
         variableValue(server)
     }
 

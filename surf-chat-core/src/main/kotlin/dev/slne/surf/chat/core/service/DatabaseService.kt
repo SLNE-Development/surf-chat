@@ -16,7 +16,7 @@ interface DatabaseService {
     suspend fun saveUser(user: ChatUserModel)
     suspend fun handleDisconnect(user: UUID)
     suspend fun markMessageDeleted(deleter: String, messageID: UUID)
-    suspend fun loadHistory(uuid: UUID? = null, type: String? = null, rangeMillis: Long? = null, message: String? = null, deleted: Boolean? = null, deletedBy: String? = null): ObjectList<HistoryEntryModel>
+    suspend fun loadHistory(uuid: UUID? = null, type: String? = null, rangeMillis: Long? = null, message: String? = null, deleted: Boolean? = null, deletedBy: String? = null, server: String? = null): ObjectList<HistoryEntryModel>
 
     suspend fun loadBlacklist(): ObjectSet<BlacklistWordEntry>
     suspend fun addToBlacklist(entry: BlacklistWordEntry): Boolean

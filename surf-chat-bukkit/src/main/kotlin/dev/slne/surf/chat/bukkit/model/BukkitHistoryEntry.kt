@@ -10,5 +10,7 @@ class BukkitHistoryEntry (
     override val type: String,
     override val id: UUID,
     override val deleted: Boolean = false,
-    override val deletedBy: String = "Not Deleted."
+    override val deletedBy: String = "Not Deleted.",
+
+    override val server: String = "N/A"
 ): HistoryEntryModel

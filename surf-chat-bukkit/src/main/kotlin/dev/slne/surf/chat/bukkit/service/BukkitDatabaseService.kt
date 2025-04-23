@@ -78,6 +78,7 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
         val message = text("message")
         val deleted = bool("deleted").default(false)
         val deletedBy = varchar("deletedBy", 16)
+        val server = text("server")
 
         override val primaryKey = PrimaryKey(id)
     }
@@ -158,7 +159,8 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
         rangeMillis: Long?,
         message: String?,
         deleted: Boolean?,
-        deletedBy: String?
+        deletedBy: String?,
+        server: String?
     ): ObjectList<HistoryEntryModel> {
         return withContext(Dispatchers.IO) {
             newSuspendedTransaction {
@@ -190,6 +192,10 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
                     conditions += ChatHistory.deletedBy eq deletedBy
                 }
 
+                if(server != null) {
+                    conditions += ChatHistory.server eq server
+                }
+
                 val query = if (conditions.isNotEmpty()) {
                     ChatHistory.selectAll().where (conditions.reduce { acc, condition -> acc and condition })
                 } else {
@@ -205,7 +211,8 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
                         timestamp = it[ChatHistory.timeStamp],
                         message = it[ChatHistory.message],
                         deleted = it[ChatHistory.deleted],
-                        deletedBy = it[ChatHistory.deletedBy]
+                        deletedBy = it[ChatHistory.deletedBy],
+                        server = it[ChatHistory.server]
                     )
                 }.toObjectList()
             }
@@ -273,6 +280,7 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
                     it[message] = entry.message
                     it[deleted] = entry.deleted
                     it[deletedBy] = entry.deletedBy
+                    it[server] = entry.server
                 }
             }
         }

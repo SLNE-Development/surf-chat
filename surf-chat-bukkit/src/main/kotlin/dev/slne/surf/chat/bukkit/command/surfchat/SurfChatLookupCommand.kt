@@ -51,7 +51,8 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
                     rangeMillis = parsed.range,
                     message = parsed.message,
                     deleted = parsed.deleted,
-                    deletedBy = parsed.deletedBy
+                    deletedBy = parsed.deletedBy,
+                    server = parsed.server
                 ).sortedByDescending { it.timestamp }
 
                 if (history.isEmpty()) {
@@ -93,6 +94,9 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
                                 appendNewline()
                                 primary("Datum: ")
                                 info(formatTime(it.timestamp))
+                                appendNewline()
+                                primary("Server: ")
+                                info(it.server)
                                 appendNewline()
                                 darkSpacer("Klicke, um die Nachricht zu kopieren.")
                             }))

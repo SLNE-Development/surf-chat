@@ -22,6 +22,7 @@ import dev.slne.surf.chat.bukkit.util.serverPlayers
 import dev.slne.surf.chat.core.service.blacklistService
 import dev.slne.surf.chat.core.service.chatMotdService
 import dev.slne.surf.chat.core.service.filterService
+import dev.slne.surf.surfapi.core.api.util.logger
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 
 import it.unimi.dsi.fastutil.objects.ObjectSet
@@ -30,6 +31,7 @@ import kotlinx.coroutines.runBlocking
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
+import kotlin.system.measureTimeMillis
 
 class SurfChatBukkit(): SuspendingJavaPlugin() {
     val chatFormat: ChatFormatModel = BukkitChatFormat()
@@ -77,11 +79,15 @@ class SurfChatBukkit(): SuspendingJavaPlugin() {
     }
 
     override fun onDisable() {
-        runBlocking {
-            chatMotdService.saveMotd()
-            filterService.saveMessageLimit()
-            databaseService.saveAll()
+        val ms = measureTimeMillis {
+            runBlocking {
+                chatMotdService.saveMotd()
+                filterService.saveMessageLimit()
+                databaseService.saveAll()
+            }
         }
+
+        logger.info { "Successfully disabled in $ms!" }
     }
 
     fun getTeamMembers(): ObjectSet<Player> = serverPlayers.filter { it.hasPermission("surf.chat.command.teamchat") }.toObjectSet()

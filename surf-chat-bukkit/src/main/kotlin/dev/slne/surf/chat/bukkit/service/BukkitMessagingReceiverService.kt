@@ -34,7 +34,6 @@ class BukkitMessagingReceiverService : MessagingReceiverService, PluginMessageLi
         val typeJson = input.readUTF()
         val messageId = UUID.nameUUIDFromBytes(input.readLong().toString().toByteArray())
         val chatChannel = input.readUTF()
-        val forwardingServersJson = input.readUTF()
 
         val chatMessage = GsonComponentSerializer.gson().deserialize(messageJson)
         val messageType = gson.fromJson(typeJson, ChatMessageType::class.java)

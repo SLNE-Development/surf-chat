@@ -1,5 +1,6 @@
 cross-server-messages:
-  current-server: "lobby01"
+  current-server: "lobby01" # the internal server name, configured in the velocity config
+  current-server-name: "Lobby 1" # the display name of the server
   forward-to:
     - "lobby02"
     - "lobby03"

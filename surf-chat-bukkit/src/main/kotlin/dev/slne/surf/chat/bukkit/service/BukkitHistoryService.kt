@@ -29,7 +29,7 @@ class BukkitHistoryService(): HistoryService, Fallback {
 
     override suspend fun write(user: UUID, type: ChatMessageType, message: Component, messageID: UUID) {
         databaseService.insertHistoryEntry(user, BukkitHistoryEntry(
-            PlainTextComponentSerializer.plainText().serialize(message), System.currentTimeMillis(), user, type.toString(), messageID
+            PlainTextComponentSerializer.plainText().serialize(message), System.currentTimeMillis(), user, type.toString(), messageID, server = plugin.chatFormat.getServer()
         ))
     }
 

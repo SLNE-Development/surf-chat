@@ -168,6 +168,10 @@ class BukkitChatFormat: ChatFormatModel {
         this.currentServerNiceName = pluginConfig.getString("cross-server-messages.current-server-name") ?: "Unknown"
     }
 
+    override fun getServer(): String {
+        return currentServerNiceName
+    }
+
     private fun Component.parseItemPlaceholder(player: Player, warn: Boolean): Component {
         return this
     }

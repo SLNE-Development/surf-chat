@@ -81,12 +81,15 @@ class CompletedComponents {
         }))
     }
 
-    fun getMessageHoverComponent(sender: String, time: Long): Component = buildText {
+    fun getMessageHoverComponent(sender: String, time: Long, server: String): Component = buildText {
         variableKey("Gesendet von: ")
         variableValue(sender)
         appendNewline()
-        variableKey("Gesendet um: ")
-        variableValue(time)
+        variableKey("Gesendet am: ")
+        variableValue(formatTime(time))
+        appendNewline()
+        variableKey("Gesendet von: ")
+        variableValue(server)
     }
 
 

@@ -17,6 +17,7 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.sound
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextReplacementConfig
+import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.MiniMessage
 
@@ -50,6 +51,10 @@ class BukkitChatFormat: ChatFormatModel {
                     append(MiniMessage.miniMessage().deserialize(LuckPermsExtension.getPrefix(sender) + sender.name))
                     darkSpacer(" >> ")
                     append(highlightPlayers(rawMessage))
+
+                    hoverEvent(HoverEvent.showText {
+                        components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
+                    })
                 }.parseItemPlaceholder(sender, warn)
             }
 
@@ -59,6 +64,10 @@ class BukkitChatFormat: ChatFormatModel {
                     darkSpacer(" >> ")
                     append(components.getChannelComponent(channel))
                     append(highlightPlayers(rawMessage))
+
+                    hoverEvent(HoverEvent.showText {
+                        components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
+                    })
                 }.parseItemPlaceholder(sender, warn)
             }
 
@@ -72,6 +81,10 @@ class BukkitChatFormat: ChatFormatModel {
                     append(MiniMessage.miniMessage().deserialize(LuckPermsExtension.getPrefix(viewer) + viewer.name))
                     darkSpacer(" >> ")
                     append(rawMessage)
+
+                    hoverEvent(HoverEvent.showText {
+                        components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
+                    })
                 }.parseItemPlaceholder(sender, warn)
             }
 
@@ -85,6 +98,10 @@ class BukkitChatFormat: ChatFormatModel {
                     variableValue("Dir")
                     darkSpacer(" >> ")
                     append(rawMessage)
+
+                    hoverEvent(HoverEvent.showText {
+                        components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
+                    })
                 }.parseItemPlaceholder(sender, warn)
             }
 
@@ -96,6 +113,10 @@ class BukkitChatFormat: ChatFormatModel {
                     append(MiniMessage.miniMessage().deserialize(LuckPermsExtension.getPrefix(sender) + sender.name))
                     darkSpacer(" >> ")
                     append(highlightPlayers(rawMessage))
+
+                    hoverEvent(HoverEvent.showText {
+                        components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
+                    })
                 }.parseItemPlaceholder(sender, warn)
             }
 

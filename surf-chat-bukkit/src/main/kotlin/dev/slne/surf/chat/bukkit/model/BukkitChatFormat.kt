@@ -6,6 +6,7 @@ import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.bukkit.extension.LuckPermsExtension
 import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.bukkit.pluginConfig
 import dev.slne.surf.chat.bukkit.serverPlayers
 import dev.slne.surf.chat.bukkit.util.components
 import dev.slne.surf.chat.bukkit.util.toPlainText
@@ -27,6 +28,12 @@ import org.bukkit.entity.Player
 import java.util.UUID
 
 class BukkitChatFormat: ChatFormatModel {
+    private var currentServerNiceName: String = "Unknown"
+
+    init {
+        currentServerNiceName = pluginConfig.getString("cross-server-messages.current-server-name") ?: "Unknown"
+    }
+
     override fun formatMessage (
         rawMessage: Component,
         sender: Player,

@@ -19,6 +19,7 @@ import dev.slne.surf.chat.bukkit.command.channel.ChannelCommand
 import dev.slne.surf.chat.bukkit.command.surfchat.SurfChatCommand
 import dev.slne.surf.chat.bukkit.command.toggle.TogglePmCommand
 import dev.slne.surf.chat.bukkit.command.toggle.ToggleSoundCommand
+import dev.slne.surf.chat.bukkit.util.serverPlayers
 import dev.slne.surf.chat.core.service.blacklistService
 import dev.slne.surf.chat.core.service.chatMotdService
 import dev.slne.surf.chat.core.service.filterService
@@ -83,6 +84,4 @@ class SurfChatBukkit(): SuspendingJavaPlugin() {
     fun getTeamMembers(): ObjectSet<Player> = serverPlayers.filter { it.hasPermission("surf.chat.command.teamchat") }.toObjectSet()
 }
 
-val serverPlayers = Bukkit.getOnlinePlayers()
 val plugin = JavaPlugin.getPlugin(SurfChatBukkit::class.java)
-val gson = Gson()

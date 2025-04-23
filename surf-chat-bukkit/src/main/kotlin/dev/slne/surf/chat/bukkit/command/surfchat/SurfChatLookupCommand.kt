@@ -10,6 +10,7 @@ import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.LookupFlags
 import dev.slne.surf.chat.bukkit.util.MultiPlayerSelectorData
 import dev.slne.surf.chat.bukkit.util.PageableMessageBuilder
+import dev.slne.surf.chat.bukkit.util.formatTime
 import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.Colors
@@ -24,10 +25,6 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName) {
-    private val timeFormatter: DateTimeFormatter = DateTimeFormatter
-        .ofPattern("HH:mm:ss, dd.MM.yyyy", Locale.GERMANY)
-        .withZone(ZoneId.of("Europe/Berlin"))
-
     init {
         withPermission("surf.chat.command.lookup")
 
@@ -99,7 +96,7 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
                                 info(it.type)
                                 appendNewline()
                                 primary("Datum: ")
-                                info(getString(it.timestamp))
+                                info(formatTime(it.timestamp))
                                 appendNewline()
                                 darkSpacer("Klicke, um die Nachricht zu kopieren.")
                             }))
@@ -110,9 +107,5 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
                 }.send(sender, page)
             }
         }
-    }
-
-    private fun getString(unixMillis: Long): String {
-        return timeFormatter.format(Instant.ofEpochMilli(unixMillis))
     }
 }

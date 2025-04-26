@@ -5,11 +5,13 @@ import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.api.util.history.LoggedMessage
 import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.bukkit.service.BukkitMessagingSenderService
 import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.bukkit.util.serverPlayers
 import dev.slne.surf.chat.bukkit.util.toPlainText
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.historyService
+import dev.slne.surf.chat.core.service.messaging.messagingSenderService
 import io.papermc.paper.event.player.AsyncChatEvent
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextReplacementConfig
@@ -84,6 +86,15 @@ class BukkitChatListener(): Listener {
 
         plugin.messageValidator.parse(cleanedMessage, ChatMessageType.GLOBAL, player) {
             event.renderer { _, _, _, viewer ->
+                messagingSenderService.sendData(player.name,
+                    if(viewer is Player) viewer.name else "Unknown",
+                    cleanedMessage,
+                    ChatMessageType.GLOBAL,
+                    messageID,
+                    "N/A",
+                    BukkitMessagingSenderService.getForwardingServers()
+                )
+
                 plugin.chatFormat.formatMessage (
                     cleanedMessage,
                     player,

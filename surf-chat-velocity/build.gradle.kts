@@ -14,7 +14,6 @@ dependencies {
     api(project(":surf-chat-core"))
 
     implementation(libs.fastutil)
-
     implementation(kotlin("stdlib"))
 
     kapt(libs.velocity.api)

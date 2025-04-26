@@ -23,7 +23,7 @@ class BukkitMessagingSenderService: MessagingSenderService, Fallback {
         this.forwardingServers = ObjectArraySet(plugin.config.getStringList("cross-server-messages.forward-to"))
     }
 
-    override fun sendData(
+    override fun sendData (
         player: String,
         target: String,
         message: Component,
@@ -48,6 +48,10 @@ class BukkitMessagingSenderService: MessagingSenderService, Fallback {
     companion object {
         fun getCurrentServer(): String {
             return (MessagingSenderService.INSTANCE as BukkitMessagingSenderService).currentServer
+        }
+
+        fun getForwardingServers(): ObjectSet<String> {
+            return (MessagingSenderService.INSTANCE as BukkitMessagingSenderService).forwardingServers
         }
     }
 }

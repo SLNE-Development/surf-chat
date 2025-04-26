@@ -10,7 +10,7 @@ import java.util.UUID
 interface MessagingSenderService {
     fun loadServers()
 
-    fun sendData(player: String, target: String, message: Component, type: ChatMessageType, messageID: UUID, channel: String)
+    fun sendData(player: String, target: String, message: Component, type: ChatMessageType, messageID: UUID, channel: String, forwardingServers: ObjectSet<String>)
 
     companion object {
         val INSTANCE = requiredService<MessagingSenderService>()

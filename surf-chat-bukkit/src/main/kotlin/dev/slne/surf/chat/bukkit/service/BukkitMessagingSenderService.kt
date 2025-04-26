@@ -8,8 +8,10 @@ import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.gson
 import dev.slne.surf.chat.core.service.messaging.MessagingSenderService
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
+import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.util.Services.Fallback
+import java.util.UUID
 
 @AutoService(MessagingSenderService::class)
 class BukkitMessagingSenderService: MessagingSenderService, Fallback {
@@ -21,13 +23,14 @@ class BukkitMessagingSenderService: MessagingSenderService, Fallback {
         this.forwardingServers = ObjectArraySet(plugin.config.getStringList("cross-server-messages.forward-to"))
     }
 
-    override fun sendData (
+    override fun sendData(
         player: String,
         target: String,
         message: Component,
         type: ChatMessageType,
-        messageID: Long,
-        channel: String
+        messageID: UUID,
+        channel: String,
+        forwardingServers: ObjectSet<String>
     ) {
         val out = ByteStreams.newDataOutput()
 
@@ -35,7 +38,7 @@ class BukkitMessagingSenderService: MessagingSenderService, Fallback {
         out.writeUTF(target)
         out.writeUTF(gson.toJson(message))
         out.writeUTF(gson.toJson(type))
-        out.writeLong(messageID)
+        out.writeUTF(messageID.toString())
         out.writeUTF(channel)
         out.writeUTF(gson.toJson(forwardingServers))
 

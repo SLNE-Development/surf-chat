@@ -1,6 +1,7 @@
 package dev.slne.surf.chat.velocity.service
 
 import com.google.common.io.ByteStreams
+import com.google.gson.reflect.TypeToken
 
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.PluginMessageEvent
@@ -12,7 +13,9 @@ import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.core.service.messaging.MessagingReceiverService
 import dev.slne.surf.chat.core.service.messaging.messagingSenderService
 import dev.slne.surf.chat.velocity.gson
+import dev.slne.surf.chat.velocity.plugin
 import dev.slne.surf.chat.velocity.util.debug
+import it.unimi.dsi.fastutil.objects.ObjectSet
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
@@ -38,8 +41,12 @@ class VelocityMessagingReceiverService(): MessagingReceiverService {
         val target = input.readUTF()
         val messageJson = input.readUTF()
         val typeJson = input.readUTF()
-        val messageId = UUID.nameUUIDFromBytes(input.readLong().toString().toByteArray())
+        val messageId = UUID.fromString(input.readUTF())
         val chatChannel = input.readUTF()
+        val forwardingServers = gson.fromJson<ObjectSet<String>>(
+            input.readUTF(),
+            object : TypeToken<ObjectSet<String>>() {}.type
+        )
 
         val chatMessage = GsonComponentSerializer.gson().deserialize(messageJson)
         val messageType = gson.fromJson(typeJson, ChatMessageType::class.java)
@@ -50,17 +57,19 @@ class VelocityMessagingReceiverService(): MessagingReceiverService {
             message = chatMessage,
             type = messageType,
             messageID = messageId,
-            channel = chatChannel
+            channel = chatChannel,
+            forwardingServers
         )
     }
 
-    override fun handleReceive (
+    override fun handleReceive(
         player: String,
         target: String,
         message: Component,
         type: ChatMessageType,
         messageID: UUID,
-        channel: String
+        channel: String,
+        forwardingServers: ObjectSet<String>
     ) {
         messagingSenderService.sendData (
             player = player,
@@ -68,7 +77,8 @@ class VelocityMessagingReceiverService(): MessagingReceiverService {
             message = message,
             type = type,
             messageID = messageID,
-            channel = channel
+            channel = channel,
+            forwardingServers = forwardingServers
         )
 
         debug("${messagingSenderService.javaClass.name} with hashcode ${messagingSenderService.hashCode()}")

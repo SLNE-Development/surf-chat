@@ -2,6 +2,7 @@ package dev.slne.surf.chat.bukkit.service
 
 import com.google.auto.service.AutoService
 import com.google.common.io.ByteStreams
+import com.google.gson.reflect.TypeToken
 import dev.slne.surf.chat.api.SurfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.api.util.history.LoggedMessage
@@ -10,6 +11,7 @@ import dev.slne.surf.chat.bukkit.util.gson
 import dev.slne.surf.chat.bukkit.util.serverPlayers
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.chat.core.service.messaging.MessagingReceiverService
+import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import net.kyori.adventure.util.Services.Fallback
@@ -32,13 +34,17 @@ class BukkitMessagingReceiverService : MessagingReceiverService, PluginMessageLi
         val target = input.readUTF()
         val messageJson = input.readUTF()
         val typeJson = input.readUTF()
-        val messageId = UUID.nameUUIDFromBytes(input.readLong().toString().toByteArray())
+        val messageId = UUID.fromString(input.readUTF())
         val chatChannel = input.readUTF()
+        val forwardingServers = gson.fromJson<ObjectSet<String>>(
+            input.readUTF(),
+            object : TypeToken<ObjectSet<String>>() {}.type
+        )
 
         val chatMessage = GsonComponentSerializer.gson().deserialize(messageJson)
         val messageType = gson.fromJson(typeJson, ChatMessageType::class.java)
 
-        handleReceive(sender, target, chatMessage, messageType, messageId, chatChannel)
+        handleReceive(sender, target, chatMessage, messageType, messageId, chatChannel, forwardingServers)
     }
 
     override fun handleReceive (
@@ -47,7 +53,8 @@ class BukkitMessagingReceiverService : MessagingReceiverService, PluginMessageLi
         message: Component,
         type: ChatMessageType,
         messageID: UUID,
-        channel: String
+        channel: String,
+        forwardingServers: ObjectSet<String>
     ) {
         serverPlayers.forEach {
             historyService.logCaching(it.uniqueId, LoggedMessage(player, "Unknown", message), messageID)

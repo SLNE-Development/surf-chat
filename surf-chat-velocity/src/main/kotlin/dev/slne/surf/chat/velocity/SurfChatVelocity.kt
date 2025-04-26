@@ -39,6 +39,7 @@ class SurfChatVelocity {
     @Subscribe
     fun onInitialization(event: ProxyInitializeEvent) {
         proxy.channelRegistrar.register(VelocityMessagingReceiverService.IDENTIFIER)
+        proxy.eventManager.register(this, VelocityMessagingReceiverService())
     }
 
     @Subscribe

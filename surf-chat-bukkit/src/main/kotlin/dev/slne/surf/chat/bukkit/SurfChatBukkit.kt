@@ -3,6 +3,7 @@ package dev.slne.surf.chat.bukkit
 import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
 
 import dev.jorel.commandapi.CommandAPI
+import dev.slne.surf.chat.api.SurfChatApi
 
 import dev.slne.surf.chat.api.model.ChatFormatModel
 import dev.slne.surf.chat.api.model.MessageValidatorModel
@@ -18,6 +19,7 @@ import dev.slne.surf.chat.bukkit.command.channel.ChannelCommand
 import dev.slne.surf.chat.bukkit.command.surfchat.SurfChatCommand
 import dev.slne.surf.chat.bukkit.command.toggle.TogglePmCommand
 import dev.slne.surf.chat.bukkit.command.toggle.ToggleSoundCommand
+import dev.slne.surf.chat.bukkit.service.BukkitMessagingReceiverService
 import dev.slne.surf.chat.bukkit.util.serverPlayers
 import dev.slne.surf.chat.core.service.blacklistService
 import dev.slne.surf.chat.core.service.chatMotdService
@@ -64,6 +66,9 @@ class SurfChatBukkit(): SuspendingJavaPlugin() {
 
         Bukkit.getPluginManager().registerEvents(BukkitChatListener(), this)
         Bukkit.getPluginManager().registerEvents(BukkitConnectionListener(), this)
+
+        Bukkit.getMessenger().registerIncomingPluginChannel(this, SurfChatApi.messagingChannelIdentifier, BukkitMessagingReceiverService())
+        Bukkit.getMessenger().registerOutgoingPluginChannel(this, SurfChatApi.messagingChannelIdentifier)
 
         /**
          * Handle & start services.

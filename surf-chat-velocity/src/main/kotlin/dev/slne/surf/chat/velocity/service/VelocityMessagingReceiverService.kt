@@ -44,7 +44,7 @@ class VelocityMessagingReceiverService(): MessagingReceiverService {
         val chatMessage = GsonComponentSerializer.gson().deserialize(messageJson)
         val messageType = gson.fromJson(typeJson, ChatMessageType::class.java)
 
-        handleReceive(
+        handleReceive (
             player = sender,
             target = target,
             message = chatMessage,

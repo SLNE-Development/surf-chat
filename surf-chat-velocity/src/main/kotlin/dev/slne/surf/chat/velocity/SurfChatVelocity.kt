@@ -13,7 +13,7 @@ import dev.slne.surf.chat.velocity.service.VelocityMessagingReceiverService
 import org.slf4j.Logger
 import java.nio.file.Path
 
-@Plugin(
+@Plugin (
     id = "surf-chat-velocity",
     version = "1.21.4-1.0.0-SNAPSHOT",
     name = "surf-chat-velocity",

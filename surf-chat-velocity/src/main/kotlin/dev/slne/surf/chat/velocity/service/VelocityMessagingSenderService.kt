@@ -18,6 +18,6 @@ class VelocityMessagingSenderService(): MessagingSenderService {
         messageID: UUID,
         channel: String
     ) {
-        TODO("Not yet implemented")
+
     }
 }

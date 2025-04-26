@@ -22,10 +22,6 @@ import java.util.UUID
 
 @AutoService(MessagingReceiverService::class)
 class BukkitMessagingReceiverService : MessagingReceiverService, PluginMessageListener, Fallback {
-    init {
-        plugin.server.messenger.registerIncomingPluginChannel(plugin, SurfChatApi.messagingChannelIdentifier, this)
-    }
-
     override fun onPluginMessageReceived(channel: String, player: Player, message: ByteArray) {
         if (channel != SurfChatApi.messagingChannelIdentifier) return
 

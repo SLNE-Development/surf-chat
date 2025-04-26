@@ -9,6 +9,7 @@ import com.velocitypowered.api.plugin.Plugin
 import com.velocitypowered.api.plugin.PluginContainer
 import com.velocitypowered.api.plugin.annotation.DataDirectory
 import com.velocitypowered.api.proxy.ProxyServer
+import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier
 import dev.slne.surf.chat.velocity.service.VelocityMessagingReceiverService
 import org.slf4j.Logger
 import java.nio.file.Path
@@ -38,7 +39,7 @@ class SurfChatVelocity {
 
     @Subscribe
     fun onInitialization(event: ProxyInitializeEvent) {
-        proxy.channelRegistrar.register(VelocityMessagingReceiverService.IDENTIFIER)
+        proxy.channelRegistrar.register(messageChannel)
         proxy.eventManager.register(this, VelocityMessagingReceiverService())
     }
 
@@ -52,5 +53,6 @@ class SurfChatVelocity {
     }
 }
 
+val messageChannel get() = MinecraftChannelIdentifier.from("surf-chat:messaging")
 val plugin get() = SurfChatVelocity.INSTANCE
 val gson get() = Gson()

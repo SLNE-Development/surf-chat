@@ -4,6 +4,7 @@ import com.google.common.io.ByteStreams
 import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.core.service.messaging.MessagingSenderService
 import dev.slne.surf.chat.velocity.gson
+import dev.slne.surf.chat.velocity.messageChannel
 import dev.slne.surf.chat.velocity.plugin
 
 import it.unimi.dsi.fastutil.objects.ObjectSet
@@ -32,7 +33,7 @@ class VelocityMessagingSenderService(): MessagingSenderService {
         for (backend in forwardingServers) {
             val server = plugin.proxy.getServer(backend).getOrNull() ?: continue
 
-            server.sendPluginMessage(VelocityMessagingReceiverService.IDENTIFIER, ByteStreams.newDataOutput().apply {
+            server.sendPluginMessage(messageChannel, ByteStreams.newDataOutput().apply {
                 writeUTF(player)
                 writeUTF(target)
                 writeUTF(GsonComponentSerializer.gson().serialize(message))

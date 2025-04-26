@@ -13,6 +13,7 @@ import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.core.service.messaging.MessagingReceiverService
 import dev.slne.surf.chat.core.service.messaging.messagingSenderService
 import dev.slne.surf.chat.velocity.gson
+import dev.slne.surf.chat.velocity.messageChannel
 import dev.slne.surf.chat.velocity.plugin
 import dev.slne.surf.chat.velocity.util.debug
 import it.unimi.dsi.fastutil.objects.ObjectSet
@@ -25,7 +26,7 @@ import java.util.*
 class VelocityMessagingReceiverService(): MessagingReceiverService {
     @Subscribe
     fun onPluginMessage(event: PluginMessageEvent) {
-        if(!event.identifier.equals(IDENTIFIER)) {
+        if(!event.identifier.equals(messageChannel)) {
             return
         }
 
@@ -82,9 +83,5 @@ class VelocityMessagingReceiverService(): MessagingReceiverService {
         )
 
         debug("${messagingSenderService.javaClass.name} with hashcode ${messagingSenderService.hashCode()}")
-    }
-
-    companion object {
-        val IDENTIFIER: MinecraftChannelIdentifier = MinecraftChannelIdentifier.from(SurfChatApi.messagingChannelIdentifier)
     }
 }

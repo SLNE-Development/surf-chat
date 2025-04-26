@@ -98,7 +98,7 @@ class BukkitChatListener(): Listener {
                 plugin.chatFormat.formatMessage (
                     cleanedMessage,
                     player,
-                    if(viewer is Player) viewer else player,
+                    viewer as? Player ?: player,
                     ChatMessageType.GLOBAL,
                     "N/A",
                     messageID,

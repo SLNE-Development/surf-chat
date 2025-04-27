@@ -84,16 +84,16 @@ class BukkitChatListener(): Listener {
 
         var formatted = false
 
-        messagingSenderService.sendData(player.name,
-            player.name,
-            formattedMessage,
-            ChatMessageType.GLOBAL,
-            messageID,
-            "N/A",
-            BukkitMessagingSenderService.getForwardingServers()
-        )
-
         plugin.messageValidator.parse(cleanedMessage, ChatMessageType.GLOBAL, player) {
+            messagingSenderService.sendData(player.name,
+                player.name,
+                formattedMessage,
+                ChatMessageType.GLOBAL,
+                messageID,
+                "N/A",
+                BukkitMessagingSenderService.getForwardingServers()
+            )
+
             event.renderer { _, _, _, viewer ->
                 plugin.chatFormat.formatMessage (
                     cleanedMessage,

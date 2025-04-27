@@ -1,5 +1,6 @@
 package dev.slne.surf.chat.velocity
 
+import com.github.shynixn.mccoroutine.velocity.SuspendingPluginContainer
 import com.google.gson.Gson
 import com.google.inject.Inject
 import com.velocitypowered.api.event.Subscribe
@@ -23,22 +24,18 @@ import java.nio.file.Path
     url = "https://server.castcrafter.de/",
     dependencies = []
 )
-class SurfChatVelocity {
-    @Inject
-    lateinit var logger: Logger
-
-    @Inject
-    lateinit var proxy: ProxyServer
-
+class SurfChatVelocity @Inject constructor(
+    val proxy: ProxyServer,
+    @DataDirectory val dataPath: Path,
+    suspendingPluginContainer: SuspendingPluginContainer
+) {
     @Inject
     lateinit var pluginContainer: PluginContainer
 
-    @Inject
-    @DataDirectory
-    lateinit var dataFolder: Path
-
     @Subscribe
     fun onInitialization(event: ProxyInitializeEvent) {
+        INSTANCE = this
+
         proxy.channelRegistrar.register(messageChannel)
         proxy.eventManager.register(this, VelocityMessagingReceiverService())
     }
@@ -49,7 +46,8 @@ class SurfChatVelocity {
     }
 
     companion object {
-        val INSTANCE = SurfChatVelocity()
+        lateinit var INSTANCE: SurfChatVelocity
+            private set
     }
 }
 

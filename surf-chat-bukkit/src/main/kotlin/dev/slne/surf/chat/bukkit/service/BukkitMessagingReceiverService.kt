@@ -28,16 +28,13 @@ class BukkitMessagingReceiverService : MessagingReceiverService, PluginMessageLi
         val input = ByteStreams.newDataInput(message)
         val sender = input.readUTF()
         val target = input.readUTF()
-        val messageJson = input.readUTF()
-        val typeJson = input.readUTF()
+        val message = GsonComponentSerializer.gson().deserialize(input.readUTF())
+        val type = gson.fromJson(input.readUTF(), ChatMessageType::class.java)
         val messageId = UUID.fromString(input.readUTF())
         val chatChannel = input.readUTF()
         val forwardingServers: Set<String> = gson.fromJson(input.readUTF(), object : TypeToken<Set<String>>() {}.type)
 
-        val chatMessage = GsonComponentSerializer.gson().deserialize(messageJson)
-        val messageType = gson.fromJson(typeJson, ChatMessageType::class.java)
-
-        handleReceive(sender, target, chatMessage, messageType, messageId, chatChannel, forwardingServers.toObjectSet())
+        handleReceive(sender, target, message, type, messageId, chatChannel, forwardingServers.toObjectSet())
     }
 
     override fun handleReceive (

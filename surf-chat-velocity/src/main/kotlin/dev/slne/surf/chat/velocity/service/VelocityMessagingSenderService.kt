@@ -1,5 +1,6 @@
 package dev.slne.surf.chat.velocity.service
 
+import com.google.auto.service.AutoService
 import com.google.common.io.ByteStreams
 import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.core.service.messaging.MessagingSenderService
@@ -11,12 +12,14 @@ import it.unimi.dsi.fastutil.objects.ObjectSet
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
+import net.kyori.adventure.util.Services
 
 import java.util.UUID
 
 import kotlin.jvm.optionals.getOrNull
 
-class VelocityMessagingSenderService(): MessagingSenderService {
+@AutoService(MessagingSenderService::class)
+class VelocityMessagingSenderService(): MessagingSenderService, Services.Fallback {
     override fun loadServers() {
         TODO("Not implemented on proxy")
     }

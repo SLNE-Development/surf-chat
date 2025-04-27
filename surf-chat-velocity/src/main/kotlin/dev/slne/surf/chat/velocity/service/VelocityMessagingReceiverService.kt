@@ -1,5 +1,6 @@
 package dev.slne.surf.chat.velocity.service
 
+import com.google.auto.service.AutoService
 import com.google.common.io.ByteStreams
 import com.google.gson.reflect.TypeToken
 
@@ -22,10 +23,12 @@ import it.unimi.dsi.fastutil.objects.ObjectSet
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
+import net.kyori.adventure.util.Services
 
 import java.util.*
 
-class VelocityMessagingReceiverService(): MessagingReceiverService {
+@AutoService(MessagingReceiverService::class)
+class VelocityMessagingReceiverService(): MessagingReceiverService, Services.Fallback {
     @Subscribe
     fun onPluginMessage(event: PluginMessageEvent) {
         if(!event.identifier.equals(messageChannel)) {
@@ -42,20 +45,17 @@ class VelocityMessagingReceiverService(): MessagingReceiverService {
 
         val sender = input.readUTF()
         val target = input.readUTF()
-        val messageJson = input.readUTF()
-        val typeJson = input.readUTF()
+        val message = GsonComponentSerializer.gson().deserialize(input.readUTF())
+        val type = gson.fromJson(input.readUTF(), ChatMessageType::class.java)
         val messageId = UUID.fromString(input.readUTF())
         val chatChannel = input.readUTF()
         val forwardingServers: Set<String> = gson.fromJson(input.readUTF(), object : TypeToken<Set<String>>() {}.type)
 
-        val chatMessage = GsonComponentSerializer.gson().deserialize(messageJson)
-        val messageType = gson.fromJson(typeJson, ChatMessageType::class.java)
-
         handleReceive (
             player = sender,
             target = target,
-            message = chatMessage,
-            type = messageType,
+            message = message,
+            type = type,
             messageID = messageId,
             channel = chatChannel,
             forwardingServers.toObjectSet()

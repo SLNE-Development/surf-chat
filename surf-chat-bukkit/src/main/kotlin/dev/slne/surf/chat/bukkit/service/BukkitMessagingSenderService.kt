@@ -10,6 +10,7 @@ import dev.slne.surf.chat.core.service.messaging.MessagingSenderService
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import net.kyori.adventure.util.Services.Fallback
 import java.util.UUID
 
@@ -36,7 +37,7 @@ class BukkitMessagingSenderService: MessagingSenderService, Fallback {
 
         out.writeUTF(player)
         out.writeUTF(target)
-        out.writeUTF(gson.toJson(message))
+        out.writeUTF(GsonComponentSerializer.gson().serialize(message))
         out.writeUTF(gson.toJson(type))
         out.writeUTF(messageID.toString())
         out.writeUTF(channel)

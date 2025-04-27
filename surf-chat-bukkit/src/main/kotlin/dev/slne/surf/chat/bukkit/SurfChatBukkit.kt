@@ -85,19 +85,17 @@ class SurfChatBukkit(): SuspendingJavaPlugin() {
         LuckPermsExtension.loadApi()
     }
 
-    override fun onDisable() {
-        // Note: measureTimeMillis may throw java.lang.NoClassDefFoundError: dev/slne/surf/chat/bukkit/SurfChatBukkit$onDisable$ms$1$1.
-        // This issue requires further investigation to identify the root cause and implement a fix.
-        val start = System.currentTimeMillis()
+    override suspend fun onDisableAsync() {
+        val ms = measureTimeMillis {
+            chatMotdService.saveMotd()
+            filterService.saveMessageLimit()
 
-        chatMotdService.saveMotd()
-        filterService.saveMessageLimit()
-
-        runBlocking {
-            databaseService.saveAll()
+            runBlocking {
+                databaseService.saveAll()
+            }
         }
 
-        logger.info { "Successfully disabled in ${System.currentTimeMillis() - start}ms!" }
+        logger.info { "Successfully disabled in ${ms}ms!" }
     }
 
     fun getTeamMembers(): ObjectSet<Player> = serverPlayers.filter { it.hasPermission("surf.chat.command.teamchat") }.toObjectSet()

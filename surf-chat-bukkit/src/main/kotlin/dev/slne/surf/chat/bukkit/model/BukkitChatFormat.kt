@@ -46,12 +46,12 @@ class BukkitChatFormat: ChatFormatModel {
                     append(components.getTeleportComponent(sender.name, viewer))
                     append(MiniMessage.miniMessage().deserialize(LuckPermsExtension.getPrefix(sender) + sender.name))
                     darkSpacer(" >> ")
-                    append(highlightPlayers(rawMessage))
+                    append(formatItemTag(highlightPlayers(rawMessage), sender, warn))
 
                     hoverEvent(HoverEvent.showText {
                         components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
                     })
-                }.parseItemPlaceholder(sender, warn)
+                }
             }
 
             ChatMessageType.CHANNEL -> {
@@ -59,12 +59,12 @@ class BukkitChatFormat: ChatFormatModel {
                     append(MiniMessage.miniMessage().deserialize(LuckPermsExtension.getPrefix(sender) + sender.name))
                     darkSpacer(" >> ")
                     append(components.getChannelComponent(channel))
-                    append(highlightPlayers(rawMessage))
+                    append(formatItemTag(highlightPlayers(rawMessage), sender, warn))
 
                     hoverEvent(HoverEvent.showText {
                         components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
                     })
-                }.parseItemPlaceholder(sender, warn)
+                }
             }
 
             ChatMessageType.PRIVATE_TO -> {
@@ -76,12 +76,12 @@ class BukkitChatFormat: ChatFormatModel {
                     darkSpacer(" -> ")
                     append(MiniMessage.miniMessage().deserialize(LuckPermsExtension.getPrefix(viewer) + viewer.name))
                     darkSpacer(" >> ")
-                    append(rawMessage)
+                    append(formatItemTag(rawMessage, sender, warn))
 
                     hoverEvent(HoverEvent.showText {
                         components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
                     })
-                }.parseItemPlaceholder(sender, warn)
+                }
             }
 
             ChatMessageType.PRIVATE_FROM -> {
@@ -93,12 +93,12 @@ class BukkitChatFormat: ChatFormatModel {
                     darkSpacer(" -> ")
                     variableValue("Dir")
                     darkSpacer(" >> ")
-                    append(rawMessage)
+                    append(formatItemTag(rawMessage, sender, warn))
 
                     hoverEvent(HoverEvent.showText {
                         components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
                     })
-                }.parseItemPlaceholder(sender, warn)
+                }
             }
 
             ChatMessageType.TEAM -> {
@@ -108,12 +108,12 @@ class BukkitChatFormat: ChatFormatModel {
                     darkSpacer(" | ")
                     append(MiniMessage.miniMessage().deserialize(LuckPermsExtension.getPrefix(sender) + sender.name))
                     darkSpacer(" >> ")
-                    append(highlightPlayers(rawMessage))
+                    append(formatItemTag(highlightPlayers(rawMessage), sender, warn))
 
                     hoverEvent(HoverEvent.showText {
                         components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
                     })
-                }.parseItemPlaceholder(sender, warn)
+                }
             }
 
             /**
@@ -172,34 +172,36 @@ class BukkitChatFormat: ChatFormatModel {
         return currentServerNiceName
     }
 
-    private fun Component.parseItemPlaceholder(player: Player, warn: Boolean): Component {
-        return this
-    }
+    private fun formatItemTag(rawMessage: Component, player: Player, warn: Boolean): Component {
+        var message = rawMessage
+        val item = player.inventory.itemInMainHand
+        val pattern = Regex("\\[(?i)item]")
 
-    //.replaceText(TextReplacementConfig.builder()
-    //            .matchLiteral("[item]")
-    //            .replacement(player.getItemComponent(warn))
-    //            .build()
-    //        )
+        if(!pattern.containsMatchIn(message.toPlainText())) {
+            return rawMessage
+        }
 
-    private fun Player.getItemComponent(warn: Boolean): Component = buildText {
-        val stack = inventory.itemInMainHand
-
-        if (stack.type == Material.AIR) {
+        if (item.type == Material.AIR) {
             if(warn) {
-                surfChatApi.sendText(this@getItemComponent, buildText {
+                surfChatApi.sendText(player, buildText {
                     error("Du hast kein Item in der Hand!")
                 })
             }
-            return@buildText
+            return rawMessage
         }
 
-        if (stack.amount > 1) {
-            variableValue("${stack.amount}x ")
-        }
+        message = message.replaceText(TextReplacementConfig
+            .builder()
+            .match(pattern.pattern)
+            .replacement(buildText {
+                if (item.amount > 1) {
+                    variableValue("${item.amount}x ")
+                }
+                append(item.displayName())
+            })
+            .build())
 
-        append(variableValue(stack.displayName().toPlainText()))
-        hoverEvent(stack.asHoverEvent())
+        return message
     }
 
     private fun highlightPlayers(rawMessage: Component): Component {
@@ -209,7 +211,9 @@ class BukkitChatFormat: ChatFormatModel {
             val name = onlinePlayer.name
             val pattern = Regex("(?<!\\w)@?$name(?!\\w)")
 
-            if (!pattern.containsMatchIn(message.toPlainText())) continue
+            if (!pattern.containsMatchIn(message.toPlainText())) {
+                continue
+            }
 
             plugin.launch {
                 val user = databaseService.getUser(onlinePlayer.uniqueId)

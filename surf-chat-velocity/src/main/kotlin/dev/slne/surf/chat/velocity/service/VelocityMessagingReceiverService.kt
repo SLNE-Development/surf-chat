@@ -16,6 +16,7 @@ import dev.slne.surf.chat.velocity.gson
 import dev.slne.surf.chat.velocity.messageChannel
 import dev.slne.surf.chat.velocity.plugin
 import dev.slne.surf.chat.velocity.util.debug
+import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import it.unimi.dsi.fastutil.objects.ObjectSet
 
@@ -45,9 +46,7 @@ class VelocityMessagingReceiverService(): MessagingReceiverService {
         val typeJson = input.readUTF()
         val messageId = UUID.fromString(input.readUTF())
         val chatChannel = input.readUTF()
-        val forwardingServers: ObjectSet<String> = ObjectArraySet(
-            gson.fromJson<Set<String>>(input.readUTF(), object : TypeToken<Set<String>>() {}.type)
-        )
+        val forwardingServers: Set<String> = gson.fromJson(input.readUTF(), object : TypeToken<Set<String>>() {}.type)
 
         val chatMessage = GsonComponentSerializer.gson().deserialize(messageJson)
         val messageType = gson.fromJson(typeJson, ChatMessageType::class.java)
@@ -59,7 +58,7 @@ class VelocityMessagingReceiverService(): MessagingReceiverService {
             type = messageType,
             messageID = messageId,
             channel = chatChannel,
-            forwardingServers
+            forwardingServers.toObjectSet()
         )
     }
 

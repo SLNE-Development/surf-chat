@@ -10,7 +10,7 @@ import dev.slne.surf.chat.bukkit.util.gson
 import dev.slne.surf.chat.bukkit.util.serverPlayers
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.chat.core.service.messaging.MessagingReceiverService
-import it.unimi.dsi.fastutil.objects.ObjectArraySet
+import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
@@ -32,14 +32,12 @@ class BukkitMessagingReceiverService : MessagingReceiverService, PluginMessageLi
         val typeJson = input.readUTF()
         val messageId = UUID.fromString(input.readUTF())
         val chatChannel = input.readUTF()
-        val forwardingServers: ObjectSet<String> = ObjectArraySet (
-            gson.fromJson<Set<String>>(input.readUTF(), object : TypeToken<Set<String>>() {}.type)
-        )
+        val forwardingServers: Set<String> = gson.fromJson(input.readUTF(), object : TypeToken<Set<String>>() {}.type)
 
         val chatMessage = GsonComponentSerializer.gson().deserialize(messageJson)
         val messageType = gson.fromJson(typeJson, ChatMessageType::class.java)
 
-        handleReceive(sender, target, chatMessage, messageType, messageId, chatChannel, forwardingServers)
+        handleReceive(sender, target, chatMessage, messageType, messageId, chatChannel, forwardingServers.toObjectSet())
     }
 
     override fun handleReceive (

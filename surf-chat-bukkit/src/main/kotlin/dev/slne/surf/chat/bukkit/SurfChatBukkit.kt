@@ -86,7 +86,8 @@ class SurfChatBukkit(): SuspendingJavaPlugin() {
     }
 
     override fun onDisable() {
-        // measureTimeMillis throws java.lang.NoClassDefFoundError: dev/slne/surf/chat/bukkit/SurfChatBukkit$onDisable$ms$1$1 idk why
+        // Note: measureTimeMillis may throw java.lang.NoClassDefFoundError: dev/slne/surf/chat/bukkit/SurfChatBukkit$onDisable$ms$1$1.
+        // This issue requires further investigation to identify the root cause and implement a fix.
         val start = System.currentTimeMillis()
 
         chatMotdService.saveMotd()

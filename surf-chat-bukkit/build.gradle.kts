@@ -7,10 +7,10 @@ plugins {
 
 surfPaperPluginApi {
     mainClass("dev.slne.surf.chat.bukkit.SurfChatBukkit")
-    authors.add("SLNE Development")
+    authors.add("red")
 
     serverDependencies {
-        registerSoft("LuckPerms")
+        registerRequired("LuckPerms")
     }
 
     generateLibraryLoader(false)

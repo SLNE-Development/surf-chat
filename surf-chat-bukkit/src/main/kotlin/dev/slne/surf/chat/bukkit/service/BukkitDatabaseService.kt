@@ -2,29 +2,37 @@ package dev.slne.surf.chat.bukkit.service
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.benmanes.caffeine.cache.LoadingCache
+
 import com.google.auto.service.AutoService
+
 import com.sksamuel.aedile.core.asLoadingCache
 import com.sksamuel.aedile.core.expireAfterWrite
 import com.sksamuel.aedile.core.withRemovalListener
-import dev.slne.surf.chat.api.model.BlacklistWordModel
+
+import dev.slne.surf.chat.api.model.BlacklistWordEntry
 import dev.slne.surf.chat.api.model.ChatUserModel
 import dev.slne.surf.chat.api.model.HistoryEntryModel
-import dev.slne.surf.chat.bukkit.gson
-import dev.slne.surf.chat.bukkit.model.BukkitBlacklistWord
+import dev.slne.surf.chat.bukkit.model.BukkitBlacklistEntry
 import dev.slne.surf.chat.bukkit.model.BukkitChatUser
 import dev.slne.surf.chat.bukkit.model.BukkitHistoryEntry
 import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.bukkit.util.gson
 import dev.slne.surf.chat.core.service.DatabaseService
 import dev.slne.surf.database.DatabaseProvider
 import dev.slne.surf.surfapi.core.api.util.toObjectList
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
+
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import it.unimi.dsi.fastutil.objects.ObjectList
 import it.unimi.dsi.fastutil.objects.ObjectSet
+
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+
 import net.kyori.adventure.util.Services.Fallback
+
 import org.bukkit.Bukkit
+
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -32,7 +40,9 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.greaterEq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
+
 import java.util.*
+
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 
@@ -68,6 +78,7 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
         val message = text("message")
         val deleted = bool("deleted").default(false)
         val deletedBy = varchar("deletedBy", 16)
+        val server = text("server")
 
         override val primaryKey = PrimaryKey(id)
     }
@@ -148,7 +159,8 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
         rangeMillis: Long?,
         message: String?,
         deleted: Boolean?,
-        deletedBy: String?
+        deletedBy: String?,
+        server: String?
     ): ObjectList<HistoryEntryModel> {
         return withContext(Dispatchers.IO) {
             newSuspendedTransaction {
@@ -180,6 +192,10 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
                     conditions += ChatHistory.deletedBy eq deletedBy
                 }
 
+                if(server != null) {
+                    conditions += ChatHistory.server eq server
+                }
+
                 val query = if (conditions.isNotEmpty()) {
                     ChatHistory.selectAll().where (conditions.reduce { acc, condition -> acc and condition })
                 } else {
@@ -195,20 +211,21 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
                         timestamp = it[ChatHistory.timeStamp],
                         message = it[ChatHistory.message],
                         deleted = it[ChatHistory.deleted],
-                        deletedBy = it[ChatHistory.deletedBy]
+                        deletedBy = it[ChatHistory.deletedBy],
+                        server = it[ChatHistory.server]
                     )
                 }.toObjectList()
             }
         }
     }
 
-    override suspend fun loadBlacklist(): ObjectSet<BlacklistWordModel> {
+    override suspend fun loadBlacklist(): ObjectSet<BlacklistWordEntry> {
         return withContext(Dispatchers.IO) {
             newSuspendedTransaction {
                 val selected = BlackList.selectAll()
 
                 return@newSuspendedTransaction selected.map {
-                    BukkitBlacklistWord (
+                    BukkitBlacklistEntry (
                         word = it[BlackList.word],
                         reason = it[BlackList.reason],
                         addedAt = it[BlackList.addedAt],
@@ -220,7 +237,7 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
         }
     }
 
-    override suspend fun addToBlacklist(entry: BlacklistWordModel): Boolean {
+    override suspend fun addToBlacklist(entry: BlacklistWordEntry): Boolean {
         return withContext(Dispatchers.IO) {
             newSuspendedTransaction {
                 if(BlackList.selectAll().where (BlackList.word eq entry.word).empty()) {
@@ -263,6 +280,7 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
                     it[message] = entry.message
                     it[deleted] = entry.deleted
                     it[deletedBy] = entry.deletedBy
+                    it[server] = entry.server
                 }
             }
         }

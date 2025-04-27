@@ -1,7 +1,6 @@
 package dev.slne.surf.chat.bukkit.util
 
 import dev.slne.surf.chat.api.model.ChannelModel
-import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
@@ -80,6 +79,17 @@ class CompletedComponents {
         hoverEvent(HoverEvent.showText(buildText {
             error("Klicke, um die Einladung zu ${channel.name} abzulehnen")
         }))
+    }
+
+    fun getMessageHoverComponent(sender: String, time: Long, server: String): Component = buildText {
+        variableKey("Gesendet von: ")
+        variableValue(sender)
+        appendNewline()
+        variableKey("Gesendet am: ")
+        variableValue(formatTime(time))
+        appendNewline()
+        variableKey("Gesendet auf: ")
+        variableValue(server)
     }
 
 

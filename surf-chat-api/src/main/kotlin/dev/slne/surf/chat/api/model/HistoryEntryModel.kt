@@ -11,4 +11,6 @@ interface HistoryEntryModel {
    val message: String
    val deleted: Boolean
    val deletedBy: String
+
+   val server: String
 }

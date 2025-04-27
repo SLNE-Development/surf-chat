@@ -7,4 +7,7 @@ import java.util.*
 
 interface ChatFormatModel {
     fun formatMessage(rawMessage: Component, sender: Player, viewer: Player, messageType: ChatMessageType, channel: String, messageID: UUID, warn: Boolean): Component
+    fun loadServer()
+
+    fun getServer(): String
 }

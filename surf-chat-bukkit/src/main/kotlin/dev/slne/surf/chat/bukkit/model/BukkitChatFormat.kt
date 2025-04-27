@@ -7,6 +7,8 @@ import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.bukkit.extension.LuckPermsExtension
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.components
+import dev.slne.surf.chat.bukkit.util.pluginConfig
+import dev.slne.surf.chat.bukkit.util.serverPlayers
 import dev.slne.surf.chat.bukkit.util.toPlainText
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.Colors
@@ -15,10 +17,10 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.sound
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextReplacementConfig
+import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.MiniMessage
 
-import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
@@ -26,6 +28,8 @@ import org.bukkit.entity.Player
 import java.util.UUID
 
 class BukkitChatFormat: ChatFormatModel {
+    private var currentServerNiceName: String = "Unknown"
+
     override fun formatMessage (
         rawMessage: Component,
         sender: Player,
@@ -43,6 +47,10 @@ class BukkitChatFormat: ChatFormatModel {
                     append(MiniMessage.miniMessage().deserialize(LuckPermsExtension.getPrefix(sender) + sender.name))
                     darkSpacer(" >> ")
                     append(highlightPlayers(rawMessage))
+
+                    hoverEvent(HoverEvent.showText {
+                        components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
+                    })
                 }.parseItemPlaceholder(sender, warn)
             }
 
@@ -52,6 +60,10 @@ class BukkitChatFormat: ChatFormatModel {
                     darkSpacer(" >> ")
                     append(components.getChannelComponent(channel))
                     append(highlightPlayers(rawMessage))
+
+                    hoverEvent(HoverEvent.showText {
+                        components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
+                    })
                 }.parseItemPlaceholder(sender, warn)
             }
 
@@ -65,6 +77,10 @@ class BukkitChatFormat: ChatFormatModel {
                     append(MiniMessage.miniMessage().deserialize(LuckPermsExtension.getPrefix(viewer) + viewer.name))
                     darkSpacer(" >> ")
                     append(rawMessage)
+
+                    hoverEvent(HoverEvent.showText {
+                        components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
+                    })
                 }.parseItemPlaceholder(sender, warn)
             }
 
@@ -78,6 +94,10 @@ class BukkitChatFormat: ChatFormatModel {
                     variableValue("Dir")
                     darkSpacer(" >> ")
                     append(rawMessage)
+
+                    hoverEvent(HoverEvent.showText {
+                        components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
+                    })
                 }.parseItemPlaceholder(sender, warn)
             }
 
@@ -89,6 +109,10 @@ class BukkitChatFormat: ChatFormatModel {
                     append(MiniMessage.miniMessage().deserialize(LuckPermsExtension.getPrefix(sender) + sender.name))
                     darkSpacer(" >> ")
                     append(highlightPlayers(rawMessage))
+
+                    hoverEvent(HoverEvent.showText {
+                        components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
+                    })
                 }.parseItemPlaceholder(sender, warn)
             }
 
@@ -140,6 +164,14 @@ class BukkitChatFormat: ChatFormatModel {
         }
     }
 
+    override fun loadServer() {
+        this.currentServerNiceName = pluginConfig.getString("cross-server-messages.current-server-name") ?: "Unknown"
+    }
+
+    override fun getServer(): String {
+        return currentServerNiceName
+    }
+
     private fun Component.parseItemPlaceholder(player: Player, warn: Boolean): Component {
         return this
     }
@@ -173,7 +205,7 @@ class BukkitChatFormat: ChatFormatModel {
     private fun highlightPlayers(rawMessage: Component): Component {
         var message = rawMessage
 
-        for (onlinePlayer in Bukkit.getOnlinePlayers()) {
+        for (onlinePlayer in serverPlayers) {
             val name = onlinePlayer.name
             val pattern = Regex("(?<!\\w)@?$name(?!\\w)")
 

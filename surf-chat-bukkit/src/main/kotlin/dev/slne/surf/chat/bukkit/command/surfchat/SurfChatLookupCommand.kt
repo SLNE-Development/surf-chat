@@ -1,4 +1,4 @@
-package dev.slne.surf.chat.bukkit.command
+package dev.slne.surf.chat.bukkit.command.surfchat
 
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
@@ -10,6 +10,8 @@ import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.LookupFlags
 import dev.slne.surf.chat.bukkit.util.MultiPlayerSelectorData
 import dev.slne.surf.chat.bukkit.util.PageableMessageBuilder
+import dev.slne.surf.chat.bukkit.util.formatTime
+import dev.slne.surf.chat.bukkit.util.getUsername
 import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.Colors
@@ -18,21 +20,13 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.TextDecoration
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.*
 
 class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName) {
-    private val timeFormatter: DateTimeFormatter = DateTimeFormatter
-        .ofPattern("HH:mm:ss, dd.MM.yyyy", Locale.GERMANY)
-        .withZone(ZoneId.of("Europe/Berlin"))
-
     init {
         withPermission("surf.chat.command.lookup")
 
         multiOfflinePlayerArgument("target")
-        argument(GreedyStringArgument("filters").replaceSuggestions (ArgumentSuggestions.strings("--type", "--range", "--message", "--deleted", "--deletedBy", "--page"))
+        argument(GreedyStringArgument("filters").replaceSuggestions (ArgumentSuggestions.strings("--type", "--range", "--message", "--deleted", "--deletedBy", "--page", "--server"))
             .setOptional(true)
         )
 
@@ -58,7 +52,8 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
                     rangeMillis = parsed.range,
                     message = parsed.message,
                     deleted = parsed.deleted,
-                    deletedBy = parsed.deletedBy
+                    deletedBy = parsed.deletedBy,
+                    server = parsed.server
                 ).sortedByDescending { it.timestamp }
 
                 if (history.isEmpty()) {
@@ -93,13 +88,16 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
 
                             hoverEvent(HoverEvent.showText(buildText {
                                 primary("von: ")
-                                info(it.uuid.toString())
+                                info(it.uuid.getUsername())
                                 appendNewline()
                                 primary("Typ: ")
                                 info(it.type)
                                 appendNewline()
                                 primary("Datum: ")
-                                info(getString(it.timestamp))
+                                info(formatTime(it.timestamp))
+                                appendNewline()
+                                primary("Server: ")
+                                info(it.server)
                                 appendNewline()
                                 darkSpacer("Klicke, um die Nachricht zu kopieren.")
                             }))
@@ -110,9 +108,5 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
                 }.send(sender, page)
             }
         }
-    }
-
-    private fun getString(unixMillis: Long): String {
-        return timeFormatter.format(Instant.ofEpochMilli(unixMillis))
     }
 }

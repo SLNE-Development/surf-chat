@@ -5,14 +5,16 @@ import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.api.util.history.LoggedMessage
 import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.bukkit.service.BukkitMessagingSenderService
 import dev.slne.surf.chat.bukkit.util.sendText
+import dev.slne.surf.chat.bukkit.util.serverPlayers
 import dev.slne.surf.chat.bukkit.util.toPlainText
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.historyService
+import dev.slne.surf.chat.core.service.messaging.messagingSenderService
 import io.papermc.paper.event.player.AsyncChatEvent
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextReplacementConfig
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -46,7 +48,7 @@ class BukkitChatListener(): Listener {
         )
 
 
-        Bukkit.getOnlinePlayers().forEach {
+        serverPlayers.forEach {
             historyService.logCaching(it.uniqueId, LoggedMessage(player.name, "Unknown", formattedMessage), messageID)
         }
 
@@ -83,11 +85,20 @@ class BukkitChatListener(): Listener {
         var formatted = false
 
         plugin.messageValidator.parse(cleanedMessage, ChatMessageType.GLOBAL, player) {
+            messagingSenderService.sendData(player.name,
+                player.name,
+                formattedMessage,
+                ChatMessageType.GLOBAL,
+                messageID,
+                "N/A",
+                BukkitMessagingSenderService.getForwardingServers()
+            )
+
             event.renderer { _, _, _, viewer ->
                 plugin.chatFormat.formatMessage (
                     cleanedMessage,
                     player,
-                    if(viewer is Player) viewer else player,
+                    viewer as? Player ?: player,
                     ChatMessageType.GLOBAL,
                     "N/A",
                     messageID,

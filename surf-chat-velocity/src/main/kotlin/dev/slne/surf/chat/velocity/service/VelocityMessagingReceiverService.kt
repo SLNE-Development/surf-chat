@@ -7,18 +7,13 @@ import com.google.gson.reflect.TypeToken
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.PluginMessageEvent
 import com.velocitypowered.api.proxy.ServerConnection
-import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier
 
-import dev.slne.surf.chat.api.SurfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.core.service.messaging.MessagingReceiverService
 import dev.slne.surf.chat.core.service.messaging.messagingSenderService
 import dev.slne.surf.chat.velocity.gson
 import dev.slne.surf.chat.velocity.messageChannel
-import dev.slne.surf.chat.velocity.plugin
-import dev.slne.surf.chat.velocity.util.debug
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
-import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import it.unimi.dsi.fastutil.objects.ObjectSet
 
 import net.kyori.adventure.text.Component
@@ -80,7 +75,5 @@ class VelocityMessagingReceiverService(): MessagingReceiverService, Services.Fal
             channel = channel,
             forwardingServers = forwardingServers
         )
-
-        debug("${messagingSenderService.javaClass.name} with hashcode ${messagingSenderService.hashCode()}")
     }
 }

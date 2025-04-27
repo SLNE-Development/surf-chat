@@ -2,6 +2,7 @@ package dev.slne.surf.chat.velocity.service
 
 import com.google.auto.service.AutoService
 import com.google.common.io.ByteStreams
+
 import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.core.service.messaging.MessagingSenderService
 import dev.slne.surf.chat.velocity.gson
@@ -9,11 +10,9 @@ import dev.slne.surf.chat.velocity.messageChannel
 import dev.slne.surf.chat.velocity.plugin
 
 import it.unimi.dsi.fastutil.objects.ObjectSet
-
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import net.kyori.adventure.util.Services
-
 import java.util.UUID
 
 import kotlin.jvm.optionals.getOrNull

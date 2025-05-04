@@ -73,7 +73,7 @@ class BukkitHistoryService(): HistoryService, Fallback {
         }
 
         chatHistory.object2ObjectEntrySet()
-            .sortedBy { it.key.sendTime }
+            .sortedByDescending { it.key.sendTime }
             .take(25)
             .forEach { (_, value) ->
                 forEachPlayer { player ->

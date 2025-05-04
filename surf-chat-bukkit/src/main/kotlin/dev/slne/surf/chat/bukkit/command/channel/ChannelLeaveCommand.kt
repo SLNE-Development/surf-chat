@@ -18,7 +18,7 @@ class ChannelLeaveCommand(commandName: String) : CommandAPICommand(commandName) 
             plugin.launch {
                 val user = databaseService.getUser(player.uniqueId)
 
-                if(channel == null) {
+                if (channel == null) {
                     user.sendText(buildText {
                         error("Du bist in keinem Nachrichtenkanal.")
                     })
@@ -26,25 +26,32 @@ class ChannelLeaveCommand(commandName: String) : CommandAPICommand(commandName) 
                     return@launch
                 }
 
-                if(channel.isOwner(user)) {
-                    val mayBeNextOwner = channel.getMembers()
-                        .filter { it.uuid != user.uuid }
-                        .sortedWith(compareBy(
-                            { if (channel.isModerator(it)) 0 else 1 },
-                            { channel.members[it] }
-                        ))
-                        .firstOrNull()
-
-                    if(mayBeNextOwner == null) {
-                        channelService.deleteChannel(channel)
-                    } else {
-                        channel.transferOwnership(mayBeNextOwner)
-                        channel.leave(user)
+                if (channel.isOwner(user)) { //if the player who wants to leave is the owner of the channel
+                    var nextOwner = channel.getModerators()
+                        .firstOrNull() // try to transfer the ownership to the first moderator (in the set) in the channel
+                    if (nextOwner == null) {    // if there is no moderator in the channel
+                        nextOwner = channel.getMembers()
+                            .firstOrNull { it.uuid != user.uuid }   // pick the first channel member (excluded executor (in this case the owner)) because the member set also contains the owner )
                     }
-                } else {
-                    channel.leave(user)
+                    if (nextOwner == null) {    // if there is no member in the channel beside the executor, the channel would be empty and can be deleted
+                        channel.leave(user)
+                        channelService.deleteChannel(channel)
+                        user.sendText(buildText {
+                            primary("Du hast den Nachrichtenkanal ")
+                            info(channel.name)
+                            primary(" als letzter Spieler verlassen und der Kanal wurde gelöscht.")
+                        })
+                        return@launch
+                    }
+                    channel.transferOwnership(nextOwner)
+                    nextOwner.sendText(buildText {
+                        info(player.name)
+                        primary(" hat den Nachrichtenkanal ")
+                        info(channel.name)
+                        error(" verlassen. Die Besitzerschaft wurde auf dich übertragen.")
+                    })
                 }
-
+                channel.leave(user)
                 user.sendText(buildText {
                     primary("Du hast den Nachrichtenkanal ")
                     info(channel.name)

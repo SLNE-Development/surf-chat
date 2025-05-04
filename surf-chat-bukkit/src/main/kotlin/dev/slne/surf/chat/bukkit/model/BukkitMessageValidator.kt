@@ -26,7 +26,7 @@ class BukkitMessageValidator(): MessageValidatorModel {
 
             MessageValidationResult.FAILED_MUTED -> {
                 surfChatApi.sendText(player, buildText {
-                    error("Du bist gemutet.")
+                    error("Du bist stummgeschalten.")
                 })
             }
 

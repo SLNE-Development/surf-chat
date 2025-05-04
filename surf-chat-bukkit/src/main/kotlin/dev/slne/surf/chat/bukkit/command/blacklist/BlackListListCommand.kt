@@ -54,13 +54,20 @@ class BlackListListCommand(commandName: String): CommandAPICommand(commandName) 
                             spacer(" (hinzugefügt von ${it.addedBy})")
 
                             hoverEvent(HoverEvent.showText(buildText {
-                                primary("von: ")
+
+                                primary("Eintrag: ")
+                                info(it.word)
+                                appendNewline()
+                                primary("Hinzugefügt von: ")
                                 info(it.addedBy)
+                                appendNewline()
+                                primary("Grund: ")
+                                info(it.reason)
                                 appendNewline()
                                 primary("Datum: ")
                                 info(getString(it.addedAt))
                                 appendNewline()
-                                darkSpacer("Klicke, um die Nachricht zu kopieren.")
+                                darkSpacer("Klicke, um den Eintrag zu kopieren.")
                             }))
 
                             clickEvent(ClickEvent.copyToClipboard(it.word))

@@ -22,12 +22,11 @@ class BukkitBlacklistService(): BlacklistService, Fallback {
     override fun hasBlackListed(message: Component): Boolean {
         val string = PlainTextComponentSerializer.plainText().serialize(message)
 
-        string.split(" ").forEach {
-            if (blackList.contains(it)) {
+        string.split(" ").forEach { word ->
+            if (blackList.any { it.equals(word, ignoreCase = true) }) {
                 return true
             }
         }
-
         return false
     }
 

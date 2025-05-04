@@ -118,7 +118,6 @@ class BukkitChannel(
         }
     }
 
-
 override fun kick(user: ChatUserModel) {
     this.leave(user)
 }

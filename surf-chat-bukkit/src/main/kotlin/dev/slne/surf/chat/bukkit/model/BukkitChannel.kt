@@ -16,17 +16,17 @@ import it.unimi.dsi.fastutil.objects.ObjectSet
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class BukkitChannel (
+class BukkitChannel(
     override val name: String,
     override var status: ChannelStatusType = ChannelStatusType.PRIVATE,
     override val members: Object2ObjectMap<ChatUserModel, ChannelRoleType> = Object2ObjectOpenHashMap(),
     override val bannedPlayers: ObjectSet<ChatUserModel> = ObjectArraySet(),
     override val invites: ObjectSet<ChatUserModel> = ObjectArraySet()
-): ChannelModel {
+) : ChannelModel {
     override fun join(user: ChatUserModel, silent: Boolean) {
         members[user] = ChannelRoleType.MEMBER
 
-        if(!silent) {
+        if (!silent) {
             members.forEach {
                 it.key.sendText(buildText {
                     plugin.launch {
@@ -41,7 +41,7 @@ class BukkitChannel (
     override fun leave(user: ChatUserModel, silent: Boolean) {
         members.remove(user)
 
-        if(!silent) {
+        if (!silent) {
             members.forEach {
                 it.key.sendText(buildText {
                     plugin.launch {
@@ -81,17 +81,18 @@ class BukkitChannel (
         members.forEach {
             it.key.sendText(buildText {
                 plugin.launch {
+                    primary("Der Besitz des Nachrichtenkanals wurde von ")
                     variableValue(user.getName())
-                    primary(" wurde zum Besitzer des Nachrichtenkanals und ")
+                    primary(" auf ")
                     variableValue(oldOwner.getName())
-                    primary(" wurde zum Moderator.")
+                    primary(" übertragen.")
                 }
             })
         }
     }
 
     override fun promote(user: ChatUserModel) {
-        if(members[user] == ChannelRoleType.MEMBER) {
+        if (members[user] == ChannelRoleType.MEMBER) {
             members[user] = ChannelRoleType.MODERATOR
         }
 
@@ -106,7 +107,7 @@ class BukkitChannel (
     }
 
     override fun demote(user: ChatUserModel) {
-        if(members[user] == ChannelRoleType.MODERATOR) {
+        if (members[user] == ChannelRoleType.MODERATOR) {
             members[user] = ChannelRoleType.MEMBER
         }
 

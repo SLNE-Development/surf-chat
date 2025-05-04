@@ -18,7 +18,7 @@ class ChannelLeaveCommand(commandName: String) : CommandAPICommand(commandName) 
             plugin.launch {
                 val user = databaseService.getUser(player.uniqueId)
 
-                if(channel == null) {
+                if (channel == null) {
                     user.sendText(buildText {
                         error("Du bist in keinem Nachrichtenkanal.")
                     })
@@ -26,25 +26,32 @@ class ChannelLeaveCommand(commandName: String) : CommandAPICommand(commandName) 
                     return@launch
                 }
 
-                if(channel.isOwner(user)) {
-                    val mayBeNextOwner = channel.getMembers()
-                        .filter { it.uuid != user.uuid }
-                        .sortedWith(compareBy(
-                            { if (channel.isModerator(it)) 0 else 1 },
-                            { channel.members[it] }
-                        ))
+                if (channel.isOwner(user)) {
+                    var nextOwner = channel.getModerators()
                         .firstOrNull()
-
-                    if(mayBeNextOwner == null) {
-                        channelService.deleteChannel(channel)
-                    } else {
-                        channel.transferOwnership(mayBeNextOwner)
-                        channel.leave(user)
+                    if (nextOwner == null) {
+                        nextOwner = channel.getMembers()
+                            .firstOrNull { it.uuid != user.uuid }
                     }
-                } else {
-                    channel.leave(user)
+                    if (nextOwner == null) {
+                        channel.leave(user)
+                        channelService.deleteChannel(channel)
+                        user.sendText(buildText {
+                            primary("Du hast den Nachrichtenkanal ")
+                            info(channel.name)
+                            primary(" als letzter Spieler verlassen und der Kanal wurde gelöscht.")
+                        })
+                        return@launch
+                    }
+                    channel.transferOwnership(nextOwner)
+                    nextOwner.sendText(buildText {
+                        info(player.name)
+                        primary(" hat den Nachrichtenkanal ")
+                        info(channel.name)
+                        error(" verlassen. Die Besitzerschaft wurde auf dich übertragen.")
+                    })
                 }
-
+                channel.leave(user)
                 user.sendText(buildText {
                     primary("Du hast den Nachrichtenkanal ")
                     info(channel.name)

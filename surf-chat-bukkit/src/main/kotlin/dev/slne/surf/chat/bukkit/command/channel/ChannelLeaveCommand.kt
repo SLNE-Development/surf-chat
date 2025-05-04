@@ -26,14 +26,14 @@ class ChannelLeaveCommand(commandName: String) : CommandAPICommand(commandName) 
                     return@launch
                 }
 
-                if (channel.isOwner(user)) { //if the player who wants to leave is the owner of the channel
+                if (channel.isOwner(user)) {
                     var nextOwner = channel.getModerators()
-                        .firstOrNull() // try to transfer the ownership to the first moderator (in the set) in the channel
-                    if (nextOwner == null) {    // if there is no moderator in the channel
+                        .firstOrNull()
+                    if (nextOwner == null) {
                         nextOwner = channel.getMembers()
-                            .firstOrNull { it.uuid != user.uuid }   // pick the first channel member (excluded executor (in this case the owner)) because the member set also contains the owner )
+                            .firstOrNull { it.uuid != user.uuid }
                     }
-                    if (nextOwner == null) {    // if there is no member in the channel beside the executor, the channel would be empty and can be deleted
+                    if (nextOwner == null) {
                         channel.leave(user)
                         channelService.deleteChannel(channel)
                         user.sendText(buildText {

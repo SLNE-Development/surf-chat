@@ -89,20 +89,6 @@ class BukkitChannel(
                 }
             })
         }
-//        members.forEach { entry ->
-//            val member = entry.key
-//            if (member != user && member != oldOwner) {
-//                member.sendText(buildText {
-//                    plugin.launch {
-//                        primary("Der Besitz des Nachrichtenkanals wurde von ")
-//                        variableValue(oldOwner.getName())
-//                        primary(" auf ")
-//                        variableValue(user.getName())
-//                        primary(" übertragen.")
-//                    }
-//                })
-//            }
-//        }
     }
 
     override fun promote(user: ChatUserModel) {

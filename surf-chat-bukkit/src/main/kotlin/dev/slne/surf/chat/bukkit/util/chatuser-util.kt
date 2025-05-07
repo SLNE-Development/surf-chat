@@ -45,3 +45,11 @@ fun UUID.getUsername(): String {
     val player = Bukkit.getPlayer(this)
     return player?.name ?: "Unknown"
 }
+
+fun player(userName: String): Player? {
+    return Bukkit.getPlayer(userName)
+}
+
+fun player(uuid: UUID): Player? {
+    return Bukkit.getPlayer(uuid)
+}

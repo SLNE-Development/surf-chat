@@ -10,6 +10,7 @@ import dev.slne.surf.chat.bukkit.model.BukkitHistoryEntry
 import dev.slne.surf.chat.api.util.history.HistoryPair
 import dev.slne.surf.chat.api.util.history.LoggedMessage
 import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.bukkit.util.player
 import dev.slne.surf.chat.core.service.HistoryService
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.bukkit.api.util.forEachPlayer
@@ -65,20 +66,17 @@ class BukkitHistoryService(): HistoryService, Fallback {
 
     override fun resendMessages(player: UUID) {
         val chatHistory = historyCache.getIfPresent(player) ?: return
+        val receiver = player(player) ?: return
 
-        forEachPlayer { online ->
-            repeat(100) {
-                online.sendMessage(Component.empty())
-            }
+        repeat(100) {
+            receiver.sendMessage(Component.empty())
         }
 
         chatHistory.object2ObjectEntrySet()
-            .sortedByDescending { it.key.sendTime }
+            .sortedBy { it.key.sendTime }
             .take(25)
             .forEach { (_, value) ->
-                forEachPlayer { player ->
-                    player.sendMessage(value.message)
-                }
+                receiver.sendMessage { value.message }
             }
     }
 

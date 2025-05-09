@@ -18,7 +18,7 @@ class BukkitFilterService : FilterService, Fallback {
 
     private val messageTimestamps = mutableMapOf<UUID, MutableList<Long>>()
 
-    private val validCharactersRegex = "^[a-zA-Z0-9/.:_,()%&=?!<>|#^\"²³+*~\\-äöüß@\\[\\] ]*$".toRegex()
+    private val validCharactersRegex = "^[\\u0000-\\u007FäöüÄÖÜß€@£¥|²³µ½¼¾«»¡¿°§´`^~¨]+$".toRegex()
     private val urlRegex = "((http|https|ftp)://)?([\\w-]+\\.)+[\\w-]+(/[\\w- ./?%&=]*)?".toRegex(RegexOption.IGNORE_CASE)
 
     private var messageLimitSeconds = 10

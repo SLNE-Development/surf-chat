@@ -46,10 +46,6 @@ class BukkitMessagingReceiverService : MessagingReceiverService, PluginMessageLi
         channel: String,
         forwardingServers: ObjectSet<String>
     ) {
-        serverPlayers.forEach {
-            historyService.logCaching(it.uniqueId, LoggedMessage(player, "Unknown", message), messageID)
-        }
-
         Bukkit.broadcast(message)
     }
 }

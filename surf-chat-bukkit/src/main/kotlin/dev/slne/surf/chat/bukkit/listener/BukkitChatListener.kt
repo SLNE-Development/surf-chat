@@ -3,11 +3,9 @@ package dev.slne.surf.chat.bukkit.listener
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
-import dev.slne.surf.chat.api.util.history.LoggedMessage
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.service.BukkitMessagingSenderService
 import dev.slne.surf.chat.bukkit.util.sendText
-import dev.slne.surf.chat.bukkit.util.serverPlayers
 import dev.slne.surf.chat.bukkit.util.toPlainText
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.historyService
@@ -47,10 +45,8 @@ class BukkitChatListener(): Listener {
                 .build()
         )
 
+        historyService.logCaching(event.signedMessage(), messageID)
 
-        serverPlayers.forEach {
-            historyService.logCaching(it.uniqueId, LoggedMessage(player.name, "Unknown", formattedMessage), messageID)
-        }
 
         val channel = channelService.getChannel(player)
 

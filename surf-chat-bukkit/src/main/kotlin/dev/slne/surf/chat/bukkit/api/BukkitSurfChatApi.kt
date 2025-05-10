@@ -31,7 +31,5 @@ class BukkitSurfChatApi(): SurfChatApi, Fallback {
         player.sendText {
             append(message)
         }
-
-        historyService.logCaching(player.uniqueId, LoggedMessage("Unknown", player.name, message), messageID)
     }
 }

@@ -15,11 +15,14 @@ import dev.slne.surf.chat.core.service.HistoryService
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.bukkit.api.util.forEachPlayer
 import dev.slne.surf.surfapi.core.api.util.mutableObject2ObjectMapOf
+import dev.slne.surf.surfapi.core.api.util.object2ObjectMapOf
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap
 import it.unimi.dsi.fastutil.objects.ObjectList
+import net.kyori.adventure.chat.SignedMessage
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.kyori.adventure.util.Services.Fallback
+import org.bukkit.Bukkit
 import java.util.*
 
 @AutoService(HistoryService::class)
@@ -27,6 +30,8 @@ class BukkitHistoryService(): HistoryService, Fallback {
     private val historyCache = Caffeine.newBuilder()
         .maximumSize(1000)
         .build<UUID, Object2ObjectMap<HistoryPair, LoggedMessage>>()
+
+    private val messageCache = object2ObjectMapOf<UUID, SignedMessage>()
 
     override suspend fun write(user: UUID, type: ChatMessageType, message: Component, messageID: UUID) {
         databaseService.insertHistoryEntry(user, BukkitHistoryEntry(
@@ -43,23 +48,17 @@ class BukkitHistoryService(): HistoryService, Fallback {
         return databaseService.loadHistory(user.uuid)
     }
 
-    override fun logCaching(player: UUID, message: LoggedMessage, messageID: UUID) {
-        val chatHistory = historyCache.get(player) { mutableObject2ObjectMapOf() }
-
-        val timestamp = System.currentTimeMillis() / 1000
-        chatHistory[HistoryPair(messageID, timestamp)] = message
+    override fun logCaching(message: SignedMessage, messageID: UUID) {
+        this.messageCache[messageID] = message
     }
 
-    override fun deleteMessage(player: UUID, name: String, messageID: UUID) {
-        val chatHistory = historyCache.getIfPresent(player) ?: return
-        val key = chatHistory.keys.find { it.messageID == messageID }
+    override fun deleteMessage(name: String, messageID: UUID) {
+        val signedMessage = messageCache[messageID] ?: return
 
-        if (key != null) {
-            chatHistory.remove(key)
+        Bukkit.getServer().deleteMessage(signedMessage)
 
-            plugin.launch {
-                databaseService.markMessageDeleted(name, messageID)
-            }
+        plugin.launch {
+            databaseService.markMessageDeleted(name, messageID)
         }
     }
 

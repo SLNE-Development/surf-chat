@@ -32,55 +32,18 @@ class VelocityMessagingSenderService(): MessagingSenderService, Services.Fallbac
         channel: String,
         forwardingServers: ObjectSet<String>
     ) {
-        when(type) {
-            ChatMessageType.GLOBAL -> {
-                for (backend in forwardingServers) {
-                    val server = plugin.proxy.getServer(backend).getOrNull() ?: continue
+        for (backend in forwardingServers) {
+            val server = plugin.proxy.getServer(backend).getOrNull() ?: continue
 
-                    server.sendPluginMessage(messageChannel, ByteStreams.newDataOutput().apply {
-                        writeUTF(player)
-                        writeUTF(target)
-                        writeUTF(GsonComponentSerializer.gson().serialize(message))
-                        writeUTF(gson.toJson(type))
-                        writeUTF(messageID.toString())
-                        writeUTF(channel)
-                        writeUTF(gson.toJson(forwardingServers))
-                    }.toByteArray())
-                }
-            }
-
-            ChatMessageType.PRIVATE_FROM -> {
-                val targetServer = plugin.proxy.getPlayer(player).getOrNull()?.currentServer?.getOrNull() ?: return
-
-                targetServer.sendPluginMessage(messageChannel, ByteStreams.newDataOutput().apply {
-                    writeUTF(player)
-                    writeUTF(target)
-                    writeUTF(GsonComponentSerializer.gson().serialize(message))
-                    writeUTF(gson.toJson(type))
-                    writeUTF(messageID.toString())
-                    writeUTF(channel)
-                    writeUTF(gson.toJson(forwardingServers))
-                }.toByteArray())
-            }
-
-            ChatMessageType.PRIVATE_TO -> {
-                val targetServer = plugin.proxy.getPlayer(player).getOrNull()?.currentServer?.getOrNull() ?: return
-
-                targetServer.sendPluginMessage(messageChannel, ByteStreams.newDataOutput().apply {
-                    writeUTF(player)
-                    writeUTF(target)
-                    writeUTF(GsonComponentSerializer.gson().serialize(message))
-                    writeUTF(gson.toJson(type))
-                    writeUTF(messageID.toString())
-                    writeUTF(channel)
-                    writeUTF(gson.toJson(forwardingServers))
-                }.toByteArray())
-            }
-            else -> {
-                /**
-                 * Do nothing, other types are not supported
-                 */
-            }
+            server.sendPluginMessage(messageChannel, ByteStreams.newDataOutput().apply {
+                writeUTF(player)
+                writeUTF(target)
+                writeUTF(GsonComponentSerializer.gson().serialize(message))
+                writeUTF(gson.toJson(type))
+                writeUTF(messageID.toString())
+                writeUTF(channel)
+                writeUTF(gson.toJson(forwardingServers))
+            }.toByteArray())
         }
     }
 }

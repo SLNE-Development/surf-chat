@@ -46,29 +46,10 @@ class BukkitMessagingReceiverService : MessagingReceiverService, PluginMessageLi
         channel: String,
         forwardingServers: ObjectSet<String>
     ) {
-        when(type) {
-            ChatMessageType.GLOBAL -> {
-                serverPlayers.forEach {
-                    it.sendMessage(message)
-                }
-            }
-            ChatMessageType.PRIVATE_FROM -> {
-                val targetPlayer = Bukkit.getPlayer(target) ?: return
-
-                targetPlayer.sendMessage(message)
-            }
-
-            ChatMessageType.PRIVATE_TO -> {
-                val targetPlayer = Bukkit.getPlayer(player) ?: return
-
-                targetPlayer.sendMessage(message)
-            }
-
-            else -> {
-                /**
-                 * Do nothing, other types are not supported
-                 */
-            }
+        serverPlayers.forEach {
+            historyService.logCaching(it.uniqueId, LoggedMessage(player, "Unknown", message), messageID)
         }
+
+        Bukkit.broadcast(message)
     }
 }

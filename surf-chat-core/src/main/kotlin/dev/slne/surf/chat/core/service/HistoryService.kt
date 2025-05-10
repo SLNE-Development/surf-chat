@@ -15,7 +15,7 @@ interface HistoryService {
     suspend fun write(user: UUID, type: ChatMessageType, message: Component, messageID: UUID)
     suspend fun getHistory(user: ChatUserModel): ObjectList<HistoryEntryModel>
 
-    fun logCaching(message: SignedMessage, messageID: UUID)
+    fun logCaching(message: SignedMessage.Signature, messageID: UUID)
     fun deleteMessage(name: String, messageID: UUID)
     fun resendMessages(player: UUID)
     fun clearChat()

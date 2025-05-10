@@ -17,6 +17,7 @@ import dev.slne.surf.surfapi.bukkit.api.util.forEachPlayer
 import dev.slne.surf.surfapi.core.api.util.mutableObject2ObjectMapOf
 import dev.slne.surf.surfapi.core.api.util.object2ObjectMapOf
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import it.unimi.dsi.fastutil.objects.ObjectList
 import net.kyori.adventure.chat.SignedMessage
 import net.kyori.adventure.text.Component
@@ -31,7 +32,7 @@ class BukkitHistoryService(): HistoryService, Fallback {
         .maximumSize(1000)
         .build<UUID, Object2ObjectMap<HistoryPair, LoggedMessage>>()
 
-    private val messageCache = object2ObjectMapOf<UUID, SignedMessage>()
+    private val messageCache: Object2ObjectMap<UUID, SignedMessage.Signature> = Object2ObjectOpenHashMap()
 
     override suspend fun write(user: UUID, type: ChatMessageType, message: Component, messageID: UUID) {
         databaseService.insertHistoryEntry(user, BukkitHistoryEntry(
@@ -48,7 +49,7 @@ class BukkitHistoryService(): HistoryService, Fallback {
         return databaseService.loadHistory(user.uuid)
     }
 
-    override fun logCaching(message: SignedMessage, messageID: UUID) {
+    override fun logCaching(message: SignedMessage.Signature, messageID: UUID) {
         this.messageCache[messageID] = message
     }
 

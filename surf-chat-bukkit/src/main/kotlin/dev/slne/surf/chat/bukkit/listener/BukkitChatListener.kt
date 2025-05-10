@@ -18,6 +18,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import java.util.UUID
 import java.util.regex.Pattern
+import kotlin.math.sign
 
 class BukkitChatListener(): Listener {
     private val pattern = Regex("^@(all|a|here|everyone)\\b\\s*", RegexOption.IGNORE_CASE)
@@ -45,8 +46,13 @@ class BukkitChatListener(): Listener {
                 .build()
         )
 
-        historyService.logCaching(event.signedMessage(), messageID)
+        val signature = event.signedMessage().signature()
 
+        if(signature != null) {
+            historyService.logCaching(signature, messageID)
+        } else {
+            plugin.logger.warning("Message signature is null for player ${player.name} with message: $message")
+        }
 
         val channel = channelService.getChannel(player)
 

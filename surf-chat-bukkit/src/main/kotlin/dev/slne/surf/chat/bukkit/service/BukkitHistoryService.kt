@@ -57,6 +57,7 @@ class BukkitHistoryService(): HistoryService, Fallback {
         val signedMessage = messageCache[messageID] ?: return
 
         Bukkit.getServer().deleteMessage(signedMessage)
+        messageCache.remove(messageID)
 
         plugin.launch {
             databaseService.markMessageDeleted(name, messageID)
@@ -64,25 +65,7 @@ class BukkitHistoryService(): HistoryService, Fallback {
     }
 
 
-    override fun resendMessages(player: UUID) {
-        val chatHistory = historyCache.getIfPresent(player) ?: return
-        val receiver = player(player) ?: return
-
-        repeat(100) {
-            receiver.sendMessage(Component.empty())
-        }
-
-        chatHistory.object2ObjectEntrySet()
-            .sortedBy { it.key.sendTime }
-            .take(25)
-            .forEach { (_, value) ->
-                receiver.sendMessage { value.message }
-            }
-    }
-
     override fun clearChat() {
-        historyCache.invalidateAll()
-
         forEachPlayer { player ->
             repeat(100) {
                 player.sendMessage(Component.empty())

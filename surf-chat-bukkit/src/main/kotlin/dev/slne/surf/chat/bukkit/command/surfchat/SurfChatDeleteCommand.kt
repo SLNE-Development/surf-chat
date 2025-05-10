@@ -17,11 +17,6 @@ class SurfChatDeleteCommand(commandName: String) : CommandAPICommand(commandName
 
             historyService.deleteMessage(player.name, UUID.fromString(messageID))
 
-//            serverPlayers.forEach {
-//                historyService.deleteMessage(it.uniqueId, player.name, UUID.fromString(messageID))
-//                historyService.resendMessages(it.uniqueId)
-//            }
-
             surfChatApi.sendText(player, buildText {
                 primary("Die Nachricht wurde gelöscht.")
             })

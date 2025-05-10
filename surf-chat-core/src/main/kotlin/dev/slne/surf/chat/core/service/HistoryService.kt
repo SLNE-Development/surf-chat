@@ -17,7 +17,6 @@ interface HistoryService {
 
     fun logCaching(message: SignedMessage.Signature, messageID: UUID)
     fun deleteMessage(name: String, messageID: UUID)
-    fun resendMessages(player: UUID)
     fun clearChat()
 
     companion object {

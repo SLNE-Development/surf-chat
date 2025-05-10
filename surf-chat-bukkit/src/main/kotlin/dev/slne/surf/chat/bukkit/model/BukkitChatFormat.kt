@@ -74,7 +74,7 @@ class BukkitChatFormat: ChatFormatModel {
                     darkSpacer(" | ")
                     variableValue("Du")
                     darkSpacer(" -> ")
-                    append(MiniMessage.miniMessage().deserialize(viewer.name))
+                    append(MiniMessage.miniMessage().deserialize(LuckPermsExtension.getPrefix(sender) + sender.name))
                     darkSpacer(" >> ")
                     append(formatItemTag(rawMessage, sender, warn))
 
@@ -89,7 +89,7 @@ class BukkitChatFormat: ChatFormatModel {
                     darkSpacer(">> ")
                     append(Component.text("PM", Colors.RED))
                     darkSpacer(" | ")
-                    append(MiniMessage.miniMessage().deserialize(sender.name))
+                    append(MiniMessage.miniMessage().deserialize(LuckPermsExtension.getPrefix(sender) + sender.name))
                     darkSpacer(" -> ")
                     variableValue("Dir")
                     darkSpacer(" >> ")

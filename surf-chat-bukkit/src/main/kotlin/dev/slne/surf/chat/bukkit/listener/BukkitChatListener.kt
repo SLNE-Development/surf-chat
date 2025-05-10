@@ -3,11 +3,9 @@ package dev.slne.surf.chat.bukkit.listener
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
-import dev.slne.surf.chat.api.util.history.LoggedMessage
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.service.BukkitMessagingSenderService
 import dev.slne.surf.chat.bukkit.util.sendText
-import dev.slne.surf.chat.bukkit.util.serverPlayers
 import dev.slne.surf.chat.bukkit.util.toPlainText
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.historyService
@@ -20,6 +18,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import java.util.UUID
 import java.util.regex.Pattern
+import kotlin.math.sign
 
 class BukkitChatListener(): Listener {
     private val pattern = Regex("^@(all|a|here|everyone)\\b\\s*", RegexOption.IGNORE_CASE)
@@ -47,9 +46,12 @@ class BukkitChatListener(): Listener {
                 .build()
         )
 
+        val signature = event.signedMessage().signature()
 
-        serverPlayers.forEach {
-            historyService.logCaching(it.uniqueId, LoggedMessage(player.name, "Unknown", formattedMessage), messageID)
+        if(signature != null) {
+            historyService.logCaching(signature, messageID)
+        } else {
+            plugin.logger.warning("Message signature is null for player ${player.name} with message: $message")
         }
 
         val channel = channelService.getChannel(player)

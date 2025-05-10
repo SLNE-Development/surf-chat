@@ -7,6 +7,7 @@ import dev.slne.surf.chat.api.util.history.LoggedMessage
 import dev.slne.surf.surfapi.core.api.util.requiredService
 
 import it.unimi.dsi.fastutil.objects.ObjectList
+import net.kyori.adventure.chat.SignedMessage
 import net.kyori.adventure.text.Component
 import java.util.UUID
 
@@ -14,9 +15,8 @@ interface HistoryService {
     suspend fun write(user: UUID, type: ChatMessageType, message: Component, messageID: UUID)
     suspend fun getHistory(user: ChatUserModel): ObjectList<HistoryEntryModel>
 
-    fun logCaching(player: UUID, message: LoggedMessage, messageID: UUID)
-    fun deleteMessage(player: UUID, name: String, messageID: UUID)
-    fun resendMessages(player: UUID)
+    fun logCaching(message: SignedMessage.Signature, messageID: UUID)
+    fun deleteMessage(name: String, messageID: UUID)
     fun clearChat()
 
     companion object {

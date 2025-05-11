@@ -5,14 +5,21 @@ import dev.jorel.commandapi.arguments.CustomArgument
 import dev.jorel.commandapi.arguments.StringArgument
 import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.core.service.channelService
+import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 
 class ChannelInviteArgument(nodeName: String) :
     CustomArgument<ChannelModel, String>(StringArgument(nodeName), { info ->
             val channel = channelService.getChannel(info.input())
-                ?: throw CustomArgumentException.fromMessageBuilder(MessageBuilder("Der Kanal wurde nicht gefunden.").appendArgInput())
+                ?: throw CustomArgumentException.fromAdventureComponent { buildText {
+                    appendPrefix()
+                    error("Der Kanal exestiert nicht.")
+                } }
 
             if (!channel.isInvited(info.sender())) {
-                throw CustomArgumentException.fromMessageBuilder(MessageBuilder("Dieser Kanal ist nicht für dich zugänglich.").appendArgInput())
+                throw CustomArgumentException.fromAdventureComponent { buildText {
+                    appendPrefix()
+                    error("Dieser Kanal ist nicht für dich zugänglich.")
+                } }
             }
             channel
         }) {

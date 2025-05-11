@@ -92,7 +92,15 @@ class VelocityMessagingReceiverService(): MessagingReceiverService, Services.Fal
         )
     }
 
+    var lastMessage: Component = Component.empty()
+
     override fun handeTeamChatReceive(message: Component) {
+        if(lastMessage == message) {
+            return
+        }
+
+        lastMessage = message
+
         for (teamMember in teamMembers()) {
             teamMember.sendMessage(message)
         }

@@ -32,7 +32,7 @@ class ChannelPromoteCommand(commandName: String) : CommandAPICommand(commandName
 
                 if(!channel.isOwner(user)) {
                     user.sendText(buildText {
-                        error("Du bist nicht der Besitzer des Nachrichtenkanals.")
+                        error("Du verfügst nicht über die erforderliche Berechtigung.")
                     })
                     return@launch
                 }
@@ -40,7 +40,7 @@ class ChannelPromoteCommand(commandName: String) : CommandAPICommand(commandName
                 if(channel.isModerator(targetUser)) {
                     user.sendText(buildText {
                         error("Der Spieler ")
-                        info(target.name ?: target.uniqueId.toString())
+                        variableValue(target.name ?: target.uniqueId.toString())
                         error(" ist bereits Moderator.")
                     })
                     return@launch
@@ -49,13 +49,13 @@ class ChannelPromoteCommand(commandName: String) : CommandAPICommand(commandName
                 channel.promote(targetUser)
 
                 user.sendText(buildText {
-                    primary("Du hast ")
-                    info(target.name ?: target.uniqueId.toString())
-                    primary(" befördert.")
+                    success("Du hast ")
+                    variableValue(target.name ?: target.uniqueId.toString())
+                    success(" befördert.")
                 })
 
                 targetUser.sendText(buildText {
-                    primary("Du wurdest befördert.")
+                    info("Du wurdest befördert.")
                 })
             }
         }

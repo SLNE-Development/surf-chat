@@ -27,16 +27,16 @@ class ChannelDeleteCommand(commandName: String) : CommandAPICommand(commandName)
 
                 if (!channel.isOwner(user)) {
                     user.sendText(buildText {
-                        error("Du bist nicht der Besitzer des Nachrichtenkanals.")
+                        error("Du bist nicht berechtigt diesen Nachrichtenkanal zu löschen.")
                     })
                     return@launch
                 }
 
                 channelService.deleteChannel(channel)
                 user.sendText(buildText {
-                    primary("Du hast den Nachrichtenkanal ")
-                    info(channel.name)
-                    error(" gelöscht.")
+                    success("Du hast den Nachrichtenkanal ")
+                    variableValue(channel.name)
+                    success(" gelöscht.")
                 })
             }
         }

@@ -34,33 +34,31 @@ class ChannelKickCommand(commandName: String) : CommandAPICommand(commandName) {
 
                 if(!channel.isModerator(user)) {
                     user.sendText(buildText {
-                        error("Du bist kein Moderator in diesem Nachrichtenkanal.")
+                        error("Du verfügst nicht über die erforderliche Berechtigung.")
                     })
                     return@launch
                 }
 
                 if(channel.isModerator(targetUser) && channel.isModerator(user)) {
                     user.sendText(buildText {
-                        error("Du kannst keine Spieler ")
-                        info("mit Moderator-Rechten")
-                        error(" kicken.")
+                        error("Du kannst keine Spieler nicht entfernen")
                     })
                     return@launch
                 }
 
                 channel.kick(targetUser)
                 user.sendText(buildText {
-                    primary("Du hast ")
-                    info(targetUser.getName())
-                    primary(" aus dem Nachrichtenkanal ")
-                    info(channel.name)
-                    error(" geworfen.")
+                    info("Du hast ")
+                    variableValue(targetUser.getName())
+                    info(" aus dem Nachrichtenkanal ")
+                    variableValue(channel.name)
+                    info(" geworfen.")
                 })
 
                 targetUser.sendText(buildText {
-                    primary("Du wurdest aus dem Nachrichtenkanal ")
-                    info(channel.name)
-                    error(" geworfen.")
+                    info("Du wurdest aus dem Nachrichtenkanal ")
+                    variableValue(channel.name)
+                    info(" geworfen.")
                 })
             }
         }

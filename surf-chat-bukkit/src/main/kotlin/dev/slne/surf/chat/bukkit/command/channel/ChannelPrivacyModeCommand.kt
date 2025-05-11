@@ -30,7 +30,7 @@ class ChannelPrivacyModeCommand(commandName: String) : CommandAPICommand(command
                 }
 
                 if (!channel.isOwner(user)) {
-                    user.sendText(buildText { error("Du bist nicht der Besitzer des Nachrichtenkanals.") })
+                    user.sendText(buildText { error("Du verfügst nicht über die erforderliche Berechtigung.") })
                     return@launch
                 }
 
@@ -43,10 +43,9 @@ class ChannelPrivacyModeCommand(commandName: String) : CommandAPICommand(command
                         }
 
                         user.sendText(buildText {
-                            primary("Der Nachrichtenkanal ")
-                            info(channel.name)
-                            primary(" ist nun ")
-                            success("öffentlich.")
+                            info("Der Nachrichtenkanal ")
+                            variableValue(channel.name)
+                            info(" ist nun öffentlich.")
                         })
                     }
                     "private" -> {
@@ -55,10 +54,9 @@ class ChannelPrivacyModeCommand(commandName: String) : CommandAPICommand(command
                         }
 
                         user.sendText(buildText {
-                            primary("Der Nachrichtenkanal ")
-                            info(channel.name)
-                            primary(" ist nun ")
-                            error("privat.")
+                            info("Der Nachrichtenkanal ")
+                            variableValue(channel.name)
+                            info(" ist nun privat.")
                         })
                     }
 

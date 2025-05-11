@@ -37,25 +37,25 @@ class ChannelLeaveCommand(commandName: String) : CommandAPICommand(commandName) 
                         channel.leave(user)
                         channelService.deleteChannel(channel)
                         user.sendText(buildText {
-                            primary("Du hast den Nachrichtenkanal ")
-                            info(channel.name)
-                            primary(" als letzter Spieler verlassen und der Kanal wurde gelöscht.")
+                            info("Du hast den Nachrichtenkanal ")
+                            variableValue(channel.name)
+                            info(" als letzter Spieler verlassen und der Kanal wurde gelöscht.")
                         })
                         return@launch
                     }
                     channel.transferOwnership(nextOwner)
                     nextOwner.sendText(buildText {
-                        info(player.name)
-                        primary(" hat den Nachrichtenkanal ")
-                        info(channel.name)
-                        error(" verlassen. Die Besitzerschaft wurde auf dich übertragen.")
+                        variableValue(player.name)
+                        info(" hat den Nachrichtenkanal ")
+                        variableValue(channel.name)
+                        info(" verlassen. Die Besitzerschaft wurde auf dich übertragen.")
                     })
                 }
                 channel.leave(user)
                 user.sendText(buildText {
-                    primary("Du hast den Nachrichtenkanal ")
-                    info(channel.name)
-                    error(" verlassen.")
+                    info("Du hast den Nachrichtenkanal ")
+                    variableValue(channel.name)
+                    info(" verlassen.")
                 })
             }
         }

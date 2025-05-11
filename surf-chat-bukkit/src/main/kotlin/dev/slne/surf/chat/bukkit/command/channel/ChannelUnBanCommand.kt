@@ -32,7 +32,7 @@ class ChannelUnBanCommand(commandName: String) : CommandAPICommand(commandName) 
 
                 if (!channel.isModerator(user)) {
                     user.sendText(buildText {
-                        error("Du bist nicht der Moderator oder Besitzer des Nachrichtenkanals.")
+                        error("Du verfügst nicht über die erforderliche Berechtigung.")
                     })
                     return@launch
                 }
@@ -40,7 +40,7 @@ class ChannelUnBanCommand(commandName: String) : CommandAPICommand(commandName) 
                 if (!channel.isBanned(targetUser)) {
                     user.sendText(buildText {
                         error("Der Spieler ")
-                        info(targetUser.getName())
+                        variableValue(targetUser.getName())
                         error(" ist nicht im Nachrichtenkanal gebannt.")
                     })
                     return@launch
@@ -49,17 +49,17 @@ class ChannelUnBanCommand(commandName: String) : CommandAPICommand(commandName) 
                 channel.unban(targetUser)
 
                 user.sendText(buildText {
-                    primary("Du hast ")
-                    info(target.name)
-                    primary(" im Nachrichtenkanal ")
-                    info(channel.name)
-                    error(" entbannt.")
+                    success("Du hast den Spieler ")
+                    variableValue(target.name)
+                    success(" im Nachrichtenkanal ")
+                    variableValue(channel.name)
+                    success(" entbannt.")
                 })
 
                 targetUser.sendText(buildText {
-                    primary("Du wurdest im Nachrichtenkanal ")
-                    info(channel.name)
-                    error(" entbannt.")
+                    info("Du wurdest im Nachrichtenkanal ")
+                    variableValue(channel.name)
+                    info(" entbannt.")
                 })
             }
         }

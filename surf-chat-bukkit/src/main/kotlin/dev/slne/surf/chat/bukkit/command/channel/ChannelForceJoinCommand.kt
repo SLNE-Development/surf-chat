@@ -30,8 +30,8 @@ class ChannelForceJoinCommand(commandName: String) : CommandAPICommand(commandNa
 
                 channel.join(user, true)
                 user.sendText(buildText {
-                    primary("Du bist dem Nachrichtenkanal ")
-                    info(channel.name)
+                    success("Du bist dem Nachrichtenkanal ")
+                    variableValue(channel.name)
                     success(" beigetreten.")
                 })
             }

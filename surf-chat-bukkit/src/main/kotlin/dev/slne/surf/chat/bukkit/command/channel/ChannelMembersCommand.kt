@@ -31,24 +31,24 @@ class ChannelMembersCommand(commandName: String) : CommandAPICommand(commandName
 
                 title {
                     primary("Kanal-Mitglieder von ")
-                    info(channel.name)
+                    variableValue(channel.name)
                 }
 
                 line {
-                    primary(channel.getOwner().getName())
+                    variableValue(channel.getOwner().getName())
                     darkSpacer(" (Besitzer)")
                 }
 
                 channel.getModerators().forEach {
                     line {
-                        primary(it.getName())
+                        variableValue(it.getName())
                         darkSpacer(" (Moderator)")
                     }
                 }
 
                 channel.getOnlyMembers().forEach {
                     line {
-                        primary(it.getName())
+                        variableValue(it.getName())
                         darkSpacer(" (Mitglied)")
                     }
                 }

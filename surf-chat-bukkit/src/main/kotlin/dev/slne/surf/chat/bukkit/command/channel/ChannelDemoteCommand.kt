@@ -4,6 +4,7 @@ import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.model.ChannelModel
+import dev.slne.surf.chat.api.type.ChannelRoleType
 import dev.slne.surf.chat.bukkit.command.argument.ChannelMembersArgument
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.sendText
@@ -53,6 +54,13 @@ class ChannelDemoteCommand(commandName: String) : CommandAPICommand(commandName)
                         error("Der Spieler ")
                         variableValue(target.name)
                         error(" ist bereits ein Mitglied.")
+                    })
+                    return@launch
+                }
+
+                if(channel.members.filter { it.value == ChannelRoleType.OWNER }.isEmpty()) {
+                    user.sendText(buildText {
+                        error("Der Nachrichtenkanal benötigt mindestens einen Besitzer.")
                     })
                     return@launch
                 }

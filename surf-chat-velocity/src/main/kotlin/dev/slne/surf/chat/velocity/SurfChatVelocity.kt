@@ -9,9 +9,12 @@ import com.velocitypowered.api.event.proxy.ProxyShutdownEvent
 import com.velocitypowered.api.plugin.Plugin
 import com.velocitypowered.api.plugin.PluginContainer
 import com.velocitypowered.api.plugin.annotation.DataDirectory
+import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier
 import dev.slne.surf.chat.velocity.service.VelocityMessagingReceiverService
+import dev.slne.surf.surfapi.core.api.util.toObjectSet
+import it.unimi.dsi.fastutil.objects.ObjectSet
 
 import java.nio.file.Path
 
@@ -36,6 +39,7 @@ class SurfChatVelocity @Inject constructor(
         INSTANCE = this
 
         proxy.channelRegistrar.register(messageChannel)
+        proxy.channelRegistrar.register(teamChatChannel)
         proxy.eventManager.register(this, VelocityMessagingReceiverService())
     }
 
@@ -50,6 +54,10 @@ class SurfChatVelocity @Inject constructor(
     }
 }
 
-val messageChannel get() = MinecraftChannelIdentifier.from("surf-chat:messaging")
+val messageChannel: MinecraftChannelIdentifier get() = MinecraftChannelIdentifier.from("surf-chat:messaging")
+val teamChatChannel: MinecraftChannelIdentifier get() = MinecraftChannelIdentifier.from("surf-chat:teamchat")
+
 val plugin get() = SurfChatVelocity.INSTANCE
 val gson get() = Gson()
+
+fun teamMembers(): ObjectSet<Player> = plugin.proxy.allPlayers.filter { it.hasPermission("surf.chat.command.teamchat") }.toObjectSet()

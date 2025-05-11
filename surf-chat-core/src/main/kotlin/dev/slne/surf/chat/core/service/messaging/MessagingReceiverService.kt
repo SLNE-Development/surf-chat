@@ -8,6 +8,7 @@ import java.util.UUID
 
 interface MessagingReceiverService {
     fun handleReceive(player: String, target: String, message: Component, type: ChatMessageType, messageID: UUID, channel: String, forwardingServers: ObjectSet<String>)
+    fun handeTeamChatReceive(message: Component)
 
     companion object {
         val INSTANCE = requiredService<MessagingReceiverService>()

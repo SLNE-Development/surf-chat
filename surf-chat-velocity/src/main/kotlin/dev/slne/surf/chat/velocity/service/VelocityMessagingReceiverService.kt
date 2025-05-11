@@ -93,6 +93,8 @@ class VelocityMessagingReceiverService(): MessagingReceiverService, Services.Fal
     }
 
     override fun handeTeamChatReceive(message: Component) {
-        teamMembers().forEach { it.sendMessage { message } }
+        for (teamMember in teamMembers()) {
+            teamMember.sendMessage(message)
+        }
     }
 }

@@ -44,7 +44,7 @@ class BukkitChatFormat: ChatFormatModel {
                 buildText {
                     append(components.getDeleteComponent(messageID, viewer))
                     append(components.getTeleportComponent(sender.name, viewer))
-                    append(MiniMessage.miniMessage().deserialize(LuckPermsExtension.getPrefix(sender) + " " + sender.name))
+                    append(MiniMessage.miniMessage().deserialize(convertLegacy(LuckPermsExtension.getPrefix(sender) + " " + sender.name)))
                     darkSpacer(" >> ")
                     append(formatItemTag(highlightPlayers(rawMessage), sender, warn))
 
@@ -58,7 +58,7 @@ class BukkitChatFormat: ChatFormatModel {
                 buildText {
                     append(components.getChannelComponent(channel))
                     darkSpacer(" ")
-                    append(MiniMessage.miniMessage().deserialize(LuckPermsExtension.getPrefix(sender) + " " + sender.name))
+                    append(MiniMessage.miniMessage().deserialize(convertLegacy(LuckPermsExtension.getPrefix(sender) + " " + sender.name)))
                     darkSpacer(" >> ")
                     append(formatItemTag(highlightPlayers(rawMessage), sender, warn))
 
@@ -75,7 +75,7 @@ class BukkitChatFormat: ChatFormatModel {
                     darkSpacer(" | ")
                     variableValue("Du")
                     darkSpacer(" -> ")
-                    append(MiniMessage.miniMessage().deserialize(LuckPermsExtension.getPrefix(sender) + " " + sender.name))
+                    append(MiniMessage.miniMessage().deserialize(convertLegacy(LuckPermsExtension.getPrefix(sender) + " " + sender.name)))
                     darkSpacer(" >> ")
                     append(formatItemTag(rawMessage, sender, warn))
 
@@ -90,7 +90,7 @@ class BukkitChatFormat: ChatFormatModel {
                     darkSpacer(">> ")
                     append(Component.text("PM", Colors.RED))
                     darkSpacer(" | ")
-                    append(MiniMessage.miniMessage().deserialize(LuckPermsExtension.getPrefix(sender) + " " + sender.name))
+                    append(MiniMessage.miniMessage().deserialize(convertLegacy(LuckPermsExtension.getPrefix(sender) + " " + sender.name)))
                     darkSpacer(" -> ")
                     variableValue("Dir")
                     darkSpacer(" >> ")
@@ -107,7 +107,7 @@ class BukkitChatFormat: ChatFormatModel {
                     darkSpacer(">> ")
                     append(Component.text("TEAM", Colors.RED).decorate(TextDecoration.BOLD))
                     darkSpacer(" | ")
-                    append(MiniMessage.miniMessage().deserialize(LuckPermsExtension.getPrefix(sender) + " " + sender.name))
+                    append(MiniMessage.miniMessage().deserialize(convertLegacy(LuckPermsExtension.getPrefix(sender) + " " + sender.name)))
                     darkSpacer(" >> ")
                     append(formatItemTag(highlightPlayers(rawMessage), sender, warn))
 
@@ -142,7 +142,7 @@ class BukkitChatFormat: ChatFormatModel {
                     darkSpacer(">> ")
                     append(Component.text("INTERNAL", Colors.DARK_RED))
                     darkSpacer(" | ")
-                    append(MiniMessage.miniMessage().deserialize(LuckPermsExtension.getPrefix(sender) + " " + sender.name))
+                    append(MiniMessage.miniMessage().deserialize(convertLegacy(LuckPermsExtension.getPrefix(sender) + " " + sender.name)))
                     darkSpacer(" >> ")
                     append(rawMessage)
                 }
@@ -244,4 +244,11 @@ class BukkitChatFormat: ChatFormatModel {
         return message
     }
 
+    fun convertLegacy(input: String): String {
+        val regex = Regex("&#[A-Fa-f0-9]{6}")
+        return regex.replace(input) { matchResult ->
+            val hex = matchResult.value.removePrefix("&#")
+            "<#$hex>"
+        }
+    }
 }

@@ -39,7 +39,9 @@ class ChannelInviteRevokeCommand(commandName: String) : CommandAPICommand(comman
 
                 if (!channel.isInvited(targetUser)) {
                     user.sendText(buildText {
-                        error("Der Spieler ${targetUser.getName()} hat keine Einladung für diesen Nachrichtenkanal.")
+                        info("Der Spieler ")
+                        variableValue(targetUser.getName())
+                        info(" hat keine Einladung für diesen Nachrichtenkanal.")
                     })
                     return@launch
                 }
@@ -47,17 +49,17 @@ class ChannelInviteRevokeCommand(commandName: String) : CommandAPICommand(comman
                 channel.unInvite(targetUser)
 
                 user.sendText(buildText {
-                    primary("Du hast die Einladung für den Spieler ")
-                    info(targetUser.getName())
-                    primary(" in den Nachrichtenkanal ")
-                    info(channel.name)
-                    success(" zurückgezogen.")
+                    info("Du hast die Einladung des Spielers ")
+                    variableValue(targetUser.getName())
+                    info(" im Nachrichtenkanal ")
+                    variableValue(channel.name)
+                    info(" zurückgezogen.")
                 })
 
                 targetUser.sendText(buildText {
-                    primary("Deine Einladung in den Nachrichtenkanal ")
-                    info(channel.name)
-                    success(" wurde zurückgezogen.")
+                    info("Deine Einladung in den Nachrichtenkanal ")
+                    variableValue(channel.name)
+                    info(" wurde zurückgezogen.")
                 })
             }
         }

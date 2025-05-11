@@ -23,7 +23,7 @@ class ChannelInfoCommand(commandName: String) : CommandAPICommand(commandName) {
 
     private fun createInfoMessage(channel: ChannelModel): Component {
         return buildText {
-            primary("Kanalinformation: ").info(channel.name)
+            info("Kanalinformation: ").variableValue(channel.name)
             appendNewline()
             darkSpacer("   - ").variableKey("Besitzer: ")
             variableValue(channel.getOwner().getName())

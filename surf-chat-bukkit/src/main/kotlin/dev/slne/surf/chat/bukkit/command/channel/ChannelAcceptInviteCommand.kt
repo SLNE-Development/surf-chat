@@ -24,7 +24,7 @@ class ChannelAcceptInviteCommand(commandName: String) : CommandAPICommand(comman
                 if (!channel.isInvited(user)) {
                     user.sendText(buildText {
                         error("Du hast keine Einladung für den Nachrichtenkanal ")
-                        info(channel.name)
+                        variableValue(channel.name)
                         error(" erhalten.")
                     })
                     return@launch
@@ -34,7 +34,7 @@ class ChannelAcceptInviteCommand(commandName: String) : CommandAPICommand(comman
                 user.sendText(
                     buildText {
                         primary("Du hast die Einladung für den Nachrichtenkanal ")
-                        info(channel.name)
+                        variableValue(channel.name)
                         success(" angenommen.")
                     }
                 )

@@ -36,7 +36,7 @@ class ChannelTransferOwnerShipCommand(commandName: String) : CommandAPICommand(c
 
                 if (!channel.isOwner(user)) {
                     user.sendText(buildText {
-                        error("Du bist nicht der Besitzer des Nachrichtenkanals.")
+                        error("Du verfügst nicht über die erforderliche Berechtigung.")
                     })
                     return@launch
                 }
@@ -44,7 +44,7 @@ class ChannelTransferOwnerShipCommand(commandName: String) : CommandAPICommand(c
                 if (!channel.isMember(targetUser)) {
                     user.sendText(buildText {
                         error("Der Spieler ")
-                        info(target.name ?: target.uniqueId.toString())
+                        variableValue(target.name ?: target.uniqueId.toString())
                         error(" ist kein Mitglied in deinem Nachrichtenkanal.")
                     })
                     return@launch
@@ -52,9 +52,9 @@ class ChannelTransferOwnerShipCommand(commandName: String) : CommandAPICommand(c
 
                 if (!confirm.equals("confirm", ignoreCase = true) && !confirm.equals("yes", ignoreCase = true) && !confirm.equals("true", ignoreCase = true) && !confirm.equals("ja", ignoreCase = true)) {
                     user.sendText(buildText {
-                        primary("Bitte bestätige die Übertragung des Besitzes des Nachrichtenkanals an ")
-                        info(targetUser.getName())
-                        primary(". ")
+                        info("Bitte bestätige die Übertragung des Besitzes des Nachrichtenkanals an den Spieler ")
+                        variableValue(targetUser.getName())
+                        info(". ")
                         append(components.getTransferConfirmComponent(targetUser.getName()))
                     })
                     return@launch
@@ -63,17 +63,17 @@ class ChannelTransferOwnerShipCommand(commandName: String) : CommandAPICommand(c
                 channel.transferOwnership(targetUser)
 
                 user.sendText(buildText {
-                    primary("Du hast den Nachrichtenkanal ")
-                    info(channel.name)
-                    primary(" an ")
-                    info(target.name ?: target.uniqueId.toString())
+                    success("Du hast den Nachrichtenkanal ")
+                    variableValue(channel.name)
+                    success(" an ")
+                    variableValue(target.name ?: target.uniqueId.toString())
                     success(" übertragen.")
                 })
 
                 targetUser.sendText(buildText {
-                    primary("Du bist jetzt der Besitzer des Nachrichtenkanals ")
-                    info(channel.name)
-                    success(".")
+                    info("Du bist jetzt der Besitzer des Nachrichtenkanals ")
+                    variableValue(channel.name)
+                    info(".")
                 })
             }
         }

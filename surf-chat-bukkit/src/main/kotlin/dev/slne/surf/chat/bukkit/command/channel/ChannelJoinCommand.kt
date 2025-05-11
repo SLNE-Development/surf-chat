@@ -44,7 +44,7 @@ class ChannelJoinCommand(commandName: String) : CommandAPICommand(commandName) {
                 if(channel.isBanned(user)) {
                     user.sendText (
                         buildText {
-                            error("Du bist von diesem Nachrichtenkanal ausgeschlossen.")
+                            error("Du wurdest von diesem Nachrichtenkanal ausgeschlossen.")
                         }
                     )
                     return@launch
@@ -54,9 +54,9 @@ class ChannelJoinCommand(commandName: String) : CommandAPICommand(commandName) {
                 channel.join(user)
                 user.sendText (
                     buildText {
-                        primary("Du bist dem Nachrichtenkanal ")
-                        info(channel.name)
-                        success(" beigetreten.")
+                        info("Du bist dem Nachrichtenkanal ")
+                        variableValue(channel.name)
+                        info(" beigetreten.")
                     }
                 )
             }

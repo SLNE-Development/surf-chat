@@ -34,7 +34,7 @@ class ChannelInviteCommand(commandName: String) : CommandAPICommand(commandName)
                 if(channel.isInvited(targetUser)) {
                     user.sendText(buildText {
                         error("Der Spieler ")
-                        info(target.name ?: target.uniqueId.toString())
+                        variableValue(target.name ?: target.uniqueId.toString())
                         error(" wurde bereits eingeladen.")
                     })
                     return@launch
@@ -43,7 +43,7 @@ class ChannelInviteCommand(commandName: String) : CommandAPICommand(commandName)
                 if(channel.isMember(targetUser)) {
                     user.sendText(buildText {
                         error("Der Spieler ")
-                        info(target.name ?: target.uniqueId.toString())
+                        variableValue(target.name ?: target.uniqueId.toString())
                         error(" ist bereits in diesem Nachrichtenkanal.")
                     })
                     return@launch
@@ -51,7 +51,7 @@ class ChannelInviteCommand(commandName: String) : CommandAPICommand(commandName)
 
                 if(!channel.isModerator(user)) {
                     user.sendText(buildText {
-                        error("Du bist kein Moderator in diesem Nachrichtenkanal.")
+                        error("Du verfügst nicht über die erforderliche Berechtigung.")
                     })
                     return@launch
                 }
@@ -59,17 +59,17 @@ class ChannelInviteCommand(commandName: String) : CommandAPICommand(commandName)
                 channel.invite(targetUser)
 
                 user.sendText(buildText {
-                    primary("Du hast ")
-                    info(target.name ?: target.uniqueId.toString())
-                    primary(" in den Nachrichtenkanal ")
+                    info("Du hast ")
+                    variableValue(target.name ?: target.uniqueId.toString())
+                    info(" in den Nachrichtenkanal ")
                     variableValue(channel.name)
-                    success(" eingeladen.")
+                    info(" eingeladen.")
                 })
 
                 targetUser.sendText(buildText {
-                    primary("Du wurdest in den Nachrichtenkanal ")
-                    info(channel.name)
-                    success(" eingeladen. ")
+                    info("Du wurdest in den Nachrichtenkanal ")
+                    variableValue(channel.name)
+                    info(" eingeladen. ")
 
                     append(components.getInviteAcceptComponent(channel))
                     append(components.getInviteDeclineComponent(channel))

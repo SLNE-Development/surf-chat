@@ -33,7 +33,7 @@ class ChannelDemoteCommand(commandName: String) : CommandAPICommand(commandName)
                 if (!channel.isOwner(user)) {
                     user.sendText(
                         buildText {
-                            error("Du bist nicht der Besitzer des Nachrichtenkanals.")
+                            error("Du verfügst nicht über die erforderliche Berechtigung.")
                         }
                     )
                     return@launch
@@ -42,8 +42,8 @@ class ChannelDemoteCommand(commandName: String) : CommandAPICommand(commandName)
                 if (!channel.isMember(targetUser)) {
                     user.sendText(buildText {
                         error("Der Spieler ")
-                        info(target.name)
-                        error(" ist kein Mitglied in deinem Nachrichtenkanal.")
+                        variableValue(target.name)
+                        error(" ist kein Mitglied in dem Nachrichtenkanal.")
                     })
                     return@launch
                 }
@@ -51,7 +51,7 @@ class ChannelDemoteCommand(commandName: String) : CommandAPICommand(commandName)
                 if(!channel.isModerator(targetUser) && !channel.isOwner(targetUser)) {
                     user.sendText(buildText {
                         error("Der Spieler ")
-                        info(target.name)
+                        variableValue(target.name)
                         error(" ist bereits ein Mitglied.")
                     })
                     return@launch
@@ -60,13 +60,13 @@ class ChannelDemoteCommand(commandName: String) : CommandAPICommand(commandName)
                 channel.demote(targetUser)
 
                 user.sendText(buildText {
-                    primary("Du hast ")
-                    info(target.name)
-                    primary(" degradiert.")
+                    success("Du hast ")
+                    variableValue(target.name)
+                    success(" degradiert.")
                 })
 
                 targetUser.sendText(buildText {
-                    primary("Du wurdest degradiert.")
+                    info("Du wurdest degradiert.")
                 })
             }
         }

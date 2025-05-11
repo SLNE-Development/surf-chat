@@ -33,16 +33,14 @@ class ChannelBanCommand(commandName: String) : CommandAPICommand(commandName) {
 
                 if(!channel.isModerator(user)) {
                     user.sendText(buildText {
-                        error("Du bist kein Moderator in diesem Nachrichtenkanal.")
+                        error("Du verfügst nicht über die erforderliche Berechtigung.")
                     })
                     return@launch
                 }
 
                 if(channel.isModerator(targetUser) && channel.isModerator(user)) {
                     user.sendText(buildText {
-                        error("Du kannst keine Spieler ")
-                        info("mit Moderator-Rechten")
-                        error(" bannen.")
+                        error("Du kannst diesen Spieler nicht entfernen.")
                     })
                     return@launch
                 }
@@ -51,14 +49,14 @@ class ChannelBanCommand(commandName: String) : CommandAPICommand(commandName) {
 
                 user.sendText(buildText {
                     primary("Du hast ")
-                    info(target.name ?: target.uniqueId.toString())
+                    variableValue(target.name)
                     primary(" aus dem Nachrichtenkanal ")
-                    info(channel.name)
+                    variableValue(channel.name)
                     error(" verbannt.")
                 })
                 targetUser.sendText(buildText {
                     primary("Du wurdest aus dem Nachrichtenkanal ")
-                    info(channel.name)
+                    variableValue(channel.name)
                     error(" verbannt.")
                 })
             }

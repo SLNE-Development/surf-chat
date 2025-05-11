@@ -18,9 +18,9 @@ class ChannelForceDeleteCommand(commandName: String) : CommandAPICommand(command
             channelService.deleteChannel(channel)
 
             surfChatApi.sendText(player, buildText {
-                primary("Der Nachrichtenkanal ")
-                info(channel.name)
-                error(" wurde gelöscht.")
+                success("Der Nachrichtenkanal ")
+                variableValue(channel.name)
+                success(" wurde gelöscht.")
             })
         }
     }

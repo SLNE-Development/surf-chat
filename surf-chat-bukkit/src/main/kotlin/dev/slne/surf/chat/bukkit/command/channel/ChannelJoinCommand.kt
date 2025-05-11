@@ -21,17 +21,6 @@ class ChannelJoinCommand(commandName: String) : CommandAPICommand(commandName) {
             plugin.launch {
                 val user = databaseService.getUser(player.uniqueId)
 
-                if(channel.status != ChannelStatusType.PUBLIC && !channel.isInvited(user)) {
-                    user.sendText (
-                        buildText {
-                            error("Der Nachrichtenkanal ")
-                            variableValue(channel.name)
-                            error(" ist privat.")
-                        }
-                    )
-                    return@launch
-                }
-
                 if (channelService.getChannel(player) != null) {
                     user.sendText (
                         buildText {
@@ -50,6 +39,16 @@ class ChannelJoinCommand(commandName: String) : CommandAPICommand(commandName) {
                     return@launch
                 }
 
+                if(channel.status != ChannelStatusType.PUBLIC && !channel.isInvited(user)) {
+                    user.sendText (
+                        buildText {
+                            error("Der Nachrichtenkanal ")
+                            info(channel.name)
+                            error(" ist privat.")
+                        }
+                    )
+                    return@launch
+                }
 
                 channel.join(user)
                 user.sendText (

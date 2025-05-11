@@ -17,15 +17,12 @@ class ChannelCommand(commandName: String) : CommandAPICommand(commandName) {
         subcommand(ChannelListCommand("list"))
         subcommand(ChannelJoinCommand("join"))
         subcommand(ChannelLeaveCommand("leave"))
-        subcommand(ChannelPrivacyModeCommand("mode"))
+        subcommand(ChannelPrivacyModeCommand("visibility"))
         subcommand(ChannelBanCommand("ban"))
         subcommand(ChannelUnBanCommand("unban"))
         subcommand(ChannelDemoteCommand("demote"))
         subcommand(ChannelPromoteCommand("promote"))
         subcommand(ChannelKickCommand("kick"))
-        subcommand(ChannelMoveCommand("move"))
-        subcommand(ChannelForceDeleteCommand("forceDelete"))
-        subcommand(ChannelForceJoinCommand("forceJoin"))
         subcommand(ChannelTransferOwnerShipCommand("transferOwnership"))
     }
 }

@@ -2,6 +2,7 @@ package dev.slne.surf.chat.bukkit.command.channel
 
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
+import dev.jorel.commandapi.arguments.EntitySelectorArgument
 import dev.jorel.commandapi.arguments.OfflinePlayerArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.model.ChannelModel
@@ -15,7 +16,7 @@ import org.bukkit.OfflinePlayer
 
 class ChannelInviteCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
-        withArguments(OfflinePlayerArgument("player"))
+        withArguments(EntitySelectorArgument.OneEntity("player"))
         playerExecutor { player, args ->
             val channel: ChannelModel? = channelService.getChannel(player)
             val target = args.getUnchecked<OfflinePlayer>("player") ?: return@playerExecutor

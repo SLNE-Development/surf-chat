@@ -11,6 +11,7 @@ import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.PageableMessageBuilder
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import net.kyori.adventure.text.format.TextDecoration
 
 class ChannelMembersCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
@@ -30,19 +31,25 @@ class ChannelMembersCommand(commandName: String) : CommandAPICommand(commandName
                 pageCommand = "/channel members %page%"
 
                 title {
-                    primary("ᴍɪᴛɢʟɪᴇᴅᴇʀ ᴠᴏɴ ")
+                    info("ᴍɪᴛɢʟɪᴇᴅᴇʀ ᴠᴏɴ ")
                     variableValue(channel.name)
                 }
 
                 line {
-                    info("| ")
+                    append {
+                        info("| ")
+                        decorate(TextDecoration.BOLD)
+                    }
                     variableValue(channel.getOwner().getName())
                     darkSpacer(" (Besitzer)")
                 }
 
                 channel.getModerators().forEach {
                     line {
-                        info("| ")
+                        append {
+                            info("| ")
+                            decorate(TextDecoration.BOLD)
+                        }
                         variableValue(it.getName())
                         darkSpacer(" (Moderator)")
                     }
@@ -50,7 +57,10 @@ class ChannelMembersCommand(commandName: String) : CommandAPICommand(commandName
 
                 channel.getOnlyMembers().forEach {
                     line {
-                        info("| ")
+                        append {
+                            info("| ")
+                            decorate(TextDecoration.BOLD)
+                        }
                         variableValue(it.getName())
                         darkSpacer(" (Mitglied)")
                     }

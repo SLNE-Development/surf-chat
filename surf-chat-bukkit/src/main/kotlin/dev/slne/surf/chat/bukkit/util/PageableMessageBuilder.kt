@@ -78,7 +78,7 @@ class PageableMessageBuilder(private val linesPerPage: Int = 10) {
         return buildText {
             append(navButton("[<<] ", 1, page > 1))
             append(navButton("[<] ", page - 1, page > 1))
-            darkSpacer("Seite $page von $totalPages")
+            darkSpacer("ѕᴇɪᴛᴇ $page/$totalPages")
             append(navButton(" [>] ", page + 1, page < totalPages))
             append(navButton(" [>>]", totalPages, page < totalPages))
         }

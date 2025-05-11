@@ -30,17 +30,19 @@ class ChannelMembersCommand(commandName: String) : CommandAPICommand(commandName
                 pageCommand = "/channel members %page%"
 
                 title {
-                    primary("Kanal-Mitglieder von ")
+                    primary("ᴍɪᴛɢʟɪᴇᴅᴇʀ ᴠᴏɴ ")
                     variableValue(channel.name)
                 }
 
                 line {
+                    info("| ")
                     variableValue(channel.getOwner().getName())
                     darkSpacer(" (Besitzer)")
                 }
 
                 channel.getModerators().forEach {
                     line {
+                        info("| ")
                         variableValue(it.getName())
                         darkSpacer(" (Moderator)")
                     }
@@ -48,6 +50,7 @@ class ChannelMembersCommand(commandName: String) : CommandAPICommand(commandName
 
                 channel.getOnlyMembers().forEach {
                     line {
+                        info("| ")
                         variableValue(it.getName())
                         darkSpacer(" (Mitglied)")
                     }

@@ -57,7 +57,6 @@ class BukkitChatFormat: ChatFormatModel {
             ChatMessageType.CHANNEL -> {
                 buildText {
                     append(components.getChannelComponent(channel))
-                    darkSpacer(" ")
                     append(MiniMessage.miniMessage().deserialize(convertLegacy(LuckPermsExtension.getPrefix(sender) + " " + sender.name)))
                     darkSpacer(" >> ")
                     append(formatItemTag(highlightPlayers(rawMessage), sender, warn))

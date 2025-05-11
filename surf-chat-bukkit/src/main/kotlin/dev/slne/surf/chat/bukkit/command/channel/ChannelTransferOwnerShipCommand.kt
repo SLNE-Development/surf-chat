@@ -5,7 +5,6 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.stringArgument
 import dev.slne.surf.chat.api.model.ChannelModel
-import dev.slne.surf.chat.api.type.ChannelRoleType
 import dev.slne.surf.chat.bukkit.command.argument.ChannelMembersArgument
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.components
@@ -57,13 +56,6 @@ class ChannelTransferOwnerShipCommand(commandName: String) : CommandAPICommand(c
                         variableValue(targetUser.getName())
                         info(". ")
                         append(components.getTransferConfirmComponent(targetUser.getName()))
-                    })
-                    return@launch
-                }
-
-                if(channel.members.filter { it.value == ChannelRoleType.OWNER }.isEmpty()) {
-                    user.sendText(buildText {
-                        error("Der Nachrichtenkanal benötigt mindestens einen Besitzer.")
                     })
                     return@launch
                 }

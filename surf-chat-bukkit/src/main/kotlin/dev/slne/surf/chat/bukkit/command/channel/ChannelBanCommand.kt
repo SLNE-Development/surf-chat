@@ -48,16 +48,16 @@ class ChannelBanCommand(commandName: String) : CommandAPICommand(commandName) {
                 channel.ban(targetUser)
 
                 user.sendText(buildText {
-                    success("Du hast ")
+                    primary("Du hast ")
                     variableValue(target.name)
-                    success(" aus dem Nachrichtenkanal ")
+                    primary(" aus dem Nachrichtenkanal ")
                     variableValue(channel.name)
-                    success(" verbannt.")
+                    error(" verbannt.")
                 })
                 targetUser.sendText(buildText {
-                    info("Du wurdest aus dem Nachrichtenkanal ")
+                    primary("Du wurdest aus dem Nachrichtenkanal ")
                     variableValue(channel.name)
-                    info(" verbannt.")
+                    error(" verbannt.")
                 })
             }
         }

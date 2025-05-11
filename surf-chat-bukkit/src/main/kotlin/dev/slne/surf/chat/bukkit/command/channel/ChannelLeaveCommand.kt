@@ -37,7 +37,7 @@ class ChannelLeaveCommand(commandName: String) : CommandAPICommand(commandName) 
                         channel.leave(user)
                         channelService.deleteChannel(channel)
                         user.sendText(buildText {
-                            info("Du hast den Nachrichtenkanal ")
+                            success("Du hast den Nachrichtenkanal ")
                             variableValue(channel.name)
                             info(" als letzter Spieler verlassen und der Kanal wurde gelöscht.")
                         })

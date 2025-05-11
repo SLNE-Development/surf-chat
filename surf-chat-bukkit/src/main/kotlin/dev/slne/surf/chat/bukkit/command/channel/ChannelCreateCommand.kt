@@ -44,7 +44,7 @@ class ChannelCreateCommand(commandName: String) : CommandAPICommand(commandName)
 
                 channelService.createChannel(name, user)
                 user.sendText(buildText {
-                    success("Du hast den Nachrichtenkanal ")
+                    primary("Du hast den Nachrichtenkanal ")
                     variableValue(name)
                     success(" erfolgreich erstellt.")
                 })

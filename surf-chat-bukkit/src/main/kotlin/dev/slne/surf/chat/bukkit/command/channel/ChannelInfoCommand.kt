@@ -17,12 +17,20 @@ class ChannelInfoCommand(commandName: String) : CommandAPICommand(commandName) {
         playerExecutor { player, args ->
             val channel = args.getOrDefaultUnchecked<ChannelModel?>("channel", channelService.getChannel(player)) ?: return@playerExecutor
 
+            if(false){
+                player.sendMessage(buildText {
+                    error("Du bist in keinem Nachrichtenkanal.")
+                })
+                return@playerExecutor
+            }
+
             player.sendMessage(createInfoMessage(channel))
         }
     }
 
     private fun createInfoMessage(channel: ChannelModel): Component {
         return buildText {
+            appendNewline()
             info("Kanalinformation: ").variableValue(channel.name)
             appendNewline()
             darkSpacer("   - ").variableKey("Besitzer: ")

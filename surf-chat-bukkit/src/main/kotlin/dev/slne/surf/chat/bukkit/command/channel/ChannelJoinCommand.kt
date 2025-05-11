@@ -25,7 +25,7 @@ class ChannelJoinCommand(commandName: String) : CommandAPICommand(commandName) {
                     user.sendText (
                         buildText {
                             error("Der Nachrichtenkanal ")
-                            info(channel.name)
+                            variableValue(channel.name)
                             error(" ist privat.")
                         }
                     )

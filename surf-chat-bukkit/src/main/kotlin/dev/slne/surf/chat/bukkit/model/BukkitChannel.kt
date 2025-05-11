@@ -31,7 +31,7 @@ class BukkitChannel(
                 it.key.sendText(buildText {
                     plugin.launch {
                         variableValue(user.getName())
-                        primary(" ist dem Nachrichtenkanal beigetreten.")
+                        info(" ist dem Nachrichtenkanal beigetreten.")
                     }
                 })
             }
@@ -46,7 +46,7 @@ class BukkitChannel(
                 it.key.sendText(buildText {
                     plugin.launch {
                         variableValue(user.getName())
-                        primary(" hat den Nachrichtenkanal verlassen.")
+                        info(" hat den Nachrichtenkanal verlassen.")
                     }
                 })
             }

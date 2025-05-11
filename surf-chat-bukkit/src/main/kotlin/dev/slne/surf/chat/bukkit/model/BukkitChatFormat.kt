@@ -58,6 +58,8 @@ class BukkitChatFormat: ChatFormatModel {
 
             ChatMessageType.CHANNEL -> {
                 buildText {
+                    append(components.getDeleteComponent(messageID, viewer))
+                    append(components.getTeleportComponent(sender.name, viewer))
                     append(components.getChannelComponent(channel))
                     append(MiniMessage.miniMessage().deserialize(convertLegacy(LuckPermsExtension.getPrefix(sender) + " " + sender.name)))
                     darkSpacer(" >> ")

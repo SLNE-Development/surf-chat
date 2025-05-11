@@ -7,6 +7,7 @@ import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.service.BukkitMessagingSenderService
 import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.bukkit.util.toPlainText
+import dev.slne.surf.chat.bukkit.util.toPlayer
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.chat.core.service.messaging.messagingSenderService
@@ -57,25 +58,24 @@ class BukkitChatListener(): Listener {
         val channel = channelService.getChannel(player)
 
         if (channel != null && !message.toPlainText().contains(pattern)) {
-            channel.getMembers().forEach {
-                it.sendText(
-                    plugin.chatFormat.formatMessage(
-                        message,
-                        player,
-                        player,
-                        ChatMessageType.CHANNEL,
-                        channel.name,
-                        messageID,
-                        true
-                    )
+            event.viewers().clear()
+            event.viewers().addAll(channel.getMembers().map { it.toPlayer()?: return })
+
+            event.renderer { _, _, _, viewer ->
+                plugin.chatFormat.formatMessage(
+                    message,
+                    player,
+                    player,
+                    ChatMessageType.CHANNEL,
+                    channel.name,
+                    messageID,
+                    true
                 )
             }
 
             plugin.launch {
                 surfChatApi.logMessage(player.uniqueId, ChatMessageType.CHANNEL, message, messageID)
             }
-
-            event.isCancelled = true
 
             return
         }

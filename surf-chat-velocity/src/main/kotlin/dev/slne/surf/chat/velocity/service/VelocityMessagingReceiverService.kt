@@ -13,6 +13,8 @@ import dev.slne.surf.chat.core.service.messaging.MessagingReceiverService
 import dev.slne.surf.chat.core.service.messaging.messagingSenderService
 import dev.slne.surf.chat.velocity.gson
 import dev.slne.surf.chat.velocity.messageChannel
+import dev.slne.surf.chat.velocity.teamChatChannel
+import dev.slne.surf.chat.velocity.teamMembers
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectSet
 
@@ -26,35 +28,48 @@ import java.util.*
 class VelocityMessagingReceiverService(): MessagingReceiverService, Services.Fallback {
     @Subscribe
     fun onPluginMessage(event: PluginMessageEvent) {
-        if(!event.identifier.equals(messageChannel)) {
-            return
+        when(event.identifier) {
+            messageChannel -> {
+                event.result = PluginMessageEvent.ForwardResult.handled()
+
+                if (event.source !is ServerConnection) {
+                    return
+                }
+
+                val input = ByteStreams.newDataInput(event.data)
+
+                val sender = input.readUTF()
+                val target = input.readUTF()
+                val message = GsonComponentSerializer.gson().deserialize(input.readUTF())
+                val type = gson.fromJson(input.readUTF(), ChatMessageType::class.java)
+                val messageId = UUID.fromString(input.readUTF())
+                val chatChannel = input.readUTF()
+                val forwardingServers: Set<String> = gson.fromJson(input.readUTF(), object : TypeToken<Set<String>>() {}.type)
+
+                handleReceive(
+                    player = sender,
+                    target = target,
+                    message = message,
+                    type = type,
+                    messageID = messageId,
+                    channel = chatChannel,
+                    forwardingServers.toObjectSet()
+                )
+            }
+
+            teamChatChannel -> {
+                event.result = PluginMessageEvent.ForwardResult.handled()
+
+                if (event.source !is ServerConnection) {
+                    return
+                }
+
+                val input = ByteStreams.newDataInput(event.data)
+                val message = GsonComponentSerializer.gson().deserialize(input.readUTF())
+
+                handeTeamChatReceive(message)
+            }
         }
-
-        event.result = PluginMessageEvent.ForwardResult.handled()
-
-        if (event.source !is ServerConnection) {
-            return
-        }
-
-        val input = ByteStreams.newDataInput(event.data)
-
-        val sender = input.readUTF()
-        val target = input.readUTF()
-        val message = GsonComponentSerializer.gson().deserialize(input.readUTF())
-        val type = gson.fromJson(input.readUTF(), ChatMessageType::class.java)
-        val messageId = UUID.fromString(input.readUTF())
-        val chatChannel = input.readUTF()
-        val forwardingServers: Set<String> = gson.fromJson(input.readUTF(), object : TypeToken<Set<String>>() {}.type)
-
-        handleReceive (
-            player = sender,
-            target = target,
-            message = message,
-            type = type,
-            messageID = messageId,
-            channel = chatChannel,
-            forwardingServers.toObjectSet()
-        )
     }
 
     override fun handleReceive(
@@ -75,5 +90,9 @@ class VelocityMessagingReceiverService(): MessagingReceiverService, Services.Fal
             channel = channel,
             forwardingServers = forwardingServers
         )
+    }
+
+    override fun handeTeamChatReceive(message: Component) {
+        teamMembers().forEach { it.sendMessage { message } }
     }
 }

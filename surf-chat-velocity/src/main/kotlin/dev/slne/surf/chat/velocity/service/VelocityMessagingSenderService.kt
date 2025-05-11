@@ -20,7 +20,9 @@ import kotlin.jvm.optionals.getOrNull
 @AutoService(MessagingSenderService::class)
 class VelocityMessagingSenderService(): MessagingSenderService, Services.Fallback {
     override fun loadServers() {
-        TODO("Not implemented on proxy")
+        /**
+         * Backends only handle servers.
+         */
     }
 
     override fun sendData (
@@ -45,5 +47,11 @@ class VelocityMessagingSenderService(): MessagingSenderService, Services.Fallbac
                 writeUTF(gson.toJson(forwardingServers))
             }.toByteArray())
         }
+    }
+
+    override fun sendTeamChatMessage(message: Component) {
+        /**
+         * Team Chat messages are only sent by backends.
+         */
     }
 }

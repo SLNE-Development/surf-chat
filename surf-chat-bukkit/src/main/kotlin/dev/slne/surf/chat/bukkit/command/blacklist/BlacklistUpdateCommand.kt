@@ -20,8 +20,8 @@ class BlacklistUpdateCommand(commandName: String): CommandAPICommand(commandName
                 }
 
                 user.sendText(buildText {
-                    primary("Die Blacklist wurde aktualisiert. ")
-                    success("(${duration}ms)")
+                    success("Die Blacklist wurde aktualisiert. ")
+                    info("(${duration}ms)")
                 })
             }
         }

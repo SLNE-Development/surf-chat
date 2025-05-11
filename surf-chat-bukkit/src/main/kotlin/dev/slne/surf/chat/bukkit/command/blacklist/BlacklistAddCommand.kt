@@ -27,15 +27,14 @@ class BlacklistAddCommand(commandName: String): CommandAPICommand(commandName) {
 
                 if(result) {
                     user.sendText(buildText {
-                        primary("Du hast das Wort ")
-                        info(word)
-                        primary(" zu der Blacklist ")
-                        success("hinzugefügt.")
+                        success("Du hast das Wort ")
+                        variableValue(word)
+                        success(" zu der Blacklist hinzugefügt.")
                     })
                 } else {
                     user.sendText(buildText {
                         error("Das Wort ")
-                        info(word)
+                        variableValue(word)
                         error(" ist bereits auf der Blacklist.")
                     })
                 }

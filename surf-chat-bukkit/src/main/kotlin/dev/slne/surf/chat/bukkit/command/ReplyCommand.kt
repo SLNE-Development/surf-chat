@@ -31,7 +31,7 @@ class ReplyCommand(commandName: String) : CommandAPICommand(commandName) {
 
                 if(uuid == null) {
                     user.sendText(buildText {
-                        error("Du hast niemanden, dem du antworten kannst.")
+                        error("Der Spieler wurde nicht gefunden.")
                     })
                     return@launch
                 }
@@ -41,7 +41,7 @@ class ReplyCommand(commandName: String) : CommandAPICommand(commandName) {
 
                 if(target == null) {
                     user.sendText(buildText {
-                        error("Du hast niemanden, dem du antworten kannst.")
+                        error("Der Spieler wurde nicht gefunden.")
                     })
                     return@launch
                 }

@@ -18,9 +18,9 @@ class ChatMotdRemoveLineCommand(commandName: String): CommandAPICommand(commandN
             chatMotdService.clearMotdLine(line)
 
             surfChatApi.sendText(player, buildText {
-                primary("Die Zeile ")
-                info(line.toString())
-                primary(" wurde aus der Chat-MOTD entfernt.")
+                info("Die Zeile ")
+                variableValue(line.toString())
+                info(" wurde aus der Chat-MOTD entfernt.")
             })
         }
     }

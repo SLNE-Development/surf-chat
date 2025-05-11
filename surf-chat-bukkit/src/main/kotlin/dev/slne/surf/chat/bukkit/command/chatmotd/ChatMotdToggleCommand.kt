@@ -15,14 +15,12 @@ class ChatMotdToggleCommand(commandName: String): CommandAPICommand(commandName)
             if(current) {
                 chatMotdService.disableMotd()
                 surfChatApi.sendText(player, buildText {
-                    primary("Die Chat-MOTD-Funktion wurde ")
-                    error("deaktiviert.")
+                    success("Die Chat-MOTD-Funktion wurde deaktiviert.")
                 })
             } else {
                 chatMotdService.enableMotd()
                 surfChatApi.sendText(player, buildText {
-                    primary("Die Chat-MOTD-Funktion wurde ")
-                    success("aktiviert.")
+                    success("Die Chat-MOTD-Funktion wurde aktiviert.")
                 })
             }
         }

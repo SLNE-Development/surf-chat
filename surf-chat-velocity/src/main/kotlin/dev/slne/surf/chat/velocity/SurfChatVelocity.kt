@@ -39,6 +39,7 @@ class SurfChatVelocity @Inject constructor(
         INSTANCE = this
 
         proxy.channelRegistrar.register(messageChannel)
+        proxy.channelRegistrar.register(teamChatChannel)
         proxy.eventManager.register(this, VelocityMessagingReceiverService())
     }
 

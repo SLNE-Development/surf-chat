@@ -60,10 +60,6 @@ class VelocityMessagingReceiverService(): MessagingReceiverService, Services.Fal
             teamChatChannel -> {
                 event.result = PluginMessageEvent.ForwardResult.handled()
 
-                if (event.source !is ServerConnection) {
-                    return
-                }
-
                 val input = ByteStreams.newDataInput(event.data)
                 val message = GsonComponentSerializer.gson().deserialize(input.readUTF())
 
@@ -92,15 +88,7 @@ class VelocityMessagingReceiverService(): MessagingReceiverService, Services.Fal
         )
     }
 
-    var lastMessage: Component = Component.empty()
-
     override fun handeTeamChatReceive(message: Component) {
-        if(lastMessage == message) {
-            return
-        }
-
-        lastMessage = message
-
         for (teamMember in teamMembers()) {
             teamMember.sendMessage(message)
         }

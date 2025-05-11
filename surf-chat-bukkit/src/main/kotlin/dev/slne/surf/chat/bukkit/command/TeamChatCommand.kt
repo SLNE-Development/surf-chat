@@ -20,7 +20,7 @@ class TeamChatCommand(commandName: String): CommandAPICommand(commandName) {
             val message = args.getUnchecked<String>("message") ?: return@playerExecutor
             val messageID = UUID.randomUUID()
 
-            messagingSenderService.sendTeamChatMessage(plugin.chatFormat.formatMessage(Component.text(message), player, player, ChatMessageType.TEAM, "", messageID, true))
+            messagingSenderService.sendTeamChatMessage(player, plugin.chatFormat.formatMessage(Component.text(message), player, player, ChatMessageType.TEAM, "", messageID, true))
 
             plugin.launch {
                 surfChatApi.logMessage(player.uniqueId, ChatMessageType.TEAM, Component.text(message), messageID)

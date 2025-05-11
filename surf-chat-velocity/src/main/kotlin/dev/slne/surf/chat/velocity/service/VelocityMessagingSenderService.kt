@@ -10,6 +10,7 @@ import dev.slne.surf.chat.velocity.messageChannel
 import dev.slne.surf.chat.velocity.plugin
 
 import it.unimi.dsi.fastutil.objects.ObjectSet
+import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import net.kyori.adventure.util.Services
@@ -49,7 +50,7 @@ class VelocityMessagingSenderService(): MessagingSenderService, Services.Fallbac
         }
     }
 
-    override fun sendTeamChatMessage(message: Component) {
+    override fun sendTeamChatMessage(player: Audience, message: Component) {
         /**
          * Team Chat messages are only sent by backends.
          */

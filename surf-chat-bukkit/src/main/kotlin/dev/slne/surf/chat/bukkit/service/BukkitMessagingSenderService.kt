@@ -9,9 +9,11 @@ import dev.slne.surf.chat.bukkit.util.gson
 import dev.slne.surf.chat.core.service.messaging.MessagingSenderService
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import it.unimi.dsi.fastutil.objects.ObjectSet
+import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import net.kyori.adventure.util.Services.Fallback
+import org.bukkit.entity.Player
 import java.util.UUID
 
 @AutoService(MessagingSenderService::class)
@@ -46,11 +48,15 @@ class BukkitMessagingSenderService: MessagingSenderService, Fallback {
         plugin.server.sendPluginMessage(plugin, SurfChatApi.MESSAGING_CHANNEL_IDENTIFIER, out.toByteArray())
     }
 
-    override fun sendTeamChatMessage(message: Component) {
+    override fun sendTeamChatMessage(player: Audience, message: Component) {
         val out = ByteStreams.newDataOutput()
         out.writeUTF(GsonComponentSerializer.gson().serialize(message))
 
-        plugin.server.sendPluginMessage(plugin, SurfChatApi.TEAM_CHAT_IDENTIFIER, out.toByteArray())
+        if(player !is Player) {
+            return
+        }
+
+        player.sendPluginMessage(plugin, SurfChatApi.TEAM_CHAT_IDENTIFIER, out.toByteArray())
     }
 
     companion object {

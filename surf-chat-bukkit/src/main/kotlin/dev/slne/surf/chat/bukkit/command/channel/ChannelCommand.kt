@@ -24,5 +24,6 @@ class ChannelCommand(commandName: String) : CommandAPICommand(commandName) {
         subcommand(ChannelPromoteCommand("promote"))
         subcommand(ChannelKickCommand("kick"))
         subcommand(ChannelTransferOwnerShipCommand("transferOwnership"))
+        subcommand(ChannelAdminCommand("admin"))
     }
 }

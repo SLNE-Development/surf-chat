@@ -23,9 +23,6 @@ class ChannelCommand(commandName: String) : CommandAPICommand(commandName) {
         subcommand(ChannelDemoteCommand("demote"))
         subcommand(ChannelPromoteCommand("promote"))
         subcommand(ChannelKickCommand("kick"))
-        subcommand(ChannelMoveCommand("move"))
-        subcommand(ChannelForceDeleteCommand("forceDelete"))
-        subcommand(ChannelForceJoinCommand("forceJoin"))
         subcommand(ChannelTransferOwnerShipCommand("transferOwnership"))
     }
 }

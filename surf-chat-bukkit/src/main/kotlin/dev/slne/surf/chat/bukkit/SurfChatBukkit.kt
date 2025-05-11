@@ -25,7 +25,6 @@ import dev.slne.surf.chat.core.service.blacklistService
 import dev.slne.surf.chat.core.service.chatMotdService
 import dev.slne.surf.chat.core.service.filterService
 import dev.slne.surf.chat.core.service.messaging.messagingSenderService
-import dev.slne.surf.surfapi.core.api.util.logger
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 
 import it.unimi.dsi.fastutil.objects.ObjectSet
@@ -67,8 +66,9 @@ class SurfChatBukkit(): SuspendingJavaPlugin() {
         Bukkit.getPluginManager().registerEvents(BukkitChatListener(), this)
         Bukkit.getPluginManager().registerEvents(BukkitConnectionListener(), this)
 
-        Bukkit.getMessenger().registerIncomingPluginChannel(this, SurfChatApi.messagingChannelIdentifier, BukkitMessagingReceiverService())
-        Bukkit.getMessenger().registerOutgoingPluginChannel(this, SurfChatApi.messagingChannelIdentifier)
+        Bukkit.getMessenger().registerIncomingPluginChannel(this, SurfChatApi.MESSAGING_CHANNEL_IDENTIFIER, BukkitMessagingReceiverService())
+        Bukkit.getMessenger().registerOutgoingPluginChannel(this, SurfChatApi.MESSAGING_CHANNEL_IDENTIFIER)
+        Bukkit.getMessenger().registerOutgoingPluginChannel(this, SurfChatApi.TEAM_CHAT_IDENTIFIER)
 
         /**
          * Handle & start services.

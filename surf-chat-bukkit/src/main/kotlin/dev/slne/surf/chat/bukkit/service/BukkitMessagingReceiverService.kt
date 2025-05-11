@@ -5,10 +5,7 @@ import com.google.common.io.ByteStreams
 import com.google.gson.reflect.TypeToken
 import dev.slne.surf.chat.api.SurfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
-import dev.slne.surf.chat.api.util.history.LoggedMessage
 import dev.slne.surf.chat.bukkit.util.gson
-import dev.slne.surf.chat.bukkit.util.serverPlayers
-import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.chat.core.service.messaging.MessagingReceiverService
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectSet
@@ -23,7 +20,7 @@ import java.util.UUID
 @AutoService(MessagingReceiverService::class)
 class BukkitMessagingReceiverService : MessagingReceiverService, PluginMessageListener, Fallback {
     override fun onPluginMessageReceived(channel: String, player: Player, message: ByteArray) {
-        if (channel != SurfChatApi.messagingChannelIdentifier) return
+        if (channel != SurfChatApi.MESSAGING_CHANNEL_IDENTIFIER) return
 
         val input = ByteStreams.newDataInput(message)
         val sender = input.readUTF()
@@ -47,5 +44,11 @@ class BukkitMessagingReceiverService : MessagingReceiverService, PluginMessageLi
         forwardingServers: ObjectSet<String>
     ) {
         Bukkit.broadcast(message)
+    }
+
+    override fun handeTeamChatReceive(message: Component) {
+        /**
+         * Team Chat messages are only sent by backends.
+         */
     }
 }

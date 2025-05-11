@@ -19,8 +19,8 @@ class SurfChatReloadCommand(commandName: String): CommandAPICommand(commandName)
              }
 
              surfChatApi.sendText(player, buildText {
-                    primary("Das Plugin wurde erfolgreich neu geladen.")
-                    success(" (${time}ms)")
+                    success("Das Plugin wurde erfolgreich neu geladen.")
+                    info(" (${time}ms)")
              })
          }
     }

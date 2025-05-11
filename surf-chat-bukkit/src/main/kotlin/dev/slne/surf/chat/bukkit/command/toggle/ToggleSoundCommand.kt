@@ -18,13 +18,11 @@ class ToggleSoundCommand(commandName: String) : CommandAPICommand(commandName) {
 
                 if(likesSound) {
                     user.sendText(buildText {
-                        primary("Du hörst jetzt ")
-                        success("Notify-Sounds. ")
+                        success("Du hast Benachrichtigungen aktiviert.")
                     })
                 } else {
                     user.sendText(buildText {
-                        primary("Du hörst jetzt ")
-                        error("keine Notify-Sounds mehr.")
+                        success("Du hast Benachrichtigungen deaktiviert.")
                     })
                 }
             }

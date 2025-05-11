@@ -19,8 +19,7 @@ class SurfChatChatClearCommand(commandName: String) : CommandAPICommand(commandN
                 val user = databaseService.getUser(player.uniqueId)
 
                 user.sendText(buildText {
-                    primary("Du hast den Chat ")
-                    success("geleert.")
+                    success("Du hast den Chat geleert.")
                 })
             }
         }

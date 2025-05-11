@@ -18,11 +18,11 @@ class ChatMotdAddLineCommand(commandName: String): CommandAPICommand(commandName
             chatMotdService.setMotdLine(line, content)
 
             surfChatApi.sendText(player, buildText {
-                primary("Die Zeile ")
-                info(line.toString())
-                primary(" wurde auf ")
-                info(content)
-                primary(" gesetzt.")
+                info("Die Zeile ")
+                variableValue(line.toString())
+                info(" wurde auf ")
+                variableValue(content)
+                info(" gesetzt.")
             })
         }
     }

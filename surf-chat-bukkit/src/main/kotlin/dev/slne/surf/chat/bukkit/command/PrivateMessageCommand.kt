@@ -42,7 +42,7 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
 
                 if(targetUser.uuid == user.uuid) {
                     user.sendText(buildText {
-                        error("Du kannst dir nicht selbst eine Nachricht senden.")
+                        error("Du kannst dir selbst keine Nachrichten senden.")
                     })
                     return@launch
                 }

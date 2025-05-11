@@ -22,16 +22,15 @@ class BlacklistRemoveCommand(commandName: String): CommandAPICommand(commandName
 
                 if(result) {
                     user.sendText(buildText {
-                        primary("Du hast das Wort ")
-                        info(word)
-                        primary(" von der Blacklist ")
-                        error("entfernt.")
+                        success("Du hast das Wort ")
+                        variableValue(word)
+                        success(" von der Blacklist entfernt.")
                     })
                 } else {
                     user.sendText(buildText {
                         error("Das Wort ")
-                        info(word)
-                        error(" ist nicht auf der Blacklist.")
+                        variableValue(word)
+                        error(" befindet sich nicht auf der Blacklist.")
                     })
                 }
             }

@@ -43,7 +43,7 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
                 val user = databaseService.getUser(sender.uniqueId)
 
                 user.sendText(buildText {
-                    primary("Chat-Daten werden geladen...")
+                    info("Chat-Daten werden geladen...")
                 })
 
                 val history = databaseService.loadHistory(
@@ -58,7 +58,7 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
 
                 if (history.isEmpty()) {
                     user.sendText(buildText {
-                        error("Es wurden keine passenden Chat Daten gefunden. Bitte überprüfe deinen Filter (${parsed.toFlagString()})")
+                        error("Es wurden keine passenden Chat-Daten gefunden. Bitte überprüfe deinen Filter (${parsed.toFlagString()})")
                     })
                     return@launch
                 }

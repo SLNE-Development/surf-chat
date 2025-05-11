@@ -13,11 +13,11 @@ class ChatMotdListLineCommand(commandName: String): CommandAPICommand(commandNam
     init {
         playerExecutor { player, _ ->
             surfChatApi.sendText(player, buildText {
-                primary("Die Chat-MOTD ist aktuell auf ")
+                info("Die Chat-MOTD ist aktuell auf ")
                 appendNewline()
                 append(chatMotdService.getMotd())
                 appendNewline()
-                primary(" gesetzt.")
+                info(" gesetzt.")
             })
         }
     }

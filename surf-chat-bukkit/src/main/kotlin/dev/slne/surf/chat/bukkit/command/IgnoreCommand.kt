@@ -31,15 +31,15 @@ class IgnoreCommand(commandName: String) : CommandAPICommand(commandName) {
 
                 if(user.toggleIgnore(target.uniqueId)) {
                     user.sendText(buildText {
-                        primary("Du ignorierst jetzt ")
-                        info(target.name ?: target.uniqueId.toString())
+                        success("Du ignorierst jetzt")
+                        variableValue(target.name ?: target.uniqueId.toString())
                         primary(".")
                     })
                 } else {
                     user.sendText(buildText {
-                        primary("Du ignorierst ")
-                        info(target.name ?: target.uniqueId.toString())
-                        primary(" nicht mehr.")
+                        success("Du ignorierst ")
+                        variableValue(target.name ?: target.uniqueId.toString())
+                        success(" nicht mehr.")
                     })
                 }
             }

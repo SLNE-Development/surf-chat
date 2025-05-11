@@ -35,6 +35,13 @@ class ChannelCreateCommand(commandName: String) : CommandAPICommand(commandName)
                     return@launch
                 }
 
+                if(!isValidString(name)) {
+                    user.sendText(buildText {
+                        error("Der Kanalname ist ungültig. Er darf maximal 10 Zeichen lang sein und nur Buchstaben und Zahlen enthalten.")
+                    })
+                    return@launch
+                }
+
                 channelService.createChannel(name, user)
                 user.sendText(buildText {
                     primary("Du hast den Nachrichtenkanal ")
@@ -43,5 +50,9 @@ class ChannelCreateCommand(commandName: String) : CommandAPICommand(commandName)
                 })
             }
         }
+    }
+
+    fun isValidString(input: String): Boolean {
+        return input.length <= 10 && input.all { it.isLetterOrDigit() }
     }
 }

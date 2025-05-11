@@ -16,9 +16,7 @@ class ChannelInfoCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withOptionalArguments(ChannelArgument("channel"))
         playerExecutor { player, args ->
-            val channel = args.getOrDefaultUnchecked<ChannelModel?>("channel", channelService.getChannel(player))
-
-            if(channel == null) {
+            val channel = args.getOrDefaultUnchecked<ChannelModel?>("channel", channelService.getChannel(player)) ?: run {
                 player.sendText {
                     error("Der Kanal existiert nicht oder ist nicht für dich zugänglich.")
                 }

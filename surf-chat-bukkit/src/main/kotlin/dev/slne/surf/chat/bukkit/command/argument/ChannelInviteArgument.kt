@@ -9,10 +9,10 @@ import dev.slne.surf.chat.core.service.channelService
 class ChannelInviteArgument(nodeName: String) :
     CustomArgument<ChannelModel, String>(StringArgument(nodeName), { info ->
             val channel = channelService.getChannel(info.input())
-                ?: throw CustomArgumentException.fromMessageBuilder(MessageBuilder("Unknown channel: ").appendArgInput())
+                ?: throw CustomArgumentException.fromMessageBuilder(MessageBuilder("Der Kanal wurde nicht gefunden.").appendArgInput())
 
             if (!channel.isInvited(info.sender())) {
-                throw CustomArgumentException.fromMessageBuilder(MessageBuilder("Unknown channel: ").appendArgInput())
+                throw CustomArgumentException.fromMessageBuilder(MessageBuilder("Dieser Kanal ist nicht für dich zugänglich.").appendArgInput())
             }
             channel
         }) {

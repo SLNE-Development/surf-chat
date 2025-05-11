@@ -41,7 +41,7 @@ class ChannelKickCommand(commandName: String) : CommandAPICommand(commandName) {
 
                 if(channel.isModerator(targetUser) && channel.isModerator(user)) {
                     user.sendText(buildText {
-                        error("Du kannst keine Spieler nicht entfernen")
+                        error("Du kannst keine Spieler aus diesem Kanal entfernen.")
                     })
                     return@launch
                 }

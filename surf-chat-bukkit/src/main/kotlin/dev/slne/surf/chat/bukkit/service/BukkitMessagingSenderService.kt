@@ -48,7 +48,6 @@ class BukkitMessagingSenderService: MessagingSenderService, Fallback {
 
     override fun sendTeamChatMessage(message: Component) {
         val out = ByteStreams.newDataOutput()
-
         out.writeUTF(GsonComponentSerializer.gson().serialize(message))
 
         plugin.server.sendPluginMessage(plugin, SurfChatApi.TEAM_CHAT_IDENTIFIER, out.toByteArray())

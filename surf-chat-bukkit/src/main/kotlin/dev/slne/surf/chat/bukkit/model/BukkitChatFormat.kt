@@ -79,7 +79,7 @@ class BukkitChatFormat: ChatFormatModel {
                     darkSpacer(" | ")
                     variableValue("Du")
                     darkSpacer(" -> ")
-                    append(MiniMessage.miniMessage().deserialize(convertLegacy(LuckPermsExtension.getPrefix(sender) + " " + sender.name)))
+                    append(MiniMessage.miniMessage().deserialize(convertLegacy(LuckPermsExtension.getPrefix(viewer) + " " + viewer.name)))
                     darkSpacer(" >> ")
                     append(formatItemTag(rawMessage, sender, warn))
 

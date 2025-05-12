@@ -63,7 +63,7 @@ class BukkitChatFormat: ChatFormatModel {
                     append(components.getChannelComponent(channel))
                     append(MiniMessage.miniMessage().deserialize(convertLegacy(LuckPermsExtension.getPrefix(sender) + " " + sender.name)))
                     darkSpacer(" >> ")
-                    append(formatItemTag(highlightPlayers(rawMessage), sender, warn))
+                    append(formatItemTag(rawMessage, sender, warn))
 
                     hoverEvent(HoverEvent.showText {
                         components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
@@ -115,7 +115,7 @@ class BukkitChatFormat: ChatFormatModel {
                     darkSpacer(" | ")
                     append(MiniMessage.miniMessage().deserialize(convertLegacy(LuckPermsExtension.getPrefix(sender) + " " + sender.name)))
                     darkSpacer(" >> ")
-                    append(formatItemTag(highlightPlayers(rawMessage), sender, warn))
+                    append(formatItemTag(rawMessage, sender, warn))
 
                     hoverEvent(HoverEvent.showText {
                         components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)

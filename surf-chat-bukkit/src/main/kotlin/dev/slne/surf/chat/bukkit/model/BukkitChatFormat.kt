@@ -129,7 +129,7 @@ class BukkitChatFormat: ChatFormatModel {
              * no message should be sent with this type.
              */
 
-            ChatMessageType.PRIVATE_GENERAL -> {
+            ChatMessageType.PRIVATE -> {
                 buildText {
                     darkSpacer(">> ")
                     append(Component.text("PM", Colors.RED))

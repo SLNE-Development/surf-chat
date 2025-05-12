@@ -42,8 +42,8 @@ fun Component.toPlainText(): String {
 }
 
 fun UUID.getUsername(): String {
-    val player = Bukkit.getPlayer(this)
-    return player?.name ?: "Unknown"
+    val player = Bukkit.getOfflinePlayer(this)
+    return player.name ?: "Unknown"
 }
 
 fun player(userName: String): Player? {

@@ -15,8 +15,8 @@ class BukkitConnectionListener(): Listener {
     @EventHandler
     fun onDisconnect(event: PlayerQuitEvent) {
         plugin.launch {
-            databaseService.handleDisconnect(event.player.uniqueId)
             channelService.handleDisconnect(event.player)
+            databaseService.handleDisconnect(event.player.uniqueId)
         }
     }
 

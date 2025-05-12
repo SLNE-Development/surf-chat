@@ -27,12 +27,12 @@ class ChannelLeaveCommand(commandName: String) : CommandAPICommand(commandName) 
                 }
 
                 if (channel.isOwner(user)) {
-                    var nextOwner = channel.getModerators()
-                        .firstOrNull()
+                    var nextOwner = channel.getModerators().firstOrNull()
+
                     if (nextOwner == null) {
-                        nextOwner = channel.getMembers()
-                            .firstOrNull { it.uuid != user.uuid }
+                        nextOwner = channel.getOnlyMembers().firstOrNull { it.uuid != user.uuid }
                     }
+
                     if (nextOwner == null) {
                         channel.leave(user)
                         channelService.deleteChannel(channel)
@@ -51,6 +51,7 @@ class ChannelLeaveCommand(commandName: String) : CommandAPICommand(commandName) 
                         info(" verlassen. Die Besitzerschaft wurde auf dich übertragen.")
                     })
                 }
+
                 channel.leave(user)
                 user.sendText(buildText {
                     success("Du hast den Nachrichtenkanal ")

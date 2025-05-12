@@ -108,6 +108,7 @@ class BukkitChannelService(): ChannelService, Fallback {
                 }
 
                 channel.transferOwnership(nextOwner)
+                channel.leave(user)
                 nextOwner.sendText(buildText {
                     variableValue(player.name)
                     info(" hat den Nachrichtenkanal ")

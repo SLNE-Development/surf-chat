@@ -35,6 +35,7 @@ class ChannelDemoteCommand(commandName: String) : CommandAPICommand(commandName)
                     user.sendText (buildText {
                         error("Du kannst dich nicht selbst degradieren.")
                     })
+                    return@launch
                 }
 
                 if (!channel.isOwner(user)) {

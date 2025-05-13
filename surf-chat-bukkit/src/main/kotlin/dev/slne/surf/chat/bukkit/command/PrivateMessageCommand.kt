@@ -11,14 +11,19 @@ import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.bukkit.util.components
 import dev.slne.surf.chat.bukkit.util.sendRawText
 import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.bukkit.util.serverPlayers
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.chat.core.service.replyService
+import dev.slne.surf.chat.core.service.spyService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.event.ClickEvent
+import net.kyori.adventure.text.event.HoverEvent
 import org.bukkit.entity.Player
 import java.util.*
 
@@ -53,6 +58,18 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
 
                     replyService.updateLast(player.uniqueId, target.uniqueId)
                     replyService.updateLast(target.uniqueId, player.uniqueId)
+
+                    if(spyService.hasPrivateMessageSpies(player)) {
+                        spyService.getPrivateMessageSpys(player).forEach { it.sendText {
+                            info("[${player.name} -> ${target.name}] ")
+                            append(messageComponent)
+
+                            hoverEvent(HoverEvent.showText {
+                                components.getMessageHoverComponent(player.name, System.currentTimeMillis(), "N/A")
+                            })
+                            clickEvent(ClickEvent.suggestCommand("/msg ${player.name} "))
+                        } }
+                    }
 
                     plugin.launch {
                         surfChatApi.logMessage(player.uniqueId, ChatMessageType.PRIVATE, messageComponent, UUID.randomUUID())

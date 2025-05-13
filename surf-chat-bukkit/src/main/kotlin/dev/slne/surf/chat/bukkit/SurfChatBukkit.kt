@@ -16,6 +16,8 @@ import dev.slne.surf.chat.bukkit.model.BukkitChatFormat
 import dev.slne.surf.chat.bukkit.model.BukkitMessageValidator
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.chat.bukkit.command.channel.ChannelCommand
+import dev.slne.surf.chat.bukkit.command.ignore.IgnoreCommand
+import dev.slne.surf.chat.bukkit.command.ignore.IgnoreListCommand
 import dev.slne.surf.chat.bukkit.command.surfchat.SurfChatCommand
 import dev.slne.surf.chat.bukkit.command.toggle.TogglePmCommand
 import dev.slne.surf.chat.bukkit.command.toggle.ToggleSoundCommand
@@ -59,6 +61,7 @@ class SurfChatBukkit(): SuspendingJavaPlugin() {
         TeamChatCommand("teamchat").register()
         BlackListCommand("blacklist").register()
         PrivateMessageSpyCommand("pmspy").register()
+        IgnoreListCommand("ignorelist").register()
 
         /**
          * Register all listeners.

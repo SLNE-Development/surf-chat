@@ -10,6 +10,7 @@ import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import dev.slne.surf.surfapi.core.api.service.PlayerLookupService
 import org.bukkit.OfflinePlayer
 
 class IgnoreCommand(commandName: String) : CommandAPICommand(commandName) {
@@ -32,18 +33,22 @@ class IgnoreCommand(commandName: String) : CommandAPICommand(commandName) {
 
                 if(user.toggleIgnore(target.uniqueId)) {
                     user.sendText(buildText {
-                        success("Du ignorierst jetzt")
-                        variableValue(target.name ?: target.uniqueId.toString())
+                        success("Du ignorierst jetzt ")
+                        variableValue(target.requestName() ?: target.uniqueId.toString())
                         primary(".")
                     })
                 } else {
                     user.sendText(buildText {
                         success("Du ignorierst ")
-                        variableValue(target.name ?: target.uniqueId.toString())
+                        variableValue(target.requestName() ?: target.uniqueId.toString())
                         success(" nicht mehr.")
                     })
                 }
             }
         }
+    }
+
+    suspend fun OfflinePlayer.requestName(): String? {
+        return PlayerLookupService.getUsername(this.uniqueId)
     }
 }

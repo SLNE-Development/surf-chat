@@ -23,6 +23,13 @@ class BlacklistAddCommand(commandName: String) : CommandAPICommand(commandName) 
 
             plugin.launch {
                 val user = databaseService.getUser(player.uniqueId)
+                if (word.isBlank()) {
+                    user.sendText(buildText {
+                        error("Das Wort muss mindestens ein Zeichen enthalten.")
+                    })
+                    return@launch
+                }
+
                 val result = blacklistService.addToBlacklist(
                     BukkitBlacklistEntry(
                         word,
@@ -31,14 +38,6 @@ class BlacklistAddCommand(commandName: String) : CommandAPICommand(commandName) 
                         player.name
                     )
                 )
-
-                if (word.isBlank()) {
-                    user.sendText(buildText {
-                        error("Das Wort muss mindestens ein Zeichen enthalten.")
-                    })
-                    return@launch
-                }
-
                 if (result) {
                     user.sendText(buildText {
                         success("Du hast das Wort ")

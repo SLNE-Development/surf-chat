@@ -30,6 +30,7 @@ class ChannelSpyCommand(commandName: String): CommandAPICommand(commandName) {
                 surfChatApi.sendText(player, buildText {
                     success("Du spionierst in keinem Kanal mehr.")
                 })
+                return@playerExecutor
             }
 
             channels.forEach {

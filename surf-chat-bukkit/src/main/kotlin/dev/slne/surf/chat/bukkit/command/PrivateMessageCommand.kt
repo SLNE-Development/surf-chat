@@ -3,8 +3,7 @@ package dev.slne.surf.chat.bukkit.command
 import com.github.shynixn.mccoroutine.folia.launch
 
 import dev.jorel.commandapi.CommandAPICommand
-import dev.jorel.commandapi.arguments.ArgumentSuggestions
-import dev.jorel.commandapi.arguments.PlayerArgument
+import dev.jorel.commandapi.arguments.EntitySelectorArgument
 import dev.jorel.commandapi.kotlindsl.greedyStringArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 
@@ -14,7 +13,6 @@ import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.components
 import dev.slne.surf.chat.bukkit.util.sendRawText
 import dev.slne.surf.chat.bukkit.util.sendText
-import dev.slne.surf.chat.bukkit.util.serverPlayers
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.chat.core.service.replyService
 import dev.slne.surf.chat.core.service.spyService
@@ -29,9 +27,7 @@ import java.util.*
 
 class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
-        withArguments(PlayerArgument("player").replaceSuggestions(ArgumentSuggestions.stringCollection {
-            serverPlayers.map { it.name }
-        }))
+        withArguments(EntitySelectorArgument.OneEntity("player"))
         greedyStringArgument("message")
 
         withAliases("tell", "w", "pm", "dm")

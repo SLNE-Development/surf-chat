@@ -2,6 +2,7 @@ package dev.slne.surf.chat.bukkit.command
 
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
+import dev.jorel.commandapi.arguments.EntitySelectorArgument
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.offlinePlayerArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
@@ -14,7 +15,7 @@ import org.bukkit.OfflinePlayer
 class IgnoreCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission("surf.chat.command.ignore")
-        offlinePlayerArgument("target")
+        withArguments(EntitySelectorArgument.OneEntity("target"))
 
         playerExecutor { player, args ->
             val target: OfflinePlayer by args

@@ -16,6 +16,7 @@ import dev.slne.surf.surfapi.bukkit.api.util.forEachPlayer
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import it.unimi.dsi.fastutil.objects.ObjectList
+import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.chat.SignedMessage
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
@@ -25,6 +26,7 @@ import java.util.*
 
 @AutoService(HistoryService::class)
 class BukkitHistoryService(): HistoryService, Fallback {
+
     private val historyCache = Caffeine.newBuilder()
         .maximumSize(1000)
         .build<UUID, Object2ObjectMap<HistoryPair, LoggedMessage>>()
@@ -44,6 +46,9 @@ class BukkitHistoryService(): HistoryService, Fallback {
 
     override suspend fun getHistory(user: ChatUserModel): ObjectList<HistoryEntryModel> {
         return databaseService.loadHistory(user.uuid)
+    }
+    override fun getMessageIds(): ObjectSet<UUID> {
+        return messageCache.keys
     }
 
     override fun logCaching(message: SignedMessage.Signature, messageID: UUID) {

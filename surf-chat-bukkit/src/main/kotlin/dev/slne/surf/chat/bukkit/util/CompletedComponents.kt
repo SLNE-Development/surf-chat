@@ -16,12 +16,12 @@ class CompletedComponents {
 
         return buildText {
             darkSpacer("[")
-            error("DEL")
+            warning("X")
             darkSpacer("]")
             darkSpacer(" ")
             clickEvent(ClickEvent.runCommand("/surfchat delete $messageID"))
             hoverEvent(HoverEvent.showText(buildText {
-                error("Klicke, um die Nachricht zu löschen")
+                warning("Klicke, um die Nachricht zu löschen")
             }))
         }
     }

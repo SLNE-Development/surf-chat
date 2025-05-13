@@ -14,9 +14,9 @@ class SurfChatCommand(commandName: String) : CommandAPICommand(commandName) {
         subcommand(SurfChatDeleteCommand("delete"))
         subcommand(SurfChatChatClearCommand("clear"))
         subcommand(SurfChatLookupCommand("lookup"))
-        //subcommand(ChatMotdCommand("chatMotd")) Configure via config.yml
+        subcommand(ChatMotdCommand("chatMotd"))
         subcommand(BlackListCommand("blacklist"))
-        //subcommand(MessageLimitCommand("messageLimit")) Configure via config.yml
+        subcommand(MessageLimitCommand("messageLimit"))
         subcommand(SurfChatReloadCommand("reload"))
     }
 }

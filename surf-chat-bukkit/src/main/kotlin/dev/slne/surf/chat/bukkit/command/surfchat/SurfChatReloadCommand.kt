@@ -18,6 +18,7 @@ class SurfChatReloadCommand(commandName: String): CommandAPICommand(commandName)
         withPermission("surf.chat.command.reload")
          playerExecutor { player, _ ->
              val time = measureTimeMillis {
+                 plugin.reloadConfig()
                  messagingSenderService.loadServers()
                  plugin.chatFormat.loadServer()
                  connectionService.reloadMessages()

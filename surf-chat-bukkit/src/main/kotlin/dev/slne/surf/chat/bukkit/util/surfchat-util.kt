@@ -9,7 +9,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-val pluginConfig = plugin.config
+val pluginConfig get() = plugin.config
 val gson = Gson()
 val serverPlayers = Bukkit.getOnlinePlayers()
 

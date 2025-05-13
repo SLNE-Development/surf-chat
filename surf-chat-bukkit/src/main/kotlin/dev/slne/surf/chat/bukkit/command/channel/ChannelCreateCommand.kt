@@ -28,7 +28,7 @@ class ChannelCreateCommand(commandName: String) : CommandAPICommand(commandName)
 
                 if(channelService.getChannel(name) != null) {
                     user.sendText(buildText {
-                        error("Es Existiert bereits ein Nachrichtenkanal mit dem Namen")
+                        error("Es existiert bereits ein Nachrichtenkanal mit dem Namen")
                         variableValue(name)
                         error(".")
                     })

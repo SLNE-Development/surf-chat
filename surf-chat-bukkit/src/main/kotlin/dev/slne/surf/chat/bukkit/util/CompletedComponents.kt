@@ -16,7 +16,7 @@ class CompletedComponents {
 
         return buildText {
             darkSpacer("[")
-            warning("X")
+            error("X")
             darkSpacer("]")
             darkSpacer(" ")
             clickEvent(ClickEvent.runCommand("/surfchat delete $messageID"))

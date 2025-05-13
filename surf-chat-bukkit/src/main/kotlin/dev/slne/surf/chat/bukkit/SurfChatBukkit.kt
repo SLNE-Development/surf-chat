@@ -58,6 +58,7 @@ class SurfChatBukkit(): SuspendingJavaPlugin() {
         ToggleSoundCommand("togglesound").register()
         TeamChatCommand("teamchat").register()
         BlackListCommand("blacklist").register()
+        PrivateMessageSpyCommand("pmspy").register()
 
         /**
          * Register all listeners.

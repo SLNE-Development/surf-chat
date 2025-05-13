@@ -8,9 +8,11 @@ import dev.slne.surf.chat.api.type.ChannelStatusType
 import dev.slne.surf.chat.bukkit.command.argument.ChannelArgument
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.service.channelService
+import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.TextDecoration
 
 class ChannelInfoCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
@@ -29,24 +31,30 @@ class ChannelInfoCommand(commandName: String) : CommandAPICommand(commandName) {
 
     private fun createInfoMessage(channel: ChannelModel): Component {
         return buildText {
-            appendNewline()
-            info("Kanalinformation: ").variableValue(channel.name)
-            appendNewline()
-            darkSpacer("   - ").variableKey("Besitzer: ")
-            variableValue(channel.getOwner().getName())
-            appendNewline()
-            darkSpacer("   - ").variableKey("Status: ")
-            variableValue(when(channel.status) {
+            info("ɪɴꜰᴏʀᴍᴀᴛɪᴏɴᴇɴ").appendNewline()
+            append {
+                info("| ")
+                decorate(TextDecoration.BOLD)
+            }.spacer("ɴᴀᴍᴇ: ").text(channel.name, Colors.WHITE).appendNewline()
+            append {
+                info("| ")
+                decorate(TextDecoration.BOLD)
+            }.spacer("ʙᴇѕɪᴛᴢᴇʀ: ").text(channel.getOwner().getName(), Colors.WHITE).appendNewline()
+            append {
+                info("| ")
+                decorate(TextDecoration.BOLD)
+            }.spacer("ᴍᴏᴅᴜѕ: ").text(when(channel.status) {
                 ChannelStatusType.PUBLIC -> "Öffentlich"
                 ChannelStatusType.PRIVATE -> "Privat"
-            })
-            appendNewline()
-            darkSpacer("   - ").variableKey("Mitglieder: ")
-            variableValue(channel.members.size.toString())
-            appendNewline()
-            darkSpacer("   - ").variableKey("Einladungen: ")
-            variableValue(channel.invites.size.toString())
-            appendNewline()
+            }, Colors.WHITE).appendNewline()
+            append {
+                info("| ")
+                decorate(TextDecoration.BOLD)
+            }.spacer("ᴍɪᴛɢʟɪᴇᴅᴇʀ: ").text(channel.members.size, Colors.WHITE).appendNewline()
+            append {
+                info("| ")
+                decorate(TextDecoration.BOLD)
+            }.spacer("ᴇɪɴʟᴀᴅᴜɴɢᴇɴ: ").text(channel.invites.size, Colors.WHITE)
         }
     }
 }

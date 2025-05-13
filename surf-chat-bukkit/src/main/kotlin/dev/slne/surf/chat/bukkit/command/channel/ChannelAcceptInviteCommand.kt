@@ -33,7 +33,7 @@ class ChannelAcceptInviteCommand(commandName: String) : CommandAPICommand(comman
                 user.acceptInvite(channel)
                 user.sendText(
                     buildText {
-                        primary("Du hast die Einladung für den Nachrichtenkanal ")
+                        info("Du hast die Einladung für den Nachrichtenkanal ")
                         variableValue(channel.name)
                         success(" angenommen.")
                     }

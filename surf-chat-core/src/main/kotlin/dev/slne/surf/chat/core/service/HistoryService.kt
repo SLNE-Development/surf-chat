@@ -3,7 +3,6 @@ package dev.slne.surf.chat.core.service
 import dev.slne.surf.chat.api.model.ChatUserModel
 import dev.slne.surf.chat.api.model.HistoryEntryModel
 import dev.slne.surf.chat.api.type.ChatMessageType
-import dev.slne.surf.chat.api.util.history.LoggedMessage
 import dev.slne.surf.surfapi.core.api.util.requiredService
 
 import it.unimi.dsi.fastutil.objects.ObjectList
@@ -16,7 +15,7 @@ interface HistoryService {
     suspend fun getHistory(user: ChatUserModel): ObjectList<HistoryEntryModel>
 
     fun logCaching(message: SignedMessage.Signature, messageID: UUID)
-    fun deleteMessage(name: String, messageID: UUID)
+    fun deleteMessage(name: String, messageID: UUID): Boolean
     fun clearChat()
 
     companion object {

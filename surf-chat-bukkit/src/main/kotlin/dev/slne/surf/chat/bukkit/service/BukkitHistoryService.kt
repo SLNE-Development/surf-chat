@@ -10,12 +10,9 @@ import dev.slne.surf.chat.bukkit.model.BukkitHistoryEntry
 import dev.slne.surf.chat.api.util.history.HistoryPair
 import dev.slne.surf.chat.api.util.history.LoggedMessage
 import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.bukkit.util.player
 import dev.slne.surf.chat.core.service.HistoryService
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.bukkit.api.util.forEachPlayer
-import dev.slne.surf.surfapi.core.api.util.mutableObject2ObjectMapOf
-import dev.slne.surf.surfapi.core.api.util.object2ObjectMapOf
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import it.unimi.dsi.fastutil.objects.ObjectList
@@ -53,8 +50,8 @@ class BukkitHistoryService(): HistoryService, Fallback {
         this.messageCache[messageID] = message
     }
 
-    override fun deleteMessage(name: String, messageID: UUID) {
-        val signedMessage = messageCache[messageID] ?: return
+    override fun deleteMessage(name: String, messageID: UUID): Boolean {
+        val signedMessage = messageCache[messageID] ?: return false
 
         Bukkit.getServer().deleteMessage(signedMessage)
         messageCache.remove(messageID)
@@ -62,6 +59,8 @@ class BukkitHistoryService(): HistoryService, Fallback {
         plugin.launch {
             databaseService.markMessageDeleted(name, messageID)
         }
+
+        return true
     }
 
 

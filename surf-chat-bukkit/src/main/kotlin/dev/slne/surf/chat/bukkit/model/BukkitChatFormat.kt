@@ -52,7 +52,7 @@ class BukkitChatFormat: ChatFormatModel {
                     hoverEvent(HoverEvent.showText {
                         components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
                     })
-                    clickEvent(ClickEvent.suggestCommand("/msg ${sender.name} "))
+                    clickEvent(ClickEvent.suggestCommand("/msg ${viewer.name} "))
                 }
             }
 
@@ -63,12 +63,12 @@ class BukkitChatFormat: ChatFormatModel {
                     append(components.getChannelComponent(channel))
                     append(MiniMessage.miniMessage().deserialize(convertLegacy(LuckPermsExtension.getPrefix(sender) + " " + sender.name)))
                     darkSpacer(" >> ")
-                    append(formatItemTag(highlightPlayers(rawMessage), sender, warn))
+                    append(formatItemTag(rawMessage, sender, warn))
 
                     hoverEvent(HoverEvent.showText {
                         components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
                     })
-                    clickEvent(ClickEvent.suggestCommand("/msg ${sender.name} "))
+                    clickEvent(ClickEvent.suggestCommand("/msg ${viewer.name} "))
                 }
             }
 
@@ -79,14 +79,14 @@ class BukkitChatFormat: ChatFormatModel {
                     darkSpacer(" | ")
                     variableValue("Du")
                     darkSpacer(" -> ")
-                    append(MiniMessage.miniMessage().deserialize(convertLegacy(LuckPermsExtension.getPrefix(sender) + " " + sender.name)))
+                    append(MiniMessage.miniMessage().deserialize(convertLegacy(LuckPermsExtension.getPrefix(viewer) + " " + viewer.name)))
                     darkSpacer(" >> ")
                     append(formatItemTag(rawMessage, sender, warn))
 
                     hoverEvent(HoverEvent.showText {
                         components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
                     })
-                    clickEvent(ClickEvent.suggestCommand("/msg ${sender.name} "))
+                    clickEvent(ClickEvent.suggestCommand("/msg ${viewer.name} "))
                 }
             }
 
@@ -104,7 +104,7 @@ class BukkitChatFormat: ChatFormatModel {
                     hoverEvent(HoverEvent.showText {
                         components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
                     })
-                    clickEvent(ClickEvent.suggestCommand("/msg ${sender.name} "))
+                    clickEvent(ClickEvent.suggestCommand("/msg ${viewer.name} "))
                 }
             }
 
@@ -115,12 +115,12 @@ class BukkitChatFormat: ChatFormatModel {
                     darkSpacer(" | ")
                     append(MiniMessage.miniMessage().deserialize(convertLegacy(LuckPermsExtension.getPrefix(sender) + " " + sender.name)))
                     darkSpacer(" >> ")
-                    append(formatItemTag(highlightPlayers(rawMessage), sender, warn))
+                    append(formatItemTag(rawMessage, sender, warn))
 
                     hoverEvent(HoverEvent.showText {
                         components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
                     })
-                    clickEvent(ClickEvent.suggestCommand("/msg ${sender.name} "))
+                    clickEvent(ClickEvent.suggestCommand("/msg ${viewer.name} "))
                 }
             }
 
@@ -129,7 +129,7 @@ class BukkitChatFormat: ChatFormatModel {
              * no message should be sent with this type.
              */
 
-            ChatMessageType.PRIVATE_GENERAL -> {
+            ChatMessageType.PRIVATE -> {
                 buildText {
                     darkSpacer(">> ")
                     append(Component.text("PM", Colors.RED))
@@ -167,7 +167,7 @@ class BukkitChatFormat: ChatFormatModel {
                     variableValue("Dir ")
                     darkSpacer(" >> ")
                     append(rawMessage)
-                    clickEvent(ClickEvent.suggestCommand("/msg ${sender.name} "))
+                    clickEvent(ClickEvent.suggestCommand("/msg ${viewer.name} "))
                 }
             }
         }

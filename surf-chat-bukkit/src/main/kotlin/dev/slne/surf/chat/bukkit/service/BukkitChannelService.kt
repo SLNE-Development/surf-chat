@@ -8,11 +8,13 @@ import dev.slne.surf.chat.api.type.ChannelRoleType
 import dev.slne.surf.chat.bukkit.model.BukkitChannel
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.edit
+import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.bukkit.util.toChatUser
 import dev.slne.surf.chat.bukkit.util.toPlayer
 import dev.slne.surf.chat.core.service.ChannelService
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
+import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.util.Services.Fallback
@@ -86,21 +88,33 @@ class BukkitChannelService(): ChannelService, Fallback {
         plugin.launch {
             val user = databaseService.getUser(player.uniqueId)
 
-            if(channel.isOwner(user)) {
-                val mayBeNextOwner = channel.getMembers()
-                    .filter { it.uuid != user.uuid }
-                    .sortedWith(compareBy(
-                        { if (channel.isModerator(it)) 0 else 1 },
-                        { channel.members[it] }
-                    ))
-                    .firstOrNull()
+            if (channel.isOwner(user)) {
+                var nextOwner = channel.getModerators().firstOrNull()
 
-                if(mayBeNextOwner == null) {
-                    channelService.deleteChannel(channel)
-                } else {
-                    channel.transferOwnership(mayBeNextOwner)
-                    channel.leave(user)
+                if (nextOwner == null) {
+                    nextOwner = channel.getOnlyMembers().firstOrNull { it.uuid != user.uuid }
                 }
+
+                if (nextOwner == null) {
+                    channel.leave(user)
+                    channelService.deleteChannel(channel)
+
+                    user.sendText(buildText {
+                        info("Du hast den Nachrichtenkanal ")
+                        variableValue(channel.name)
+                        info(" als letzter Spieler verlassen und der Kanal wurde gelöscht.")
+                    })
+                    return@launch
+                }
+
+                channel.transferOwnership(nextOwner)
+                channel.leave(user)
+                nextOwner.sendText(buildText {
+                    variableValue(player.name)
+                    info(" hat den Nachrichtenkanal ")
+                    variableValue(channel.name)
+                    info(" verlassen. Die Besitzerschaft wurde auf dich übertragen.")
+                })
             } else {
                 channel.leave(user)
             }

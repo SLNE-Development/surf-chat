@@ -15,11 +15,15 @@ class SurfChatDeleteCommand(commandName: String) : CommandAPICommand(commandName
         playerExecutor { player, args ->
             val messageID = args.getUnchecked<String>("messageID") ?: return@playerExecutor
 
-            historyService.deleteMessage(player.name, UUID.fromString(messageID))
-
-            surfChatApi.sendText(player, buildText {
-                success("Die Nachricht wurde gelöscht.")
-            })
+            if(historyService.deleteMessage(player.name, UUID.fromString(messageID))) {
+                surfChatApi.sendText(player, buildText {
+                    success("Die Nachricht wurde gelöscht.")
+                })
+            } else {
+                surfChatApi.sendText(player, buildText {
+                    error("Beim Löschen der Nachricht ist ein Fehler aufgetreten.")
+                })
+            }
         }
     }
 }

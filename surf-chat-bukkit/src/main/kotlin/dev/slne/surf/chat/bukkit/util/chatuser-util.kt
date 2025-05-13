@@ -4,6 +4,7 @@ import dev.slne.surf.chat.api.model.ChatUserModel
 import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.user.DisplayUser
 import dev.slne.surf.chat.core.service.databaseService
+import dev.slne.surf.surfapi.core.api.service.PlayerLookupService
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
@@ -41,9 +42,8 @@ fun Component.toPlainText(): String {
     return PlainTextComponentSerializer.plainText().serialize(this)
 }
 
-fun UUID.getUsername(): String {
-    val player = Bukkit.getPlayer(this)
-    return player?.name ?: "Unknown"
+suspend fun UUID.getUsername(): String {
+    return PlayerLookupService.getUsername(this) ?: "Unknown"
 }
 
 fun player(userName: String): Player? {

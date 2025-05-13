@@ -10,9 +10,11 @@ import dev.slne.surf.chat.api.type.ChannelStatusType
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.PageableMessageBuilder
 import dev.slne.surf.chat.core.service.channelService
+import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.HoverEvent
+import net.kyori.adventure.text.format.TextDecoration
 
 class ChannelListCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
@@ -32,19 +34,22 @@ class ChannelListCommand(commandName: String) : CommandAPICommand(commandName) {
                 PageableMessageBuilder {
                     pageCommand = "/channel list %page%"
                     title {
-                        primary("Kanalübersicht")
+                        info("ᴋᴀɴᴀʟüʙᴇʀѕɪᴄʜᴛ")
                     }
 
                     channelService.getAllChannels().forEach {
                         line {
-                            spacer(" - ")
-                            variableValue("${it.name} ")
-                            darkSpacer("(")
-                            variableValue(when(it.status) {
+                            append {
+                                info("| ")
+                                decorate(TextDecoration.BOLD)
+                            }
+                            text(it.name, Colors.WHITE)
+                            spacer(" (")
+                            info(when(it.status) {
                                 ChannelStatusType.PUBLIC -> "Öffentlich"
                                 ChannelStatusType.PRIVATE -> "Privat"
                             })
-                            darkSpacer(") ")
+                            spacer(")")
                             hoverEvent(HoverEvent.showText(createInfoMessage(it)))
                         }
                     }
@@ -55,23 +60,15 @@ class ChannelListCommand(commandName: String) : CommandAPICommand(commandName) {
 
     private fun createInfoMessage(channel: ChannelModel): Component {
         return buildText {
-            info("Kanalinformation: ").variableKey(channel.name)
-            appendNewline()
-            darkSpacer("   - ").variableKey("Besitzer: ")
-            variableValue(channel.getOwner().getName())
-            appendNewline()
-            darkSpacer("   - ").variableKey("Status: ")
-            variableValue(when(channel.status) {
+            info("ɪɴꜰᴏʀᴍᴀᴛɪᴏɴᴇɴ").appendNewline()
+            spacer("ɴᴀᴍᴇ: ").text(channel.name, Colors.WHITE).appendNewline()
+            spacer("ʙᴇѕɪᴛᴢᴇʀ: ").text(channel.getOwner().getName(), Colors.WHITE).appendNewline()
+            spacer("ᴍᴏᴅᴜѕ: ").text(when(channel.status) {
                 ChannelStatusType.PUBLIC -> "Öffentlich"
                 ChannelStatusType.PRIVATE -> "Privat"
-            })
-            appendNewline()
-            darkSpacer("   - ").variableKey("Mitglieder: ")
-            variableValue(channel.members.size.toString())
-            appendNewline()
-            darkSpacer("   - ").variableKey("Einladungen: ")
-            variableValue(channel.invites.size.toString())
-            appendNewline()
+            }, Colors.WHITE).appendNewline()
+            spacer("ᴍɪᴛɢʟɪᴇᴅᴇʀ: ").text(channel.members.size, Colors.WHITE).appendNewline()
+            spacer("ᴇɪɴʟᴀᴅᴜɴɢᴇɴ: ").text(channel.invites.size, Colors.WHITE)
         }
     }
 }

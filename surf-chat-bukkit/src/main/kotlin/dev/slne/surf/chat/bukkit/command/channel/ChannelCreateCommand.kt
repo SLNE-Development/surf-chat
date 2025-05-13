@@ -28,7 +28,7 @@ class ChannelCreateCommand(commandName: String) : CommandAPICommand(commandName)
 
                 if(channelService.getChannel(name) != null) {
                     user.sendText(buildText {
-                        error("Es Existiert bereits ein Nachrichtenkanal mit dem Namen")
+                        error("Es existiert bereits ein Nachrichtenkanal mit dem Namen")
                         variableValue(name)
                         error(".")
                     })
@@ -37,7 +37,7 @@ class ChannelCreateCommand(commandName: String) : CommandAPICommand(commandName)
 
                 if(!isValidString(name)) {
                     user.sendText(buildText {
-                        error("Der Kanalname ist ungültig. Er darf maximal 10 Zeichen lang sein und nur Buchstaben und Zahlen enthalten.")
+                        error("Der Kanalname muss zwischen 3 und 16 Zeichen lang sein und darf nur Buchstaben und Zahlen enthalten.")
                     })
                     return@launch
                 }
@@ -53,6 +53,6 @@ class ChannelCreateCommand(commandName: String) : CommandAPICommand(commandName)
     }
 
     fun isValidString(input: String): Boolean {
-        return input.length <= 10 && input.all { it.isLetterOrDigit() }
+        return input.length in 3..16 && input.all { it.isLetterOrDigit() }
     }
 }

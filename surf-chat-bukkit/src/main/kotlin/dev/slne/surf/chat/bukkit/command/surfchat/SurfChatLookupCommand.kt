@@ -63,6 +63,11 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
                     return@launch
                 }
 
+                val entriesWithNames = history.map { entry ->
+                    val username = entry.uuid.getUsername()
+                    entry to username
+                }
+
                 PageableMessageBuilder {
                     pageCommand = "/surfchat lookup ${target.getString()} ${parsed.toFlagString()} --page %page%"
 
@@ -75,34 +80,34 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
                         spacer(" (${history.size} Einträge)")
                     }
 
-                    history.forEach {
+                    entriesWithNames.forEach { (entry, username) ->
                         line {
                             darkSpacer(" - ")
-                            append(Component.text(it.message, Colors.WHITE))
-                            spacer(" (${it.type})")
+                            append(Component.text(entry.message, Colors.WHITE))
+                            spacer(" (${entry.type})")
 
-                            if (it.deleted) {
+                            if (entry.deleted) {
                                 appendNewline()
-                                spacer("    (Gelöscht von ${it.deletedBy})").decorate(TextDecoration.ITALIC)
+                                spacer("    (Gelöscht von ${entry.deletedBy})").decorate(TextDecoration.ITALIC)
                             }
 
                             hoverEvent(HoverEvent.showText(buildText {
                                 primary("von: ")
-                                info(it.uuid.getUsername())
+                                info(username)
                                 appendNewline()
                                 primary("Typ: ")
-                                info(it.type)
+                                info(entry.type)
                                 appendNewline()
                                 primary("Datum: ")
-                                info(formatTime(it.timestamp))
+                                info(formatTime(entry.timestamp))
                                 appendNewline()
                                 primary("Server: ")
-                                info(it.server)
+                                info(entry.server)
                                 appendNewline()
                                 darkSpacer("Klicke, um die Nachricht zu kopieren.")
                             }))
 
-                            clickEvent(ClickEvent.copyToClipboard(it.message))
+                            clickEvent(ClickEvent.copyToClipboard(entry.message))
                         }
                     }
                 }.send(sender, page)

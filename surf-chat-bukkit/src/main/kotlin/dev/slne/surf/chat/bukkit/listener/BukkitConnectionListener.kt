@@ -6,6 +6,7 @@ import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.chatMotdService
 import dev.slne.surf.chat.core.service.databaseService
+import dev.slne.surf.chat.core.service.spyService
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -15,8 +16,9 @@ class BukkitConnectionListener(): Listener {
     @EventHandler
     fun onDisconnect(event: PlayerQuitEvent) {
         plugin.launch {
-            databaseService.handleDisconnect(event.player.uniqueId)
             channelService.handleDisconnect(event.player)
+            databaseService.handleDisconnect(event.player.uniqueId)
+            spyService.handleDisconnect(event.player)
         }
     }
 

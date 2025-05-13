@@ -36,6 +36,7 @@ class BlacklistAddCommand(commandName: String) : CommandAPICommand(commandName) 
                     user.sendText(buildText {
                         error("Das Wort muss mindestens ein Zeichen enthalten.")
                     })
+                    return@launch
                 }
 
                 if (result) {

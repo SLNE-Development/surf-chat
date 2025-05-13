@@ -35,13 +35,13 @@ class MultiChannelArgument(nodeName: String) : CustomArgument<ObjectSet<ChannelM
         val channels = channelNames.mapNotNull { name -> channelService.getChannel(name) }.toObjectSet()
 
         if (channels.size != channelNames.size) {
+            val missingChannels = channelNames.filter { name -> channelService.getChannel(name) == null }
             throw CustomArgumentException.fromAdventureComponent {
                 buildText {
                     appendPrefix()
-                    error("Ein oder mehrere Kanäle existieren.")
+                    error("Die folgenden Kanäle konnten nicht gefunden werden: ${missingChannels.joinToString(", ")}.")
                 }
             }
-        }
         returnedChannels.addAll(channels)
     }
 

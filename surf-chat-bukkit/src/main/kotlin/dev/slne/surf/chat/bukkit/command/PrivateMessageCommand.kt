@@ -18,6 +18,7 @@ import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.chat.core.service.replyService
 import dev.slne.surf.chat.core.service.spyService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
@@ -54,6 +55,13 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
 
                     replyService.updateLast(player.uniqueId, target.uniqueId)
                     replyService.updateLast(target.uniqueId, player.uniqueId)
+
+                    if(spyService.hasPrivateMessageSpys(player)) {
+                        spyService.getPrivateMessageSpys(player).forEach { it.sendText {
+                            spacer("[${player.name}] ")
+                            append { messageComponent }
+                        } }
+                    }
 
                     plugin.launch {
                         surfChatApi.logMessage(player.uniqueId, ChatMessageType.PRIVATE, messageComponent, UUID.randomUUID())

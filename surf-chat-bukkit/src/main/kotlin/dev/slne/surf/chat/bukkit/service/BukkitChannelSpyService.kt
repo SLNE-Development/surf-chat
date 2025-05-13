@@ -3,15 +3,16 @@ package dev.slne.surf.chat.bukkit.service
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.core.service.SpyService
-import dev.slne.surf.surfapi.core.api.util.object2ObjectMapOf
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import it.unimi.dsi.fastutil.objects.ObjectList
 import net.kyori.adventure.util.Services
 import org.bukkit.entity.Player
 
 @AutoService(SpyService::class)
 class BukkitChannelSpyService: SpyService, Services.Fallback {
-    val channelsSpys = object2ObjectMapOf<ChannelModel, ObjectList<Player>>()
-    val privateMessageSpys = object2ObjectMapOf<Player, ObjectList<Player>>()
+    val channelsSpys = Object2ObjectOpenHashMap<ChannelModel, ObjectList<Player>>()
+    val privateMessageSpys = Object2ObjectOpenHashMap<Player, ObjectList<Player>>()
 
     override fun getChannelSpys(channel: ChannelModel): ObjectList<Player> {
         return channelsSpys.getOrDefault(channel, ObjectList.of())

@@ -13,7 +13,7 @@ class MessageLimitInfoCommand(commandName: String) : CommandAPICommand(commandNa
             val limit = filterService.getMessageLimit()
 
             surfChatApi.sendText(player, buildText {
-                info("Das aktuelle Limit beträgt")
+                info("Das aktuelle Limit beträgt aktuell ")
                 variableValue("${limit.first} Nachrichten in ${limit.second} Sekunden")
                 info(".")
             })

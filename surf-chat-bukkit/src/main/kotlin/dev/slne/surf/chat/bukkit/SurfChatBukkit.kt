@@ -25,6 +25,7 @@ import dev.slne.surf.chat.bukkit.service.BukkitMessagingReceiverService
 import dev.slne.surf.chat.bukkit.util.serverPlayers
 import dev.slne.surf.chat.core.service.blacklistService
 import dev.slne.surf.chat.core.service.chatMotdService
+import dev.slne.surf.chat.core.service.connectionService
 import dev.slne.surf.chat.core.service.filterService
 import dev.slne.surf.chat.core.service.messaging.messagingSenderService
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
@@ -86,6 +87,7 @@ class SurfChatBukkit(): SuspendingJavaPlugin() {
         filterService.loadMessageLimit()
         chatFormat.loadServer()
         messagingSenderService.loadServers()
+        connectionService.loadMessages()
         LuckPermsExtension.loadApi()
     }
 

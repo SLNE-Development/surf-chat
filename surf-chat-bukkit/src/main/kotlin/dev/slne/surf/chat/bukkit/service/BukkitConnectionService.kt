@@ -7,13 +7,13 @@ import net.kyori.adventure.util.Services
 
 @AutoService(ConnectionService::class)
 class BukkitConnectionService: ConnectionService, Services.Fallback {
-    private var joinMessage: String = "An internal error occurred."
-    private var leaveMessage: String = "An internal error occurred."
+    private var joinMessage: String = "An internal error occurred: 011"
+    private var leaveMessage: String = "An internal error occurred: 012."
     private var enabled: Boolean = true
 
     override fun loadMessages() {
-        joinMessage = pluginConfig.getString("connection.messages.join") ?: "An internal error occurred."
-        leaveMessage = pluginConfig.getString("connection.messages.leave") ?: "An internal error occurred."
+        joinMessage = pluginConfig.getString("connection.messages.join") ?: "An internal error occurred: 021"
+        leaveMessage = pluginConfig.getString("connection.messages.leave") ?: "An internal error occurred: 022."
         enabled = pluginConfig.getBoolean("connection.messages.enabled")
     }
 

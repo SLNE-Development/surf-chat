@@ -7,8 +7,8 @@ cross-server-messages:
 connection:
   messages:
     enabled: true
-    join: ""
-    leave: ""
+    join: "%player% grüßt Keviro."
+    leave: "%player% verabschiedet sich von Keviro."
 
 chat-message-of-the-day-status: false
 chat-message-of-the-day:

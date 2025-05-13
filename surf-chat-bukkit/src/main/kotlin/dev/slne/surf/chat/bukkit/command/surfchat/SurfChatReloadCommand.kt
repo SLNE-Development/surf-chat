@@ -4,6 +4,8 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 
 import dev.slne.surf.chat.api.surfChatApi
+import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.core.service.chatMotdService
 import dev.slne.surf.chat.core.service.connectionService
 import dev.slne.surf.chat.core.service.messaging.messagingSenderService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
@@ -17,7 +19,9 @@ class SurfChatReloadCommand(commandName: String): CommandAPICommand(commandName)
          playerExecutor { player, _ ->
              val time = measureTimeMillis {
                  messagingSenderService.loadServers()
-                 connectionService.loadMessages()
+                 plugin.chatFormat.loadServer()
+                 connectionService.reloadMessages()
+                 chatMotdService.loadMotd()
              }
 
              surfChatApi.sendText(player, buildText {

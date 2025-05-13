@@ -29,7 +29,7 @@ import org.bukkit.entity.Player
 import java.util.UUID
 
 class BukkitChatFormat: ChatFormatModel {
-    var currentServerNiceName: String = "Unknown"
+    private var currentServerNiceName: String = "Unknown"
 
     override fun formatMessage (
         rawMessage: Component,

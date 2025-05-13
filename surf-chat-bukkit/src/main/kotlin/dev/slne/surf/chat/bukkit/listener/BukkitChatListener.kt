@@ -5,7 +5,6 @@ import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.service.BukkitMessagingSenderService
-import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.bukkit.util.toPlainText
 import dev.slne.surf.chat.bukkit.util.toPlayer
 import dev.slne.surf.chat.core.service.channelService
@@ -20,7 +19,6 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import java.util.UUID
 import java.util.regex.Pattern
-import kotlin.math.sign
 
 class BukkitChatListener(): Listener {
     private val pattern = Regex("^@(all|a|here|everyone)\\b\\s*", RegexOption.IGNORE_CASE)
@@ -62,7 +60,7 @@ class BukkitChatListener(): Listener {
             event.viewers().clear()
             event.viewers().addAll(channel.getMembers().map { it.toPlayer()?: return })
 
-            if(spyService.hasChannelSpys(channel)) {
+            if(spyService.hasChannelSpies(channel)) {
                 event.viewers().addAll(spyService.getChannelSpys(channel))
             }
 

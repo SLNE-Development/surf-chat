@@ -59,7 +59,7 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
                     replyService.updateLast(player.uniqueId, target.uniqueId)
                     replyService.updateLast(target.uniqueId, player.uniqueId)
 
-                    if(spyService.hasPrivateMessageSpys(player)) {
+                    if(spyService.hasPrivateMessageSpies(player)) {
                         spyService.getPrivateMessageSpys(player).forEach { it.sendText {
                             info("[${player.name} -> ${target.name}] ")
                             append(messageComponent)

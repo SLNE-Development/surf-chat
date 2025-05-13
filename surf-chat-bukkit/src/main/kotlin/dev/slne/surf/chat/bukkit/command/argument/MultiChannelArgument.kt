@@ -14,7 +14,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArraySet
 
 import it.unimi.dsi.fastutil.objects.ObjectSet
 
-class MultiChannelArgument(nodeName: String) : CustomArgument<ObjectSet<ChannelModel>, String>(GreedyStringArgument(nodeName), { info ->
+class MultiChannelArgument(nodeName: String): CustomArgument<ObjectSet<ChannelModel>, String>(GreedyStringArgument(nodeName), { info ->
     val input = info.input.trim()
 
     if (input.isEmpty()) {
@@ -32,17 +32,26 @@ class MultiChannelArgument(nodeName: String) : CustomArgument<ObjectSet<ChannelM
         returnedChannels.addAll(channelService.getAllChannels())
     } else {
         val channelNames = input.split("\\s+".toRegex())
-        val channels = channelNames.mapNotNull { name -> channelService.getChannel(name) }.toObjectSet()
+        val channels =
+            channelNames.mapNotNull { name -> channelService.getChannel(name) }.toObjectSet()
 
         if (channels.size != channelNames.size) {
-            val missingChannels = channelNames.filter { name -> channelService.getChannel(name) == null }
+            val missingChannels =
+                channelNames.filter { name -> channelService.getChannel(name) == null }
             throw CustomArgumentException.fromAdventureComponent {
                 buildText {
                     appendPrefix()
-                    error("Die folgenden Kanäle konnten nicht gefunden werden: ${missingChannels.joinToString(", ")}.")
+                    error(
+                        "Die folgenden Kanäle konnten nicht gefunden werden: ${
+                            missingChannels.joinToString(
+                                ", "
+                            )
+                        }."
+                    )
                 }
             }
-        returnedChannels.addAll(channels)
+            returnedChannels.addAll(channels)
+        }
     }
 
     returnedChannels

@@ -46,11 +46,11 @@ class BukkitSpyService: SpyService, Services.Fallback {
         }
     }
 
-    override fun hasChannelSpys(channel: ChannelModel): Boolean {
+    override fun hasChannelSpies(channel: ChannelModel): Boolean {
         return channelsSpys.containsKey(channel) && channelsSpys[channel]?.isNotEmpty() == true
     }
 
-    override fun hasPrivateMessageSpys(player: Player): Boolean {
+    override fun hasPrivateMessageSpies(player: Player): Boolean {
         return privateMessageSpys.containsKey(player) && privateMessageSpys[player]?.isNotEmpty() == true
     }
 

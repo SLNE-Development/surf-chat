@@ -15,8 +15,8 @@ interface SpyService {
     fun addPrivateMessageSpy(player: Player, target: Player)
     fun removePrivateMessageSpy(player: Player, target: Player)
 
-    fun hasChannelSpys(channel: ChannelModel): Boolean
-    fun hasPrivateMessageSpys(player: Player): Boolean
+    fun hasChannelSpies(channel: ChannelModel): Boolean
+    fun hasPrivateMessageSpies(player: Player): Boolean
 
     fun isChannelSpying(player: Player): Boolean
     fun isPrivateMessageSpying(player: Player): Boolean

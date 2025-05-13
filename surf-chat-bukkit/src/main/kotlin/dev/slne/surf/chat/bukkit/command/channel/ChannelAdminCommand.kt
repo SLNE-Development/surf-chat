@@ -11,5 +11,6 @@ class ChannelAdminCommand(commandName: String) : CommandAPICommand(commandName) 
         subcommand(ChannelMoveCommand("move"))
         subcommand(ChannelForceDeleteCommand("forceDelete"))
         subcommand(ChannelForceJoinCommand("forceJoin"))
+        subcommand(ChannelSpyCommand("spy"))
     }
 }

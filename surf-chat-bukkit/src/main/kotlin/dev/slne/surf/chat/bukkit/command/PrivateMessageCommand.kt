@@ -16,6 +16,7 @@ import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.bukkit.util.serverPlayers
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.chat.core.service.replyService
+import dev.slne.surf.chat.core.service.spyService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 
 import net.kyori.adventure.text.Component

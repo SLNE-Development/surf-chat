@@ -11,6 +11,7 @@ import dev.slne.surf.chat.bukkit.util.toPlayer
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.chat.core.service.messaging.messagingSenderService
+import dev.slne.surf.chat.core.service.spyService
 import io.papermc.paper.event.player.AsyncChatEvent
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextReplacementConfig
@@ -60,6 +61,10 @@ class BukkitChatListener(): Listener {
         if (channel != null && !message.toPlainText().contains(pattern)) {
             event.viewers().clear()
             event.viewers().addAll(channel.getMembers().map { it.toPlayer()?: return })
+
+            if(spyService.hasChannelSpys(channel)) {
+                event.viewers().addAll(spyService.getChannelSpys(channel))
+            }
 
             event.renderer { _, _, _, viewer ->
                 plugin.chatFormat.formatMessage(

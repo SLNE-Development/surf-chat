@@ -4,6 +4,11 @@ cross-server-messages:
   forward-to:
     - "lobby02"
     - "lobby03"
+connection:
+  messages:
+    enabled: true
+    join: ""
+    leave: ""
 
 chat-message-of-the-day-status: false
 chat-message-of-the-day:

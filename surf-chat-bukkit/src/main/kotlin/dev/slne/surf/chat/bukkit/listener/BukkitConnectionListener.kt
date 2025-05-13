@@ -5,8 +5,10 @@ import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.chatMotdService
+import dev.slne.surf.chat.core.service.connectionService
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.chat.core.service.spyService
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -15,6 +17,12 @@ import org.bukkit.event.player.PlayerQuitEvent
 class BukkitConnectionListener(): Listener {
     @EventHandler
     fun onDisconnect(event: PlayerQuitEvent) {
+        if(connectionService.isEnabled()) {
+            event.quitMessage(MiniMessage.miniMessage().deserialize(connectionService.getLeaveMessage().replace("%player%", event.player.name)))
+        } else {
+            event.quitMessage(null)
+        }
+
         plugin.launch {
             channelService.handleDisconnect(event.player)
             databaseService.handleDisconnect(event.player.uniqueId)
@@ -25,6 +33,12 @@ class BukkitConnectionListener(): Listener {
     @EventHandler
     fun onConnect(event: PlayerJoinEvent) {
         val player = event.player
+
+        if(connectionService.isEnabled()) {
+            event.joinMessage(MiniMessage.miniMessage().deserialize(connectionService.getJoinMessage().replace("%player%", player.name)))
+        } else {
+            event.joinMessage(null)
+        }
 
         if(chatMotdService.isMotdEnabled()) {
             surfChatApi.sendRawText(player, chatMotdService.getMotd())

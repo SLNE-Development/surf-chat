@@ -5,32 +5,26 @@ import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.core.service.SpyService
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
+import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import it.unimi.dsi.fastutil.objects.ObjectList
 import net.kyori.adventure.util.Services
 import org.bukkit.entity.Player
 
 @AutoService(SpyService::class)
-class BukkitChannelSpyService: SpyService, Services.Fallback {
+class BukkitSpyService: SpyService, Services.Fallback {
     val channelsSpys = Object2ObjectOpenHashMap<ChannelModel, ObjectList<Player>>()
     val privateMessageSpys = Object2ObjectOpenHashMap<Player, ObjectList<Player>>()
 
     override fun getChannelSpys(channel: ChannelModel): ObjectList<Player> {
-        return channelsSpys.getOrDefault(channel, ObjectList.of())
+        return channelsSpys.getOrDefault(channel, ObjectArrayList())
     }
 
     override fun getPrivateMessageSpys(player: Player): ObjectList<Player> {
-        return privateMessageSpys.getOrDefault(player, ObjectList.of())
+        return privateMessageSpys.getOrDefault(player, ObjectArrayList())
     }
 
-    override fun addChannelSpy(
-        player: Player,
-        channel: ChannelModel
-    ) {
-        if (channelsSpys.containsKey(channel)) {
-            channelsSpys[channel]?.add(player)
-        } else {
-            channelsSpys[channel] = ObjectList.of(player)
-        }
+    override fun addChannelSpy(player: Player, channel: ChannelModel) {
+        channelsSpys.computeIfAbsent(channel) { ObjectArrayList() }.add(player)
     }
 
     override fun removeChannelSpy(
@@ -43,11 +37,7 @@ class BukkitChannelSpyService: SpyService, Services.Fallback {
     }
 
     override fun addPrivateMessageSpy(player: Player, target: Player) {
-        if (privateMessageSpys.containsKey(target)) {
-            privateMessageSpys[target]?.add(player)
-        } else {
-            privateMessageSpys[target] = ObjectList.of(player)
-        }
+        privateMessageSpys.computeIfAbsent(target) { ObjectArrayList() }.add(player)
     }
 
     override fun removePrivateMessageSpy(player: Player, target: Player) {

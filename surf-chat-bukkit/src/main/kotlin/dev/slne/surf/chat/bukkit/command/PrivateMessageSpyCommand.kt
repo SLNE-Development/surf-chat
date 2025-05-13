@@ -36,8 +36,9 @@ class PrivateMessageSpyCommand(commandName: String): CommandAPICommand(commandNa
                 }
 
                 surfChatApi.sendText(player, buildText {
-                    success("Du spionierst jetzt in den privaten Nachrichten von: ")
+                    success("Du spionierst jetzt in den privaten Nachrichten von ")
                     variableValue(players.joinToString(", ") { it.name })
+                    success(".")
                 })
             }
         }

@@ -16,7 +16,7 @@ class SurfChatDeleteCommand(commandName: String) : CommandAPICommand(commandName
         playerExecutor { player, args ->
             val messageID = args.getUnchecked<String>("messageID") ?: return@playerExecutor
 
-            if(historyService.getMessageIds().contains(UUID.fromString(messageID))) {
+            if (!historyService.getMessageIds().contains(UUID.fromString(messageID))) {
                 surfChatApi.sendText(player, buildText {
                     error("Eine Nachricht mit der ID ")
                     variableValue(messageID)

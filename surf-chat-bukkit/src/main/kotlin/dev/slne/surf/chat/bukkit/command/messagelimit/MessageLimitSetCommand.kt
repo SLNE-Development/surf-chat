@@ -19,8 +19,10 @@ class MessageLimitSetCommand(commandName: String) : CommandAPICommand(commandNam
 
             filterService.setMessageLimit(seconds, messages)
             surfChatApi.sendText(player, buildText {
-                primary("Das Nachrichten Limit wurde auf ")
-                variableValue("$messages/$seconds mps")
+                success("Das Nachrichten-Limit wurde erfolgreich auf ")
+                variableValue("$messages Nachrichten ")
+                success("in ")
+                variableValue("$seconds Sekunden")
                 success(" gesetzt.")
             })
         }

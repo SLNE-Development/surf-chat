@@ -8,6 +8,7 @@ class ChannelCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission("surf.chat.command.channel")
         subcommand(ChannelAcceptInviteCommand("accept"))
+        subcommand(ChannelDeclineInviteCommand("decline"))
         subcommand(ChannelCreateCommand("create"))
         subcommand(ChannelDeleteCommand("delete"))
         subcommand(ChannelInviteCommand("invite"))

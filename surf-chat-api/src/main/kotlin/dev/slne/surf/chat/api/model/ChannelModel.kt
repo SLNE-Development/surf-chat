@@ -77,7 +77,7 @@ interface ChannelModel {
      * Revokes an invitation for a user.
      * @param user The user whose invitation is revoked.
      */
-    fun unInvite(user: ChatUserModel)
+    fun revokeInvite(user: ChatUserModel)
 
     /**
      * Transfers ownership of the channel to another user.

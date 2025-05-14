@@ -46,7 +46,7 @@ class ChannelInviteRevokeCommand(commandName: String) : CommandAPICommand(comman
                     return@launch
                 }
 
-                channel.unInvite(targetUser)
+                channel.revokeInvite(targetUser)
 
                 user.sendText(buildText {
                     info("Du hast die Einladung des Spielers ")

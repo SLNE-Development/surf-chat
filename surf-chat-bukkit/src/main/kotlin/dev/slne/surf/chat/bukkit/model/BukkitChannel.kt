@@ -68,7 +68,7 @@ class BukkitChannel(
         invites.add(user)
     }
 
-    override fun unInvite(user: ChatUserModel) {
+    override fun revokeInvite(user: ChatUserModel) {
         invites.remove(user)
     }
 

@@ -91,7 +91,7 @@ class BukkitChannelService() : ChannelService, Fallback {
                 var nextOwner = channel.getModerators().firstOrNull()
 
                 if (nextOwner == null) {
-                    nextOwner = channel.getOnlyMembers().firstOrNull { it.uuid != user.uuid }
+                    nextOwner = channel.getMembers(false).firstOrNull { it.uuid != user.uuid }
                 }
 
                 if (nextOwner == null) {

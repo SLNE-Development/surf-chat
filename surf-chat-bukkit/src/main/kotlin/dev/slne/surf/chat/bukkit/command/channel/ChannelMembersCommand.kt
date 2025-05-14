@@ -56,7 +56,7 @@ class ChannelMembersCommand(commandName: String) : CommandAPICommand(commandName
                     }
                 }
 
-                channel.getOnlyMembers().forEach {
+                channel.getMembers(false).forEach {
                     line {
                         append {
                             info("| ")

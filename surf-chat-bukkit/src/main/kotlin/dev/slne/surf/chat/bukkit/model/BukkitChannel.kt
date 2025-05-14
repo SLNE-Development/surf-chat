@@ -169,8 +169,4 @@ class BukkitChannel(
         }
         return false
     }
-
-    override fun isMember(user: Player): Boolean {
-        return members.keys.any { it.uuid == user.uniqueId }
-    }
 }

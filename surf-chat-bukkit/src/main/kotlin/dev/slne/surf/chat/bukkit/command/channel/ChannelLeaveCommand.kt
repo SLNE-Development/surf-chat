@@ -30,7 +30,7 @@ class ChannelLeaveCommand(commandName: String) : CommandAPICommand(commandName) 
                     var nextOwner = channel.getModerators().firstOrNull()
 
                     if (nextOwner == null) {
-                        nextOwner = channel.getOnlyMembers().firstOrNull { it.uuid != user.uuid }
+                        nextOwner = channel.getMembers(false).firstOrNull { it.uuid != user.uuid }
                     }
 
                     if (nextOwner == null) {

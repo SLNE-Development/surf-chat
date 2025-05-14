@@ -167,11 +167,4 @@ interface ChannelModel {
      * @return True if the sender is a member, false otherwise.
      */
     fun isMember(user: CommandSender): Boolean
-
-    /**
-     * Checks if a player is a member of the channel.
-     * @param user The player to check.
-     * @return True if the player is a member, false otherwise.
-     */
-    fun isMember(user: Player): Boolean
 }

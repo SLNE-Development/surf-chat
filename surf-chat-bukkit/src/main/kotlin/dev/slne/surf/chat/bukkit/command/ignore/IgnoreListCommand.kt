@@ -9,6 +9,8 @@ import dev.slne.surf.chat.bukkit.util.getUsername
 import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import it.unimi.dsi.fastutil.objects.ObjectSet
+import java.util.UUID
 
 class IgnoreListCommand(commandName: String): CommandAPICommand(commandName) {
     init {
@@ -16,7 +18,7 @@ class IgnoreListCommand(commandName: String): CommandAPICommand(commandName) {
         playerExecutor { player, _ ->
             plugin.launch {
                 val user = databaseService.getUser(player.uniqueId)
-                val ignores = user.ignoreList
+                val ignores: ObjectSet<UUID> = user.ignoreList
 
                 if (ignores.isEmpty()) {
                     surfChatApi.sendText(player, buildText {
@@ -26,8 +28,7 @@ class IgnoreListCommand(commandName: String): CommandAPICommand(commandName) {
                 }
 
                 val entriesWithNames = ignores.map { entry ->
-                    val username = entry.getUsername()
-                    entry to username
+                    entry to entry.getUsername()
                 }
 
                 user.sendText(buildText {

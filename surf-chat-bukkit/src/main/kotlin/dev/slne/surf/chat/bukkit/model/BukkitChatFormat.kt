@@ -86,7 +86,7 @@ class BukkitChatFormat: ChatFormatModel {
                     hoverEvent(HoverEvent.showText {
                         components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
                     })
-                    clickEvent(ClickEvent.suggestCommand("/msg ${sender.name} "))
+                    clickEvent(ClickEvent.suggestCommand("/msg ${viewer.name} "))
                 }
             }
 

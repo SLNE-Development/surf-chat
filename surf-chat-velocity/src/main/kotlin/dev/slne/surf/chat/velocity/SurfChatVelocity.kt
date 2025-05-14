@@ -11,6 +11,7 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier
+import dev.slne.surf.chat.api.SurfChatApi
 import dev.slne.surf.chat.velocity.service.VelocityMessagingReceiverService
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectSet
@@ -52,8 +53,8 @@ class SurfChatVelocity @Inject constructor(
     }
 }
 
-val messageChannel: MinecraftChannelIdentifier get() = MinecraftChannelIdentifier.from("surf-chat:messaging")
-val teamChatChannel: MinecraftChannelIdentifier get() = MinecraftChannelIdentifier.from("surf-chat:teamchat")
+val messageChannel: MinecraftChannelIdentifier get() = MinecraftChannelIdentifier.from(SurfChatApi.MESSAGING_CHANNEL_IDENTIFIER)
+val teamChatChannel: MinecraftChannelIdentifier get() = MinecraftChannelIdentifier.from(SurfChatApi.TEAM_CHAT_IDENTIFIER)
 
 val plugin get() = SurfChatVelocity.INSTANCE
 val gson get() = Gson()

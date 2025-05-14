@@ -56,7 +56,7 @@ class CompletedComponents {
 
     fun getChannelComponent(channel: String): Component = buildText {
         darkSpacer("[")
-        info(channel)
+        variableValue(channel)
         darkSpacer("]")
         darkSpacer(" ")
     }

@@ -13,7 +13,7 @@ interface HistoryEntryModel {
     /**
      * The unique identifier (UUID) of the history entry.
      */
-    val id: UUID
+    val entryUuid: UUID
 
     /**
      * The unique identifier (UUID) of the user associated with the history entry.

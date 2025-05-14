@@ -8,7 +8,7 @@ class BukkitHistoryEntry(
     override val timestamp: Long,
     override val userUuid: UUID,
     override val type: String,
-    override val id: UUID,
+    override val entryUuid: UUID,
     override val deleted: Boolean = false,
     override val deletedBy: String = "Not Deleted.",
 

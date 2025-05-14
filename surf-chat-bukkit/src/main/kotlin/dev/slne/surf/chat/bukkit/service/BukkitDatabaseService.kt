@@ -71,7 +71,7 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
     }
 
     object ChatHistory : Table() {
-        val id = varchar("id", 36).transform({ UUID.fromString(it) }, { it.toString() })
+        val entryUuid = varchar("id", 36).transform({ UUID.fromString(it) }, { it.toString() })
         val userUuid = varchar("uuid", 36).transform({ UUID.fromString(it) }, { it.toString() })
         val type = text("type")
         val timeStamp = long("timeStamp")
@@ -80,7 +80,7 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
         val deletedBy = varchar("deletedBy", 16)
         val server = text("server")
 
-        override val primaryKey = PrimaryKey(id)
+        override val primaryKey = PrimaryKey(entryUuid)
     }
 
     object Denylist : Table() {
@@ -147,7 +147,7 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
     override suspend fun markMessageDeleted(deleter: String, messageID: UUID) {
         withContext(Dispatchers.IO) {
             newSuspendedTransaction {
-                ChatHistory.update({ ChatHistory.id eq messageID }) {
+                ChatHistory.update({ ChatHistory.entryUuid eq messageID }) {
 
                     it[deleted] = true
                     it[deletedBy] = deleter
@@ -209,7 +209,7 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
 
                 return@newSuspendedTransaction query.map {
                     BukkitHistoryEntry(
-                        id = it[ChatHistory.id],
+                        entryUuid = it[ChatHistory.entryUuid],
                         userUuid = it[ChatHistory.userUuid],
                         type = it[ChatHistory.type],
                         timestamp = it[ChatHistory.timeStamp],
@@ -277,7 +277,7 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
         withContext(Dispatchers.IO) {
             newSuspendedTransaction {
                 ChatHistory.insert {
-                    it[id] = entry.id
+                    it[entryUuid] = entry.entryUuid
                     it[userUuid] = user
                     it[type] = entry.type
                     it[timeStamp] = entry.timestamp

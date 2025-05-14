@@ -21,6 +21,7 @@ import dev.slne.surf.chat.bukkit.listener.BukkitConnectionListener
 import dev.slne.surf.chat.bukkit.model.BukkitChatFormat
 import dev.slne.surf.chat.bukkit.model.BukkitMessageValidator
 import dev.slne.surf.chat.bukkit.service.BukkitMessagingReceiverService
+import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.serverPlayers
 import dev.slne.surf.chat.core.service.*
 import dev.slne.surf.chat.core.service.messaging.messagingSenderService
@@ -102,7 +103,7 @@ class SurfChatBukkit() : SuspendingJavaPlugin() {
     }
 
     fun getTeamMembers(): ObjectSet<Player> =
-        serverPlayers.filter { it.hasPermission("surf.chat.command.teamchat") }.toObjectSet()
+        serverPlayers.filter { it.hasPermission(ChatPermissionRegistry.COMMAND_TEAMCHAT) }.toObjectSet()
 }
 
 val plugin = JavaPlugin.getPlugin(SurfChatBukkit::class.java)

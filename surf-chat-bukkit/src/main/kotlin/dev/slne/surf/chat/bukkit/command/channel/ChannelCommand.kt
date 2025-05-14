@@ -2,10 +2,11 @@ package dev.slne.surf.chat.bukkit.command.channel
 
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.subcommand
+import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 
 class ChannelCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
-        withPermission("surf.chat.command.channel")
+        withPermission(ChatPermissionRegistry.COMMAND_CHANNEL)
         subcommand(ChannelAcceptInviteCommand("accept"))
         subcommand(ChannelDeclineInviteCommand("decline"))
         subcommand(ChannelCreateCommand("create"))

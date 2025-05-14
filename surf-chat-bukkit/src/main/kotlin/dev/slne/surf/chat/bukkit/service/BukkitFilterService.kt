@@ -3,6 +3,7 @@ package dev.slne.surf.chat.bukkit.service
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.type.MessageValidationResult
 import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.toPlainText
 import dev.slne.surf.chat.core.service.FilterService
 import dev.slne.surf.chat.core.service.denylistService
@@ -26,7 +27,7 @@ class BukkitFilterService : FilterService, Fallback {
     private var messageLimitCount = 5
 
     override fun find(message: Component, sender: Player): MessageValidationResult {
-        if (sender.hasPermission("surf.chat.filter.bypass")) {
+        if (sender.hasPermission(ChatPermissionRegistry.FILTER_BYPASS)) {
             return MessageValidationResult.SUCCESS
         }
 

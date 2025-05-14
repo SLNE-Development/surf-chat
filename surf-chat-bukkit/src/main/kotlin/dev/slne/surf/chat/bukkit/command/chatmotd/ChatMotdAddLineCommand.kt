@@ -6,11 +6,13 @@ import dev.jorel.commandapi.kotlindsl.integerArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.textArgument
 import dev.slne.surf.chat.api.surfChatApi
+import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.core.service.chatMotdService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 
 class ChatMotdAddLineCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
+        withPermission(ChatPermissionRegistry.COMMAND_CHATMOTD_ADD)
         integerArgument("line", 1)
         textArgument("content")
 

@@ -5,6 +5,7 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.getUsername
 import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.core.service.databaseService
@@ -14,7 +15,7 @@ import java.util.*
 
 class IgnoreListCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
-        withPermission("surf.chat.command.ignorelist")
+        withPermission(ChatPermissionRegistry.COMMAND_IGNORE_LIST)
         playerExecutor { player, _ ->
             plugin.launch {
                 val user = databaseService.getUser(player.uniqueId)

@@ -6,6 +6,7 @@ import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.bukkit.command.argument.ChannelArgument
 import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
@@ -13,7 +14,7 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 
 class ChannelForceJoinCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
-        withPermission("surf.chat.command.channel.forcejoin")
+        withPermission(ChatPermissionRegistry.COMMAND_CHANNEL_ADMIN_JOIN)
         withArguments(ChannelArgument("channel"))
         playerExecutor { player, args ->
             val channel = args.getUnchecked<ChannelModel>("channel") ?: return@playerExecutor

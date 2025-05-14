@@ -5,6 +5,7 @@ import dev.jorel.commandapi.kotlindsl.playerExecutor
 
 import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.core.service.chatMotdService
 import dev.slne.surf.chat.core.service.connectionService
 import dev.slne.surf.chat.core.service.messaging.messagingSenderService
@@ -15,7 +16,7 @@ import kotlin.system.measureTimeMillis
 class SurfChatReloadCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withAliases("rl")
-        withPermission("surf.chat.command.reload")
+        withPermission(ChatPermissionRegistry.COMMAND_SURFCHAT_RELOAD)
         playerExecutor { player, _ ->
             val time = measureTimeMillis {
                 plugin.reloadConfig()

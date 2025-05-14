@@ -19,7 +19,7 @@ import net.kyori.adventure.text.format.TextDecoration
 
 class SurfChatLookupCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
-        withPermission("surf.chat.command.lookup")
+        withPermission(ChatPermissionRegistry.COMMAND_SURFCHAT_LOOKUP)
 
         multiOfflinePlayerArgument("target")
         argument(

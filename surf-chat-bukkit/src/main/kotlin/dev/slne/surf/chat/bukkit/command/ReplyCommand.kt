@@ -7,6 +7,7 @@ import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.sendRawText
 import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.core.service.databaseService
@@ -18,7 +19,7 @@ import java.util.*
 
 class ReplyCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
-        withPermission("surf.chat.command.reply")
+        withPermission(ChatPermissionRegistry.COMMAND_REPLY)
         withAliases("r")
         greedyStringArgument("message")
         playerExecutor { player, args ->

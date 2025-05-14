@@ -8,6 +8,7 @@ import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.api.type.ChannelRoleType
 import dev.slne.surf.chat.bukkit.command.argument.ChannelMembersArgument
 import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.components
 import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.core.service.channelService
@@ -17,6 +18,7 @@ import org.bukkit.OfflinePlayer
 
 class ChannelTransferOwnerShipCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
+        withPermission(ChatPermissionRegistry.COMMAND_CHANNEL_TRANSFER)
         withArguments(ChannelMembersArgument("member"))
         stringArgument("confirm", optional = true)
         playerExecutor { player, args ->

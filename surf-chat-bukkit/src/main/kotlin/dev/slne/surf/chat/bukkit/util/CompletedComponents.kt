@@ -10,7 +10,7 @@ import java.util.*
 
 class CompletedComponents {
     fun getDeleteComponent(messageID: UUID, viewer: Player): Component {
-        if (!viewer.hasPermission("surf.chat.command.delete")) {
+        if (!viewer.hasPermission(ChatPermissionRegistry.COMMAND_SURFCHAT_DELETE)) {
             return Component.empty()
         }
 
@@ -27,7 +27,7 @@ class CompletedComponents {
     }
 
     fun getTeleportComponent(name: String, viewer: Player): Component {
-        if (!viewer.hasPermission("surf.chat.command.teleport")) {
+        if (!viewer.hasPermission(ChatPermissionRegistry.COMMAND_SURFCHAT_TELEPORT)) {
             return Component.empty()
         }
 

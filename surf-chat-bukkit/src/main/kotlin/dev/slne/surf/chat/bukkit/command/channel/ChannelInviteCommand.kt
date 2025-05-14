@@ -6,6 +6,7 @@ import dev.jorel.commandapi.arguments.EntitySelectorArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.components
 import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.core.service.channelService
@@ -15,6 +16,7 @@ import org.bukkit.OfflinePlayer
 
 class ChannelInviteCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
+        withPermission(ChatPermissionRegistry.COMMAND_CHANNEL_INVITE)
         withArguments(EntitySelectorArgument.OneEntity("player"))
         playerExecutor { player, args ->
             val channel: ChannelModel? = channelService.getChannel(player)

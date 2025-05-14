@@ -10,6 +10,7 @@ import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.components
 import dev.slne.surf.chat.bukkit.util.sendRawText
 import dev.slne.surf.chat.bukkit.util.sendText
@@ -31,7 +32,7 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
         greedyStringArgument("message")
 
         withAliases("tell", "w", "pm", "dm")
-        withPermission("surf.chat.command.private-message")
+        withPermission(ChatPermissionRegistry.COMMAND_MSG)
         playerExecutor { player, args ->
             plugin.launch {
                 val target = args.getUnchecked<Player>("player") ?: return@launch

@@ -7,6 +7,7 @@ import dev.jorel.commandapi.kotlindsl.playerExecutor
 
 import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.PageableMessageBuilder
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.Colors
@@ -27,6 +28,7 @@ class DenyListListCommand(commandName: String) : CommandAPICommand(commandName) 
         .withZone(ZoneId.of("Europe/Berlin"))
 
     init {
+        withPermission(ChatPermissionRegistry.COMMAND_DENYLIST_LIST)
         integerArgument("page", 1, optional = true)
 
         playerExecutor { player, args ->

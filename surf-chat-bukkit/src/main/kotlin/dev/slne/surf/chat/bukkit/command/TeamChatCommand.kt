@@ -7,13 +7,14 @@ import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.core.service.messaging.messagingSenderService
 import net.kyori.adventure.text.Component
 import java.util.*
 
 class TeamChatCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
-        withPermission("surf.chat.command.teamchat")
+        withPermission(ChatPermissionRegistry.COMMAND_TEAMCHAT)
         greedyStringArgument("message")
         withAliases("tc")
         playerExecutor { player, args ->

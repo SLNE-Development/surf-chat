@@ -2,10 +2,11 @@ package dev.slne.surf.chat.bukkit.command.denylist
 
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.subcommand
+import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 
 class DenyListCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
-        withPermission("surf.chat.command.denylist")
+        withPermission(ChatPermissionRegistry.COMMAND_DENYLIST)
         withUsage(
             "/denylist <add> <word> [reason]",
             "/denylist <remove> <word>",

@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.core.service
 
-import dev.slne.surf.chat.api.model.BlacklistWordEntry
+import dev.slne.surf.chat.api.model.DenyListEntry
 import dev.slne.surf.chat.api.model.ChatUserModel
 import dev.slne.surf.chat.api.model.HistoryEntryModel
 import dev.slne.surf.surfapi.core.api.util.requiredService
@@ -28,9 +28,9 @@ interface DatabaseService {
         server: String? = null
     ): ObjectList<HistoryEntryModel>
 
-    suspend fun loadBlacklist(): ObjectSet<BlacklistWordEntry>
-    suspend fun addToBlacklist(entry: BlacklistWordEntry): Boolean
-    suspend fun removeFromBlacklist(word: String): Boolean
+    suspend fun loadDenyList(): ObjectSet<DenyListEntry>
+    suspend fun addToDenylist(entry: DenyListEntry): Boolean
+    suspend fun removeFromDenylist(word: String): Boolean
 
     suspend fun insertHistoryEntry(user: UUID, entry: HistoryEntryModel)
 

@@ -7,10 +7,10 @@ import com.google.gson.reflect.TypeToken
 import com.sksamuel.aedile.core.asLoadingCache
 import com.sksamuel.aedile.core.expireAfterWrite
 import com.sksamuel.aedile.core.withRemovalListener
-import dev.slne.surf.chat.api.model.BlacklistWordEntry
+import dev.slne.surf.chat.api.model.DenyListEntry
 import dev.slne.surf.chat.api.model.ChatUserModel
 import dev.slne.surf.chat.api.model.HistoryEntryModel
-import dev.slne.surf.chat.bukkit.model.BukkitBlacklistEntry
+import dev.slne.surf.chat.bukkit.model.BukkitDenyListEntry
 import dev.slne.surf.chat.bukkit.model.BukkitChatUser
 import dev.slne.surf.chat.bukkit.model.BukkitHistoryEntry
 import dev.slne.surf.chat.bukkit.plugin
@@ -83,7 +83,7 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
         override val primaryKey = PrimaryKey(id)
     }
 
-    object BlackList : Table() {
+    object Denylist : Table() {
         val id = integer("id").autoIncrement()
         val word = text("word")
         val reason = text("reason")
@@ -99,7 +99,7 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
         DatabaseProvider(plugin.dataPath, plugin.dataPath).connect()
 
         transaction {
-            SchemaUtils.create(Users, ChatHistory, BlackList)
+            SchemaUtils.create(Users, ChatHistory, Denylist)
         }
     }
 
@@ -223,17 +223,17 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
         }
     }
 
-    override suspend fun loadBlacklist(): ObjectSet<BlacklistWordEntry> {
+    override suspend fun loadDenyList(): ObjectSet<DenyListEntry> {
         return withContext(Dispatchers.IO) {
             newSuspendedTransaction {
-                val selected = BlackList.selectAll()
+                val selected = Denylist.selectAll()
 
                 return@newSuspendedTransaction selected.map {
-                    BukkitBlacklistEntry(
-                        word = it[BlackList.word],
-                        reason = it[BlackList.reason],
-                        addedAt = it[BlackList.addedAt],
-                        addedBy = it[BlackList.addedBy]
+                    BukkitDenyListEntry(
+                        word = it[Denylist.word],
+                        reason = it[Denylist.reason],
+                        addedAt = it[Denylist.addedAt],
+                        addedBy = it[Denylist.addedBy]
                     )
                 }.toObjectSet()
             }
@@ -241,11 +241,11 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
         }
     }
 
-    override suspend fun addToBlacklist(entry: BlacklistWordEntry): Boolean {
+    override suspend fun addToDenylist(entry: DenyListEntry): Boolean {
         return withContext(Dispatchers.IO) {
             newSuspendedTransaction {
-                if (BlackList.selectAll().where(BlackList.word eq entry.word).empty()) {
-                    BlackList.insert {
+                if (Denylist.selectAll().where(Denylist.word eq entry.word).empty()) {
+                    Denylist.insert {
                         it[word] = entry.word
                         it[reason] = entry.reason
                         it[addedAt] = entry.addedAt
@@ -259,13 +259,13 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
         }
     }
 
-    override suspend fun removeFromBlacklist(word: String): Boolean {
+    override suspend fun removeFromDenylist(word: String): Boolean {
         return withContext(Dispatchers.IO) {
             newSuspendedTransaction {
-                if (BlackList.selectAll().where(BlackList.word eq word).empty()) {
+                if (Denylist.selectAll().where(Denylist.word eq word).empty()) {
                     return@newSuspendedTransaction false
                 } else {
-                    BlackList.deleteWhere { BlackList.word eq word }
+                    Denylist.deleteWhere { Denylist.word eq word }
                     return@newSuspendedTransaction true
                 }
             }

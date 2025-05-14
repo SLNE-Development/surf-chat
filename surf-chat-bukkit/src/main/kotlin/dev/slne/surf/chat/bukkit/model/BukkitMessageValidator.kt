@@ -76,7 +76,7 @@ class BukkitMessageValidator() : MessageValidatorModel {
                 })
             }
 
-            MessageValidationResult.FAILED_BLACKLIST -> {
+            MessageValidationResult.FAILED_DENYLISTED -> {
                 surfChatApi.sendText(player, buildText {
                     error("Deine Nachricht enthält unerlaubte Wörter.")
                 })

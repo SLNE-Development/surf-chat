@@ -1,4 +1,4 @@
-package dev.slne.surf.chat.bukkit.command.blacklist
+package dev.slne.surf.chat.bukkit.command.denylist
 
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
@@ -21,7 +21,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class BlackListListCommand(commandName: String) : CommandAPICommand(commandName) {
+class DenyListListCommand(commandName: String) : CommandAPICommand(commandName) {
     private val timeFormatter: DateTimeFormatter = DateTimeFormatter
         .ofPattern("dd.MM.yyyy, HH:mm:ss", Locale.GERMANY)
         .withZone(ZoneId.of("Europe/Berlin"))
@@ -31,19 +31,19 @@ class BlackListListCommand(commandName: String) : CommandAPICommand(commandName)
 
         playerExecutor { player, args ->
             plugin.launch {
-                val result = databaseService.loadBlacklist()
+                val result = databaseService.loadDenyList()
                 val page = args.getOrDefaultUnchecked("page", 1)
 
                 if (result.isEmpty()) {
                     surfChatApi.sendText(player, buildText {
-                        error("Es sind keine Wörter auf der Blacklist.")
+                        error("Es sind keine Wörter auf der Denylist.")
                     })
                     return@launch
                 }
 
                 PageableMessageBuilder {
                     title {
-                        primary("Wörter auf der Blacklist")
+                        primary("Wörter auf der Denylist")
                         darkSpacer(" (${result.size} Einträge)")
                     }
 
@@ -74,7 +74,7 @@ class BlackListListCommand(commandName: String) : CommandAPICommand(commandName)
                         }
                     }
 
-                    pageCommand = "/surfchat blacklist list %page%"
+                    pageCommand = "/surfchat denylist list %page%"
                 }.send(player, page)
             }
         }

@@ -9,7 +9,7 @@ import dev.slne.surf.chat.bukkit.command.PrivateMessageCommand
 import dev.slne.surf.chat.bukkit.command.PrivateMessageSpyCommand
 import dev.slne.surf.chat.bukkit.command.ReplyCommand
 import dev.slne.surf.chat.bukkit.command.TeamChatCommand
-import dev.slne.surf.chat.bukkit.command.blacklist.BlackListCommand
+import dev.slne.surf.chat.bukkit.command.denylist.DenyListCommand
 import dev.slne.surf.chat.bukkit.command.channel.ChannelCommand
 import dev.slne.surf.chat.bukkit.command.ignore.IgnoreCommand
 import dev.slne.surf.chat.bukkit.command.ignore.IgnoreListCommand
@@ -53,7 +53,7 @@ class SurfChatBukkit() : SuspendingJavaPlugin() {
         ReplyCommand("reply").register()
         ToggleCommand("toggle").register()
         TeamChatCommand("teamchat").register()
-        BlackListCommand("blacklist").register()
+        DenyListCommand("denylist").register()
         PrivateMessageSpyCommand("pmspy").register()
         IgnoreListCommand("ignorelist").register()
 
@@ -80,7 +80,7 @@ class SurfChatBukkit() : SuspendingJavaPlugin() {
         plugin.saveDefaultConfig()
 
         databaseService.connect()
-        blacklistService.fetch()
+        denylistService.fetch()
         chatMotdService.loadMotd()
         filterService.loadMessageLimit()
         chatFormat.loadServer()

@@ -1,4 +1,4 @@
-package dev.slne.surf.chat.bukkit.command.blacklist
+package dev.slne.surf.chat.bukkit.command.denylist
 
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
@@ -6,14 +6,14 @@ import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.greedyStringArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.textArgument
-import dev.slne.surf.chat.bukkit.model.BukkitBlacklistEntry
+import dev.slne.surf.chat.bukkit.model.BukkitDenyListEntry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.sendText
-import dev.slne.surf.chat.core.service.blacklistService
+import dev.slne.surf.chat.core.service.denylistService
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 
-class BlacklistAddCommand(commandName: String) : CommandAPICommand(commandName) {
+class DenyListAddCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         textArgument("word")
         greedyStringArgument("reason", optional = true)
@@ -30,8 +30,8 @@ class BlacklistAddCommand(commandName: String) : CommandAPICommand(commandName) 
                     return@launch
                 }
 
-                val result = blacklistService.addToBlacklist(
-                    BukkitBlacklistEntry(
+                val result = denylistService.addToDenylist(
+                    BukkitDenyListEntry(
                         word,
                         reason ?: "Kein Grund angegeben.",
                         System.currentTimeMillis(),
@@ -42,13 +42,13 @@ class BlacklistAddCommand(commandName: String) : CommandAPICommand(commandName) 
                     user.sendText(buildText {
                         success("Du hast das Wort ")
                         variableValue(word)
-                        success(" zu der Blacklist hinzugefügt.")
+                        success(" zu der Denylist hinzugefügt.")
                     })
                 } else {
                     user.sendText(buildText {
                         error("Das Wort ")
                         variableValue(word)
-                        error(" ist bereits auf der Blacklist.")
+                        error(" ist bereits auf der Denylist.")
                     })
                 }
             }

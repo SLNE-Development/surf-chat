@@ -2,7 +2,7 @@ package dev.slne.surf.chat.bukkit.command.surfchat
 
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.subcommand
-import dev.slne.surf.chat.bukkit.command.blacklist.BlackListCommand
+import dev.slne.surf.chat.bukkit.command.denylist.DenyListCommand
 import dev.slne.surf.chat.bukkit.command.chatmotd.ChatMotdCommand
 import dev.slne.surf.chat.bukkit.command.messagelimit.MessageLimitCommand
 
@@ -15,7 +15,7 @@ class SurfChatCommand(commandName: String) : CommandAPICommand(commandName) {
         subcommand(SurfChatChatClearCommand("clear"))
         subcommand(SurfChatLookupCommand("lookup"))
         subcommand(ChatMotdCommand("chatMotd"))
-        subcommand(BlackListCommand("blacklist"))
+        subcommand(DenyListCommand("denylist"))
         subcommand(MessageLimitCommand("messageLimit"))
         subcommand(SurfChatReloadCommand("reload"))
     }

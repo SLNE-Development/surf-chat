@@ -5,7 +5,7 @@ import dev.slne.surf.chat.api.type.MessageValidationResult
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.toPlainText
 import dev.slne.surf.chat.core.service.FilterService
-import dev.slne.surf.chat.core.service.blacklistService
+import dev.slne.surf.chat.core.service.denylistService
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.util.Services.Fallback
@@ -30,8 +30,8 @@ class BukkitFilterService : FilterService, Fallback {
             return MessageValidationResult.SUCCESS
         }
 
-        if (blacklistService.hasBlackListed(message)) {
-            return MessageValidationResult.FAILED_BLACKLIST
+        if (denylistService.hasDenyListed(message)) {
+            return MessageValidationResult.FAILED_DENYLISTED
         }
 
         if (containsLink(message)) {

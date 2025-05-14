@@ -47,9 +47,9 @@ enum class MessageValidationResult {
     FAILED_PM_DISABLED,
 
     /**
-     * The message validation failed because the sender is on the recipient's blacklist.
+     * The message validation failed because the sender is on the recipient's denylist.
      */
-    FAILED_BLACKLIST,
+    FAILED_DENYLISTED,
 
     /**
      * The message validation failed because the recipient is ignoring the sender.

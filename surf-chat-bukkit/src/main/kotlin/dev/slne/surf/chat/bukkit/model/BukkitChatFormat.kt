@@ -52,7 +52,7 @@ class BukkitChatFormat: ChatFormatModel {
                     hoverEvent(HoverEvent.showText {
                         components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
                     })
-                    clickEvent(ClickEvent.suggestCommand("/msg ${viewer.name} "))
+                    clickEvent(ClickEvent.suggestCommand("/msg ${sender.name} "))
                 }
             }
 
@@ -68,7 +68,7 @@ class BukkitChatFormat: ChatFormatModel {
                     hoverEvent(HoverEvent.showText {
                         components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
                     })
-                    clickEvent(ClickEvent.suggestCommand("/msg ${viewer.name} "))
+                    clickEvent(ClickEvent.suggestCommand("/msg ${sender.name} "))
                 }
             }
 
@@ -86,7 +86,7 @@ class BukkitChatFormat: ChatFormatModel {
                     hoverEvent(HoverEvent.showText {
                         components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
                     })
-                    clickEvent(ClickEvent.suggestCommand("/msg ${viewer.name} "))
+                    clickEvent(ClickEvent.suggestCommand("/msg ${sender.name} "))
                 }
             }
 
@@ -104,7 +104,7 @@ class BukkitChatFormat: ChatFormatModel {
                     hoverEvent(HoverEvent.showText {
                         components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
                     })
-                    clickEvent(ClickEvent.suggestCommand("/msg ${viewer.name} "))
+                    clickEvent(ClickEvent.suggestCommand("/msg ${sender.name} "))
                 }
             }
 
@@ -120,7 +120,7 @@ class BukkitChatFormat: ChatFormatModel {
                     hoverEvent(HoverEvent.showText {
                         components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
                     })
-                    clickEvent(ClickEvent.suggestCommand("/msg ${viewer.name} "))
+                    clickEvent(ClickEvent.suggestCommand("/msg ${sender.name} "))
                 }
             }
 
@@ -167,7 +167,7 @@ class BukkitChatFormat: ChatFormatModel {
                     variableValue("Dir ")
                     darkSpacer(" >> ")
                     append(rawMessage)
-                    clickEvent(ClickEvent.suggestCommand("/msg ${viewer.name} "))
+                    clickEvent(ClickEvent.suggestCommand("/msg ${sender.name} "))
                 }
             }
         }

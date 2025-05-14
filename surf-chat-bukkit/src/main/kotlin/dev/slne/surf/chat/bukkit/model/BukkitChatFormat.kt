@@ -265,7 +265,7 @@ class BukkitChatFormat : ChatFormatModel {
             plugin.launch {
                 val user = databaseService.getUser(onlinePlayer.uniqueId)
 
-                if (user.likesSound) {
+                if (user.soundEnabled) {
                     onlinePlayer.playSound(sound {
                         type(Sound.BLOCK_NOTE_BLOCK_PLING)
                         source(net.kyori.adventure.sound.Sound.Source.PLAYER)

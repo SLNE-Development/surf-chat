@@ -28,7 +28,7 @@ interface ChatUserModel {
     /**
      * Indicates whether the user likes sound notifications.
      */
-    var likesSound: Boolean
+    var soundEnabled: Boolean
 
     /**
      * Indicates whether the user allows channel invites.

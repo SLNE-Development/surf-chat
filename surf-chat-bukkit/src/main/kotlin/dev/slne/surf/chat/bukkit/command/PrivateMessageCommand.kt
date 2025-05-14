@@ -48,8 +48,18 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
                     return@launch
                 }
 
+                if(targetUser.isIgnoring(user.uuid)) {
+                    targetUser.sendText(buildText {
+                        error("Du ignorierst diesen Spieler.")
+                    })
+                    return@launch
+                }
+
                 plugin.messageValidator.parse(messageComponent, ChatMessageType.PRIVATE_TO, player) {
-                    targetUser.sendRawText(plugin.chatFormat.formatMessage(messageComponent, player, target, ChatMessageType.PRIVATE_FROM, "", UUID.randomUUID(), true))
+                    if(!targetUser.isIgnoring(user.uuid)) {
+                        targetUser.sendRawText(plugin.chatFormat.formatMessage(messageComponent, player, target, ChatMessageType.PRIVATE_FROM, "", UUID.randomUUID(), true))
+                    }
+
                     user.sendRawText(plugin.chatFormat.formatMessage(messageComponent, player, target, ChatMessageType.PRIVATE_TO, "", UUID.randomUUID(), true))
 
                     replyService.updateLast(player.uniqueId, target.uniqueId)

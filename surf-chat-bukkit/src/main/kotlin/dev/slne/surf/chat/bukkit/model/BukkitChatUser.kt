@@ -6,12 +6,12 @@ import dev.slne.surf.chat.bukkit.util.toPlayer
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
-import org.bukkit.Bukkit
+import it.unimi.dsi.fastutil.objects.ObjectSet
 import java.util.*
 
 class BukkitChatUser (
     override val uuid: UUID,
-    override val ignoreList: ObjectArraySet<UUID> = ObjectArraySet(),
+    override val ignoreList: ObjectSet<UUID> = ObjectArraySet(),
     override var pmToggled: Boolean = false,
     override var likesSound: Boolean = true
 ): ChatUserModel {

@@ -1,13 +1,12 @@
 package dev.slne.surf.chat.api.model
 
-import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import java.util.UUID
 
 interface ChatUserModel {
     val uuid: UUID
 
-    val ignoreList: ObjectArraySet<UUID>
+    val ignoreList: ObjectSet<UUID>
     var pmToggled: Boolean
     var likesSound: Boolean
 

@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.benmanes.caffeine.cache.LoadingCache
 
 import com.google.auto.service.AutoService
+import com.google.gson.reflect.TypeToken
 
 import com.sksamuel.aedile.core.asLoadingCache
 import com.sksamuel.aedile.core.expireAfterWrite
@@ -63,7 +64,14 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
 
     object Users : Table() {
         val uuid = varchar("uuid", 36).transform({ UUID.fromString(it) }, { it.toString() })
-        val ignoreList = text("ignoreList").transform({ gson.fromJson(it, ObjectArraySet<UUID>().javaClass) }, { gson.toJson(it) })
+        val ignoreList = text("ignoreList").transform({ val type = object : TypeToken<ObjectArraySet<UUID>>() {}.type
+                gson.fromJson<ObjectArraySet<UUID>>(it, type).toObjectSet()
+            },
+            {
+                gson.toJson(it)
+            }
+        )
+
         val pmToggled = bool("pmToggled").default(false)
         val likesSound = bool("likesSound").default(true)
 

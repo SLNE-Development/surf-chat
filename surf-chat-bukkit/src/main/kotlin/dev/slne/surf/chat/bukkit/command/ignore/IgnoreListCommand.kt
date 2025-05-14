@@ -1,14 +1,17 @@
 package dev.slne.surf.chat.bukkit.command.ignore
 
 import com.github.shynixn.mccoroutine.folia.launch
+
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
+
 import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.getUsername
 import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import java.util.UUID
 

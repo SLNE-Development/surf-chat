@@ -25,6 +25,7 @@ import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.serverPlayers
 import dev.slne.surf.chat.core.service.*
 import dev.slne.surf.chat.core.service.messaging.messagingSenderService
+import dev.slne.surf.surfapi.bukkit.api.event.register
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import kotlinx.coroutines.runBlocking
@@ -62,8 +63,8 @@ class SurfChatBukkit() : SuspendingJavaPlugin() {
          * Register all listeners.
          */
 
-        Bukkit.getPluginManager().registerEvents(BukkitChatListener(), this)
-        Bukkit.getPluginManager().registerEvents(BukkitConnectionListener(), this)
+        BukkitChatListener().register()
+        BukkitConnectionListener().register()
 
         Bukkit.getMessenger().registerIncomingPluginChannel(
             this,

@@ -3,7 +3,6 @@ package dev.slne.surf.chat.bukkit.command.channel
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.arguments.EntitySelectorArgument
-import dev.jorel.commandapi.arguments.OfflinePlayerArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.bukkit.plugin
@@ -32,7 +31,7 @@ class ChannelInviteCommand(commandName: String) : CommandAPICommand(commandName)
                     return@launch
                 }
 
-                if(channel.isInvited(targetUser)) {
+                if (channel.isInvited(targetUser)) {
                     user.sendText(buildText {
                         error("Der Spieler ")
                         variableValue(target.name ?: target.uniqueId.toString())
@@ -41,7 +40,7 @@ class ChannelInviteCommand(commandName: String) : CommandAPICommand(commandName)
                     return@launch
                 }
 
-                if(channel.isMember(targetUser)) {
+                if (channel.isMember(targetUser)) {
                     user.sendText(buildText {
                         error("Der Spieler ")
                         variableValue(target.name ?: target.uniqueId.toString())
@@ -50,7 +49,7 @@ class ChannelInviteCommand(commandName: String) : CommandAPICommand(commandName)
                     return@launch
                 }
 
-                if(!channel.isModerator(user)) {
+                if (!channel.isModerator(user)) {
                     user.sendText(buildText {
                         error("Du verfügst nicht über die erforderliche Berechtigung.")
                     })
@@ -67,7 +66,7 @@ class ChannelInviteCommand(commandName: String) : CommandAPICommand(commandName)
                     info(" eingeladen.")
                 })
 
-                if(!targetUser.isIgnoringChannelInvites()) {
+                if (!targetUser.isIgnoringChannelInvites()) {
                     targetUser.sendText(buildText {
                         info("Du wurdest in den Nachrichtenkanal ")
                         variableValue(channel.name)

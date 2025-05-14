@@ -7,7 +7,6 @@ import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
-import net.kyori.adventure.text.format.TextDecoration
 
 class TogglePmCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
@@ -17,7 +16,7 @@ class TogglePmCommand(commandName: String) : CommandAPICommand(commandName) {
                 val user = databaseService.getUser(player.uniqueId)
                 val ignoring = user.togglePm()
 
-                if(ignoring) {
+                if (ignoring) {
                     user.sendText(buildText {
                         success("Du ignorierst jetzt privaten Nachrichten. ")
 //                        append {

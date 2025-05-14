@@ -25,10 +25,10 @@ import net.kyori.adventure.util.Services
 import java.util.*
 
 @AutoService(MessagingReceiverService::class)
-class VelocityMessagingReceiverService(): MessagingReceiverService, Services.Fallback {
+class VelocityMessagingReceiverService() : MessagingReceiverService, Services.Fallback {
     @Subscribe
     fun onPluginMessage(event: PluginMessageEvent) {
-        when(event.identifier) {
+        when (event.identifier) {
             messageChannel -> {
                 event.result = PluginMessageEvent.ForwardResult.handled()
 
@@ -44,7 +44,8 @@ class VelocityMessagingReceiverService(): MessagingReceiverService, Services.Fal
                 val type = gson.fromJson(input.readUTF(), ChatMessageType::class.java)
                 val messageId = UUID.fromString(input.readUTF())
                 val chatChannel = input.readUTF()
-                val forwardingServers: Set<String> = gson.fromJson(input.readUTF(), object : TypeToken<Set<String>>() {}.type)
+                val forwardingServers: Set<String> =
+                    gson.fromJson(input.readUTF(), object : TypeToken<Set<String>>() {}.type)
 
                 handleReceive(
                     player = sender,
@@ -77,7 +78,7 @@ class VelocityMessagingReceiverService(): MessagingReceiverService, Services.Fal
         channel: String,
         forwardingServers: ObjectSet<String>
     ) {
-        messagingSenderService.sendData (
+        messagingSenderService.sendData(
             player = player,
             target = target,
             message = message,

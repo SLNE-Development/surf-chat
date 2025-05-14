@@ -1,6 +1,5 @@
 package dev.slne.surf.chat.velocity
 
-import com.github.shynixn.mccoroutine.velocity.SuspendingPluginContainer
 import com.google.gson.Gson
 import com.google.inject.Inject
 import com.velocitypowered.api.event.Subscribe
@@ -15,10 +14,9 @@ import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier
 import dev.slne.surf.chat.velocity.service.VelocityMessagingReceiverService
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectSet
-
 import java.nio.file.Path
 
-@Plugin (
+@Plugin(
     id = "surf-chat-velocity",
     version = "1.21.4-1.0.0-SNAPSHOT",
     name = "surf-chat-velocity",
@@ -60,4 +58,5 @@ val teamChatChannel: MinecraftChannelIdentifier get() = MinecraftChannelIdentifi
 val plugin get() = SurfChatVelocity.INSTANCE
 val gson get() = Gson()
 
-fun teamMembers(): ObjectSet<Player> = plugin.proxy.allPlayers.filter { it.hasPermission("surf.chat.command.teamchat") }.toObjectSet()
+fun teamMembers(): ObjectSet<Player> =
+    plugin.proxy.allPlayers.filter { it.hasPermission("surf.chat.command.teamchat") }.toObjectSet()

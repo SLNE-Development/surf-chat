@@ -36,9 +36,9 @@ class ChannelPrivacyModeCommand(commandName: String) : CommandAPICommand(command
 
                 val mode: String by args
 
-                when(mode) {
+                when (mode) {
                     "public" -> {
-                        if(channel.status == ChannelStatusType.PUBLIC) {
+                        if (channel.status == ChannelStatusType.PUBLIC) {
                             user.sendText(buildText { error("Der Nachrichtenkanal ist bereits öffentlich.") })
                             return@launch
                         }
@@ -53,8 +53,9 @@ class ChannelPrivacyModeCommand(commandName: String) : CommandAPICommand(command
                             info(" ist nun öffentlich.")
                         })
                     }
+
                     "private" -> {
-                        if(channel.status == ChannelStatusType.PRIVATE) {
+                        if (channel.status == ChannelStatusType.PRIVATE) {
                             user.sendText(buildText { error("Der Nachrichtenkanal ist bereits privat.") })
                             return@launch
                         }

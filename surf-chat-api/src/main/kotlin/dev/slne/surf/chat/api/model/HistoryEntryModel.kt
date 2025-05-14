@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.api.model
 
-import java.util.UUID
+import java.util.*
 
 /**
  * Represents a history entry model.

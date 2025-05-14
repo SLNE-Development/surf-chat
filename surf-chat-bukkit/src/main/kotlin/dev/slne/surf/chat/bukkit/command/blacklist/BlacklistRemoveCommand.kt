@@ -11,7 +11,7 @@ import dev.slne.surf.chat.core.service.blacklistService
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 
-class BlacklistRemoveCommand(commandName: String): CommandAPICommand(commandName) {
+class BlacklistRemoveCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         textArgument("word")
         playerExecutor { player, args ->
@@ -20,7 +20,7 @@ class BlacklistRemoveCommand(commandName: String): CommandAPICommand(commandName
                 val user = databaseService.getUser(player.uniqueId)
                 val result = blacklistService.removeFromBlacklist(word)
 
-                if(result) {
+                if (result) {
                     user.sendText(buildText {
                         success("Du hast das Wort ")
                         variableValue(word)

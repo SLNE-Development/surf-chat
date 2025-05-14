@@ -22,7 +22,7 @@ class ChannelJoinCommand(commandName: String) : CommandAPICommand(commandName) {
                 val user = databaseService.getUser(player.uniqueId)
 
                 if (channelService.getChannel(player) != null) {
-                    user.sendText (
+                    user.sendText(
                         buildText {
                             error("Du bist bereits in einem Nachrichtenkanal.")
                         }
@@ -30,8 +30,8 @@ class ChannelJoinCommand(commandName: String) : CommandAPICommand(commandName) {
                     return@launch
                 }
 
-                if(channel.isBanned(user)) {
-                    user.sendText (
+                if (channel.isBanned(user)) {
+                    user.sendText(
                         buildText {
                             error("Du wurdest von diesem Nachrichtenkanal ausgeschlossen.")
                         }
@@ -39,8 +39,8 @@ class ChannelJoinCommand(commandName: String) : CommandAPICommand(commandName) {
                     return@launch
                 }
 
-                if(channel.status != ChannelStatusType.PUBLIC && !channel.isInvited(user)) {
-                    user.sendText (
+                if (channel.status != ChannelStatusType.PUBLIC && !channel.isInvited(user)) {
+                    user.sendText(
                         buildText {
                             error("Der Nachrichtenkanal ")
                             info(channel.name)
@@ -51,7 +51,7 @@ class ChannelJoinCommand(commandName: String) : CommandAPICommand(commandName) {
                 }
 
                 channel.join(user)
-                user.sendText (
+                user.sendText(
                     buildText {
                         info("Du bist dem Nachrichtenkanal ")
                         variableValue(channel.name)

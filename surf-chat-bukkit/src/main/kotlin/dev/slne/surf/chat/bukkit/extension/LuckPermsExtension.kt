@@ -13,6 +13,7 @@ object LuckPermsExtension {
 
     fun getPrefix(player: Player): String {
         val luckperms = luckPermsApi ?: return "Internal Api error"
-        return luckperms.getPlayerAdapter(Player::class.java).getUser(player).cachedData.metaData.prefix ?: ""
+        return luckperms.getPlayerAdapter(Player::class.java)
+            .getUser(player).cachedData.metaData.prefix ?: ""
     }
 }

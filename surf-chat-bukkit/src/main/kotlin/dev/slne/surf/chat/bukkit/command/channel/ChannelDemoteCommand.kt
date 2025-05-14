@@ -31,8 +31,8 @@ class ChannelDemoteCommand(commandName: String) : CommandAPICommand(commandName)
                     return@launch
                 }
 
-                if(target.uniqueId == player.uniqueId) {
-                    user.sendText (buildText {
+                if (target.uniqueId == player.uniqueId) {
+                    user.sendText(buildText {
                         error("Du kannst dich nicht selbst degradieren.")
                     })
                     return@launch
@@ -56,7 +56,7 @@ class ChannelDemoteCommand(commandName: String) : CommandAPICommand(commandName)
                     return@launch
                 }
 
-                if(!channel.isModerator(targetUser) && !channel.isOwner(targetUser)) {
+                if (!channel.isModerator(targetUser) && !channel.isOwner(targetUser)) {
                     user.sendText(buildText {
                         error("Der Spieler ")
                         variableValue(target.name)
@@ -65,7 +65,7 @@ class ChannelDemoteCommand(commandName: String) : CommandAPICommand(commandName)
                     return@launch
                 }
 
-                if(channel.members.filter { it.value == ChannelRoleType.OWNER }.isEmpty()) {
+                if (channel.members.filter { it.value == ChannelRoleType.OWNER }.isEmpty()) {
                     user.sendText(buildText {
                         error("Der Nachrichtenkanal benötigt mindestens einen Besitzer.")
                     })

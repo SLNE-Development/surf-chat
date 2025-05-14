@@ -10,7 +10,6 @@ import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.edit
 import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.bukkit.util.toChatUser
-import dev.slne.surf.chat.bukkit.util.toPlayer
 import dev.slne.surf.chat.core.service.ChannelService
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
@@ -23,7 +22,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 @AutoService(ChannelService::class)
-class BukkitChannelService(): ChannelService, Fallback {
+class BukkitChannelService() : ChannelService, Fallback {
     private val channels = ObjectArraySet<ChannelModel>()
     override fun createChannel(name: String, owner: ChatUserModel): ChannelModel {
         val channel = BukkitChannel(name)
@@ -45,7 +44,7 @@ class BukkitChannelService(): ChannelService, Fallback {
     }
 
     override fun getChannel(player: CommandSender): ChannelModel? {
-        if(player is OfflinePlayer) {
+        if (player is OfflinePlayer) {
             return channels.find { it -> it.members.keys.any { it.uuid == player.uniqueId } }
         }
 
@@ -70,7 +69,7 @@ class BukkitChannelService(): ChannelService, Fallback {
         plugin.launch {
             val user = player.toChatUser()
 
-            if(currentChannel != null)  {
+            if (currentChannel != null) {
                 if (currentChannel == channel) {
                     return@launch
                 }

@@ -118,59 +118,61 @@ class BukkitChannel(
         }
     }
 
-override fun kick(user: ChatUserModel) {
-    this.leave(user)
-}
+    override fun kick(user: ChatUserModel) {
+        this.leave(user)
+    }
 
-override fun ban(user: ChatUserModel) {
-    this.leave(user)
-    bannedPlayers.add(user)
-}
+    override fun ban(user: ChatUserModel) {
+        this.leave(user)
+        bannedPlayers.add(user)
+    }
 
-override fun unban(user: ChatUserModel) {
-    bannedPlayers.remove(user)
-}
+    override fun unban(user: ChatUserModel) {
+        bannedPlayers.remove(user)
+    }
 
-override fun isBanned(user: ChatUserModel): Boolean {
-    return bannedPlayers.contains(user)
-}
+    override fun isBanned(user: ChatUserModel): Boolean {
+        return bannedPlayers.contains(user)
+    }
 
-override fun getOwner(): ChatUserModel {
-    return members.entries.first { it.value == ChannelRoleType.OWNER }.key
-}
+    override fun getOwner(): ChatUserModel {
+        return members.entries.first { it.value == ChannelRoleType.OWNER }.key
+    }
 
-override fun getMembers(): ObjectSet<ChatUserModel> {
-    return members.keys
-}
+    override fun getMembers(): ObjectSet<ChatUserModel> {
+        return members.keys
+    }
 
-override fun getOnlyMembers(): ObjectSet<ChatUserModel> {
-    return members.entries.filter { it.value == ChannelRoleType.MEMBER }.map { it.key }.toObjectSet()
-}
+    override fun getOnlyMembers(): ObjectSet<ChatUserModel> {
+        return members.entries.filter { it.value == ChannelRoleType.MEMBER }.map { it.key }
+            .toObjectSet()
+    }
 
-override fun getModerators(): ObjectSet<ChatUserModel> {
-    return members.entries.filter { it.value == ChannelRoleType.MODERATOR }.map { it.key }.toObjectSet()
-}
+    override fun getModerators(): ObjectSet<ChatUserModel> {
+        return members.entries.filter { it.value == ChannelRoleType.MODERATOR }.map { it.key }
+            .toObjectSet()
+    }
 
-override fun isOwner(user: ChatUserModel): Boolean {
-    return members[user] == ChannelRoleType.OWNER
-}
+    override fun isOwner(user: ChatUserModel): Boolean {
+        return members[user] == ChannelRoleType.OWNER
+    }
 
-override fun isModerator(user: ChatUserModel): Boolean {
-    return members[user] == ChannelRoleType.MODERATOR || members[user] == ChannelRoleType.OWNER
-}
+    override fun isModerator(user: ChatUserModel): Boolean {
+        return members[user] == ChannelRoleType.MODERATOR || members[user] == ChannelRoleType.OWNER
+    }
 
-override fun isMember(user: ChatUserModel): Boolean {
-    return members.contains(user)
-}
+    override fun isMember(user: ChatUserModel): Boolean {
+        return members.contains(user)
+    }
 
-override fun isMember(user: CommandSender): Boolean {
-    if (user is Player) {
+    override fun isMember(user: CommandSender): Boolean {
+        if (user is Player) {
+            return members.keys.any { it.uuid == user.uniqueId }
+        }
+        return false
+    }
+
+    override fun isMember(user: Player): Boolean {
         return members.keys.any { it.uuid == user.uniqueId }
     }
-    return false
-}
-
-override fun isMember(user: Player): Boolean {
-    return members.keys.any { it.uuid == user.uniqueId }
-}
 }

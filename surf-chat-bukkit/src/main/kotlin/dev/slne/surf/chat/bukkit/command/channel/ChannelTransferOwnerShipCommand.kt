@@ -51,7 +51,14 @@ class ChannelTransferOwnerShipCommand(commandName: String) : CommandAPICommand(c
                     return@launch
                 }
 
-                if (!confirm.equals("confirm", ignoreCase = true) && !confirm.equals("yes", ignoreCase = true) && !confirm.equals("true", ignoreCase = true) && !confirm.equals("ja", ignoreCase = true)) {
+                if (!confirm.equals("confirm", ignoreCase = true) && !confirm.equals(
+                        "yes",
+                        ignoreCase = true
+                    ) && !confirm.equals("true", ignoreCase = true) && !confirm.equals(
+                        "ja",
+                        ignoreCase = true
+                    )
+                ) {
                     user.sendText(buildText {
                         info("Bitte bestätige die Übertragung des Besitzes des Nachrichtenkanals an den Spieler ")
                         variableValue(targetUser.getName())
@@ -61,7 +68,7 @@ class ChannelTransferOwnerShipCommand(commandName: String) : CommandAPICommand(c
                     return@launch
                 }
 
-                if(channel.members.filter { it.value == ChannelRoleType.OWNER }.isEmpty()) {
+                if (channel.members.filter { it.value == ChannelRoleType.OWNER }.isEmpty()) {
                     user.sendText(buildText {
                         error("Der Nachrichtenkanal benötigt mindestens einen Besitzer.")
                     })

@@ -22,7 +22,7 @@ class ChannelListCommand(commandName: String) : CommandAPICommand(commandName) {
         playerExecutor { player, args ->
             val page = args.getOrDefaultUnchecked("page", 1)
 
-            if(channelService.getAllChannels().isEmpty()) {
+            if (channelService.getAllChannels().isEmpty()) {
                 surfChatApi.sendText(player, buildText {
                     error("Es sind keine Kanäle vorhanden.")
                 })
@@ -45,10 +45,12 @@ class ChannelListCommand(commandName: String) : CommandAPICommand(commandName) {
                             }
                             text(it.name, Colors.WHITE)
                             spacer(" (")
-                            info(when(it.status) {
-                                ChannelStatusType.PUBLIC -> "Öffentlich"
-                                ChannelStatusType.PRIVATE -> "Privat"
-                            })
+                            info(
+                                when (it.status) {
+                                    ChannelStatusType.PUBLIC -> "Öffentlich"
+                                    ChannelStatusType.PRIVATE -> "Privat"
+                                }
+                            )
                             spacer(")")
                             hoverEvent(HoverEvent.showText(createInfoMessage(it)))
                         }
@@ -63,10 +65,12 @@ class ChannelListCommand(commandName: String) : CommandAPICommand(commandName) {
             info("ɪɴꜰᴏʀᴍᴀᴛɪᴏɴᴇɴ").appendNewline()
             spacer("ɴᴀᴍᴇ: ").text(channel.name, Colors.WHITE).appendNewline()
             spacer("ʙᴇѕɪᴛᴢᴇʀ: ").text(channel.getOwner().getName(), Colors.WHITE).appendNewline()
-            spacer("ᴍᴏᴅᴜѕ: ").text(when(channel.status) {
-                ChannelStatusType.PUBLIC -> "Öffentlich"
-                ChannelStatusType.PRIVATE -> "Privat"
-            }, Colors.WHITE).appendNewline()
+            spacer("ᴍᴏᴅᴜѕ: ").text(
+                when (channel.status) {
+                    ChannelStatusType.PUBLIC -> "Öffentlich"
+                    ChannelStatusType.PRIVATE -> "Privat"
+                }, Colors.WHITE
+            ).appendNewline()
             spacer("ᴍɪᴛɢʟɪᴇᴅᴇʀ: ").text(channel.members.size, Colors.WHITE).appendNewline()
             spacer("ᴇɪɴʟᴀᴅᴜɴɢᴇɴ: ").text(channel.invites.size, Colors.WHITE)
         }

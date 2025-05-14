@@ -41,44 +41,79 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
                 val user = databaseService.getUser(player.uniqueId)
                 val targetUser = databaseService.getUser(target.uniqueId)
 
-                if(targetUser.uuid == user.uuid) {
+                if (targetUser.uuid == user.uuid) {
                     user.sendText(buildText {
                         error("Du kannst dir selbst keine Nachrichten senden.")
                     })
                     return@launch
                 }
 
-                if(targetUser.isIgnoring(user.uuid)) {
+                if (targetUser.isIgnoring(user.uuid)) {
                     targetUser.sendText(buildText {
                         error("Du ignorierst diesen Spieler.")
                     })
                     return@launch
                 }
 
-                plugin.messageValidator.parse(messageComponent, ChatMessageType.PRIVATE_TO, player) {
-                    if(!targetUser.isIgnoring(user.uuid)) {
-                        targetUser.sendRawText(plugin.chatFormat.formatMessage(messageComponent, player, target, ChatMessageType.PRIVATE_FROM, "", UUID.randomUUID(), true))
+                plugin.messageValidator.parse(
+                    messageComponent,
+                    ChatMessageType.PRIVATE_TO,
+                    player
+                ) {
+                    if (!targetUser.isIgnoring(user.uuid)) {
+                        targetUser.sendRawText(
+                            plugin.chatFormat.formatMessage(
+                                messageComponent,
+                                player,
+                                target,
+                                ChatMessageType.PRIVATE_FROM,
+                                "",
+                                UUID.randomUUID(),
+                                true
+                            )
+                        )
                     }
 
-                    user.sendRawText(plugin.chatFormat.formatMessage(messageComponent, player, target, ChatMessageType.PRIVATE_TO, "", UUID.randomUUID(), true))
+                    user.sendRawText(
+                        plugin.chatFormat.formatMessage(
+                            messageComponent,
+                            player,
+                            target,
+                            ChatMessageType.PRIVATE_TO,
+                            "",
+                            UUID.randomUUID(),
+                            true
+                        )
+                    )
 
                     replyService.updateLast(player.uniqueId, target.uniqueId)
                     replyService.updateLast(target.uniqueId, player.uniqueId)
 
-                    if(spyService.hasPrivateMessageSpies(player)) {
-                        spyService.getPrivateMessageSpys(player).forEach { it.sendText {
-                            info("[${player.name} -> ${target.name}] ")
-                            append(messageComponent)
+                    if (spyService.hasPrivateMessageSpies(player)) {
+                        spyService.getPrivateMessageSpys(player).forEach {
+                            it.sendText {
+                                info("[${player.name} -> ${target.name}] ")
+                                append(messageComponent)
 
-                            hoverEvent(HoverEvent.showText {
-                                components.getMessageHoverComponent(player.name, System.currentTimeMillis(), "N/A")
-                            })
-                            clickEvent(ClickEvent.suggestCommand("/msg ${player.name} "))
-                        } }
+                                hoverEvent(HoverEvent.showText {
+                                    components.getMessageHoverComponent(
+                                        player.name,
+                                        System.currentTimeMillis(),
+                                        "N/A"
+                                    )
+                                })
+                                clickEvent(ClickEvent.suggestCommand("/msg ${player.name} "))
+                            }
+                        }
                     }
 
                     plugin.launch {
-                        surfChatApi.logMessage(player.uniqueId, ChatMessageType.PRIVATE, messageComponent, UUID.randomUUID())
+                        surfChatApi.logMessage(
+                            player.uniqueId,
+                            ChatMessageType.PRIVATE,
+                            messageComponent,
+                            UUID.randomUUID()
+                        )
                     }
                 }
             }

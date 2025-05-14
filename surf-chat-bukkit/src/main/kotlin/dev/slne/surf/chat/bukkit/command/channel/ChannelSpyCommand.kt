@@ -9,7 +9,7 @@ import dev.slne.surf.chat.core.service.spyService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.util.emptyObjectSet
 
-class ChannelSpyCommand(commandName: String): CommandAPICommand(commandName) {
+class ChannelSpyCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission("surf.chat.command.channel.spy")
         multiChannelArgument("channels", optional = true)
@@ -17,8 +17,8 @@ class ChannelSpyCommand(commandName: String): CommandAPICommand(commandName) {
         playerExecutor { player, args ->
             val channels = args.getOrDefaultUnchecked("channels", emptyObjectSet<ChannelModel>())
 
-            if(channels.isEmpty()) {
-                if(!spyService.isChannelSpying(player)) {
+            if (channels.isEmpty()) {
+                if (!spyService.isChannelSpying(player)) {
                     surfChatApi.sendText(player, buildText {
                         error("Du spionierst in keinem Kanal.")
                     })

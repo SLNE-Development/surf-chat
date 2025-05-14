@@ -12,23 +12,23 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 
 import kotlin.system.measureTimeMillis
 
-class SurfChatReloadCommand(commandName: String): CommandAPICommand(commandName) {
+class SurfChatReloadCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withAliases("rl")
         withPermission("surf.chat.command.reload")
-         playerExecutor { player, _ ->
-             val time = measureTimeMillis {
-                 plugin.reloadConfig()
-                 messagingSenderService.loadServers()
-                 plugin.chatFormat.loadServer()
-                 connectionService.reloadMessages()
-                 chatMotdService.loadMotd()
-             }
+        playerExecutor { player, _ ->
+            val time = measureTimeMillis {
+                plugin.reloadConfig()
+                messagingSenderService.loadServers()
+                plugin.chatFormat.loadServer()
+                connectionService.reloadMessages()
+                chatMotdService.loadMotd()
+            }
 
-             surfChatApi.sendText(player, buildText {
-                    success("Das Plugin wurde erfolgreich neu geladen.")
-                    info(" (${time}ms)")
-             })
-         }
+            surfChatApi.sendText(player, buildText {
+                success("Das Plugin wurde erfolgreich neu geladen.")
+                info(" (${time}ms)")
+            })
+        }
     }
 }

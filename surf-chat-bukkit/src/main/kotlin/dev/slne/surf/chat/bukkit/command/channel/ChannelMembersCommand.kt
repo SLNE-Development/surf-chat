@@ -18,7 +18,8 @@ class ChannelMembersCommand(commandName: String) : CommandAPICommand(commandName
         integerArgument("page", 1, Int.MAX_VALUE, true)
         playerExecutor { player, args ->
             val page = args.getOrDefaultUnchecked("page", 1)
-            val channel: ChannelModel? = args.getOrDefaultUnchecked("channel", channelService.getChannel(player))
+            val channel: ChannelModel? =
+                args.getOrDefaultUnchecked("channel", channelService.getChannel(player))
 
             if (channel == null) {
                 surfChatApi.sendText(player, buildText {

@@ -6,7 +6,7 @@ import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.toPlainText
 import dev.slne.surf.chat.core.service.FilterService
 import dev.slne.surf.chat.core.service.blacklistService
-import dev.slne.surf.surfapi.core.api.util.*
+import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.util.Services.Fallback
 import org.bukkit.entity.Player
@@ -19,7 +19,8 @@ class BukkitFilterService : FilterService, Fallback {
     private val messageTimestamps = mutableMapOf<UUID, MutableList<Long>>()
 
     private val validCharactersRegex = "^[\\u0000-\\u007FäöüÄÖÜß€@£¥|²³µ½¼¾«»¡¿°§´`^~¨]+$".toRegex()
-    private val urlRegex = "((http|https|ftp)://)?([\\w-]+\\.)+[\\w-]+(/[\\w- ./?%&=]*)?".toRegex(RegexOption.IGNORE_CASE)
+    private val urlRegex =
+        "((http|https|ftp)://)?([\\w-]+\\.)+[\\w-]+(/[\\w- ./?%&=]*)?".toRegex(RegexOption.IGNORE_CASE)
 
     private var messageLimitSeconds = 10
     private var messageLimitCount = 5

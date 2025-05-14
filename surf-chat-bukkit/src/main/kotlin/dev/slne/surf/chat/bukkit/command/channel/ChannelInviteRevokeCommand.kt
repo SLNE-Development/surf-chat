@@ -3,7 +3,6 @@ package dev.slne.surf.chat.bukkit.command.channel
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.arguments.EntitySelectorArgument
-import dev.jorel.commandapi.arguments.OfflinePlayerArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.bukkit.plugin
@@ -57,7 +56,7 @@ class ChannelInviteRevokeCommand(commandName: String) : CommandAPICommand(comman
                     info(" zurückgezogen.")
                 })
 
-                if(!targetUser.isIgnoringChannelInvites()) {
+                if (!targetUser.isIgnoringChannelInvites()) {
                     targetUser.sendText(buildText {
                         info("Deine Einladung in den Nachrichtenkanal ")
                         variableValue(channel.name)

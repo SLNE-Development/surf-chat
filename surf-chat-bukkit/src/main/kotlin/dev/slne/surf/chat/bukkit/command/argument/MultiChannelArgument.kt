@@ -14,55 +14,61 @@ import it.unimi.dsi.fastutil.objects.ObjectArraySet
 
 import it.unimi.dsi.fastutil.objects.ObjectSet
 
-class MultiChannelArgument(nodeName: String): CustomArgument<ObjectSet<ChannelModel>, String>(GreedyStringArgument(nodeName), { info ->
-    val input = info.input.trim()
+class MultiChannelArgument(nodeName: String) :
+    CustomArgument<ObjectSet<ChannelModel>, String>(GreedyStringArgument(nodeName), { info ->
+        val input = info.input.trim()
 
-    if (input.isEmpty()) {
-        throw CustomArgumentException.fromAdventureComponent {
-            buildText {
-                appendPrefix()
-                error("Du musst mindestens einen Kanal angeben.")
-            }
-        }
-    }
-
-    val returnedChannels: ObjectSet<ChannelModel> = ObjectArraySet()
-
-    if (input.equals("all", ignoreCase = true)) {
-        returnedChannels.addAll(channelService.getAllChannels())
-    } else {
-        val channelNames = input.split("\\s+".toRegex())
-        val channels =
-            channelNames.mapNotNull { name -> channelService.getChannel(name) }.toObjectSet()
-
-        if (channels.size != channelNames.size) {
-            val missingChannels =
-                channelNames.filter { name -> channelService.getChannel(name) == null }
+        if (input.isEmpty()) {
             throw CustomArgumentException.fromAdventureComponent {
                 buildText {
                     appendPrefix()
-                    error(
-                        "Die folgenden Kanäle konnten nicht gefunden werden: ${
-                            missingChannels.joinToString(
-                                ", "
-                            )
-                        }."
-                    )
+                    error("Du musst mindestens einen Kanal angeben.")
                 }
             }
-            returnedChannels.addAll(channels)
         }
-    }
 
-    returnedChannels
-}) {
+        val returnedChannels: ObjectSet<ChannelModel> = ObjectArraySet()
+
+        if (input.equals("all", ignoreCase = true)) {
+            returnedChannels.addAll(channelService.getAllChannels())
+        } else {
+            val channelNames = input.split("\\s+".toRegex())
+            val channels =
+                channelNames.mapNotNull { name -> channelService.getChannel(name) }.toObjectSet()
+
+            if (channels.size != channelNames.size) {
+                val missingChannels =
+                    channelNames.filter { name -> channelService.getChannel(name) == null }
+                throw CustomArgumentException.fromAdventureComponent {
+                    buildText {
+                        appendPrefix()
+                        error(
+                            "Die folgenden Kanäle konnten nicht gefunden werden: ${
+                                missingChannels.joinToString(
+                                    ", "
+                                )
+                            }."
+                        )
+                    }
+                }
+                returnedChannels.addAll(channels)
+            }
+        }
+
+        returnedChannels
+    }) {
     init {
         replaceSuggestions(ArgumentSuggestions.stringCollection {
-                listOf("all") + channelService.getAllChannels().map { it.name }
-            }
+            listOf("all") + channelService.getAllChannels().map { it.name }
+        }
         )
     }
 }
 
 
-inline fun CommandAPICommand.multiChannelArgument(nodeName: String, optional: Boolean = false, block: Argument<*>.() -> Unit = {}): CommandAPICommand = withArguments(MultiChannelArgument(nodeName).setOptional(optional).apply(block))
+inline fun CommandAPICommand.multiChannelArgument(
+    nodeName: String,
+    optional: Boolean = false,
+    block: Argument<*>.() -> Unit = {}
+): CommandAPICommand =
+    withArguments(MultiChannelArgument(nodeName).setOptional(optional).apply(block))

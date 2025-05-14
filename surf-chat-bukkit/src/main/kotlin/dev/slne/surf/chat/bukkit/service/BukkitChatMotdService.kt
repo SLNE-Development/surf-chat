@@ -9,7 +9,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.util.Services.Fallback
 
 @AutoService(ChatMotdService::class)
-class BukkitChatMotdService(): ChatMotdService, Fallback {
+class BukkitChatMotdService() : ChatMotdService, Fallback {
     private var chatMotdLines: Int2ObjectOpenHashMap<Component> = Int2ObjectOpenHashMap<Component>()
     private var status = true
 

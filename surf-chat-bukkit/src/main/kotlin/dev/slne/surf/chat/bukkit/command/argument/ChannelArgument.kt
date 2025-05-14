@@ -8,13 +8,19 @@ import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 
-class ChannelArgument(nodeName: String): CustomArgument<ChannelModel, String>(StringArgument(nodeName), {
-    info -> channelService.getChannel(info.input) ?: throw CustomArgumentException.fromAdventureComponent { buildText {
-    appendPrefix()
-    error("Der Kanal existiert nicht oder ist nicht für dich zugänglich.")
-} }
+class ChannelArgument(nodeName: String) :
+    CustomArgument<ChannelModel, String>(StringArgument(nodeName), { info ->
+        channelService.getChannel(info.input)
+            ?: throw CustomArgumentException.fromAdventureComponent {
+                buildText {
+                    appendPrefix()
+                    error("Der Kanal existiert nicht oder ist nicht für dich zugänglich.")
+                }
+            }
     }) {
     init {
-        replaceSuggestions(ArgumentSuggestions.stringCollection { channelService.getAllChannels().map { it.name } })
+        replaceSuggestions(ArgumentSuggestions.stringCollection {
+            channelService.getAllChannels().map { it.name }
+        })
     }
 }

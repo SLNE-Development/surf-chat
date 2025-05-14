@@ -4,15 +4,11 @@ import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.GreedyStringArgument
-import dev.jorel.commandapi.kotlindsl.*
+import dev.jorel.commandapi.kotlindsl.argument
+import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.bukkit.command.argument.multiOfflinePlayerArgument
 import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.bukkit.util.LookupFlags
-import dev.slne.surf.chat.bukkit.util.MultiPlayerSelectorData
-import dev.slne.surf.chat.bukkit.util.PageableMessageBuilder
-import dev.slne.surf.chat.bukkit.util.formatTime
-import dev.slne.surf.chat.bukkit.util.getUsername
-import dev.slne.surf.chat.bukkit.util.sendText
+import dev.slne.surf.chat.bukkit.util.*
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
@@ -21,13 +17,24 @@ import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.TextDecoration
 
-class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName) {
+class SurfChatLookupCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission("surf.chat.command.lookup")
 
         multiOfflinePlayerArgument("target")
-        argument(GreedyStringArgument("filters").replaceSuggestions (ArgumentSuggestions.strings("--type", "--range", "--message", "--deleted", "--deletedBy", "--page", "--server"))
-            .setOptional(true)
+        argument(
+            GreedyStringArgument("filters").replaceSuggestions(
+                ArgumentSuggestions.strings(
+                    "--type",
+                    "--range",
+                    "--message",
+                    "--deleted",
+                    "--deletedBy",
+                    "--page",
+                    "--server"
+                )
+            )
+                .setOptional(true)
         )
 
 
@@ -36,7 +43,8 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
             val parsed = LookupFlags.parse(flagString)
             val page = parsed.page ?: 1
 
-            val target = args.getUnchecked<MultiPlayerSelectorData>("target") ?: return@playerExecutor
+            val target =
+                args.getUnchecked<MultiPlayerSelectorData>("target") ?: return@playerExecutor
 
 
             plugin.launch {
@@ -69,7 +77,8 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
                 }
 
                 PageableMessageBuilder {
-                    pageCommand = "/surfchat lookup ${target.getString()} ${parsed.toFlagString()} --page %page%"
+                    pageCommand =
+                        "/surfchat lookup ${target.getString()} ${parsed.toFlagString()} --page %page%"
 
                     title {
                         primary("Chat-Daten")
@@ -88,7 +97,9 @@ class SurfChatLookupCommand(commandName: String): CommandAPICommand(commandName)
 
                             if (entry.deleted) {
                                 appendNewline()
-                                spacer("    (Gelöscht von ${entry.deletedBy})").decorate(TextDecoration.ITALIC)
+                                spacer("    (Gelöscht von ${entry.deletedBy})").decorate(
+                                    TextDecoration.ITALIC
+                                )
                             }
 
                             hoverEvent(HoverEvent.showText(buildText {

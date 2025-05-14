@@ -4,13 +4,12 @@ import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.model.ChannelModel
-import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.bukkit.command.argument.ChannelMembersArgument
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.sendText
+import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
-import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 
 class ChannelBanCommand(commandName: String) : CommandAPICommand(commandName) {
@@ -31,14 +30,14 @@ class ChannelBanCommand(commandName: String) : CommandAPICommand(commandName) {
                     return@launch
                 }
 
-                if(!channel.isModerator(user)) {
+                if (!channel.isModerator(user)) {
                     user.sendText(buildText {
                         error("Du verfügst nicht über die erforderliche Berechtigung.")
                     })
                     return@launch
                 }
 
-                if(channel.isModerator(targetUser) && channel.isModerator(user)) {
+                if (channel.isModerator(targetUser) && channel.isModerator(user)) {
                     user.sendText(buildText {
                         error("Du kannst diesen Spieler nicht entfernen.")
                     })

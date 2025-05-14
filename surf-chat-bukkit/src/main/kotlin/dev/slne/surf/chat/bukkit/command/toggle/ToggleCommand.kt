@@ -3,7 +3,7 @@ package dev.slne.surf.chat.bukkit.command.toggle
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.subcommand
 
-class ToggleCommand(commandName: String): CommandAPICommand(commandName) {
+class ToggleCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission("surf.chat.command.toggle")
         withAliases("toggle")

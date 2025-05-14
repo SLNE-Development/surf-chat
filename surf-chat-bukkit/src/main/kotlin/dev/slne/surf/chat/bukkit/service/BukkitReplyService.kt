@@ -7,7 +7,7 @@ import net.kyori.adventure.util.Services.Fallback
 import java.util.*
 
 @AutoService(ReplyService::class)
-class BukkitReplyService(): ReplyService, Fallback {
+class BukkitReplyService() : ReplyService, Fallback {
     private val cache = Caffeine.newBuilder()
         .maximumSize(1000)
         .build<UUID, UUID>()

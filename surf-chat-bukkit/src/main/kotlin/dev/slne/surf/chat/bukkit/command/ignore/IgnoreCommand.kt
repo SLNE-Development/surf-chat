@@ -23,14 +23,14 @@ class IgnoreCommand(commandName: String) : CommandAPICommand(commandName) {
             plugin.launch {
                 val user = databaseService.getUser(player.uniqueId)
 
-                if(target.uniqueId == user.uuid) {
+                if (target.uniqueId == user.uuid) {
                     user.sendText(buildText {
                         error("Du kannst dich nicht selbst ignorieren.")
                     })
                     return@launch
                 }
 
-                if(user.toggleIgnore(target.uniqueId)) {
+                if (user.toggleIgnore(target.uniqueId)) {
                     user.sendText(buildText {
                         success("Du ignorierst jetzt ")
                         variableValue(target.requestName() ?: target.uniqueId.toString())

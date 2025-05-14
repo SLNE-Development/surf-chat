@@ -11,7 +11,7 @@ import net.kyori.adventure.util.Services
 import org.bukkit.entity.Player
 
 @AutoService(SpyService::class)
-class BukkitSpyService: SpyService, Services.Fallback {
+class BukkitSpyService : SpyService, Services.Fallback {
     val channelsSpys = Object2ObjectOpenHashMap<ChannelModel, ObjectList<Player>>()
     val privateMessageSpys = Object2ObjectOpenHashMap<Player, ObjectList<Player>>()
 

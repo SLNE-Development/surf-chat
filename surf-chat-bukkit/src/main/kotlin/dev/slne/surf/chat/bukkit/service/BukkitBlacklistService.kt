@@ -12,7 +12,7 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.kyori.adventure.util.Services.Fallback
 
 @AutoService(BlacklistService::class)
-class BukkitBlacklistService(): BlacklistService, Fallback {
+class BukkitBlacklistService() : BlacklistService, Fallback {
     private var blackList: ObjectSet<String> = ObjectArraySet()
 
     override fun isBlackListed(word: String): Boolean {

@@ -1,7 +1,7 @@
 package dev.slne.surf.chat.core.service
 
 import dev.slne.surf.surfapi.core.api.util.requiredService
-import java.util.UUID
+import java.util.*
 
 interface ReplyService {
     fun updateLast(player: UUID, target: UUID)

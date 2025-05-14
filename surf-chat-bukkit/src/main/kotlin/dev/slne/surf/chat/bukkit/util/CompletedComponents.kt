@@ -6,11 +6,11 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import org.bukkit.entity.Player
-import java.util.UUID
+import java.util.*
 
 class CompletedComponents {
     fun getDeleteComponent(messageID: UUID, viewer: Player): Component {
-        if(!viewer.hasPermission("surf.chat.command.delete")) {
+        if (!viewer.hasPermission("surf.chat.command.delete")) {
             return Component.empty()
         }
 
@@ -27,7 +27,7 @@ class CompletedComponents {
     }
 
     fun getTeleportComponent(name: String, viewer: Player): Component {
-        if(!viewer.hasPermission("surf.chat.command.teleport")) {
+        if (!viewer.hasPermission("surf.chat.command.teleport")) {
             return Component.empty()
         }
 
@@ -81,16 +81,17 @@ class CompletedComponents {
         }))
     }
 
-    fun getMessageHoverComponent(sender: String, time: Long, server: String): Component = buildText {
-        variableKey("Gesendet von: ")
-        variableValue(sender)
-        appendNewline()
-        variableKey("Gesendet am: ")
-        variableValue(formatTime(time))
-        appendNewline()
-        variableKey("Gesendet auf: ")
-        variableValue(server)
-    }
+    fun getMessageHoverComponent(sender: String, time: Long, server: String): Component =
+        buildText {
+            variableKey("Gesendet von: ")
+            variableValue(sender)
+            appendNewline()
+            variableKey("Gesendet am: ")
+            variableValue(formatTime(time))
+            appendNewline()
+            variableKey("Gesendet auf: ")
+            variableValue(server)
+        }
 
 
     companion object {

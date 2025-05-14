@@ -6,7 +6,7 @@ import dev.slne.surf.chat.api.model.HistoryEntryModel
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectList
 import it.unimi.dsi.fastutil.objects.ObjectSet
-import java.util.UUID
+import java.util.*
 
 interface DatabaseService {
     fun connect()
@@ -16,7 +16,15 @@ interface DatabaseService {
     suspend fun saveUser(user: ChatUserModel)
     suspend fun handleDisconnect(user: UUID)
     suspend fun markMessageDeleted(deleter: String, messageID: UUID)
-    suspend fun loadHistory(uuid: UUID? = null, type: String? = null, rangeMillis: Long? = null, message: String? = null, deleted: Boolean? = null, deletedBy: String? = null, server: String? = null): ObjectList<HistoryEntryModel>
+    suspend fun loadHistory(
+        uuid: UUID? = null,
+        type: String? = null,
+        rangeMillis: Long? = null,
+        message: String? = null,
+        deleted: Boolean? = null,
+        deletedBy: String? = null,
+        server: String? = null
+    ): ObjectList<HistoryEntryModel>
 
     suspend fun loadBlacklist(): ObjectSet<BlacklistWordEntry>
     suspend fun addToBlacklist(entry: BlacklistWordEntry): Boolean

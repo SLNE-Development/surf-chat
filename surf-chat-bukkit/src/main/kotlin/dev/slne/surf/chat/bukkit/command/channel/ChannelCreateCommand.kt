@@ -19,14 +19,14 @@ class ChannelCreateCommand(commandName: String) : CommandAPICommand(commandName)
                 val user = databaseService.getUser(player.uniqueId)
                 val name: String by args
 
-                if(channelService.getChannel(player) != null) {
+                if (channelService.getChannel(player) != null) {
                     user.sendText(buildText {
                         error("Du bist bereits in einem Nachrichtenkanal.")
                     })
                     return@launch
                 }
 
-                if(channelService.getChannel(name) != null) {
+                if (channelService.getChannel(name) != null) {
                     user.sendText(buildText {
                         error("Es existiert bereits ein Nachrichtenkanal mit dem Namen")
                         variableValue(name)
@@ -35,7 +35,7 @@ class ChannelCreateCommand(commandName: String) : CommandAPICommand(commandName)
                     return@launch
                 }
 
-                if(!isValidString(name)) {
+                if (!isValidString(name)) {
                     user.sendText(buildText {
                         error("Der Kanalname muss zwischen 3 und 16 Zeichen lang sein und darf nur Buchstaben und Zahlen enthalten.")
                     })

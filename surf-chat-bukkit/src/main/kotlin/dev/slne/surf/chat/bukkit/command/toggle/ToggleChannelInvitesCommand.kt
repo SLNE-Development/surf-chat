@@ -16,7 +16,7 @@ class ToggleChannelInvitesCommand(commandName: String) : CommandAPICommand(comma
                 val user = databaseService.getUser(player.uniqueId)
                 val receiving = user.toggleChannelInvites()
 
-                if(receiving) {
+                if (receiving) {
                     user.sendText(buildText {
                         success("Du ignorierst keine Nachrichtenkanal-Einladungen mehr.")
                     })

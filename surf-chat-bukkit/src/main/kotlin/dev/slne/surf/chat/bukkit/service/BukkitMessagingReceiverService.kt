@@ -15,7 +15,7 @@ import net.kyori.adventure.util.Services.Fallback
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.plugin.messaging.PluginMessageListener
-import java.util.UUID
+import java.util.*
 
 @AutoService(MessagingReceiverService::class)
 class BukkitMessagingReceiverService : MessagingReceiverService, PluginMessageListener, Fallback {
@@ -29,12 +29,21 @@ class BukkitMessagingReceiverService : MessagingReceiverService, PluginMessageLi
         val type = gson.fromJson(input.readUTF(), ChatMessageType::class.java)
         val messageId = UUID.fromString(input.readUTF())
         val chatChannel = input.readUTF()
-        val forwardingServers: Set<String> = gson.fromJson(input.readUTF(), object : TypeToken<Set<String>>() {}.type)
+        val forwardingServers: Set<String> =
+            gson.fromJson(input.readUTF(), object : TypeToken<Set<String>>() {}.type)
 
-        handleReceive(sender, target, message, type, messageId, chatChannel, forwardingServers.toObjectSet())
+        handleReceive(
+            sender,
+            target,
+            message,
+            type,
+            messageId,
+            chatChannel,
+            forwardingServers.toObjectSet()
+        )
     }
 
-    override fun handleReceive (
+    override fun handleReceive(
         player: String,
         target: String,
         message: Component,

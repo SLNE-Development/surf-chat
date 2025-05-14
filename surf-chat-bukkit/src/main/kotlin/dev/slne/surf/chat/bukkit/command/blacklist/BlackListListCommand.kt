@@ -21,7 +21,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class BlackListListCommand(commandName: String): CommandAPICommand(commandName) {
+class BlackListListCommand(commandName: String) : CommandAPICommand(commandName) {
     private val timeFormatter: DateTimeFormatter = DateTimeFormatter
         .ofPattern("dd.MM.yyyy, HH:mm:ss", Locale.GERMANY)
         .withZone(ZoneId.of("Europe/Berlin"))
@@ -34,7 +34,7 @@ class BlackListListCommand(commandName: String): CommandAPICommand(commandName) 
                 val result = databaseService.loadBlacklist()
                 val page = args.getOrDefaultUnchecked("page", 1)
 
-                if(result.isEmpty()) {
+                if (result.isEmpty()) {
                     surfChatApi.sendText(player, buildText {
                         error("Es sind keine Wörter auf der Blacklist.")
                     })

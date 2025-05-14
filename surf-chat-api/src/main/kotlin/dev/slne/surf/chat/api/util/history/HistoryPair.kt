@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.api.util.history
 
-import java.util.UUID
+import java.util.*
 
 data class HistoryPair(
     val messageID: UUID,

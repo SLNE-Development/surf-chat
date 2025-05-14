@@ -2,14 +2,11 @@ package dev.slne.surf.chat.bukkit.service
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.benmanes.caffeine.cache.LoadingCache
-
 import com.google.auto.service.AutoService
 import com.google.gson.reflect.TypeToken
-
 import com.sksamuel.aedile.core.asLoadingCache
 import com.sksamuel.aedile.core.expireAfterWrite
 import com.sksamuel.aedile.core.withRemovalListener
-
 import dev.slne.surf.chat.api.model.BlacklistWordEntry
 import dev.slne.surf.chat.api.model.ChatUserModel
 import dev.slne.surf.chat.api.model.HistoryEntryModel
@@ -22,33 +19,25 @@ import dev.slne.surf.chat.core.service.DatabaseService
 import dev.slne.surf.database.DatabaseProvider
 import dev.slne.surf.surfapi.core.api.util.toObjectList
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
-
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import it.unimi.dsi.fastutil.objects.ObjectList
 import it.unimi.dsi.fastutil.objects.ObjectSet
-
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-
 import net.kyori.adventure.util.Services.Fallback
-
 import org.bukkit.Bukkit
-
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.greaterEq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
-
 import java.util.*
-
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 
 @AutoService(DatabaseService::class)
-class BukkitDatabaseService(): DatabaseService, Fallback {
+class BukkitDatabaseService() : DatabaseService, Fallback {
     private val dataCache = Caffeine.newBuilder()
         .expireAfterWrite(15.minutes)
         .withRemovalListener { uuid, data, _ ->
@@ -60,11 +49,13 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
 
     private val nameCache: LoadingCache<UUID, String> = Caffeine.newBuilder()
         .expireAfterWrite(1.hours)
-        .build{ Bukkit.getOfflinePlayer(it).name ?: "Unknown" }
+        .build { Bukkit.getOfflinePlayer(it).name ?: "Unknown" }
 
     object Users : Table() {
         val uuid = varchar("uuid", 36).transform({ UUID.fromString(it) }, { it.toString() })
-        val ignoreList = text("ignoreList").transform({ val type = object : TypeToken<ObjectArraySet<UUID>>() {}.type
+        val ignoreList = text("ignoreList").transform(
+            {
+                val type = object : TypeToken<ObjectArraySet<UUID>>() {}.type
                 gson.fromJson<ObjectArraySet<UUID>>(it, type).toObjectSet()
             },
             {
@@ -119,7 +110,8 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
     override suspend fun loadUser(uuid: UUID): ChatUserModel {
         return withContext(Dispatchers.IO) {
             newSuspendedTransaction {
-                val selected = Users.selectAll().where(Users.uuid eq uuid).firstOrNull() ?: return@newSuspendedTransaction BukkitChatUser(uuid)
+                val selected = Users.selectAll().where(Users.uuid eq uuid).firstOrNull()
+                    ?: return@newSuspendedTransaction BukkitChatUser(uuid)
 
                 return@newSuspendedTransaction selected.let {
                     BukkitChatUser(
@@ -164,7 +156,7 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
         }
     }
 
-    override suspend fun loadHistory (
+    override suspend fun loadHistory(
         uuid: UUID?,
         type: String?,
         rangeMillis: Long?,
@@ -203,12 +195,13 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
                     conditions += ChatHistory.deletedBy eq deletedBy
                 }
 
-                if(server != null) {
+                if (server != null) {
                     conditions += ChatHistory.server eq server
                 }
 
                 val query = if (conditions.isNotEmpty()) {
-                    ChatHistory.selectAll().where (conditions.reduce { acc, condition -> acc and condition })
+                    ChatHistory.selectAll()
+                        .where(conditions.reduce { acc, condition -> acc and condition })
                 } else {
                     ChatHistory.selectAll()
                 }
@@ -236,7 +229,7 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
                 val selected = BlackList.selectAll()
 
                 return@newSuspendedTransaction selected.map {
-                    BukkitBlacklistEntry (
+                    BukkitBlacklistEntry(
                         word = it[BlackList.word],
                         reason = it[BlackList.reason],
                         addedAt = it[BlackList.addedAt],
@@ -251,7 +244,7 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
     override suspend fun addToBlacklist(entry: BlacklistWordEntry): Boolean {
         return withContext(Dispatchers.IO) {
             newSuspendedTransaction {
-                if(BlackList.selectAll().where (BlackList.word eq entry.word).empty()) {
+                if (BlackList.selectAll().where(BlackList.word eq entry.word).empty()) {
                     BlackList.insert {
                         it[word] = entry.word
                         it[reason] = entry.reason
@@ -269,7 +262,7 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
     override suspend fun removeFromBlacklist(word: String): Boolean {
         return withContext(Dispatchers.IO) {
             newSuspendedTransaction {
-                if (BlackList.selectAll().where (BlackList.word eq word).empty()) {
+                if (BlackList.selectAll().where(BlackList.word eq word).empty()) {
                     return@newSuspendedTransaction false
                 } else {
                     BlackList.deleteWhere { BlackList.word eq word }

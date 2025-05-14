@@ -17,10 +17,10 @@ import net.kyori.adventure.text.TextReplacementConfig
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import java.util.UUID
+import java.util.*
 import java.util.regex.Pattern
 
-class BukkitChatListener(): Listener {
+class BukkitChatListener() : Listener {
     private val pattern = Regex("^@(all|a|here|everyone)\\b\\s*", RegexOption.IGNORE_CASE)
 
     @EventHandler
@@ -48,7 +48,7 @@ class BukkitChatListener(): Listener {
 
         val signature = event.signedMessage().signature()
 
-        if(signature != null) {
+        if (signature != null) {
             historyService.logCaching(signature, messageID)
         } else {
             plugin.logger.warning("Message signature is null for player ${player.name} with message: $message")
@@ -58,9 +58,9 @@ class BukkitChatListener(): Listener {
 
         if (channel != null && !message.toPlainText().contains(pattern)) {
             event.viewers().clear()
-            event.viewers().addAll(channel.getMembers().map { it.toPlayer()?: return })
+            event.viewers().addAll(channel.getMembers().map { it.toPlayer() ?: return })
 
-            if(spyService.hasChannelSpies(channel)) {
+            if (spyService.hasChannelSpies(channel)) {
                 event.viewers().addAll(spyService.getChannelSpys(channel))
             }
 
@@ -84,13 +84,19 @@ class BukkitChatListener(): Listener {
         }
 
         plugin.launch {
-            surfChatApi.logMessage(player.uniqueId, ChatMessageType.GLOBAL, cleanedMessage, messageID)
+            surfChatApi.logMessage(
+                player.uniqueId,
+                ChatMessageType.GLOBAL,
+                cleanedMessage,
+                messageID
+            )
         }
 
         var formatted = false
 
         plugin.messageValidator.parse(cleanedMessage, ChatMessageType.GLOBAL, player) {
-            messagingSenderService.sendData(player.name,
+            messagingSenderService.sendData(
+                player.name,
                 player.name,
                 formattedMessage,
                 ChatMessageType.GLOBAL,
@@ -100,7 +106,7 @@ class BukkitChatListener(): Listener {
             )
 
             event.renderer { _, _, _, viewer ->
-                plugin.chatFormat.formatMessage (
+                plugin.chatFormat.formatMessage(
                     cleanedMessage,
                     player,
                     viewer as? Player ?: player,
@@ -114,7 +120,7 @@ class BukkitChatListener(): Listener {
             formatted = true
         }
 
-        if(!formatted) {
+        if (!formatted) {
             event.isCancelled = true
         }
     }

@@ -11,7 +11,7 @@ import dev.slne.surf.chat.core.service.messaging.messagingSenderService
 import net.kyori.adventure.text.Component
 import java.util.*
 
-class TeamChatCommand(commandName: String): CommandAPICommand(commandName) {
+class TeamChatCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission("surf.chat.command.teamchat")
         greedyStringArgument("message")
@@ -20,10 +20,26 @@ class TeamChatCommand(commandName: String): CommandAPICommand(commandName) {
             val message = args.getUnchecked<String>("message") ?: return@playerExecutor
             val messageID = UUID.randomUUID()
 
-            messagingSenderService.sendTeamChatMessage(player, plugin.chatFormat.formatMessage(Component.text(message), player, player, ChatMessageType.TEAM, "", messageID, true))
+            messagingSenderService.sendTeamChatMessage(
+                player,
+                plugin.chatFormat.formatMessage(
+                    Component.text(message),
+                    player,
+                    player,
+                    ChatMessageType.TEAM,
+                    "",
+                    messageID,
+                    true
+                )
+            )
 
             plugin.launch {
-                surfChatApi.logMessage(player.uniqueId, ChatMessageType.TEAM, Component.text(message), messageID)
+                surfChatApi.logMessage(
+                    player.uniqueId,
+                    ChatMessageType.TEAM,
+                    Component.text(message),
+                    messageID
+                )
             }
         }
     }

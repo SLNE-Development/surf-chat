@@ -10,7 +10,7 @@ import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import kotlin.system.measureTimeMillis
 
-class BlacklistUpdateCommand(commandName: String): CommandAPICommand(commandName) {
+class BlacklistUpdateCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         playerExecutor { player, _ ->
             plugin.launch {

@@ -14,19 +14,21 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import net.kyori.adventure.util.Services.Fallback
 import org.bukkit.entity.Player
-import java.util.UUID
+import java.util.*
 
 @AutoService(MessagingSenderService::class)
-class BukkitMessagingSenderService: MessagingSenderService, Fallback {
+class BukkitMessagingSenderService : MessagingSenderService, Fallback {
     private var currentServer: String = "Unknown"
     private var forwardingServers = ObjectArraySet<String>()
 
     override fun loadServers() {
-        this.currentServer = plugin.config.getString("cross-server-messages.current-server") ?: "Unknown"
-        this.forwardingServers = ObjectArraySet(plugin.config.getStringList("cross-server-messages.forward-to"))
+        this.currentServer =
+            plugin.config.getString("cross-server-messages.current-server") ?: "Unknown"
+        this.forwardingServers =
+            ObjectArraySet(plugin.config.getStringList("cross-server-messages.forward-to"))
     }
 
-    override fun sendData (
+    override fun sendData(
         player: String,
         target: String,
         message: Component,
@@ -45,14 +47,18 @@ class BukkitMessagingSenderService: MessagingSenderService, Fallback {
         out.writeUTF(channel)
         out.writeUTF(gson.toJson(forwardingServers))
 
-        plugin.server.sendPluginMessage(plugin, SurfChatApi.MESSAGING_CHANNEL_IDENTIFIER, out.toByteArray())
+        plugin.server.sendPluginMessage(
+            plugin,
+            SurfChatApi.MESSAGING_CHANNEL_IDENTIFIER,
+            out.toByteArray()
+        )
     }
 
     override fun sendTeamChatMessage(player: Audience, message: Component) {
         val out = ByteStreams.newDataOutput()
         out.writeUTF(GsonComponentSerializer.gson().serialize(message))
 
-        if(player !is Player) {
+        if (player !is Player) {
             return
         }
 

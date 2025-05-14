@@ -16,7 +16,7 @@ class ToggleSoundCommand(commandName: String) : CommandAPICommand(commandName) {
                 val user = databaseService.getUser(player.uniqueId)
                 val likesSound = user.toggleSound()
 
-                if(likesSound) {
+                if (likesSound) {
                     user.sendText(buildText {
                         success("Du hast Benachrichtigungen aktiviert.")
                     })

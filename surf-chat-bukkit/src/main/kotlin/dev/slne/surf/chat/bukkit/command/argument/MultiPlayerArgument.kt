@@ -56,4 +56,9 @@ class MultiPlayerArgument(nodeName: String) : CustomArgument<ObjectSet<Player>, 
     }
 }
 
-inline fun CommandAPICommand.multiPlayerArgument(nodeName: String, optional: Boolean = false, block: Argument<*>.() -> Unit = {}): CommandAPICommand = withArguments(MultiPlayerArgument(nodeName).setOptional(optional).apply(block))
+inline fun CommandAPICommand.multiPlayerArgument(
+    nodeName: String,
+    optional: Boolean = false,
+    block: Argument<*>.() -> Unit = {}
+): CommandAPICommand =
+    withArguments(MultiPlayerArgument(nodeName).setOptional(optional).apply(block))

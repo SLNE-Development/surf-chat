@@ -27,7 +27,7 @@ class ReplyCommand(commandName: String) : CommandAPICommand(commandName) {
                 val uuid = replyService.getLast(player.uniqueId)
                 val user = databaseService.getUser(player.uniqueId)
 
-                if(uuid == null) {
+                if (uuid == null) {
                     user.sendText(buildText {
                         error("Der Spieler wurde nicht gefunden.")
                     })
@@ -37,14 +37,14 @@ class ReplyCommand(commandName: String) : CommandAPICommand(commandName) {
                 val targetUser = databaseService.getUser(uuid)
                 val target = Bukkit.getPlayer(uuid)
 
-                if(target == null) {
+                if (target == null) {
                     user.sendText(buildText {
                         error("Der Spieler wurde nicht gefunden.")
                     })
                     return@launch
                 }
 
-                if(target == player) {
+                if (target == player) {
                     user.sendText(buildText {
                         error("Du kannst dir nicht selbst schreiben.")
                     })
@@ -53,12 +53,41 @@ class ReplyCommand(commandName: String) : CommandAPICommand(commandName) {
 
                 val messageComponent = Component.text(message)
 
-                plugin.messageValidator.parse(messageComponent, ChatMessageType.PRIVATE_TO, player) {
-                    targetUser.sendRawText(plugin.chatFormat.formatMessage(messageComponent, player, target, ChatMessageType.PRIVATE_FROM, "", UUID.randomUUID(), true))
-                    user.sendRawText(plugin.chatFormat.formatMessage(messageComponent, player, target, ChatMessageType.PRIVATE_TO, "", UUID.randomUUID(), true))
+                plugin.messageValidator.parse(
+                    messageComponent,
+                    ChatMessageType.PRIVATE_TO,
+                    player
+                ) {
+                    targetUser.sendRawText(
+                        plugin.chatFormat.formatMessage(
+                            messageComponent,
+                            player,
+                            target,
+                            ChatMessageType.PRIVATE_FROM,
+                            "",
+                            UUID.randomUUID(),
+                            true
+                        )
+                    )
+                    user.sendRawText(
+                        plugin.chatFormat.formatMessage(
+                            messageComponent,
+                            player,
+                            target,
+                            ChatMessageType.PRIVATE_TO,
+                            "",
+                            UUID.randomUUID(),
+                            true
+                        )
+                    )
 
                     plugin.launch {
-                        surfChatApi.logMessage(player.uniqueId, ChatMessageType.REPLY, messageComponent, UUID.randomUUID())
+                        surfChatApi.logMessage(
+                            player.uniqueId,
+                            ChatMessageType.REPLY,
+                            messageComponent,
+                            UUID.randomUUID()
+                        )
                     }
                 }
             }

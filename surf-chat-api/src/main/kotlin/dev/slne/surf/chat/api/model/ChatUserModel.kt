@@ -1,7 +1,7 @@
 package dev.slne.surf.chat.api.model
 
 import it.unimi.dsi.fastutil.objects.ObjectSet
-import java.util.UUID
+import java.util.*
 
 /**
  * Represents a chat user model.

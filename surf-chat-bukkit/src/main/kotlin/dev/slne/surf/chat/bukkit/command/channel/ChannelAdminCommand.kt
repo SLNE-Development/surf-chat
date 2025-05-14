@@ -2,7 +2,6 @@ package dev.slne.surf.chat.bukkit.command.channel
 
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.subcommand
-import dev.slne.surf.chat.bukkit.command.channel.*
 
 class ChannelAdminCommand(commandName: String) : CommandAPICommand(commandName) {
     init {

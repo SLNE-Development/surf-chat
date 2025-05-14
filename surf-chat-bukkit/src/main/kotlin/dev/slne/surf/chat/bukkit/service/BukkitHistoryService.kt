@@ -22,23 +22,32 @@ import org.bukkit.Bukkit
 import java.util.*
 
 @AutoService(HistoryService::class)
-class BukkitHistoryService(): HistoryService, Fallback {
-    private val messageCache: Object2ObjectMap<UUID, SignedMessage.Signature> = Object2ObjectOpenHashMap()
+class BukkitHistoryService() : HistoryService, Fallback {
+    private val messageCache: Object2ObjectMap<UUID, SignedMessage.Signature> =
+        Object2ObjectOpenHashMap()
 
-    override suspend fun write(user: UUID, type: ChatMessageType, message: Component, messageID: UUID) {
-        databaseService.insertHistoryEntry(user, BukkitHistoryEntry(
-            message = PlainTextComponentSerializer.plainText().serialize(message),
-            timestamp = System.currentTimeMillis(),
-            uuid = user,
-            type = type.toString(),
-            id = messageID,
-            server = BukkitMessagingSenderService.getCurrentServer()
-        ))
+    override suspend fun write(
+        user: UUID,
+        type: ChatMessageType,
+        message: Component,
+        messageID: UUID
+    ) {
+        databaseService.insertHistoryEntry(
+            user, BukkitHistoryEntry(
+                message = PlainTextComponentSerializer.plainText().serialize(message),
+                timestamp = System.currentTimeMillis(),
+                uuid = user,
+                type = type.toString(),
+                id = messageID,
+                server = BukkitMessagingSenderService.getCurrentServer()
+            )
+        )
     }
 
     override suspend fun getHistory(user: ChatUserModel): ObjectList<HistoryEntryModel> {
         return databaseService.loadHistory(user.uuid)
     }
+
     override fun getMessageIds(): ObjectSet<UUID> {
         return messageCache.keys
     }

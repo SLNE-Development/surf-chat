@@ -5,12 +5,21 @@ import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.Component
-import java.util.UUID
+import java.util.*
 
 interface MessagingSenderService {
     fun loadServers()
 
-    fun sendData(player: String, target: String, message: Component, type: ChatMessageType, messageID: UUID, channel: String, forwardingServers: ObjectSet<String>)
+    fun sendData(
+        player: String,
+        target: String,
+        message: Component,
+        type: ChatMessageType,
+        messageID: UUID,
+        channel: String,
+        forwardingServers: ObjectSet<String>
+    )
+
     fun sendTeamChatMessage(player: Audience, message: Component)
 
     companion object {

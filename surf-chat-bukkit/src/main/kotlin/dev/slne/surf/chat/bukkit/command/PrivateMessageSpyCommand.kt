@@ -10,7 +10,7 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.util.emptyObjectSet
 import org.bukkit.entity.Player
 
-class PrivateMessageSpyCommand(commandName: String): CommandAPICommand(commandName) {
+class PrivateMessageSpyCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission("surf.chat.command.pmspy")
         multiPlayerArgument("players", optional = true)

@@ -10,13 +10,26 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
 
-class BukkitMessageValidator(): MessageValidatorModel {
-    override fun validate(message: Component, type: ChatMessageType, sender: Player): MessageValidationResult {
+class BukkitMessageValidator() : MessageValidatorModel {
+    override fun validate(
+        message: Component,
+        type: ChatMessageType,
+        sender: Player
+    ): MessageValidationResult {
         return filterService.find(message, sender)
     }
 
-    override fun parse(message: Component, type: ChatMessageType, player: Player, onSuccess: () -> Unit) {
-        when(plugin.messageValidator.validate(message, ChatMessageType.PRIVATE, player ?: return)) {
+    override fun parse(
+        message: Component,
+        type: ChatMessageType,
+        player: Player,
+        onSuccess: () -> Unit
+    ) {
+        when (plugin.messageValidator.validate(
+            message,
+            ChatMessageType.PRIVATE,
+            player ?: return
+        )) {
             MessageValidationResult.SUCCESS -> {
                 onSuccess()
             }

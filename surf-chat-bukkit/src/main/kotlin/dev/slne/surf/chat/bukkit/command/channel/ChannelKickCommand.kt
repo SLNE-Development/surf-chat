@@ -32,14 +32,14 @@ class ChannelKickCommand(commandName: String) : CommandAPICommand(commandName) {
                     return@launch
                 }
 
-                if(!channel.isModerator(user)) {
+                if (!channel.isModerator(user)) {
                     user.sendText(buildText {
                         error("Du verfügst nicht über die erforderliche Berechtigung.")
                     })
                     return@launch
                 }
 
-                if(channel.isModerator(targetUser) && channel.isModerator(user)) {
+                if (channel.isModerator(targetUser) && channel.isModerator(user)) {
                     user.sendText(buildText {
                         error("Du kannst keine Spieler aus diesem Kanal entfernen.")
                     })

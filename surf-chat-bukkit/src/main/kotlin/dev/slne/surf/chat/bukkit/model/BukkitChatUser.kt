@@ -9,13 +9,13 @@ import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import java.util.*
 
-class BukkitChatUser (
+class BukkitChatUser(
     override val uuid: UUID,
     override val ignoreList: ObjectSet<UUID> = ObjectArraySet(),
     override var pmToggled: Boolean = false,
     override var likesSound: Boolean = true,
     override var channelInvites: Boolean = true
-): ChatUserModel {
+) : ChatUserModel {
     override fun ignoreChannelInvites() {
         channelInvites = false
     }
@@ -46,7 +46,7 @@ class BukkitChatUser (
     }
 
     override fun toggleIgnore(target: UUID): Boolean {
-        if(ignoreList.contains(target)) {
+        if (ignoreList.contains(target)) {
             ignoreList.remove(target)
             return false
         } else {

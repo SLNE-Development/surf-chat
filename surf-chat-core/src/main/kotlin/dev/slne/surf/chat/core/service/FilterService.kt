@@ -4,7 +4,7 @@ import dev.slne.surf.chat.api.type.MessageValidationResult
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
-import java.util.UUID
+import java.util.*
 
 interface FilterService {
     /**

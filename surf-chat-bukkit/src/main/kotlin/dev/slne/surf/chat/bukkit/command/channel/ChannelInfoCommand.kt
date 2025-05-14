@@ -1,12 +1,10 @@
 package dev.slne.surf.chat.bukkit.command.channel
 
-import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.api.type.ChannelStatusType
 import dev.slne.surf.chat.bukkit.command.argument.ChannelArgument
-import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
@@ -18,7 +16,10 @@ class ChannelInfoCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withOptionalArguments(ChannelArgument("channel"))
         playerExecutor { player, args ->
-            val channel = args.getOrDefaultUnchecked<ChannelModel?>("channel", channelService.getChannel(player)) ?: run {
+            val channel = args.getOrDefaultUnchecked<ChannelModel?>(
+                "channel",
+                channelService.getChannel(player)
+            ) ?: run {
                 player.sendText {
                     error("Der Kanal existiert nicht oder ist nicht für dich zugänglich.")
                 }
@@ -43,10 +44,12 @@ class ChannelInfoCommand(commandName: String) : CommandAPICommand(commandName) {
             append {
                 info("| ")
                 decorate(TextDecoration.BOLD)
-            }.spacer("ᴍᴏᴅᴜѕ: ").text(when(channel.status) {
-                ChannelStatusType.PUBLIC -> "Öffentlich"
-                ChannelStatusType.PRIVATE -> "Privat"
-            }, Colors.WHITE).appendNewline()
+            }.spacer("ᴍᴏᴅᴜѕ: ").text(
+                when (channel.status) {
+                    ChannelStatusType.PUBLIC -> "Öffentlich"
+                    ChannelStatusType.PRIVATE -> "Privat"
+                }, Colors.WHITE
+            ).appendNewline()
             append {
                 info("| ")
                 decorate(TextDecoration.BOLD)

@@ -14,24 +14,21 @@ import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.sound
-
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextReplacementConfig
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.MiniMessage
-
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
+import java.util.*
 
-import java.util.UUID
-
-class BukkitChatFormat: ChatFormatModel {
+class BukkitChatFormat : ChatFormatModel {
     private var currentServerNiceName: String = "Unknown"
 
-    override fun formatMessage (
+    override fun formatMessage(
         rawMessage: Component,
         sender: Player,
         viewer: Player,
@@ -40,17 +37,24 @@ class BukkitChatFormat: ChatFormatModel {
         messageID: UUID,
         warn: Boolean
     ): Component {
-        return when(messageType) {
+        return when (messageType) {
             ChatMessageType.GLOBAL -> {
                 buildText {
                     append(components.getDeleteComponent(messageID, viewer))
                     append(components.getTeleportComponent(sender.name, viewer))
-                    append(MiniMessage.miniMessage().deserialize(convertLegacy(LuckPermsExtension.getPrefix(sender) + " " + sender.name)))
+                    append(
+                        MiniMessage.miniMessage()
+                            .deserialize(convertLegacy(LuckPermsExtension.getPrefix(sender) + " " + sender.name))
+                    )
                     darkSpacer(" >> ")
                     append(formatItemTag(highlightPlayers(rawMessage), sender, warn))
 
                     hoverEvent(HoverEvent.showText {
-                        components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
+                        components.getMessageHoverComponent(
+                            sender.name,
+                            System.currentTimeMillis(),
+                            currentServerNiceName
+                        )
                     })
                     clickEvent(ClickEvent.suggestCommand("/msg ${sender.name} "))
                 }
@@ -61,12 +65,19 @@ class BukkitChatFormat: ChatFormatModel {
                     append(components.getDeleteComponent(messageID, viewer))
                     append(components.getTeleportComponent(sender.name, viewer))
                     append(components.getChannelComponent(channel))
-                    append(MiniMessage.miniMessage().deserialize(convertLegacy(LuckPermsExtension.getPrefix(sender) + " " + sender.name)))
+                    append(
+                        MiniMessage.miniMessage()
+                            .deserialize(convertLegacy(LuckPermsExtension.getPrefix(sender) + " " + sender.name))
+                    )
                     darkSpacer(" >> ")
                     append(formatItemTag(rawMessage, sender, warn))
 
                     hoverEvent(HoverEvent.showText {
-                        components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
+                        components.getMessageHoverComponent(
+                            sender.name,
+                            System.currentTimeMillis(),
+                            currentServerNiceName
+                        )
                     })
                     clickEvent(ClickEvent.suggestCommand("/msg ${sender.name} "))
                 }
@@ -79,12 +90,19 @@ class BukkitChatFormat: ChatFormatModel {
                     darkSpacer(" | ")
                     variableValue("Du")
                     darkSpacer(" -> ")
-                    append(MiniMessage.miniMessage().deserialize(convertLegacy(LuckPermsExtension.getPrefix(viewer) + " " + viewer.name)))
+                    append(
+                        MiniMessage.miniMessage()
+                            .deserialize(convertLegacy(LuckPermsExtension.getPrefix(viewer) + " " + viewer.name))
+                    )
                     darkSpacer(" >> ")
                     append(formatItemTag(rawMessage, sender, warn))
 
                     hoverEvent(HoverEvent.showText {
-                        components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
+                        components.getMessageHoverComponent(
+                            sender.name,
+                            System.currentTimeMillis(),
+                            currentServerNiceName
+                        )
                     })
                     clickEvent(ClickEvent.suggestCommand("/msg ${viewer.name} "))
                 }
@@ -95,14 +113,21 @@ class BukkitChatFormat: ChatFormatModel {
                     darkSpacer(">> ")
                     append(Component.text("PM", Colors.RED))
                     darkSpacer(" | ")
-                    append(MiniMessage.miniMessage().deserialize(convertLegacy(LuckPermsExtension.getPrefix(sender) + " " + sender.name)))
+                    append(
+                        MiniMessage.miniMessage()
+                            .deserialize(convertLegacy(LuckPermsExtension.getPrefix(sender) + " " + sender.name))
+                    )
                     darkSpacer(" -> ")
                     variableValue("Dir")
                     darkSpacer(" >> ")
                     append(formatItemTag(rawMessage, sender, warn))
 
                     hoverEvent(HoverEvent.showText {
-                        components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
+                        components.getMessageHoverComponent(
+                            sender.name,
+                            System.currentTimeMillis(),
+                            currentServerNiceName
+                        )
                     })
                     clickEvent(ClickEvent.suggestCommand("/msg ${sender.name} "))
                 }
@@ -113,12 +138,19 @@ class BukkitChatFormat: ChatFormatModel {
                     darkSpacer(">> ")
                     append(Component.text("TEAM", Colors.RED).decorate(TextDecoration.BOLD))
                     darkSpacer(" | ")
-                    append(MiniMessage.miniMessage().deserialize(convertLegacy(LuckPermsExtension.getPrefix(sender) + " " + sender.name)))
+                    append(
+                        MiniMessage.miniMessage()
+                            .deserialize(convertLegacy(LuckPermsExtension.getPrefix(sender) + " " + sender.name))
+                    )
                     darkSpacer(" >> ")
                     append(formatItemTag(rawMessage, sender, warn))
 
                     hoverEvent(HoverEvent.showText {
-                        components.getMessageHoverComponent(sender.name, System.currentTimeMillis(), currentServerNiceName)
+                        components.getMessageHoverComponent(
+                            sender.name,
+                            System.currentTimeMillis(),
+                            currentServerNiceName
+                        )
                     })
                     clickEvent(ClickEvent.suggestCommand("/msg ${sender.name} "))
                 }
@@ -149,7 +181,10 @@ class BukkitChatFormat: ChatFormatModel {
                     darkSpacer(">> ")
                     append(Component.text("INTERNAL", Colors.DARK_RED))
                     darkSpacer(" | ")
-                    append(MiniMessage.miniMessage().deserialize(convertLegacy(LuckPermsExtension.getPrefix(sender) + " " + sender.name)))
+                    append(
+                        MiniMessage.miniMessage()
+                            .deserialize(convertLegacy(LuckPermsExtension.getPrefix(sender) + " " + sender.name))
+                    )
                     darkSpacer(" >> ")
                     append(rawMessage)
                 }
@@ -174,7 +209,8 @@ class BukkitChatFormat: ChatFormatModel {
     }
 
     override fun loadServer() {
-        this.currentServerNiceName = pluginConfig.getString("cross-server-messages.current-server-name") ?: "Unknown"
+        this.currentServerNiceName =
+            pluginConfig.getString("cross-server-messages.current-server-name") ?: "Unknown"
     }
 
     override fun getServer(): String {
@@ -186,12 +222,12 @@ class BukkitChatFormat: ChatFormatModel {
         val item = player.inventory.itemInMainHand
         val pattern = Regex("\\[(?i)item]")
 
-        if(!pattern.containsMatchIn(message.toPlainText())) {
+        if (!pattern.containsMatchIn(message.toPlainText())) {
             return rawMessage
         }
 
         if (item.type == Material.AIR) {
-            if(warn) {
+            if (warn) {
                 surfChatApi.sendText(player, buildText {
                     error("Du hast kein Item in der Hand!")
                 })
@@ -199,16 +235,18 @@ class BukkitChatFormat: ChatFormatModel {
             return rawMessage
         }
 
-        message = message.replaceText(TextReplacementConfig
-            .builder()
-            .match(pattern.pattern)
-            .replacement(buildText {
-                if (item.amount > 1) {
-                    variableValue("${item.amount}x ")
-                }
-                append(item.displayName())
-            })
-            .build())
+        message = message.replaceText(
+            TextReplacementConfig
+                .builder()
+                .match(pattern.pattern)
+                .replacement(buildText {
+                    if (item.amount > 1) {
+                        variableValue("${item.amount}x ")
+                    }
+                    append(item.displayName())
+                })
+                .build()
+        )
 
         return message
     }
@@ -227,7 +265,7 @@ class BukkitChatFormat: ChatFormatModel {
             plugin.launch {
                 val user = databaseService.getUser(onlinePlayer.uniqueId)
 
-                if(user.likesSound) {
+                if (user.likesSound) {
                     onlinePlayer.playSound(sound {
                         type(Sound.BLOCK_NOTE_BLOCK_PLING)
                         source(net.kyori.adventure.sound.Sound.Source.PLAYER)
@@ -239,14 +277,16 @@ class BukkitChatFormat: ChatFormatModel {
 
 
 
-            message = message.replaceText(TextReplacementConfig
-                .builder()
-                .match(pattern.pattern)
-                .replacement(buildText {
-                    append(Component.text(name))
-                    decorate(TextDecoration.BOLD)
-                })
-                .build())
+            message = message.replaceText(
+                TextReplacementConfig
+                    .builder()
+                    .match(pattern.pattern)
+                    .replacement(buildText {
+                        append(Component.text(name))
+                        decorate(TextDecoration.BOLD)
+                    })
+                    .build()
+            )
         }
 
         return message

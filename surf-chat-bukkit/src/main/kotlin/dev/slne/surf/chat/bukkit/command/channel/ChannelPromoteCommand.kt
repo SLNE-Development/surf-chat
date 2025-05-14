@@ -23,21 +23,21 @@ class ChannelPromoteCommand(commandName: String) : CommandAPICommand(commandName
                 val user = databaseService.getUser(player.uniqueId)
                 val targetUser = databaseService.getUser(target.uniqueId)
 
-                if(channel == null) {
+                if (channel == null) {
                     user.sendText(buildText {
                         error("Du bist in keinem Nachrichtenkanal.")
                     })
                     return@launch
                 }
 
-                if(!channel.isOwner(user)) {
+                if (!channel.isOwner(user)) {
                     user.sendText(buildText {
                         error("Du verfügst nicht über die erforderliche Berechtigung.")
                     })
                     return@launch
                 }
 
-                if(channel.isModerator(targetUser)) {
+                if (channel.isModerator(targetUser)) {
                     user.sendText(buildText {
                         error("Der Spieler ")
                         variableValue(target.name ?: target.uniqueId.toString())

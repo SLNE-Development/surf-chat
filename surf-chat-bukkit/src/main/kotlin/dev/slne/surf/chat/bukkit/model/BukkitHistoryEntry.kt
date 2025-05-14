@@ -3,7 +3,7 @@ package dev.slne.surf.chat.bukkit.model
 import dev.slne.surf.chat.api.model.HistoryEntryModel
 import java.util.*
 
-class BukkitHistoryEntry (
+class BukkitHistoryEntry(
     override val message: String,
     override val timestamp: Long,
     override val uuid: UUID,
@@ -13,4 +13,4 @@ class BukkitHistoryEntry (
     override val deletedBy: String = "Not Deleted.",
 
     override val server: String = "N/A"
-): HistoryEntryModel
+) : HistoryEntryModel

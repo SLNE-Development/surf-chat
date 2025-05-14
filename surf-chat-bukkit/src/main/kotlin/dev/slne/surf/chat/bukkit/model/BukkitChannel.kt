@@ -139,13 +139,11 @@ class BukkitChannel(
         return members.entries.first { it.value == ChannelRoleType.OWNER }.key
     }
 
-    override fun getMembers(): ObjectSet<ChatUserModel> {
-        return members.keys
-    }
-
-    override fun getOnlyMembers(): ObjectSet<ChatUserModel> {
-        return members.entries.filter { it.value == ChannelRoleType.MEMBER }.map { it.key }
-            .toObjectSet()
+    override fun getMembers(includeElevatedUsers: Boolean): ObjectSet<ChatUserModel> {
+        return when(includeElevatedUsers) {
+            true -> members.keys
+            false -> members.entries.filter { it.value == ChannelRoleType.MEMBER }.map { it.key }.toObjectSet()
+        }
     }
 
     override fun getModerators(): ObjectSet<ChatUserModel> {

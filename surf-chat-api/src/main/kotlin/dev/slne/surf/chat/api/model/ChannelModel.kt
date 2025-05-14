@@ -129,16 +129,10 @@ interface ChannelModel {
     fun getOwner(): ChatUserModel
 
     /**
-     * Gets all members of the channel.
+     * Gets members of the channel.
      * @return A set of all channel members.
      */
-    fun getMembers(): ObjectSet<ChatUserModel>
-
-    /**
-     * Gets only the members of the channel (excluding moderators and owners).
-     * @return A set of regular channel members.
-     */
-    fun getOnlyMembers(): ObjectSet<ChatUserModel>
+    fun getMembers(includeElevatedUsers: Boolean = true): ObjectSet<ChatUserModel>
 
     /**
      * Gets all moderators of the channel.

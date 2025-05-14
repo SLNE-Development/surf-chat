@@ -18,7 +18,7 @@ interface HistoryEntryModel {
     /**
      * The unique identifier (UUID) of the user associated with the history entry.
      */
-    val uuid: UUID
+    val userUuid: UUID
 
     /**
      * The type of the history entry (e.g., message type or category).

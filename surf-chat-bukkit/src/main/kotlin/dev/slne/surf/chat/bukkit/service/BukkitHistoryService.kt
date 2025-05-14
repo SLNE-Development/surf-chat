@@ -36,7 +36,7 @@ class BukkitHistoryService() : HistoryService, Fallback {
             user, BukkitHistoryEntry(
                 message = PlainTextComponentSerializer.plainText().serialize(message),
                 timestamp = System.currentTimeMillis(),
-                uuid = user,
+                userUuid = user,
                 type = type.toString(),
                 id = messageID,
                 server = BukkitMessagingSenderService.getCurrentServer()

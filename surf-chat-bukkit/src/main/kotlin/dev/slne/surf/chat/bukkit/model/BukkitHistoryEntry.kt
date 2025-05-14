@@ -6,7 +6,7 @@ import java.util.*
 class BukkitHistoryEntry(
     override val message: String,
     override val timestamp: Long,
-    override val uuid: UUID,
+    override val userUuid: UUID,
     override val type: String,
     override val id: UUID,
     override val deleted: Boolean = false,

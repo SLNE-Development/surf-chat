@@ -72,7 +72,7 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
 
     object ChatHistory : Table() {
         val id = varchar("id", 36).transform({ UUID.fromString(it) }, { it.toString() })
-        val uuid = varchar("uuid", 36).transform({ UUID.fromString(it) }, { it.toString() })
+        val userUuid = varchar("uuid", 36).transform({ UUID.fromString(it) }, { it.toString() })
         val type = text("type")
         val timeStamp = long("timeStamp")
         val message = text("message")
@@ -171,7 +171,7 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
                 val conditions = mutableListOf<Op<Boolean>>()
 
                 if (uuid != null) {
-                    conditions += ChatHistory.uuid eq uuid
+                    conditions += ChatHistory.userUuid eq uuid
                 }
 
                 if (type != null) {
@@ -210,7 +210,7 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
                 return@newSuspendedTransaction query.map {
                     BukkitHistoryEntry(
                         id = it[ChatHistory.id],
-                        uuid = it[ChatHistory.uuid],
+                        userUuid = it[ChatHistory.userUuid],
                         type = it[ChatHistory.type],
                         timestamp = it[ChatHistory.timeStamp],
                         message = it[ChatHistory.message],
@@ -278,7 +278,7 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
             newSuspendedTransaction {
                 ChatHistory.insert {
                     it[id] = entry.id
-                    it[uuid] = user
+                    it[userUuid] = user
                     it[type] = entry.type
                     it[timeStamp] = entry.timestamp
                     it[message] = entry.message

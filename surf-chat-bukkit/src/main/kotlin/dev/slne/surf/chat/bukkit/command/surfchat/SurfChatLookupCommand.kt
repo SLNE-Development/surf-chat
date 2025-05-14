@@ -72,7 +72,7 @@ class SurfChatLookupCommand(commandName: String) : CommandAPICommand(commandName
                 }
 
                 val entriesWithNames = history.map { entry ->
-                    val username = entry.uuid.getUsername()
+                    val username = entry.userUuid.getUsername()
                     entry to username
                 }
 

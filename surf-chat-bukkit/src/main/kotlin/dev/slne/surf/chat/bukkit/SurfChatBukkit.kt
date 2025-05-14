@@ -92,9 +92,9 @@ class SurfChatBukkit() : SuspendingJavaPlugin() {
     }
 
     override suspend fun onDisableAsync() {
-        filterService.saveMessageLimit()
-        chatMotdService.saveMotd()
         val ms = measureTimeMillis {
+            filterService.saveMessageLimit()
+            chatMotdService.saveMotd()
             runBlocking {
                 databaseService.saveAll()
             }

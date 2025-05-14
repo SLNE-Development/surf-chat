@@ -57,7 +57,6 @@ class SurfChatBukkit() : SuspendingJavaPlugin() {
         TeamChatCommand("teamchat").register()
         DenyListCommand("denylist").register()
         PrivateMessageSpyCommand("pmspy").register()
-        IgnoreListCommand("ignorelist").register()
 
         /**
          * Register all listeners.

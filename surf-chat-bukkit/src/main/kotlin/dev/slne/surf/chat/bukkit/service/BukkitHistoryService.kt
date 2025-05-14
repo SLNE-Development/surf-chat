@@ -26,11 +26,6 @@ import java.util.*
 
 @AutoService(HistoryService::class)
 class BukkitHistoryService(): HistoryService, Fallback {
-
-    private val historyCache = Caffeine.newBuilder()
-        .maximumSize(1000)
-        .build<UUID, Object2ObjectMap<HistoryPair, LoggedMessage>>()
-
     private val messageCache: Object2ObjectMap<UUID, SignedMessage.Signature> = Object2ObjectOpenHashMap()
 
     override suspend fun write(user: UUID, type: ChatMessageType, message: Component, messageID: UUID) {

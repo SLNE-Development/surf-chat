@@ -102,9 +102,6 @@ class SurfChatBukkit() : SuspendingJavaPlugin() {
 
         logger.info { "Successfully disabled in ${ms}ms!" }
     }
-
-    fun getTeamMembers(): ObjectSet<Player> =
-        serverPlayers.filter { it.hasPermission(ChatPermissionRegistry.COMMAND_TEAMCHAT) }.toObjectSet()
 }
 
 val plugin = JavaPlugin.getPlugin(SurfChatBukkit::class.java)

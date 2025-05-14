@@ -10,6 +10,7 @@ import com.sksamuel.aedile.core.withRemovalListener
 import dev.slne.surf.chat.api.model.DenyListEntry
 import dev.slne.surf.chat.api.model.ChatUserModel
 import dev.slne.surf.chat.api.model.HistoryEntryModel
+import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.bukkit.model.BukkitDenyListEntry
 import dev.slne.surf.chat.bukkit.model.BukkitChatUser
 import dev.slne.surf.chat.bukkit.model.BukkitHistoryEntry
@@ -73,7 +74,7 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
     object ChatHistory : Table() {
         val entryUuid = varchar("id", 36).transform({ UUID.fromString(it) }, { it.toString() })
         val userUuid = varchar("uuid", 36).transform({ UUID.fromString(it) }, { it.toString() })
-        val type = text("type")
+        val type = text("type").transform({ ChatMessageType.valueOf(it)}, { it.toString()} )
         val timeStamp = long("timeStamp")
         val message = text("message")
         val deleted = bool("deleted").default(false)
@@ -175,7 +176,7 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
                 }
 
                 if (type != null) {
-                    conditions += ChatHistory.type eq type
+                    conditions += ChatHistory.type eq ChatMessageType.valueOf(type)
                 }
 
                 if (rangeMillis != null) {

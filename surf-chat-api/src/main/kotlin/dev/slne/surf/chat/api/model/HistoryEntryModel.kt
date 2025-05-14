@@ -1,5 +1,6 @@
 package dev.slne.surf.chat.api.model
 
+import dev.slne.surf.chat.api.type.ChatMessageType
 import java.util.*
 
 /**
@@ -23,7 +24,7 @@ interface HistoryEntryModel {
     /**
      * The type of the history entry (e.g., message type or category).
      */
-    val type: String
+    val type: ChatMessageType
 
     /**
      * The timestamp (in milliseconds since epoch) when the history entry was created.

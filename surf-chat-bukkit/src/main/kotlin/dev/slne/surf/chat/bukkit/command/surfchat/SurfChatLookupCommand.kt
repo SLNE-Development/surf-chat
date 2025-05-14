@@ -107,7 +107,7 @@ class SurfChatLookupCommand(commandName: String) : CommandAPICommand(commandName
                                 info(username)
                                 appendNewline()
                                 primary("Typ: ")
-                                info(entry.type)
+                                info(entry.type.name)
                                 appendNewline()
                                 primary("Datum: ")
                                 info(formatTime(entry.timestamp))

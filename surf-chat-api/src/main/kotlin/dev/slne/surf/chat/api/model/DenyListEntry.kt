@@ -24,7 +24,7 @@ interface DenyListEntry {
     val addedAt: Long
 
     /**
-     * The identifier (e.g., username or UUID) of the person who added the word to the denylist.
+     * The identifier (name) of the person who added the word to the denylist.
      */
     val addedBy: String
 }

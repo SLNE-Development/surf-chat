@@ -57,11 +57,13 @@ class ChannelInviteRevokeCommand(commandName: String) : CommandAPICommand(comman
                     info(" zurückgezogen.")
                 })
 
-                targetUser.sendText(buildText {
-                    info("Deine Einladung in den Nachrichtenkanal ")
-                    variableValue(channel.name)
-                    info(" wurde zurückgezogen.")
-                })
+                if(!targetUser.isIgnoringChannelInvites()) {
+                    targetUser.sendText(buildText {
+                        info("Deine Einladung in den Nachrichtenkanal ")
+                        variableValue(channel.name)
+                        info(" wurde zurückgezogen.")
+                    })
+                }
             }
         }
     }

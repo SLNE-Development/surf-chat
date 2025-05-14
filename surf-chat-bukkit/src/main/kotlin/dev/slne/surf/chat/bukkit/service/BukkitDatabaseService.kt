@@ -72,6 +72,7 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
             }
         )
 
+        val channelInvites = bool("channelInvites").default(true)
         val pmToggled = bool("pmToggled").default(false)
         val likesSound = bool("likesSound").default(true)
 
@@ -125,7 +126,8 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
                         uuid = it[Users.uuid],
                         ignoreList = it[Users.ignoreList],
                         pmToggled = it[Users.pmToggled],
-                        likesSound = it[Users.likesSound]
+                        likesSound = it[Users.likesSound],
+                        channelInvites = it[Users.channelInvites]
                     )
                 }
             }
@@ -140,6 +142,7 @@ class BukkitDatabaseService(): DatabaseService, Fallback {
                     it[ignoreList] = user.ignoreList
                     it[pmToggled] = user.pmToggled
                     it[likesSound] = user.likesSound
+                    it[channelInvites] = user.channelInvites
                 }
             }
         }

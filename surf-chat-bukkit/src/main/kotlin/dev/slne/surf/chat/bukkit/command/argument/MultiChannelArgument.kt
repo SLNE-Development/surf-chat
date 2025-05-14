@@ -51,8 +51,9 @@ class MultiChannelArgument(nodeName: String) :
                         )
                     }
                 }
-                returnedChannels.addAll(channels)
             }
+
+            returnedChannels.addAll(channels)
         }
 
         returnedChannels

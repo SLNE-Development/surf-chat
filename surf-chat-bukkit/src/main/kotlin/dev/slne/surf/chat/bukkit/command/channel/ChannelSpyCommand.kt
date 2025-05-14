@@ -34,7 +34,14 @@ class ChannelSpyCommand(commandName: String) : CommandAPICommand(commandName) {
             }
 
             channels.forEach {
-                spyService.addChannelSpy(player, it)
+                if(!spyService.getChannelSpys(it).contains(player)) {
+                    spyService.addChannelSpy(player, it)
+                } else {
+                    surfChatApi.sendText(player, buildText {
+                        error("Du spionierst bereits in dem Kanal ${it.name}.")
+                    })
+                    return@playerExecutor
+                }
             }
 
             surfChatApi.sendText(player, buildText {

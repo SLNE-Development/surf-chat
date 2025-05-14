@@ -32,8 +32,6 @@ class BukkitSurfChatApi() : SurfChatApi, Fallback {
     }
 
     override fun sendRawText(player: Player, message: Component, messageID: UUID) {
-        player.sendText {
-            append(message)
-        }
+        player.sendMessage(message)
     }
 }

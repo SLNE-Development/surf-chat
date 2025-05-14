@@ -12,13 +12,13 @@ class ChannelInviteArgument(nodeName: String) :
             val channel = channelService.getChannel(info.input())
                 ?: throw CustomArgumentException.fromAdventureComponent { buildText {
                     appendPrefix()
-                    error("Der Kanal exestiert nicht.")
+                    error("Der Kanal existiert nicht.")
                 } }
 
             if (!channel.isInvited(info.sender())) {
                 throw CustomArgumentException.fromAdventureComponent { buildText {
                     appendPrefix()
-                    error("Dieser Kanal ist nicht für dich zugänglich.")
+                    error("Du bist nicht in diesen Kanal eingeladen.")
                 } }
             }
             channel

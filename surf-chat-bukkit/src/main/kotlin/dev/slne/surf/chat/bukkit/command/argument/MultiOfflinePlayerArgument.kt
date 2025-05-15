@@ -13,7 +13,7 @@ import org.bukkit.Bukkit
 class MultiOfflinePlayerArgument(nodeName: String) :
     CustomArgument<MultiPlayerSelectorData, String>(StringArgument(nodeName), { info ->
         when (val input = info.input()) {
-            "all" -> {
+            "#all" -> {
                 MultiPlayerSelectorData(true, null)
             }
 
@@ -29,7 +29,7 @@ class MultiOfflinePlayerArgument(nodeName: String) :
     init {
         this.replaceSuggestions(ArgumentSuggestions.stringCollection {
             val list = ObjectArraySet<String>()
-            list.add("all")
+            list.add("#all")
             list.addAll(serverPlayers.map { it.name })
             list
         })

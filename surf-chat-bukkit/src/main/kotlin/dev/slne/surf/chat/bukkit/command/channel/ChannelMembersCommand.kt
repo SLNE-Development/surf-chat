@@ -17,7 +17,7 @@ import net.kyori.adventure.text.format.TextDecoration
 class ChannelMembersCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withArguments(ChannelArgument("channel").setOptional(true))
-        integerArgument("page", 1, Int.MAX_VALUE, true)
+        integerArgument("page", 1, optional = true)
         withPermission(ChatPermissionRegistry.COMMAND_CHANNEL_MEMBERS)
         playerExecutor { player, args ->
             val page = args.getOrDefaultUnchecked("page", 1)

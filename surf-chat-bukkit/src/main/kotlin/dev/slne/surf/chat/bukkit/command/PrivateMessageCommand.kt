@@ -39,15 +39,15 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
                 val message = args.getUnchecked<String>("message") ?: return@launch
                 val messageComponent = Component.text(message)
 
-                val user = databaseService.getUser(player.uniqueId)
-                val targetUser = databaseService.getUser(target.uniqueId)
-
-                if (targetUser.uuid == user.uuid) {
-                    user.sendText(buildText {
+                if(target.uniqueId == player.uniqueId) {
+                    surfChatApi.sendText(player, buildText {
                         error("Du kannst dir selbst keine Nachrichten senden.")
                     })
                     return@launch
                 }
+
+                val user = databaseService.getUser(player.uniqueId)
+                val targetUser = databaseService.getUser(target.uniqueId)
 
                 if (targetUser.isIgnoring(user.uuid)) {
                     targetUser.sendText(buildText {

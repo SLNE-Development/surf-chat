@@ -49,13 +49,13 @@ class BukkitChatFormat : ChatFormatModel {
                     darkSpacer(" >> ")
                     append(formatItemTag(highlightPlayers(rawMessage), sender, warn))
 
-                    hoverEvent(HoverEvent.showText {
+                    hoverEvent(
                         components.getMessageHoverComponent(
                             sender.name,
                             System.currentTimeMillis(),
                             currentServerNiceName
                         )
-                    })
+                    )
                     clickEvent(ClickEvent.suggestCommand("/msg ${sender.name} "))
                 }
             }
@@ -72,13 +72,13 @@ class BukkitChatFormat : ChatFormatModel {
                     darkSpacer(" >> ")
                     append(formatItemTag(rawMessage, sender, warn))
 
-                    hoverEvent(HoverEvent.showText {
+                    hoverEvent(
                         components.getMessageHoverComponent(
                             sender.name,
                             System.currentTimeMillis(),
                             currentServerNiceName
                         )
-                    })
+                    )
                     clickEvent(ClickEvent.suggestCommand("/msg ${sender.name} "))
                 }
             }
@@ -97,13 +97,13 @@ class BukkitChatFormat : ChatFormatModel {
                     darkSpacer(" >> ")
                     append(formatItemTag(rawMessage, sender, warn))
 
-                    hoverEvent(HoverEvent.showText {
+                    hoverEvent(
                         components.getMessageHoverComponent(
                             sender.name,
                             System.currentTimeMillis(),
                             currentServerNiceName
                         )
-                    })
+                    )
                     clickEvent(ClickEvent.suggestCommand("/msg ${viewer.name} "))
                 }
             }
@@ -122,13 +122,13 @@ class BukkitChatFormat : ChatFormatModel {
                     darkSpacer(" >> ")
                     append(formatItemTag(rawMessage, sender, warn))
 
-                    hoverEvent(HoverEvent.showText {
+                    hoverEvent(
                         components.getMessageHoverComponent(
                             sender.name,
                             System.currentTimeMillis(),
                             currentServerNiceName
                         )
-                    })
+                    )
                     clickEvent(ClickEvent.suggestCommand("/msg ${sender.name} "))
                 }
             }
@@ -145,13 +145,13 @@ class BukkitChatFormat : ChatFormatModel {
                     darkSpacer(" >> ")
                     append(formatItemTag(rawMessage, sender, warn))
 
-                    hoverEvent(HoverEvent.showText {
+                    hoverEvent(
                         components.getMessageHoverComponent(
                             sender.name,
                             System.currentTimeMillis(),
                             currentServerNiceName
                         )
-                    })
+                    )
                     clickEvent(ClickEvent.suggestCommand("/msg ${sender.name} "))
                 }
             }

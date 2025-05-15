@@ -54,7 +54,7 @@ class ChannelListCommand(commandName: String) : CommandAPICommand(commandName) {
                                 }
                             )
                             spacer(")")
-                            hoverEvent(HoverEvent.showText(createInfoMessage(it)))
+                            hoverEvent(createInfoMessage(it))
                         }
                     }
                 }.send(player, page)

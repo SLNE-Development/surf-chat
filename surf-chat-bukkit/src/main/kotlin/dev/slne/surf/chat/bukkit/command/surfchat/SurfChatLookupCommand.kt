@@ -105,7 +105,7 @@ class SurfChatLookupCommand(commandName: String) : CommandAPICommand(commandName
                                 )
                             }
 
-                            hoverEvent(HoverEvent.showText(buildText {
+                            hoverEvent(buildText {
                                 primary("von: ")
                                 info(username)
                                 appendNewline()
@@ -119,7 +119,7 @@ class SurfChatLookupCommand(commandName: String) : CommandAPICommand(commandName
                                 info(entry.server)
                                 appendNewline()
                                 darkSpacer("Klicke, um die Nachricht zu kopieren.")
-                            }))
+                            })
 
                             clickEvent(ClickEvent.copyToClipboard(entry.message))
                         }

@@ -96,13 +96,13 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
                                 info("[${player.name} -> ${target.name}] ")
                                 append(messageComponent)
 
-                                hoverEvent(HoverEvent.showText {
+                                hoverEvent(
                                     components.getMessageHoverComponent(
                                         player.name,
                                         System.currentTimeMillis(),
                                         "N/A"
                                     )
-                                })
+                                )
                                 clickEvent(ClickEvent.suggestCommand("/msg ${player.name} "))
                             }
                         }

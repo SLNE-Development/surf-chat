@@ -68,7 +68,7 @@ class ChannelInviteCommand(commandName: String) : CommandAPICommand(commandName)
                     info(" eingeladen.")
                 })
 
-                if (!targetUser.isIgnoringChannelInvites()) {
+                if (targetUser.channelInvites) {
                     targetUser.sendText(buildText {
                         info("Du wurdest in den Nachrichtenkanal ")
                         variableValue(channel.name)

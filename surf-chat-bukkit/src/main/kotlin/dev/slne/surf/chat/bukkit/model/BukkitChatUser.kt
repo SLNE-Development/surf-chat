@@ -16,21 +16,9 @@ class BukkitChatUser(
     override var soundEnabled: Boolean = true,
     override var channelInvites: Boolean = true
 ) : ChatUserModel {
-    override fun ignoreChannelInvites() {
-        channelInvites = false
-    }
-
-    override fun unignoreChannelInvites() {
-        channelInvites = true
-    }
-
     override fun toggleChannelInvites(): Boolean {
         channelInvites = !channelInvites
         return channelInvites
-    }
-
-    override fun isIgnoringChannelInvites(): Boolean {
-        return !channelInvites
     }
 
     override fun isIgnoring(target: UUID): Boolean {

@@ -36,26 +36,10 @@ interface ChatUserModel {
     var channelInvites: Boolean
 
     /**
-     * Ignores all channel invites for the user.
-     */
-    fun ignoreChannelInvites()
-
-    /**
-     * Stops ignoring channel invites for the user.
-     */
-    fun unignoreChannelInvites()
-
-    /**
      * Toggles the user's preference for receiving channel invites.
      * @return The new state of the channel invite preference.
      */
     fun toggleChannelInvites(): Boolean
-
-    /**
-     * Checks if the user is currently ignoring channel invites.
-     * @return True if the user is ignoring channel invites, false otherwise.
-     */
-    fun isIgnoringChannelInvites(): Boolean
 
     /**
      * Checks if the user is ignoring a specific target user.

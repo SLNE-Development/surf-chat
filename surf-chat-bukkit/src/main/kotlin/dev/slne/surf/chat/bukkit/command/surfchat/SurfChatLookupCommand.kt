@@ -15,6 +15,7 @@ import dev.slne.surf.chat.bukkit.util.utils.sendText
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import dev.slne.surf.surfapi.core.api.messages.adventure.clickCopiesToClipboard
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
@@ -121,7 +122,7 @@ class SurfChatLookupCommand(commandName: String) : CommandAPICommand(commandName
                                 darkSpacer("Klicke, um die Nachricht zu kopieren.")
                             })
 
-                            clickEvent(ClickEvent.copyToClipboard(entry.message))
+                            clickCopiesToClipboard(entry.message)
                         }
                     }
                 }.send(sender, page)

@@ -5,6 +5,7 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.arguments.EntitySelectorArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.model.ChannelModel
+import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.utils.sendText
@@ -21,16 +22,16 @@ class ChannelInviteRevokeCommand(commandName: String) : CommandAPICommand(comman
             val channel: ChannelModel? = channelService.getChannel(player)
             val target = args.getUnchecked<OfflinePlayer>("player") ?: return@playerExecutor
 
+            if(channel == null) {
+                surfChatApi.sendText(player, buildText {
+                    error("Du bist in keinem Nachrichtenkanal.")
+                })
+                return@playerExecutor
+            }
+
             plugin.launch {
                 val user = databaseService.getUser(player.uniqueId)
                 val targetUser = databaseService.getUser(target.uniqueId)
-
-                if (channel == null) {
-                    user.sendText(buildText {
-                        error("Du bist in keinem Nachrichtenkanal.")
-                    })
-                    return@launch
-                }
 
                 if (!channel.isModerator(user)) {
                     user.sendText(buildText {

@@ -24,7 +24,10 @@ import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import it.unimi.dsi.fastutil.objects.ObjectList
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import net.kyori.adventure.util.Services.Fallback
 import org.bukkit.Bukkit
 import org.jetbrains.exposed.sql.*
@@ -39,6 +42,7 @@ import kotlin.time.Duration.Companion.minutes
 
 @AutoService(DatabaseService::class)
 class BukkitDatabaseService() : DatabaseService, Fallback {
+    private val loadHistoryMutex = Mutex()
     private val dataCache = Caffeine.newBuilder()
         .expireAfterWrite(15.minutes)
         .withRemovalListener { uuid, data, _ ->
@@ -165,57 +169,61 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
         server: String?
     ): ObjectList<HistoryEntryModel> {
         return withContext(Dispatchers.IO) {
-            newSuspendedTransaction {
-                val now = System.currentTimeMillis()
-                val conditions = mutableListOf<Op<Boolean>>()
+            withTimeout(10_000L) {
+                loadHistoryMutex.withLock {
+                    newSuspendedTransaction {
+                        val now = System.currentTimeMillis()
+                        val conditions = mutableListOf<Op<Boolean>>()
 
-                if (uuid != null) {
-                    conditions += ChatHistory.userUuid eq uuid
+                        if (uuid != null) {
+                            conditions += ChatHistory.userUuid eq uuid
+                        }
+
+                        if (type != null) {
+                            conditions += ChatHistory.type eq ChatMessageType.valueOf(type)
+                        }
+
+                        if (rangeMillis != null) {
+                            val minTime = now - rangeMillis
+                            conditions += ChatHistory.timeStamp greaterEq minTime
+                        }
+
+                        if (message != null) {
+                            conditions += ChatHistory.message like "%$message%"
+                        }
+
+                        if (deletedBy != null) {
+                            conditions += ChatHistory.deletedBy eq deletedBy
+                        }
+
+                        if (server != null) {
+                            conditions += ChatHistory.server eq server
+                        }
+
+                        val query = if (conditions.isNotEmpty()) {
+                            ChatHistory.selectAll()
+                                .where(conditions.reduce { acc, condition -> acc and condition })
+                        } else {
+                            ChatHistory.selectAll()
+                        }
+
+                        return@newSuspendedTransaction query.map {
+                            BukkitHistoryEntry(
+                                entryUuid = it[ChatHistory.entryUuid],
+                                userUuid = it[ChatHistory.userUuid],
+                                type = it[ChatHistory.type],
+                                timestamp = it[ChatHistory.timeStamp],
+                                message = it[ChatHistory.message],
+                                deletedBy = it[ChatHistory.deletedBy],
+                                server = it[ChatHistory.server]
+                            )
+                        }.toObjectList()
+                    }
                 }
-
-                if (type != null) {
-                    conditions += ChatHistory.type eq ChatMessageType.valueOf(type)
-                }
-
-                if (rangeMillis != null) {
-                    val minTime = now - rangeMillis
-                    conditions += ChatHistory.timeStamp greaterEq minTime
-                }
-
-                if (message != null) {
-                    conditions += ChatHistory.message like "%$message%"
-                }
-
-                if (deletedBy != null) {
-                    conditions += ChatHistory.deletedBy eq deletedBy
-                }
-
-                if (server != null) {
-                    conditions += ChatHistory.server eq server
-                }
-
-                val query = if (conditions.isNotEmpty()) {
-                    ChatHistory.selectAll()
-                        .where(conditions.reduce { acc, condition -> acc and condition })
-                } else {
-                    ChatHistory.selectAll()
-                }
-
-
-                return@newSuspendedTransaction query.map {
-                    BukkitHistoryEntry(
-                        entryUuid = it[ChatHistory.entryUuid],
-                        userUuid = it[ChatHistory.userUuid],
-                        type = it[ChatHistory.type],
-                        timestamp = it[ChatHistory.timeStamp],
-                        message = it[ChatHistory.message],
-                        deletedBy = it[ChatHistory.deletedBy],
-                        server = it[ChatHistory.server]
-                    )
-                }.toObjectList()
             }
         }
     }
+
 
     override suspend fun loadDenyList(): ObjectSet<DenyListEntry> {
         return withContext(Dispatchers.IO) {

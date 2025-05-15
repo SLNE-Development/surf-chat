@@ -65,7 +65,7 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
         )
 
         val channelInvites = bool("channelInvites").default(true)
-        val pmToggled = bool("pmToggled").default(false)
+        val pmDisabled = bool("pmDisabled").default(false)
         val soundEnabled = bool("likesSound").default(true)
 
         override val primaryKey = PrimaryKey(uuid)
@@ -118,7 +118,7 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
                     BukkitChatUser(
                         uuid = it[Users.uuid],
                         ignoreList = it[Users.ignoreList],
-                        pmToggled = it[Users.pmToggled],
+                        pmDisabled = it[Users.pmDisabled],
                         soundEnabled = it[Users.soundEnabled],
                         channelInvites = it[Users.channelInvites]
                     )
@@ -133,7 +133,7 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
                 Users.upsert {
                     it[uuid] = user.uuid
                     it[ignoreList] = user.ignoreList
-                    it[pmToggled] = user.pmToggled
+                    it[pmDisabled] = user.pmDisabled
                     it[soundEnabled] = user.soundEnabled
                     it[channelInvites] = user.channelInvites
                 }

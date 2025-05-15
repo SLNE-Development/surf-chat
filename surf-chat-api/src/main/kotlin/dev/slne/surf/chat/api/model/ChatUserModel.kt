@@ -23,7 +23,7 @@ interface ChatUserModel {
     /**
      * Indicates whether private messages (PMs) are toggled on or off.
      */
-    var pmToggled: Boolean
+    var pmDisabled: Boolean
 
     /**
      * Indicates whether the user likes sound notifications.

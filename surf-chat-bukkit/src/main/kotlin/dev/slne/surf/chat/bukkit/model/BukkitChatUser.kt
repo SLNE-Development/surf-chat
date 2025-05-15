@@ -12,7 +12,7 @@ import java.util.*
 class BukkitChatUser(
     override val uuid: UUID,
     override val ignoreList: ObjectSet<UUID> = ObjectArraySet(),
-    override var pmToggled: Boolean = false,
+    override var pmDisabled: Boolean = false,
     override var soundEnabled: Boolean = true,
     override var channelInvites: Boolean = true
 ) : ChatUserModel {
@@ -70,12 +70,12 @@ class BukkitChatUser(
     }
 
     override fun hasOpenPms(): Boolean {
-        return pmToggled
+        return pmDisabled
     }
 
     override fun togglePm(): Boolean {
-        pmToggled = !pmToggled
-        return pmToggled
+        pmDisabled = !pmDisabled
+        return pmDisabled
     }
 
     override fun moveToChannel(channel: ChannelModel) {

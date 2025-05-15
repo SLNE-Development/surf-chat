@@ -29,7 +29,6 @@ class SurfChatLookupCommand(commandName: String) : CommandAPICommand(commandName
                     "--type",
                     "--range",
                     "--message",
-                    "--deleted",
                     "--deletedBy",
                     "--page",
                     "--server"

@@ -52,7 +52,7 @@ class ChannelInviteCommand(commandName: String) : CommandAPICommand(commandName)
                     return@launch
                 }
 
-                if (!channel.isModerator(user)) {
+                if (!channel.hasModeratorPermissions(user)) {
                     user.sendText(buildText {
                         error("Du verfügst nicht über die erforderliche Berechtigung.")
                     })

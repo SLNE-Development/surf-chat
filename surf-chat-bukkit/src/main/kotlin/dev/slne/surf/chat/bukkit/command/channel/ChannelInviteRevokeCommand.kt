@@ -33,7 +33,7 @@ class ChannelInviteRevokeCommand(commandName: String) : CommandAPICommand(comman
                 val user = databaseService.getUser(player.uniqueId)
                 val targetUser = databaseService.getUser(target.uniqueId)
 
-                if (!channel.isModerator(user)) {
+                if (!channel.hasModeratorPermissions(user)) {
                     user.sendText(buildText {
                         error("Du hast keine Moderationsrechte in diesem Nachrichtenkanal.")
                     })

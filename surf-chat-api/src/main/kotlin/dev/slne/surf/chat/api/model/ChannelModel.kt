@@ -5,7 +5,6 @@ import dev.slne.surf.chat.api.type.ChannelStatusType
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import org.bukkit.command.CommandSender
-import org.bukkit.entity.Player
 
 /**
  * Represents a chat channel model.
@@ -152,7 +151,7 @@ interface ChannelModel {
      * @param user The user to check.
      * @return True if the user is a moderator, false otherwise.
      */
-    fun isModerator(user: ChatUserModel): Boolean
+    fun hasModeratorPermissions(user: ChatUserModel): Boolean
 
     /**
      * Checks if a user is a member of the channel.

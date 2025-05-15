@@ -40,7 +40,7 @@ class ChannelPromoteCommand(commandName: String) : CommandAPICommand(commandName
                     return@launch
                 }
 
-                if (channel.isModerator(targetUser)) {
+                if (channel.hasModeratorPermissions(targetUser)) {
                     user.sendText(buildText {
                         error("Der Spieler ")
                         variableValue(target.name ?: target.uniqueId.toString())

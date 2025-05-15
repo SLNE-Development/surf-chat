@@ -32,14 +32,14 @@ class ChannelBanCommand(commandName: String) : CommandAPICommand(commandName) {
                     return@launch
                 }
 
-                if (!channel.isModerator(user)) {
+                if (!channel.hasModeratorPermissions(user)) {
                     user.sendText(buildText {
                         error("Du verfügst nicht über die erforderliche Berechtigung.")
                     })
                     return@launch
                 }
 
-                if (channel.isModerator(targetUser) && channel.isModerator(user)) {
+                if (channel.hasModeratorPermissions(targetUser) && channel.hasModeratorPermissions(user)) {
                     user.sendText(buildText {
                         error("Du kannst diesen Spieler nicht entfernen.")
                     })

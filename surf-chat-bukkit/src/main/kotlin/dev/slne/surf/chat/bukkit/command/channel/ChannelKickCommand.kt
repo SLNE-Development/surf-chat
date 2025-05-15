@@ -35,14 +35,14 @@ class ChannelKickCommand(commandName: String) : CommandAPICommand(commandName) {
                 val user = databaseService.getUser(player.uniqueId)
                 val targetUser = databaseService.getUser(target.uniqueId)
 
-                if (!channel.isModerator(user)) {
+                if (!channel.hasModeratorPermissions(user)) {
                     user.sendText(buildText {
                         error("Du verfügst nicht über die erforderliche Berechtigung.")
                     })
                     return@launch
                 }
 
-                if (channel.isModerator(targetUser) && channel.isModerator(user)) {
+                if (channel.hasModeratorPermissions(targetUser) && channel.hasModeratorPermissions(user)) {
                     user.sendText(buildText {
                         error("Du kannst keine Spieler aus diesem Kanal entfernen.")
                     })

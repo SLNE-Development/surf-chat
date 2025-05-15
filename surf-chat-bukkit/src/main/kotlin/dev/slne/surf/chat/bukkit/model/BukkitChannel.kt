@@ -158,7 +158,7 @@ class BukkitChannel(
         return members[user] == ChannelRoleType.OWNER
     }
 
-    override fun isModerator(user: ChatUserModel): Boolean {
+    override fun hasModeratorPermissions(user: ChatUserModel): Boolean {
         return members[user] == ChannelRoleType.MODERATOR || members[user] == ChannelRoleType.OWNER
     }
 

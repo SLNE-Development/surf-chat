@@ -58,7 +58,7 @@ class ChannelDemoteCommand(commandName: String) : CommandAPICommand(commandName)
                     return@launch
                 }
 
-                if (!channel.isModerator(targetUser) && !channel.isOwner(targetUser)) {
+                if (!channel.hasModeratorPermissions(targetUser) && !channel.isOwner(targetUser)) {
                     user.sendText(buildText {
                         error("Der Spieler ")
                         variableValue(target.name)

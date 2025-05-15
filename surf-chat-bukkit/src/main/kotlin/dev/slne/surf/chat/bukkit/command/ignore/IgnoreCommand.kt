@@ -18,7 +18,7 @@ class IgnoreCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission(ChatPermissionRegistry.COMMAND_IGNORE)
         withArguments(EntitySelectorArgument.OneEntity("target"))
-        subcommand(IgnoreListCommand("list"))
+        subcommand(IgnoreListCommand("#list"))
 
         playerExecutor { player, args ->
             val target: OfflinePlayer by args

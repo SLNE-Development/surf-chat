@@ -10,7 +10,6 @@ import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.adventure.clickSuggestsCommand
 import it.unimi.dsi.fastutil.objects.ObjectSet
-import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.TextDecoration
 import java.util.*
 
@@ -38,7 +37,7 @@ class IgnoreListCommand(commandName: String) : CommandAPICommand(commandName) {
                 }
 
                 PageableMessageBuilder {
-                    pageCommand = "/ignore list %page%"
+                    pageCommand = "/ignore #list %page%"
 
                     title {
                         info(("Ignorierte Spieler").toSmallCaps())
@@ -52,15 +51,14 @@ class IgnoreListCommand(commandName: String) : CommandAPICommand(commandName) {
                             }
                             variableValue(username)
 
-                            hoverEvent(HoverEvent.showText {
+                            hoverEvent(
                                 components.getIgnoreListHoverComponent(
                                     username
                                 )
-                            })
+                            )
                             clickSuggestsCommand("/ignore $username")
                         }
                     }
-
                 }.send(player, page)
             }
         }

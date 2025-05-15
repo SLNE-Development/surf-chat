@@ -61,7 +61,7 @@ interface ChatUserModel {
     fun stopIgnoring(target: UUID)
 
     /**
-     * Toggles the ignore state for a target user.
+     * Toggles the ignored state for a target user.
      * @param target The UUID of the target user.
      * @return The new ignore state for the target user.
      */
@@ -74,13 +74,13 @@ interface ChatUserModel {
     fun toggleSound(): Boolean
 
     /**
-     * Accepts an invite to a specific channel.
+     * Accepts an invitation to a specific channel.
      * @param channel The channel to accept the invite for.
      */
     fun acceptInvite(channel: ChannelModel)
 
     /**
-     * Declines an invite to a specific channel.
+     * Declines an invitation to a specific channel.
      * @param channel The channel to decline the invite for.
      */
     fun declineInvite(channel: ChannelModel)

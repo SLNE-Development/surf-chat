@@ -76,7 +76,6 @@ class ChannelPrivacyModeCommand(commandName: String) : CommandAPICommand(command
                         user.sendText(buildText { error("Der Kanal-Modus '$mode' wurde nicht gefunden.") })
                     }
                 }
-
             }
         }
     }
@@ -85,5 +84,4 @@ class ChannelPrivacyModeCommand(commandName: String) : CommandAPICommand(command
         private const val MODE_PUBLIC = "public"
         private const val MODE_PRIVATE = "private"
     }
-
 }

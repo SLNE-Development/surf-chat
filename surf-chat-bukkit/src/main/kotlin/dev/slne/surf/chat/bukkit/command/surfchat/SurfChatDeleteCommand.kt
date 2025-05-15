@@ -15,12 +15,12 @@ class SurfChatDeleteCommand(commandName: String) : CommandAPICommand(commandName
         withPermission(ChatPermissionRegistry.COMMAND_SURFCHAT_DELETE)
         uuidArgument("messageID")
         playerExecutor { player, args ->
-            val messageID = args.getUnchecked<String>("messageID") ?: return@playerExecutor
+            val messageID = args.getUnchecked<UUID>("messageID") ?: return@playerExecutor
 
-            if (!historyService.deleteMessage(player.name, UUID.fromString(messageID))) {
+            if (!historyService.deleteMessage(player.name, messageID)) {
                 surfChatApi.sendText(player, buildText {
                     error("Eine Nachricht mit der ID ")
-                    variableValue(messageID)
+                    variableValue(messageID.toString())
                     error(" existiert nicht.")
                 })
             }

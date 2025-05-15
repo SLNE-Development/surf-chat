@@ -18,7 +18,7 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 class ChannelPrivacyModeCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission(ChatPermissionRegistry.COMMAND_CHANNEL_MODE)
-        multiLiteralArgument(nodeName = "mode", "public", "private")
+        multiLiteralArgument(nodeName = "mode", MODE_PUBLIC, MODE_PRIVATE)
         playerExecutor { player, args ->
             val channel: ChannelModel? = channelService.getChannel(player)
 
@@ -38,7 +38,7 @@ class ChannelPrivacyModeCommand(commandName: String) : CommandAPICommand(command
                 val mode: String by args
 
                 when (mode) {
-                    "public" -> {
+                    MODE_PUBLIC -> {
                         if (channel.status == ChannelStatusType.PUBLIC) {
                             user.sendText(buildText { error("Der Nachrichtenkanal ist bereits öffentlich.") })
                             return@launch
@@ -55,7 +55,7 @@ class ChannelPrivacyModeCommand(commandName: String) : CommandAPICommand(command
                         })
                     }
 
-                    "private" -> {
+                    MODE_PRIVATE -> {
                         if (channel.status == ChannelStatusType.PRIVATE) {
                             user.sendText(buildText { error("Der Nachrichtenkanal ist bereits privat.") })
                             return@launch
@@ -76,7 +76,14 @@ class ChannelPrivacyModeCommand(commandName: String) : CommandAPICommand(command
                         user.sendText(buildText { error("Der Kanal-Modus '$mode' wurde nicht gefunden.") })
                     }
                 }
+
             }
         }
     }
+
+    companion object {
+        private const val MODE_PUBLIC = "public"
+        private const val MODE_PRIVATE = "private"
+    }
+
 }

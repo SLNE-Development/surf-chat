@@ -8,6 +8,7 @@ import dev.slne.surf.chat.api.type.ChannelRoleType
 import dev.slne.surf.chat.bukkit.model.BukkitChannel
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.utils.edit
+import dev.slne.surf.chat.bukkit.util.utils.handleLeave
 import dev.slne.surf.chat.bukkit.util.utils.sendText
 import dev.slne.surf.chat.bukkit.util.utils.toChatUser
 import dev.slne.surf.chat.core.service.ChannelService
@@ -74,7 +75,7 @@ class BukkitChannelService() : ChannelService, Fallback {
                     return@launch
                 }
 
-                currentChannel.leave(user)
+                currentChannel.handleLeave(user)
             }
 
             channel.join(player.toChatUser())
@@ -85,38 +86,7 @@ class BukkitChannelService() : ChannelService, Fallback {
         val channel = channelService.getChannel(player) ?: return
 
         plugin.launch {
-            val user = databaseService.getUser(player.uniqueId)
-
-            if (channel.isOwner(user)) {
-                var nextOwner = channel.getModerators().firstOrNull()
-
-                if (nextOwner == null) {
-                    nextOwner = channel.getMembers(false).firstOrNull { it.uuid != user.uuid }
-                }
-
-                if (nextOwner == null) {
-                    channel.leave(user)
-                    channelService.deleteChannel(channel)
-
-                    user.sendText(buildText {
-                        info("Du hast den Nachrichtenkanal ")
-                        variableValue(channel.name)
-                        info(" als letzter Spieler verlassen und der Kanal wurde gelöscht.")
-                    })
-                    return@launch
-                }
-
-                channel.transferOwnership(nextOwner)
-                channel.leave(user)
-                nextOwner.sendText(buildText {
-                    variableValue(player.name)
-                    info(" hat den Nachrichtenkanal ")
-                    variableValue(channel.name)
-                    info(" verlassen. Die Besitzerschaft wurde auf dich übertragen.")
-                })
-            } else {
-                channel.leave(user)
-            }
+            channel.handleLeave(databaseService.getUser(player.uniqueId))
         }
     }
 }

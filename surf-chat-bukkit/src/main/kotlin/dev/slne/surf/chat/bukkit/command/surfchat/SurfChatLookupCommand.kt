@@ -16,9 +16,6 @@ import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.clickCopiesToClipboard
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.event.ClickEvent
-import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.TextDecoration
 
 class SurfChatLookupCommand(commandName: String) : CommandAPICommand(commandName) {
@@ -96,7 +93,7 @@ class SurfChatLookupCommand(commandName: String) : CommandAPICommand(commandName
                     entriesWithNames.forEach { (entry, username) ->
                         line {
                             darkSpacer(" - ")
-                            append(Component.text(entry.message, Colors.WHITE))
+                            text(entry.message, Colors.WHITE)
                             spacer(" (${entry.type})")
 
                             if (entry.deleted) {

@@ -11,6 +11,8 @@ import dev.slne.surf.chat.bukkit.util.utils.sendText
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import it.unimi.dsi.fastutil.objects.ObjectSet
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import java.util.*
 
 class IgnoreListCommand(commandName: String) : CommandAPICommand(commandName) {
@@ -28,9 +30,11 @@ class IgnoreListCommand(commandName: String) : CommandAPICommand(commandName) {
                     return@launch
                 }
 
-                val entriesWithNames = ignores.map { entry ->
-                    entry to entry.getUsername()
-                }
+                val entriesWithNames = ignores.map {
+                    async {
+                        it to it.getUsername()
+                    }
+                }.awaitAll()
 
                 user.sendText(buildText {
                     info("Du ignorierst: ")

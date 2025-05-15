@@ -10,6 +10,7 @@ import dev.slne.surf.chat.bukkit.command.argument.ChannelArgument
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.PageableMessageBuilder
 import dev.slne.surf.chat.core.service.channelService
+import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import net.kyori.adventure.text.format.TextDecoration
 
@@ -34,7 +35,7 @@ class ChannelMembersCommand(commandName: String) : CommandAPICommand(commandName
                 pageCommand = "/channel members ${channel.name} %page%"
 
                 title {
-                    info("ᴍɪᴛɢʟɪᴇᴅᴇʀ ᴠᴏɴ ")
+                    info("Mitglider von ".toSmallCaps())
                     variableValue(channel.name)
                 }
 

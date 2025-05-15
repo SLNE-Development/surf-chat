@@ -7,6 +7,7 @@ import dev.slne.surf.chat.api.type.ChannelStatusType
 import dev.slne.surf.chat.bukkit.command.argument.ChannelArgument
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.core.service.channelService
+import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
@@ -34,19 +35,19 @@ class ChannelInfoCommand(commandName: String) : CommandAPICommand(commandName) {
 
     private fun createInfoMessage(channel: ChannelModel): Component {
         return buildText {
-            info("ɪɴꜰᴏʀᴍᴀᴛɪᴏɴᴇɴ").appendNewline()
+            info("Informationen".toSmallCaps()).appendNewline()
             append {
                 info("| ")
                 decorate(TextDecoration.BOLD)
-            }.spacer("ɴᴀᴍᴇ: ").text(channel.name, Colors.WHITE).appendNewline()
+            }.spacer("Name: ".toSmallCaps()).text(channel.name, Colors.WHITE).appendNewline()
             append {
                 info("| ")
                 decorate(TextDecoration.BOLD)
-            }.spacer("ʙᴇѕɪᴛᴢᴇʀ: ").text(channel.getOwner().getName(), Colors.WHITE).appendNewline()
+            }.spacer("Besitzer: ".toSmallCaps()).text(channel.getOwner().getName(), Colors.WHITE).appendNewline()
             append {
                 info("| ")
                 decorate(TextDecoration.BOLD)
-            }.spacer("ᴍᴏᴅᴜѕ: ").text(
+            }.spacer("Modus: ".toSmallCaps()).text(
                 when (channel.status) {
                     ChannelStatusType.PUBLIC -> "Öffentlich"
                     ChannelStatusType.PRIVATE -> "Privat"
@@ -55,11 +56,11 @@ class ChannelInfoCommand(commandName: String) : CommandAPICommand(commandName) {
             append {
                 info("| ")
                 decorate(TextDecoration.BOLD)
-            }.spacer("ᴍɪᴛɢʟɪᴇᴅᴇʀ: ").text(channel.members.size, Colors.WHITE).appendNewline()
+            }.spacer("Mitglieder: ".toSmallCaps()).text(channel.members.size, Colors.WHITE).appendNewline()
             append {
                 info("| ")
                 decorate(TextDecoration.BOLD)
-            }.spacer("ᴇɪɴʟᴀᴅᴜɴɢᴇɴ: ").text(channel.invites.size, Colors.WHITE)
+            }.spacer("Einladungen: ".toSmallCaps()).text(channel.invites.size, Colors.WHITE)
         }
     }
 }

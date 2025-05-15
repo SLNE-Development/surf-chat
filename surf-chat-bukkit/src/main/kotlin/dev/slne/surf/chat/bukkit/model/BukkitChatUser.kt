@@ -2,7 +2,7 @@ package dev.slne.surf.chat.bukkit.model
 
 import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.api.model.ChatUserModel
-import dev.slne.surf.chat.bukkit.util.toPlayer
+import dev.slne.surf.chat.bukkit.util.utils.toPlayer
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
 import it.unimi.dsi.fastutil.objects.ObjectArraySet

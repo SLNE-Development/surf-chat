@@ -6,7 +6,7 @@ import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.CustomArgument
 import dev.jorel.commandapi.arguments.StringArgument
 import dev.slne.surf.chat.bukkit.util.MultiPlayerSelectorData
-import dev.slne.surf.chat.bukkit.util.serverPlayers
+import dev.slne.surf.chat.bukkit.util.utils.serverPlayers
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import org.bukkit.Bukkit
 

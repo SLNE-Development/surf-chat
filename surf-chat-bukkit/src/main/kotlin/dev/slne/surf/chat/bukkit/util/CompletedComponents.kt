@@ -1,6 +1,7 @@
 package dev.slne.surf.chat.bukkit.util
 
 import dev.slne.surf.chat.api.model.ChannelModel
+import dev.slne.surf.chat.bukkit.util.utils.formatTime
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent

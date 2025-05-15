@@ -9,8 +9,8 @@ import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.api.type.ChannelStatusType
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
-import dev.slne.surf.chat.bukkit.util.edit
-import dev.slne.surf.chat.bukkit.util.sendText
+import dev.slne.surf.chat.bukkit.util.utils.edit
+import dev.slne.surf.chat.bukkit.util.utils.sendText
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText

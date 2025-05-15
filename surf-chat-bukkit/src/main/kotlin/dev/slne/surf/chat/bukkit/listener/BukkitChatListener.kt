@@ -5,8 +5,8 @@ import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.service.BukkitMessagingSenderService
-import dev.slne.surf.chat.bukkit.util.toPlainText
-import dev.slne.surf.chat.bukkit.util.toPlayer
+import dev.slne.surf.chat.bukkit.util.utils.toPlainText
+import dev.slne.surf.chat.bukkit.util.utils.toPlayer
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.chat.core.service.messaging.messagingSenderService

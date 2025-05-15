@@ -1,4 +1,4 @@
-package dev.slne.surf.chat.bukkit.util
+package dev.slne.surf.chat.bukkit.util.utils
 
 import com.google.gson.Gson
 import dev.slne.surf.chat.bukkit.plugin

@@ -12,8 +12,8 @@ import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.components
-import dev.slne.surf.chat.bukkit.util.sendRawText
-import dev.slne.surf.chat.bukkit.util.sendText
+import dev.slne.surf.chat.bukkit.util.utils.sendRawText
+import dev.slne.surf.chat.bukkit.util.utils.sendText
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.chat.core.service.replyService
 import dev.slne.surf.chat.core.service.spyService

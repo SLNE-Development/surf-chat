@@ -6,7 +6,7 @@ import dev.slne.surf.chat.api.model.ChatUserModel
 import dev.slne.surf.chat.api.type.ChannelRoleType
 import dev.slne.surf.chat.api.type.ChannelStatusType
 import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.bukkit.util.sendText
+import dev.slne.surf.chat.bukkit.util.utils.sendText
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap

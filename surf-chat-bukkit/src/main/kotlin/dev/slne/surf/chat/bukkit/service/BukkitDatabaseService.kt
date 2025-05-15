@@ -15,7 +15,7 @@ import dev.slne.surf.chat.bukkit.model.BukkitDenyListEntry
 import dev.slne.surf.chat.bukkit.model.BukkitChatUser
 import dev.slne.surf.chat.bukkit.model.BukkitHistoryEntry
 import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.bukkit.util.gson
+import dev.slne.surf.chat.bukkit.util.utils.gson
 import dev.slne.surf.chat.core.service.DatabaseService
 import dev.slne.surf.database.DatabaseProvider
 import dev.slne.surf.surfapi.core.api.util.toObjectList

@@ -16,7 +16,7 @@ import org.bukkit.entity.Player
 class ChannelUnBanCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission(ChatPermissionRegistry.COMMAND_CHANNEL_UNBAN)
-        withArguments(EntitySelectorArgument.OneEntity("player"))
+        withArguments(EntitySelectorArgument.OnePlayer("player"))
         playerExecutor { player, args ->
             val target = args.getUnchecked<Player>("player") ?: return@playerExecutor
             val channel: ChannelModel? = channelService.getChannel(player)

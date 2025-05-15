@@ -28,7 +28,7 @@ import java.util.*
 
 class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
-        withArguments(EntitySelectorArgument.OneEntity("player"))
+        withArguments(EntitySelectorArgument.OnePlayer("player"))
         greedyStringArgument("message")
 
         withAliases("tell", "w", "pm", "dm")

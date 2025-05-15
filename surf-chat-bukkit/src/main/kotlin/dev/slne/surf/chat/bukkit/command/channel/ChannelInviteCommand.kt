@@ -17,7 +17,7 @@ import org.bukkit.OfflinePlayer
 class ChannelInviteCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission(ChatPermissionRegistry.COMMAND_CHANNEL_INVITE)
-        withArguments(EntitySelectorArgument.OneEntity("player"))
+        withArguments(EntitySelectorArgument.OnePlayer("player"))
         playerExecutor { player, args ->
             val channel: ChannelModel? = channelService.getChannel(player)
             val target = args.getUnchecked<OfflinePlayer>("player") ?: return@playerExecutor

@@ -16,7 +16,7 @@ import org.bukkit.OfflinePlayer
 class IgnoreCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission(ChatPermissionRegistry.COMMAND_IGNORE)
-        withArguments(EntitySelectorArgument.OneEntity("target"))
+        withArguments(EntitySelectorArgument.OnePlayer("target"))
 
         playerExecutor { player, args ->
             val target: OfflinePlayer by args

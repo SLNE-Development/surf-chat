@@ -17,7 +17,7 @@ import org.bukkit.entity.Player
 class ChannelMoveCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission(ChatPermissionRegistry.COMMAND_CHANNEL_ADMIN_MOVE)
-        withArguments(EntitySelectorArgument.OneEntity("player"))
+        withArguments(EntitySelectorArgument.OnePlayer("player"))
         withArguments(ChannelArgument("channel"))
         withPermission("surf.chat.command.channel.move")
 

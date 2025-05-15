@@ -10,8 +10,7 @@ class BukkitHistoryEntry(
     override val userUuid: UUID,
     override val type: ChatMessageType,
     override val entryUuid: UUID,
-    override val deleted: Boolean = false,
-    override val deletedBy: String = "Not Deleted.",
+    override val deletedBy: String? = null,
 
     override val server: String = "N/A"
 ) : HistoryEntryModel

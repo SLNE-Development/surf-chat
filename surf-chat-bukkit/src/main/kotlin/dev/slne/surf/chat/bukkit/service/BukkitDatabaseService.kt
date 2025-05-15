@@ -77,8 +77,7 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
         val type = text("type").transform({ ChatMessageType.valueOf(it)}, { it.toString()} )
         val timeStamp = long("timeStamp")
         val message = text("message")
-        val deleted = bool("deleted").default(false)
-        val deletedBy = varchar("deletedBy", 16)
+        val deletedBy = varchar("deletedBy", 16).nullable()
         val server = text("server")
 
         override val primaryKey = PrimaryKey(entryUuid)
@@ -150,7 +149,6 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
             newSuspendedTransaction {
                 ChatHistory.update({ ChatHistory.entryUuid eq messageID }) {
 
-                    it[deleted] = true
                     it[deletedBy] = deleter
                 }
             }
@@ -188,10 +186,6 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
                     conditions += ChatHistory.message like "%$message%"
                 }
 
-                if (deleted != null) {
-                    conditions += ChatHistory.deleted eq deleted
-                }
-
                 if (deletedBy != null) {
                     conditions += ChatHistory.deletedBy eq deletedBy
                 }
@@ -215,7 +209,6 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
                         type = it[ChatHistory.type],
                         timestamp = it[ChatHistory.timeStamp],
                         message = it[ChatHistory.message],
-                        deleted = it[ChatHistory.deleted],
                         deletedBy = it[ChatHistory.deletedBy],
                         server = it[ChatHistory.server]
                     )
@@ -283,7 +276,6 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
                     it[type] = entry.type
                     it[timeStamp] = entry.timestamp
                     it[message] = entry.message
-                    it[deleted] = entry.deleted
                     it[deletedBy] = entry.deletedBy
                     it[server] = entry.server
                 }

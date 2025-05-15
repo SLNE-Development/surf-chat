@@ -96,7 +96,7 @@ class SurfChatLookupCommand(commandName: String) : CommandAPICommand(commandName
                             text(entry.message, Colors.WHITE)
                             spacer(" (${entry.type})")
 
-                            if (entry.deleted) {
+                            if (entry.deletedBy != null) {
                                 appendNewline()
                                 spacer("    (Gelöscht von ${entry.deletedBy})").decorate(
                                     TextDecoration.ITALIC

@@ -29,7 +29,7 @@ class BukkitChatUser(
         ignoreList.add(target)
     }
 
-    override fun unIgnore(target: UUID) {
+    override fun stopIgnoring(target: UUID) {
         ignoreList.remove(target)
     }
 

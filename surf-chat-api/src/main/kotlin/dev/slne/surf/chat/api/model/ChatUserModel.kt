@@ -58,7 +58,7 @@ interface ChatUserModel {
      * Removes a target user from the ignore list.
      * @param target The UUID of the target user to unignore.
      */
-    fun unIgnore(target: UUID)
+    fun stopIgnoring(target: UUID)
 
     /**
      * Toggles the ignore state for a target user.

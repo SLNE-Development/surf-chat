@@ -5,6 +5,7 @@ import dev.jorel.commandapi.CommandAPI
 import dev.slne.surf.chat.api.SurfChatApi
 import dev.slne.surf.chat.api.model.ChatFormatModel
 import dev.slne.surf.chat.api.model.MessageValidatorModel
+import dev.slne.surf.chat.bukkit.command.CommandManager
 import dev.slne.surf.chat.bukkit.command.PrivateMessageCommand
 import dev.slne.surf.chat.bukkit.command.PrivateMessageSpyCommand
 import dev.slne.surf.chat.bukkit.command.ReplyCommand
@@ -21,16 +22,11 @@ import dev.slne.surf.chat.bukkit.listener.BukkitConnectionListener
 import dev.slne.surf.chat.bukkit.model.BukkitChatFormat
 import dev.slne.surf.chat.bukkit.model.BukkitMessageValidator
 import dev.slne.surf.chat.bukkit.service.BukkitMessagingReceiverService
-import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
-import dev.slne.surf.chat.bukkit.util.serverPlayers
 import dev.slne.surf.chat.core.service.*
 import dev.slne.surf.chat.core.service.messaging.messagingSenderService
 import dev.slne.surf.surfapi.bukkit.api.event.register
-import dev.slne.surf.surfapi.core.api.util.toObjectSet
-import it.unimi.dsi.fastutil.objects.ObjectSet
 import kotlinx.coroutines.runBlocking
 import org.bukkit.Bukkit
-import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import kotlin.system.measureTimeMillis
 
@@ -44,20 +40,7 @@ class SurfChatBukkit() : SuspendingJavaPlugin() {
          * Register all commands.
          */
 
-        CommandAPI.unregister("msg")
-        CommandAPI.unregister("tell")
-        CommandAPI.unregister("w")
-
-        ChannelCommand("channel").register()
-        SurfChatCommand("surfchat").register()
-        IgnoreCommand("ignore").register()
-        PrivateMessageCommand("msg").register()
-        ReplyCommand("reply").register()
-        ToggleCommand("toggle").register()
-        TeamChatCommand("teamchat").register()
-        DenyListCommand("denylist").register()
-        PrivateMessageSpyCommand("pmspy").register()
-        IgnoreListCommand("ignorelist").register()
+        CommandManager.registerAll()
 
         /**
          * Register all listeners.

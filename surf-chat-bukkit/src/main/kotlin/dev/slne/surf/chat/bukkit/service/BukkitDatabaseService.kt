@@ -18,6 +18,7 @@ import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.utils.gson
 import dev.slne.surf.chat.core.service.DatabaseService
 import dev.slne.surf.database.DatabaseProvider
+import dev.slne.surf.surfapi.core.api.util.toMutableObjectSet
 import dev.slne.surf.surfapi.core.api.util.toObjectList
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
@@ -61,7 +62,7 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
         val ignoreList = text("ignoreList").transform(
             {
                 val type = object : TypeToken<ObjectArraySet<UUID>>() {}.type
-                gson.fromJson<ObjectArraySet<UUID>>(it, type).toObjectSet()
+                gson.fromJson<ObjectArraySet<UUID>>(it, type).toMutableObjectSet()
             },
             {
                 gson.toJson(it)
@@ -135,7 +136,7 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
             newSuspendedTransaction {
                 Users.upsert {
                     it[uuid] = user.uuid
-                    it[ignoreList] = user.ignoreList
+                    it[ignoreList] = user.ignoreList.toMutableObjectSet()
                     it[pmDisabled] = user.pmDisabled
                     it[soundEnabled] = user.soundEnabled
                     it[channelInvites] = user.channelInvites

@@ -9,30 +9,13 @@ import java.util.*
 interface SurfChatApi {
     /**
      * Logs a message for a specific player.
+     * After logging, the message can be deleted by chat interaction or command.
      *
      * @param player The UUID of the player.
      * @param type The type of chat message.
      * @param message The message to log.
      */
     suspend fun logMessage(player: UUID, type: ChatMessageType, message: Component, messageID: UUID)
-
-    /**
-     * Sends a text message with prefix to a specific player and logs it.
-     *
-     * @param player The player to send the message to.
-     * @param message The message to send.
-     * @param uuid The UUID of the message.
-     */
-    fun sendText(player: Player, message: Component, messageID: UUID = UUID.randomUUID())
-
-    /**
-     * Sends a text message without a prefix to a specific player and logs it.
-     *
-     * @param player The player to send the message to.
-     * @param message The message to send.
-     * @param uuid The UUID of the message.
-     */
-    fun sendRawText(player: Player, message: Component, messageID: UUID = UUID.randomUUID())
 
     companion object {
         val INSTANCE = requiredService<SurfChatApi>()

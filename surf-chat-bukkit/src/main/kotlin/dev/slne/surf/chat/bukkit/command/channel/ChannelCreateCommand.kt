@@ -7,10 +7,9 @@ import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
-import dev.slne.surf.chat.bukkit.util.utils.sendText
+import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 
 class ChannelCreateCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
@@ -22,34 +21,34 @@ class ChannelCreateCommand(commandName: String) : CommandAPICommand(commandName)
                 val name: String by args
 
                 if (channelService.getChannel(player) != null) {
-                    user.sendText(buildText {
+                    user.sendPrefixed{
                         error("Du bist bereits in einem Nachrichtenkanal.")
-                    })
+                    }
                     return@launch
                 }
 
                 if (channelService.getChannel(name) != null) {
-                    user.sendText(buildText {
+                    user.sendPrefixed{
                         error("Es existiert bereits ein Nachrichtenkanal mit dem Namen")
                         variableValue(name)
                         error(".")
-                    })
+                    }
                     return@launch
                 }
 
                 if (!isValidString(name)) {
-                    user.sendText(buildText {
+                    user.sendPrefixed {
                         error("Der Kanalname muss zwischen 3 und 16 Zeichen lang sein und darf nur Buchstaben und Zahlen enthalten.")
-                    })
+                    }
                     return@launch
                 }
 
                 channelService.createChannel(name, user)
-                user.sendText(buildText {
+                user.sendPrefixed {
                     success("Du hast den Nachrichtenkanal ")
                     variableValue(name)
                     success(" erfolgreich erstellt.")
-                })
+                }
             }
         }
     }

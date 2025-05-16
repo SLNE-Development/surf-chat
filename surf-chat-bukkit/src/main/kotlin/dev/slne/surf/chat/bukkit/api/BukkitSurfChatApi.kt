@@ -21,17 +21,4 @@ class BukkitSurfChatApi() : SurfChatApi, Fallback {
     ) {
         historyService.write(player, type, message, messageID)
     }
-
-    override fun sendText(player: Player, message: Component, messageID: UUID) {
-        val finalMessage = buildText {
-            appendPrefix()
-            append(message)
-        }
-
-        this.sendRawText(player, finalMessage, messageID)
-    }
-
-    override fun sendRawText(player: Player, message: Component, messageID: UUID) {
-        player.sendMessage(message)
-    }
 }

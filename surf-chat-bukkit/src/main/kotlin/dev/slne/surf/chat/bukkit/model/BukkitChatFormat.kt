@@ -8,6 +8,7 @@ import dev.slne.surf.chat.bukkit.extension.LuckPermsExtension
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.components
 import dev.slne.surf.chat.bukkit.util.utils.pluginConfig
+import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.bukkit.util.utils.serverPlayers
 import dev.slne.surf.chat.bukkit.util.utils.toPlainText
 import dev.slne.surf.chat.core.service.databaseService
@@ -228,9 +229,9 @@ class BukkitChatFormat : ChatFormatModel {
 
         if (item.type == Material.AIR) {
             if (warn) {
-                surfChatApi.sendText(player, buildText {
+                player.sendPrefixed {
                     error("Du hast kein Item in der Hand!")
-                })
+                }
             }
             return rawMessage
         }

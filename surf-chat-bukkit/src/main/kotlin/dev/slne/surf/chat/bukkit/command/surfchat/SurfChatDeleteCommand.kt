@@ -6,6 +6,7 @@ import dev.jorel.commandapi.kotlindsl.stringArgument
 import dev.jorel.commandapi.kotlindsl.uuidArgument
 import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import java.util.*
@@ -18,11 +19,11 @@ class SurfChatDeleteCommand(commandName: String) : CommandAPICommand(commandName
             val messageID = args.getUnchecked<UUID>("messageID") ?: return@playerExecutor
 
             if (!historyService.deleteMessage(player.name, messageID)) {
-                surfChatApi.sendText(player, buildText {
+                player.sendPrefixed {
                     error("Eine Nachricht mit der ID ")
                     variableValue(messageID.toString())
                     error(" existiert nicht.")
-                })
+                }
             }
         }
     }

@@ -11,7 +11,7 @@ import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.*
 import dev.slne.surf.chat.bukkit.util.utils.formatTime
 import dev.slne.surf.chat.bukkit.util.utils.getUsername
-import dev.slne.surf.chat.bukkit.util.utils.sendText
+import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
@@ -50,9 +50,9 @@ class SurfChatLookupCommand(commandName: String) : CommandAPICommand(commandName
             plugin.launch {
                 val user = databaseService.getUser(sender.uniqueId)
 
-                user.sendText(buildText {
+                user.sendPrefixed {
                     info("Chat-Daten werden geladen...")
-                })
+                }
 
                 val history = databaseService.loadHistory(
                     uuid = target.parse(),
@@ -65,9 +65,9 @@ class SurfChatLookupCommand(commandName: String) : CommandAPICommand(commandName
                 ).sortedByDescending { it.timestamp }
 
                 if (history.isEmpty()) {
-                    user.sendText(buildText {
+                    user.sendPrefixed {
                         error("Es wurden keine passenden Chat-Daten gefunden. Bitte überprüfe deinen Filter (${parsed.toFlagString()})")
-                    })
+                    }
                     return@launch
                 }
 

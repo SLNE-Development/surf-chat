@@ -6,6 +6,7 @@ import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.api.type.ChannelStatusType
 import dev.slne.surf.chat.bukkit.command.argument.ChannelArgument
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.Colors
@@ -23,7 +24,7 @@ class ChannelInfoCommand(commandName: String) : CommandAPICommand(commandName) {
                 "channel",
                 channelService.getChannel(player)
             ) ?: run {
-                player.sendText {
+                player.sendPrefixed {
                     error("Der Kanal existiert nicht oder ist nicht für dich zugänglich.")
                 }
                 return@playerExecutor

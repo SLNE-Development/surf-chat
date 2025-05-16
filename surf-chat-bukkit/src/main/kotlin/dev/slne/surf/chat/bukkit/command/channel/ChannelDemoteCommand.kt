@@ -8,10 +8,9 @@ import dev.slne.surf.chat.api.type.ChannelRoleType
 import dev.slne.surf.chat.bukkit.command.argument.ChannelMembersArgument
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
-import dev.slne.surf.chat.bukkit.util.utils.sendText
+import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import org.bukkit.entity.Player
 
 class ChannelDemoteCommand(commandName: String) : CommandAPICommand(commandName) {
@@ -27,64 +26,62 @@ class ChannelDemoteCommand(commandName: String) : CommandAPICommand(commandName)
                 val targetUser = databaseService.getUser(target.uniqueId)
 
                 if (channel == null) {
-                    user.sendText(buildText {
+                    user.sendPrefixed {
                         error("Du bist in keinem Nachrichtenkanal.")
-                    })
+                    }
                     return@launch
                 }
 
                 if (target.uniqueId == player.uniqueId) {
-                    user.sendText(buildText {
+                    user.sendPrefixed {
                         error("Du kannst dich nicht selbst degradieren.")
-                    })
+                    }
                     return@launch
                 }
 
                 if (!channel.isOwner(user)) {
-                    user.sendText(
-                        buildText {
-                            error("Du verfügst nicht über die erforderliche Berechtigung.")
-                        }
-                    )
+                    user.sendPrefixed {
+                        error("Du verfügst nicht über die erforderliche Berechtigung.")
+                    }
                     return@launch
                 }
 
                 if (!channel.isMember(targetUser)) {
-                    user.sendText(buildText {
+                    user.sendPrefixed {
                         error("Der Spieler ")
                         variableValue(target.name)
                         error(" ist kein Mitglied in dem Nachrichtenkanal.")
-                    })
+                    }
                     return@launch
                 }
 
                 if (!channel.hasModeratorPermissions(targetUser) && !channel.isOwner(targetUser)) {
-                    user.sendText(buildText {
+                    user.sendPrefixed {
                         error("Der Spieler ")
                         variableValue(target.name)
                         error(" ist bereits ein Mitglied.")
-                    })
+                    }
                     return@launch
                 }
 
                 if (channel.members.filter { it.value == ChannelRoleType.OWNER }.isEmpty()) {
-                    user.sendText(buildText {
+                    user.sendPrefixed {
                         error("Der Nachrichtenkanal benötigt mindestens einen Besitzer.")
-                    })
+                    }
                     return@launch
                 }
 
                 channel.demote(targetUser)
 
-                user.sendText(buildText {
+                user.sendPrefixed {
                     success("Du hast ")
                     variableValue(target.name)
                     success(" degradiert.")
-                })
+                }
 
-                targetUser.sendText(buildText {
+                targetUser.sendPrefixed {
                     info("Du wurdest degradiert.")
-                })
+                }
             }
         }
     }

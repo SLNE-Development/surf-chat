@@ -10,7 +10,7 @@ import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
-import dev.slne.surf.chat.bukkit.util.utils.sendText
+import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.service.PlayerLookupService
@@ -26,9 +26,9 @@ class IgnoreCommand(commandName: String) : CommandAPICommand(commandName) {
             val target: OfflinePlayer by args
 
             if(target.uniqueId == player.uniqueId) {
-                surfChatApi.sendText(player, buildText {
+                player.sendPrefixed {
                     error("Du kannst dich nicht selbst ignorieren.")
-                })
+                }
                 return@playerExecutor
             }
 
@@ -36,17 +36,17 @@ class IgnoreCommand(commandName: String) : CommandAPICommand(commandName) {
                 val user = databaseService.getUser(player.uniqueId)
 
                 if (user.toggleIgnore(target.uniqueId)) {
-                    user.sendText(buildText {
+                    user.sendPrefixed {
                         success("Du ignorierst jetzt ")
                         variableValue(target.requestName() ?: target.uniqueId.toString())
                         success(".")
-                    })
+                    }
                 } else {
-                    user.sendText(buildText {
+                    user.sendPrefixed {
                         success("Du ignorierst ")
                         variableValue(target.requestName() ?: target.uniqueId.toString())
                         success(" nicht mehr.")
-                    })
+                    }
                 }
             }
         }

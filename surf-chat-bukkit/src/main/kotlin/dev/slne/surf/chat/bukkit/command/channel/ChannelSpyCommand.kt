@@ -6,6 +6,7 @@ import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.bukkit.command.argument.multiChannelArgument
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.spyService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.util.emptyObjectSet
@@ -21,17 +22,17 @@ class ChannelSpyCommand(commandName: String) : CommandAPICommand(commandName) {
 
             if (channels.isEmpty()) {
                 if (!spyService.isChannelSpying(player)) {
-                    surfChatApi.sendText(player, buildText {
+                    player.sendPrefixed {
                         error("Du spionierst in keinem Kanal.")
-                    })
+                    }
                     return@playerExecutor
                 }
 
                 spyService.clearChannelSpys(player)
 
-                surfChatApi.sendText(player, buildText {
+                player.sendPrefixed {
                     success("Du spionierst in keinem Kanal mehr.")
-                })
+                }
                 return@playerExecutor
             }
 
@@ -39,17 +40,17 @@ class ChannelSpyCommand(commandName: String) : CommandAPICommand(commandName) {
                 if(!spyService.getChannelSpys(it).contains(player)) {
                     spyService.addChannelSpy(player, it)
                 } else {
-                    surfChatApi.sendText(player, buildText {
+                    player.sendPrefixed {
                         error("Du spionierst bereits in dem Kanal ${it.name}.")
-                    })
+                    }
                     return@playerExecutor
                 }
             }
 
-            surfChatApi.sendText(player, buildText {
+            player.sendPrefixed {
                 success("Du spionierst jetzt in den Kanälen: ")
                 variableValue(channels.joinToString(", ") { it.name })
-            })
+            }
         }
     }
 }

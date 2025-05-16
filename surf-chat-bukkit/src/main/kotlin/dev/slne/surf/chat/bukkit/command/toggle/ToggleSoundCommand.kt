@@ -5,9 +5,8 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
-import dev.slne.surf.chat.bukkit.util.utils.sendText
+import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.databaseService
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 
 class ToggleSoundCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
@@ -18,13 +17,13 @@ class ToggleSoundCommand(commandName: String) : CommandAPICommand(commandName) {
                 val likesSound = user.toggleSound()
 
                 if (likesSound) {
-                    user.sendText(buildText {
+                    user.sendPrefixed {
                         success("Du hast Benachrichtigungen aktiviert.")
-                    })
+                    }
                 } else {
-                    user.sendText(buildText {
+                    user.sendPrefixed {
                         success("Du hast Benachrichtigungen deaktiviert.")
-                    })
+                    }
                 }
             }
         }

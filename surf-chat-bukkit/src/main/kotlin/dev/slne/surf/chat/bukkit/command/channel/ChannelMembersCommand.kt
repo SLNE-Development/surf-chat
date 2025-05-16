@@ -9,6 +9,7 @@ import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.bukkit.command.argument.ChannelArgument
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.PageableMessageBuilder
+import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
@@ -25,9 +26,9 @@ class ChannelMembersCommand(commandName: String) : CommandAPICommand(commandName
                 args.getOrDefaultUnchecked("channel", channelService.getChannel(player))
 
             if (channel == null) {
-                surfChatApi.sendText(player, buildText {
+                player.sendPrefixed {
                     error("Du bist in keinem Nachrichtenkanal oder der Kanal existiert nicht.")
-                })
+                }
                 return@playerExecutor
             }
 

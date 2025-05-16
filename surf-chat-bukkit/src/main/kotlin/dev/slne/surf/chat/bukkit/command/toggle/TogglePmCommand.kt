@@ -5,9 +5,8 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
-import dev.slne.surf.chat.bukkit.util.utils.sendText
+import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.databaseService
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 
 class TogglePmCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
@@ -18,16 +17,16 @@ class TogglePmCommand(commandName: String) : CommandAPICommand(commandName) {
                 val ignoring = user.togglePm()
 
                 if (ignoring) {
-                    user.sendText(buildText {
+                    user.sendPrefixed {
                         success("Du ignorierst jetzt privaten Nachrichten. ")
 //                        append {
 //                            spacer("(Freunde können diese Sperre umgehen)").decorate(TextDecoration.ITALIC)
 //                        }
-                    })
+                    }
                 } else {
-                    user.sendText(buildText {
+                    user.sendPrefixed {
                         success("Du ignorierst keine privaten Nachrichten mehr.")
-                    })
+                    }
                 }
             }
         }

@@ -7,10 +7,9 @@ import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.bukkit.command.argument.ChannelArgument
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
-import dev.slne.surf.chat.bukkit.util.utils.sendText
+import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 
 class ChannelForceJoinCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
@@ -23,18 +22,18 @@ class ChannelForceJoinCommand(commandName: String) : CommandAPICommand(commandNa
                 val user = databaseService.getUser(player.uniqueId)
 
                 if (channelService.getChannel(player) != null) {
-                    user.sendText(buildText {
+                    user.sendPrefixed {
                         error("Du bist bereits in einem Nachrichtenkanal.")
-                    })
+                    }
                     return@launch
                 }
 
                 channel.join(user, true)
-                user.sendText(buildText {
+                user.sendPrefixed {
                     success("Du bist dem Nachrichtenkanal ")
                     variableValue(channel.name)
                     success(" beigetreten.")
-                })
+                }
             }
         }
     }

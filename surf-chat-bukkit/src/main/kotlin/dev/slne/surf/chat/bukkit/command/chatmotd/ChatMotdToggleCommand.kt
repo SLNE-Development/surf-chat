@@ -4,6 +4,7 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.chatMotdService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 
@@ -15,14 +16,14 @@ class ChatMotdToggleCommand(commandName: String) : CommandAPICommand(commandName
 
             if (current) {
                 chatMotdService.disableMotd()
-                surfChatApi.sendText(player, buildText {
+                player.sendPrefixed {
                     success("Die Chat-MOTD-Funktion wurde deaktiviert.")
-                })
+                }
             } else {
                 chatMotdService.enableMotd()
-                surfChatApi.sendText(player, buildText {
+                player.sendPrefixed {
                     success("Die Chat-MOTD-Funktion wurde aktiviert.")
-                })
+                }
             }
         }
     }

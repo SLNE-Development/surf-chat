@@ -9,10 +9,9 @@ import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.utils.sendRawText
-import dev.slne.surf.chat.bukkit.util.utils.sendText
+import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.chat.core.service.replyService
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import java.util.*
@@ -29,9 +28,9 @@ class ReplyCommand(commandName: String) : CommandAPICommand(commandName) {
                 val user = databaseService.getUser(player.uniqueId)
 
                 if (uuid == null) {
-                    user.sendText(buildText {
+                    user.sendPrefixed {
                         error("Der Spieler wurde nicht gefunden.")
-                    })
+                    }
                     return@launch
                 }
 
@@ -39,16 +38,16 @@ class ReplyCommand(commandName: String) : CommandAPICommand(commandName) {
                 val target = Bukkit.getPlayer(uuid)
 
                 if (target == null) {
-                    user.sendText(buildText {
+                    user.sendPrefixed {
                         error("Der Spieler wurde nicht gefunden.")
-                    })
+                    }
                     return@launch
                 }
 
                 if (target == player) {
-                    user.sendText(buildText {
+                    user.sendPrefixed {
                         error("Du kannst dir nicht selbst schreiben.")
-                    })
+                    }
                     return@launch
                 }
 

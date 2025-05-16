@@ -4,6 +4,8 @@ import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.service.*
+import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
+import dev.slne.surf.surfapi.core.api.messages.adventure.text
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -45,7 +47,7 @@ class BukkitConnectionListener() : Listener {
         }
 
         if (chatMotdService.isMotdEnabled()) {
-            surfChatApi.sendRawText(player, chatMotdService.getMotd())
+            player.sendText { text(chatMotdService.getMotd()) }
         }
     }
 }

@@ -13,16 +13,13 @@ import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.components
 import dev.slne.surf.chat.bukkit.util.utils.sendRawText
-import dev.slne.surf.chat.bukkit.util.utils.sendText
+import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.chat.core.service.replyService
 import dev.slne.surf.chat.core.service.spyService
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
-import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
-import net.kyori.adventure.text.event.HoverEvent
 import org.bukkit.entity.Player
 import java.util.*
 
@@ -40,9 +37,9 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
                 val messageComponent = Component.text(message)
 
                 if(target.uniqueId == player.uniqueId) {
-                    surfChatApi.sendText(player, buildText {
+                    player.sendPrefixed {
                         error("Du kannst dir selbst keine Nachrichten senden.")
-                    })
+                    }
                     return@launch
                 }
 
@@ -50,9 +47,9 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
                 val targetUser = databaseService.getUser(target.uniqueId)
 
                 if (targetUser.isIgnoring(user.uuid)) {
-                    targetUser.sendText(buildText {
+                    targetUser.sendPrefixed {
                         error("Du ignorierst diesen Spieler.")
-                    })
+                    }
                     return@launch
                 }
 
@@ -92,7 +89,7 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
 
                     if (spyService.hasPrivateMessageSpies(player)) {
                         spyService.getPrivateMessageSpys(player).forEach {
-                            it.sendText {
+                            it.sendPrefixed {
                                 info("[${player.name} -> ${target.name}] ")
                                 append(messageComponent)
 

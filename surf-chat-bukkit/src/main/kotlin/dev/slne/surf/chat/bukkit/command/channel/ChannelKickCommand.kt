@@ -9,7 +9,7 @@ import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.bukkit.command.argument.ChannelMembersArgument
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
-import dev.slne.surf.chat.bukkit.util.utils.sendText
+import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
@@ -25,9 +25,9 @@ class ChannelKickCommand(commandName: String) : CommandAPICommand(commandName) {
             val target = args.getUnchecked<Player>("player") ?: return@playerExecutor
 
             if(channel == null) {
-                surfChatApi.sendText(player, buildText {
+                player.sendPrefixed {
                     error("Du bist in keinem Nachrichtenkanal.")
-                })
+                }
                 return@playerExecutor
             }
 
@@ -36,33 +36,33 @@ class ChannelKickCommand(commandName: String) : CommandAPICommand(commandName) {
                 val targetUser = databaseService.getUser(target.uniqueId)
 
                 if (!channel.hasModeratorPermissions(user)) {
-                    user.sendText(buildText {
+                    user.sendPrefixed {
                         error("Du verfügst nicht über die erforderliche Berechtigung.")
-                    })
+                    }
                     return@launch
                 }
 
                 if (channel.hasModeratorPermissions(targetUser) && channel.hasModeratorPermissions(user)) {
-                    user.sendText(buildText {
+                    user.sendPrefixed {
                         error("Du kannst keine Spieler aus diesem Kanal entfernen.")
-                    })
+                    }
                     return@launch
                 }
 
                 channel.kick(targetUser)
-                user.sendText(buildText {
+                user.sendPrefixed {
                     info("Du hast ")
                     variableValue(targetUser.getName())
                     info(" aus dem Nachrichtenkanal ")
                     variableValue(channel.name)
                     info(" geworfen.")
-                })
+                }
 
-                targetUser.sendText(buildText {
+                targetUser.sendPrefixed {
                     info("Du wurdest aus dem Nachrichtenkanal ")
                     variableValue(channel.name)
                     info(" geworfen.")
-                })
+                }
             }
         }
     }

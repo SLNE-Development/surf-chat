@@ -8,10 +8,9 @@ import dev.slne.surf.chat.api.type.ChannelStatusType
 import dev.slne.surf.chat.bukkit.command.argument.ChannelArgument
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
-import dev.slne.surf.chat.bukkit.util.utils.sendText
+import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 
 class ChannelJoinCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
@@ -24,42 +23,34 @@ class ChannelJoinCommand(commandName: String) : CommandAPICommand(commandName) {
                 val user = databaseService.getUser(player.uniqueId)
 
                 if (channelService.getChannel(player) != null) {
-                    user.sendText(
-                        buildText {
-                            error("Du bist bereits in einem Nachrichtenkanal.")
-                        }
-                    )
+                    user.sendPrefixed {
+                        error("Du bist bereits in einem Nachrichtenkanal.")
+                    }
                     return@launch
                 }
 
                 if (channel.isBanned(user)) {
-                    user.sendText(
-                        buildText {
-                            error("Du wurdest von diesem Nachrichtenkanal ausgeschlossen.")
-                        }
-                    )
+                    user.sendPrefixed {
+                        error("Du wurdest von diesem Nachrichtenkanal ausgeschlossen.")
+                    }
                     return@launch
                 }
 
                 if (channel.status != ChannelStatusType.PUBLIC && !channel.isInvited(user)) {
-                    user.sendText(
-                        buildText {
-                            error("Der Nachrichtenkanal ")
-                            info(channel.name)
-                            error(" ist privat.")
-                        }
-                    )
+                    user.sendPrefixed {
+                        error("Der Nachrichtenkanal ")
+                        info(channel.name)
+                        error(" ist privat.")
+                    }
                     return@launch
                 }
 
                 channel.join(user)
-                user.sendText(
-                    buildText {
-                        info("Du bist dem Nachrichtenkanal ")
-                        variableValue(channel.name)
-                        info(" beigetreten.")
-                    }
-                )
+                user.sendPrefixed {
+                    info("Du bist dem Nachrichtenkanal ")
+                    variableValue(channel.name)
+                    info(" beigetreten.")
+                }
             }
         }
     }

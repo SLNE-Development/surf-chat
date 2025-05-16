@@ -6,10 +6,9 @@ import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
-import dev.slne.surf.chat.bukkit.util.utils.sendText
+import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 
 class ChannelDeleteCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
@@ -21,25 +20,25 @@ class ChannelDeleteCommand(commandName: String) : CommandAPICommand(commandName)
                 val user = databaseService.getUser(player.uniqueId)
 
                 if (channel == null) {
-                    user.sendText(buildText {
+                    user.sendPrefixed {
                         error("Du bist in keinem Nachrichtenkanal.")
-                    })
+                    }
                     return@launch
                 }
 
                 if (!channel.isOwner(user)) {
-                    user.sendText(buildText {
+                    user.sendPrefixed {
                         error("Du bist nicht berechtigt diesen Nachrichtenkanal zu löschen.")
-                    })
+                    }
                     return@launch
                 }
 
                 channelService.deleteChannel(channel)
-                user.sendText(buildText {
+                user.sendPrefixed {
                     success("Du hast den Nachrichtenkanal ")
                     variableValue(channel.name)
                     success(" gelöscht.")
-                })
+                }
             }
         }
 

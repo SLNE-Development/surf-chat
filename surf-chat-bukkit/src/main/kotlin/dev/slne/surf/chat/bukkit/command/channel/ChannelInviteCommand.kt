@@ -9,7 +9,7 @@ import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.components
-import dev.slne.surf.chat.bukkit.util.utils.sendText
+import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
@@ -24,9 +24,9 @@ class ChannelInviteCommand(commandName: String) : CommandAPICommand(commandName)
             val target = args.getUnchecked<OfflinePlayer>("player") ?: return@playerExecutor
 
             if(channel == null) {
-                surfChatApi.sendText(player, buildText {
+                player.sendPrefixed {
                     error("Du bist in keinem Nachrichtenkanal.")
-                })
+                }
                 return@playerExecutor
             }
 
@@ -35,49 +35,49 @@ class ChannelInviteCommand(commandName: String) : CommandAPICommand(commandName)
                 val targetUser = databaseService.getUser(target.uniqueId)
 
                 if (channel.isInvited(targetUser)) {
-                    user.sendText(buildText {
+                    user.sendPrefixed {
                         error("Der Spieler ")
                         variableValue(target.name ?: target.uniqueId.toString())
                         error(" wurde bereits eingeladen.")
-                    })
+                    }
                     return@launch
                 }
 
                 if (channel.isMember(targetUser)) {
-                    user.sendText(buildText {
+                    user.sendPrefixed {
                         error("Der Spieler ")
                         variableValue(target.name ?: target.uniqueId.toString())
                         error(" ist bereits in diesem Nachrichtenkanal.")
-                    })
+                    }
                     return@launch
                 }
 
                 if (!channel.hasModeratorPermissions(user)) {
-                    user.sendText(buildText {
+                    user.sendPrefixed {
                         error("Du verfügst nicht über die erforderliche Berechtigung.")
-                    })
+                    }
                     return@launch
                 }
 
                 channel.invite(targetUser)
 
-                user.sendText(buildText {
+                user.sendPrefixed {
                     info("Du hast ")
                     variableValue(target.name ?: target.uniqueId.toString())
                     info(" in den Nachrichtenkanal ")
                     variableValue(channel.name)
                     info(" eingeladen.")
-                })
+                }
 
                 if (targetUser.channelInvites) {
-                    targetUser.sendText(buildText {
+                    targetUser.sendPrefixed {
                         info("Du wurdest in den Nachrichtenkanal ")
                         variableValue(channel.name)
                         info(" eingeladen. ")
 
                         append(components.getInviteAcceptComponent(channel))
                         append(components.getInviteDeclineComponent(channel))
-                    })
+                    }
                 }
             }
         }

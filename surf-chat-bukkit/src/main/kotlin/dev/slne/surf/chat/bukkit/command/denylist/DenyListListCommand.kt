@@ -9,6 +9,7 @@ import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.PageableMessageBuilder
+import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
@@ -38,9 +39,9 @@ class DenyListListCommand(commandName: String) : CommandAPICommand(commandName) 
                 val page = args.getOrDefaultUnchecked("page", 1)
 
                 if (result.isEmpty()) {
-                    surfChatApi.sendText(player, buildText {
+                    player.sendPrefixed {
                         error("Es sind keine Wörter auf der Denylist.")
-                    })
+                    }
                     return@launch
                 }
 

@@ -6,8 +6,10 @@ import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.bukkit.command.argument.ChannelArgument
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 class ChannelForceDeleteCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
@@ -18,11 +20,11 @@ class ChannelForceDeleteCommand(commandName: String) : CommandAPICommand(command
 
             channelService.deleteChannel(channel)
 
-            surfChatApi.sendText(player, buildText {
+            player.sendPrefixed {
                 success("Der Nachrichtenkanal ")
                 variableValue(channel.name)
                 success(" wurde gelöscht.")
-            })
+            }
         }
     }
 }

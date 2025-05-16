@@ -8,7 +8,7 @@ import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.bukkit.command.argument.ChannelMembersArgument
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
-import dev.slne.surf.chat.bukkit.util.utils.sendText
+import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
@@ -23,9 +23,9 @@ class ChannelPromoteCommand(commandName: String) : CommandAPICommand(commandName
             val target = args.getUnchecked<OfflinePlayer>("player") ?: return@playerExecutor
 
             if(channel == null) {
-                surfChatApi.sendText(player, buildText {
+                player.sendPrefixed {
                     error("Du bist in keinem Nachrichtenkanal.")
-                })
+                }
                 return@playerExecutor
             }
 
@@ -34,32 +34,32 @@ class ChannelPromoteCommand(commandName: String) : CommandAPICommand(commandName
                 val targetUser = databaseService.getUser(target.uniqueId)
 
                 if (!channel.isOwner(user)) {
-                    user.sendText(buildText {
+                    user.sendPrefixed {
                         error("Du verfügst nicht über die erforderliche Berechtigung.")
-                    })
+                    }
                     return@launch
                 }
 
                 if (channel.hasModeratorPermissions(targetUser)) {
-                    user.sendText(buildText {
+                    user.sendPrefixed {
                         error("Der Spieler ")
                         variableValue(target.name ?: target.uniqueId.toString())
                         error(" ist bereits Moderator.")
-                    })
+                    }
                     return@launch
                 }
 
                 channel.promote(targetUser)
 
-                user.sendText(buildText {
+                user.sendPrefixed {
                     success("Du hast ")
                     variableValue(target.name ?: target.uniqueId.toString())
                     success(" befördert.")
-                })
+                }
 
-                targetUser.sendText(buildText {
+                targetUser.sendPrefixed {
                     info("Du wurdest befördert.")
-                })
+                }
             }
         }
     }

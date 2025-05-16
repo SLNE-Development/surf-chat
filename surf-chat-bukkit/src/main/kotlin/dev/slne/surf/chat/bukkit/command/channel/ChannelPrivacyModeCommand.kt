@@ -10,10 +10,9 @@ import dev.slne.surf.chat.api.type.ChannelStatusType
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.utils.edit
-import dev.slne.surf.chat.bukkit.util.utils.sendText
+import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 
 class ChannelPrivacyModeCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
@@ -26,12 +25,12 @@ class ChannelPrivacyModeCommand(commandName: String) : CommandAPICommand(command
                 val user = databaseService.getUser(player.uniqueId)
 
                 if (channel == null) {
-                    user.sendText(buildText { error("Du bist in keinem Nachrichtenkanal.") })
+                    user.sendPrefixed{ error("Du bist in keinem Nachrichtenkanal.") }
                     return@launch
                 }
 
                 if (!channel.isOwner(user)) {
-                    user.sendText(buildText { error("Du verfügst nicht über die erforderliche Berechtigung.") })
+                    user.sendPrefixed { error("Du verfügst nicht über die erforderliche Berechtigung.") }
                     return@launch
                 }
 
@@ -40,7 +39,7 @@ class ChannelPrivacyModeCommand(commandName: String) : CommandAPICommand(command
                 when (mode) {
                     MODE_PUBLIC -> {
                         if (channel.status == ChannelStatusType.PUBLIC) {
-                            user.sendText(buildText { error("Der Nachrichtenkanal ist bereits öffentlich.") })
+                            user.sendPrefixed { error("Der Nachrichtenkanal ist bereits öffentlich.") }
                             return@launch
                         }
 
@@ -48,16 +47,16 @@ class ChannelPrivacyModeCommand(commandName: String) : CommandAPICommand(command
                             status = ChannelStatusType.PUBLIC
                         }
 
-                        user.sendText(buildText {
+                        user.sendPrefixed {
                             info("Der Nachrichtenkanal ")
                             variableValue(channel.name)
                             info(" ist nun öffentlich.")
-                        })
+                        }
                     }
 
                     MODE_PRIVATE -> {
                         if (channel.status == ChannelStatusType.PRIVATE) {
-                            user.sendText(buildText { error("Der Nachrichtenkanal ist bereits privat.") })
+                            user.sendPrefixed { error("Der Nachrichtenkanal ist bereits privat.") }
                             return@launch
                         }
 
@@ -65,15 +64,15 @@ class ChannelPrivacyModeCommand(commandName: String) : CommandAPICommand(command
                             status = ChannelStatusType.PRIVATE
                         }
 
-                        user.sendText(buildText {
+                        user.sendPrefixed {
                             info("Der Nachrichtenkanal ")
                             variableValue(channel.name)
                             info(" ist nun privat.")
-                        })
+                        }
                     }
 
                     else -> {
-                        user.sendText(buildText { error("Der Kanal-Modus '$mode' wurde nicht gefunden.") })
+                        user.sendPrefixed { error("Der Kanal-Modus '$mode' wurde nicht gefunden.") }
                     }
                 }
             }

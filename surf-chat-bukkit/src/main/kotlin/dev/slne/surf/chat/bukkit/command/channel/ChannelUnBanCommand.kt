@@ -8,7 +8,7 @@ import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
-import dev.slne.surf.chat.bukkit.util.utils.sendText
+import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
@@ -23,9 +23,9 @@ class ChannelUnBanCommand(commandName: String) : CommandAPICommand(commandName) 
             val channel: ChannelModel? = channelService.getChannel(player)
 
             if(channel == null) {
-                surfChatApi.sendText(player, buildText {
+                player.sendPrefixed {
                     error("Du bist in keinem Nachrichtenkanal.")
-                })
+                }
                 return@playerExecutor
             }
 
@@ -34,36 +34,36 @@ class ChannelUnBanCommand(commandName: String) : CommandAPICommand(commandName) 
                 val targetUser = databaseService.getUser(target.uniqueId)
 
                 if (!channel.hasModeratorPermissions(user)) {
-                    user.sendText(buildText {
+                    user.sendPrefixed {
                         error("Du verfügst nicht über die erforderliche Berechtigung.")
-                    })
+                    }
                     return@launch
                 }
 
                 if (!channel.isBanned(targetUser)) {
-                    user.sendText(buildText {
+                    user.sendPrefixed {
                         error("Der Spieler ")
                         variableValue(targetUser.getName())
                         error(" ist nicht im Nachrichtenkanal gebannt.")
-                    })
+                    }
                     return@launch
                 }
 
                 channel.unban(targetUser)
 
-                user.sendText(buildText {
+                user.sendPrefixed {
                     success("Du hast den Spieler ")
                     variableValue(target.name)
                     success(" im Nachrichtenkanal ")
                     variableValue(channel.name)
                     success(" entbannt.")
-                })
+                }
 
-                targetUser.sendText(buildText {
+                targetUser.sendPrefixed {
                     info("Du wurdest im Nachrichtenkanal ")
                     variableValue(channel.name)
                     info(" entbannt.")
-                })
+                }
             }
         }
     }

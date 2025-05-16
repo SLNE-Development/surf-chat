@@ -8,10 +8,9 @@ import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.bukkit.command.argument.ChannelArgument
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
-import dev.slne.surf.chat.bukkit.util.utils.sendText
+import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import org.bukkit.entity.Player
 
 class ChannelMoveCommand(commandName: String) : CommandAPICommand(commandName) {
@@ -31,19 +30,19 @@ class ChannelMoveCommand(commandName: String) : CommandAPICommand(commandName) {
 
                 channelService.move(target, channel)
 
-                user.sendText(buildText {
+                user.sendPrefixed {
                     success("Du hast ")
                     variableValue(targetUser.getName())
                     success(" in den Nachrichtenkanal ")
                     variableValue(channel.name)
                     success(" verschoben.")
-                })
+                }
 
-                targetUser.sendText(buildText {
+                targetUser.sendPrefixed {
                     info("Du wurdest in den Nachrichtenkanal ")
                     variableValue(channel.name)
                     info(" verschoben.")
-                })
+                }
             }
         }
     }

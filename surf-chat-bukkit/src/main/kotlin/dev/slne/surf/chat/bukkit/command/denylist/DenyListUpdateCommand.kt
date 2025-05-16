@@ -5,10 +5,9 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
-import dev.slne.surf.chat.bukkit.util.utils.sendText
+import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.denylistService
 import dev.slne.surf.chat.core.service.databaseService
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import kotlin.system.measureTimeMillis
 
 class DenyListUpdateCommand(commandName: String) : CommandAPICommand(commandName) {
@@ -21,10 +20,10 @@ class DenyListUpdateCommand(commandName: String) : CommandAPICommand(commandName
                     denylistService.fetch()
                 }
 
-                user.sendText(buildText {
+                user.sendPrefixed {
                     success("Die Denylist wurde aktualisiert. ")
                     info("(${duration}ms)")
-                })
+                }
             }
         }
     }

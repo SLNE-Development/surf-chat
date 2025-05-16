@@ -4,6 +4,7 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.filterService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 
@@ -13,13 +14,13 @@ class MessageLimitInfoCommand(commandName: String) : CommandAPICommand(commandNa
         playerExecutor { player, _ ->
             val limit = filterService.getMessageLimit()
 
-            surfChatApi.sendText(player, buildText {
+            player.sendPrefixed {
                 info("Das aktuelle Nachrichten-Limit beträgt ")
                 variableValue("${limit.first} Nachrichten")
                 info(" in ")
                 variableValue("${limit.second} Sekunden")
                 info(".")
-            })
+            }
         }
     }
 }

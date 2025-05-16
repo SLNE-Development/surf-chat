@@ -10,6 +10,7 @@ import dev.slne.surf.chat.api.type.ChannelStatusType
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.PageableMessageBuilder
+import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.Colors
@@ -26,9 +27,9 @@ class ChannelListCommand(commandName: String) : CommandAPICommand(commandName) {
             val page = args.getOrDefaultUnchecked("page", 1)
 
             if (channelService.getAllChannels().isEmpty()) {
-                surfChatApi.sendText(player, buildText {
+                player.sendPrefixed {
                     error("Es sind keine Kanäle vorhanden.")
-                })
+                }
 
                 return@playerExecutor
             }

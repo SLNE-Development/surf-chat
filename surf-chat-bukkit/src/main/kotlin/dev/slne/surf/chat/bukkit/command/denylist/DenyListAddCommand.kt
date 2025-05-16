@@ -9,10 +9,9 @@ import dev.jorel.commandapi.kotlindsl.textArgument
 import dev.slne.surf.chat.bukkit.model.BukkitDenyListEntry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
-import dev.slne.surf.chat.bukkit.util.utils.sendText
+import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.denylistService
 import dev.slne.surf.chat.core.service.databaseService
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 
 class DenyListAddCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
@@ -26,9 +25,9 @@ class DenyListAddCommand(commandName: String) : CommandAPICommand(commandName) {
             plugin.launch {
                 val user = databaseService.getUser(player.uniqueId)
                 if (word.isBlank()) {
-                    user.sendText(buildText {
+                    user.sendPrefixed {
                         error("Das Wort muss mindestens ein Zeichen enthalten.")
-                    })
+                    }
                     return@launch
                 }
 
@@ -41,17 +40,17 @@ class DenyListAddCommand(commandName: String) : CommandAPICommand(commandName) {
                     )
                 )
                 if (result) {
-                    user.sendText(buildText {
+                    user.sendPrefixed {
                         success("Du hast das Wort ")
                         variableValue(word)
                         success(" zu der Denylist hinzugefügt.")
-                    })
+                    }
                 } else {
-                    user.sendText(buildText {
+                    user.sendPrefixed {
                         error("Das Wort ")
                         variableValue(word)
                         error(" ist bereits auf der Denylist.")
-                    })
+                    }
                 }
             }
         }

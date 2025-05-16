@@ -9,7 +9,7 @@ import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.*
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.utils.getUsername
-import dev.slne.surf.chat.bukkit.util.utils.sendText
+import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.adventure.clickSuggestsCommand
@@ -33,9 +33,9 @@ class IgnoreListCommand(commandName: String) : CommandAPICommand(commandName) {
                 val ignores: ObjectSet<UUID> = user.ignoreList
 
                 if (ignores.isEmpty()) {
-                    user.sendText(
+                    user.sendPrefixed {
                         error("Du ignorierst niemanden.")
-                    )
+                    }
                     return@launch
                 }
 

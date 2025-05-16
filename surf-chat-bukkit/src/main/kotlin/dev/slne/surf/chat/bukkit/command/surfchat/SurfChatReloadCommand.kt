@@ -6,6 +6,7 @@ import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.chatMotdService
 import dev.slne.surf.chat.core.service.connectionService
 import dev.slne.surf.chat.core.service.messaging.messagingSenderService
@@ -26,10 +27,10 @@ class SurfChatReloadCommand(commandName: String) : CommandAPICommand(commandName
                 chatMotdService.loadMotd()
             }
 
-            surfChatApi.sendText(player, buildText {
+            player.sendPrefixed {
                 success("Das Plugin wurde erfolgreich neu geladen.")
                 info(" (${time}ms)")
-            })
+            }
         }
     }
 }

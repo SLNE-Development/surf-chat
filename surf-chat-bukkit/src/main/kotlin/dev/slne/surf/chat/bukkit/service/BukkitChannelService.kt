@@ -9,12 +9,10 @@ import dev.slne.surf.chat.bukkit.model.BukkitChannel
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.utils.edit
 import dev.slne.surf.chat.bukkit.util.utils.handleLeave
-import dev.slne.surf.chat.bukkit.util.utils.sendText
 import dev.slne.surf.chat.bukkit.util.utils.toChatUser
 import dev.slne.surf.chat.core.service.ChannelService
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.util.Services.Fallback

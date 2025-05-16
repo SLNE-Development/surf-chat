@@ -39,7 +39,7 @@ class ChannelJoinCommand(commandName: String) : CommandAPICommand(commandName) {
                 if (channel.status != ChannelStatusType.PUBLIC && !channel.isInvited(user)) {
                     user.sendPrefixed {
                         error("Der Nachrichtenkanal ")
-                        info(channel.name)
+                        variableValue(channel.name)
                         error(" ist privat.")
                     }
                     return@launch

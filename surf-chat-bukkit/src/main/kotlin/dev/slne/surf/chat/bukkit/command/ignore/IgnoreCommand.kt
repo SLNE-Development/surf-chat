@@ -5,6 +5,8 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.arguments.EntitySelectorArgument
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
+import dev.jorel.commandapi.kotlindsl.subcommand
+
 import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
@@ -18,6 +20,7 @@ class IgnoreCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission(ChatPermissionRegistry.COMMAND_IGNORE)
         withArguments(EntitySelectorArgument.OnePlayer("target"))
+        subcommand(IgnoreListCommand("#list"))
 
         playerExecutor { player, args ->
             val target: OfflinePlayer by args
@@ -36,7 +39,7 @@ class IgnoreCommand(commandName: String) : CommandAPICommand(commandName) {
                     user.sendText(buildText {
                         success("Du ignorierst jetzt ")
                         variableValue(target.requestName() ?: target.uniqueId.toString())
-                        primary(".")
+                        success(".")
                     })
                 } else {
                     user.sendText(buildText {

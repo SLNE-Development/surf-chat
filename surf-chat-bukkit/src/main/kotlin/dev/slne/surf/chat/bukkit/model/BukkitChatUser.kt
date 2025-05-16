@@ -5,13 +5,14 @@ import dev.slne.surf.chat.api.model.ChatUserModel
 import dev.slne.surf.chat.bukkit.util.utils.toPlayer
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
+import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import java.util.*
 
 class BukkitChatUser(
     override val uuid: UUID,
-    override val ignoreList: ObjectSet<UUID> = ObjectArraySet(),
+    override val ignoreList: ObjectSet<UUID> = mutableObjectSetOf(),
     override var pmDisabled: Boolean = false,
     override var soundEnabled: Boolean = true,
     override var channelInvites: Boolean = true

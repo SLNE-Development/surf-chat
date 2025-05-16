@@ -12,7 +12,6 @@ import dev.slne.surf.chat.bukkit.util.utils.getUsername
 import dev.slne.surf.chat.bukkit.util.utils.sendText
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.clickSuggestsCommand
 
 import it.unimi.dsi.fastutil.objects.ObjectSet
@@ -35,9 +34,7 @@ class IgnoreListCommand(commandName: String) : CommandAPICommand(commandName) {
 
                 if (ignores.isEmpty()) {
                     user.sendText(
-                        buildText {
-                            error("Du ignorierst niemanden.")
-                        }
+                        error("Du ignorierst niemanden.")
                     )
                     return@launch
                 }

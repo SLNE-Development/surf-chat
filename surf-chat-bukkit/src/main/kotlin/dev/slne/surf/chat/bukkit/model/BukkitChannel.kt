@@ -8,6 +8,9 @@ import dev.slne.surf.chat.api.type.ChannelStatusType
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.utils.sendText
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import dev.slne.surf.surfapi.core.api.util.mutableObject2ObjectMapOf
+import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
+import dev.slne.surf.surfapi.core.api.util.objectSetOf
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
@@ -19,9 +22,9 @@ import org.bukkit.entity.Player
 class BukkitChannel(
     override val name: String,
     override var status: ChannelStatusType = ChannelStatusType.PRIVATE,
-    override val members: Object2ObjectMap<ChatUserModel, ChannelRoleType> = Object2ObjectOpenHashMap(),
-    override val bannedPlayers: ObjectSet<ChatUserModel> = ObjectArraySet(),
-    override val invites: ObjectSet<ChatUserModel> = ObjectArraySet()
+    override val members: Object2ObjectMap<ChatUserModel, ChannelRoleType> = mutableObject2ObjectMapOf(),
+    override val bannedPlayers: ObjectSet<ChatUserModel> = mutableObjectSetOf(),
+    override val invites: ObjectSet<ChatUserModel> = mutableObjectSetOf()
 ) : ChannelModel {
     override fun join(user: ChatUserModel, silent: Boolean) {
         members[user] = ChannelRoleType.MEMBER

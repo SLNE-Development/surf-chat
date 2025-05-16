@@ -7,7 +7,7 @@ import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.utils.toPlainText
 import dev.slne.surf.chat.core.service.FilterService
 import dev.slne.surf.chat.core.service.denylistService
-import it.unimi.dsi.fastutil.objects.ObjectArraySet
+import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.util.Services.Fallback
 import org.bukkit.entity.Player
@@ -15,7 +15,7 @@ import java.util.*
 
 @AutoService(FilterService::class)
 class BukkitFilterService : FilterService, Fallback {
-    private val allowedDomains = ObjectArraySet<String>()
+    private val allowedDomains = mutableObjectSetOf<String>()
 
     private val messageTimestamps = mutableMapOf<UUID, MutableList<Long>>()
 

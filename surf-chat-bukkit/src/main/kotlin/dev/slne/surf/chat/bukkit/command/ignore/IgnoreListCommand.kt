@@ -23,7 +23,7 @@ import java.util.*
 class IgnoreListCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission(ChatPermissionRegistry.COMMAND_IGNORE_LIST)
-        integerArgument("page", 1, Int.MAX_VALUE, true)
+        integerArgument("page", 1, optional = true)
 
         playerExecutor { player, args ->
             val page = args.getOrDefaultUnchecked("page", 1)

@@ -3,6 +3,7 @@ package dev.slne.surf.chat.bukkit.command
 import com.github.shynixn.mccoroutine.folia.launch
 
 import dev.jorel.commandapi.CommandAPICommand
+import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.EntitySelectorArgument
 import dev.jorel.commandapi.kotlindsl.greedyStringArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
@@ -20,12 +21,17 @@ import dev.slne.surf.chat.core.service.spyService
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
 
 class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
-        withArguments(EntitySelectorArgument.OnePlayer("player"))
+        withArguments(EntitySelectorArgument.OnePlayer("player").replaceSuggestions(
+            ArgumentSuggestions.stringCollection {
+                val players = Bukkit.getOnlinePlayers().map { it.name }
+                players.toSet()
+            }))
         greedyStringArgument("message")
 
         withAliases("tell", "w", "pm", "dm")

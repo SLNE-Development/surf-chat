@@ -2,6 +2,7 @@ package dev.slne.surf.chat.bukkit.command.channel
 
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
+import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.EntitySelectorArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.model.ChannelModel
@@ -12,12 +13,17 @@ import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
 class ChannelUnBanCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission(ChatPermissionRegistry.COMMAND_CHANNEL_UNBAN)
-        withArguments(EntitySelectorArgument.OnePlayer("player"))
+        withArguments(EntitySelectorArgument.OnePlayer("player").replaceSuggestions(
+            ArgumentSuggestions.stringCollection {
+                val players = Bukkit.getOnlinePlayers().map { it.name }
+                players.toSet()
+            }))
         playerExecutor { player, args ->
             val target = args.getUnchecked<Player>("player") ?: return@playerExecutor
             val channel: ChannelModel? = channelService.getChannel(player)

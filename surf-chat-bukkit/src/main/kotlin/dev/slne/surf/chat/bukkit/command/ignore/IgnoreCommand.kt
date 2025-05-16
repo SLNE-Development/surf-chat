@@ -2,6 +2,7 @@ package dev.slne.surf.chat.bukkit.command.ignore
 
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
+import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.EntitySelectorArgument
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
@@ -14,12 +15,17 @@ import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.service.PlayerLookupService
+import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 
 class IgnoreCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission(ChatPermissionRegistry.COMMAND_IGNORE)
-        withArguments(EntitySelectorArgument.OnePlayer("target"))
+        withArguments(EntitySelectorArgument.OnePlayer("target").replaceSuggestions(
+            ArgumentSuggestions.stringCollection {
+                val players = Bukkit.getOnlinePlayers().map { it.name }
+                players.toSet()
+            }))
         subcommand(IgnoreListCommand("#list"))
 
         playerExecutor { player, args ->

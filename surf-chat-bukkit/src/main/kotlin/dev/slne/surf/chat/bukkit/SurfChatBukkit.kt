@@ -1,21 +1,10 @@
 package dev.slne.surf.chat.bukkit
 
 import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
-import dev.jorel.commandapi.CommandAPI
 import dev.slne.surf.chat.api.SurfChatApi
 import dev.slne.surf.chat.api.model.ChatFormatModel
 import dev.slne.surf.chat.api.model.MessageValidatorModel
 import dev.slne.surf.chat.bukkit.command.CommandManager
-import dev.slne.surf.chat.bukkit.command.PrivateMessageCommand
-import dev.slne.surf.chat.bukkit.command.PrivateMessageSpyCommand
-import dev.slne.surf.chat.bukkit.command.ReplyCommand
-import dev.slne.surf.chat.bukkit.command.TeamChatCommand
-import dev.slne.surf.chat.bukkit.command.denylist.DenyListCommand
-import dev.slne.surf.chat.bukkit.command.channel.ChannelCommand
-import dev.slne.surf.chat.bukkit.command.ignore.IgnoreCommand
-import dev.slne.surf.chat.bukkit.command.ignore.IgnoreListCommand
-import dev.slne.surf.chat.bukkit.command.surfchat.SurfChatCommand
-import dev.slne.surf.chat.bukkit.command.toggle.ToggleCommand
 import dev.slne.surf.chat.bukkit.extension.LuckPermsExtension
 import dev.slne.surf.chat.bukkit.listener.BukkitChatListener
 import dev.slne.surf.chat.bukkit.listener.BukkitConnectionListener

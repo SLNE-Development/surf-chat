@@ -6,14 +6,14 @@ import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.CustomArgument
 import dev.jorel.commandapi.arguments.StringArgument
 import dev.slne.surf.chat.bukkit.util.MultiPlayerSelectorData
-import dev.slne.surf.chat.bukkit.util.serverPlayers
+import dev.slne.surf.chat.bukkit.util.utils.serverPlayers
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import org.bukkit.Bukkit
 
 class MultiOfflinePlayerArgument(nodeName: String) :
     CustomArgument<MultiPlayerSelectorData, String>(StringArgument(nodeName), { info ->
         when (val input = info.input()) {
-            "all" -> {
+            "#all" -> {
                 MultiPlayerSelectorData(true, null)
             }
 
@@ -29,7 +29,7 @@ class MultiOfflinePlayerArgument(nodeName: String) :
     init {
         this.replaceSuggestions(ArgumentSuggestions.stringCollection {
             val list = ObjectArraySet<String>()
-            list.add("all")
+            list.add("#all")
             list.addAll(serverPlayers.map { it.name })
             list
         })

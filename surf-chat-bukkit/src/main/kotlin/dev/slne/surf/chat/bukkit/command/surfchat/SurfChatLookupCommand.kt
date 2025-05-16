@@ -9,12 +9,13 @@ import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.bukkit.command.argument.multiOfflinePlayerArgument
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.*
+import dev.slne.surf.chat.bukkit.util.utils.formatTime
+import dev.slne.surf.chat.bukkit.util.utils.getUsername
+import dev.slne.surf.chat.bukkit.util.utils.sendText
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.event.ClickEvent
-import net.kyori.adventure.text.event.HoverEvent
+import dev.slne.surf.surfapi.core.api.messages.adventure.clickCopiesToClipboard
 import net.kyori.adventure.text.format.TextDecoration
 
 class SurfChatLookupCommand(commandName: String) : CommandAPICommand(commandName) {
@@ -28,7 +29,6 @@ class SurfChatLookupCommand(commandName: String) : CommandAPICommand(commandName
                     "--type",
                     "--range",
                     "--message",
-                    "--deleted",
                     "--deletedBy",
                     "--page",
                     "--server"
@@ -92,17 +92,17 @@ class SurfChatLookupCommand(commandName: String) : CommandAPICommand(commandName
                     entriesWithNames.forEach { (entry, username) ->
                         line {
                             darkSpacer(" - ")
-                            append(Component.text(entry.message, Colors.WHITE))
+                            text(entry.message, Colors.WHITE)
                             spacer(" (${entry.type})")
 
-                            if (entry.deleted) {
+                            if (entry.deletedBy != null) {
                                 appendNewline()
                                 spacer("    (Gelöscht von ${entry.deletedBy})").decorate(
                                     TextDecoration.ITALIC
                                 )
                             }
 
-                            hoverEvent(HoverEvent.showText(buildText {
+                            hoverEvent(buildText {
                                 primary("von: ")
                                 info(username)
                                 appendNewline()
@@ -116,9 +116,9 @@ class SurfChatLookupCommand(commandName: String) : CommandAPICommand(commandName
                                 info(entry.server)
                                 appendNewline()
                                 darkSpacer("Klicke, um die Nachricht zu kopieren.")
-                            }))
+                            })
 
-                            clickEvent(ClickEvent.copyToClipboard(entry.message))
+                            clickCopiesToClipboard(entry.message)
                         }
                     }
                 }.send(sender, page)

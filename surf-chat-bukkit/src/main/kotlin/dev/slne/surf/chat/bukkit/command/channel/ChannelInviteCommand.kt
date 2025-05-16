@@ -5,10 +5,11 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.arguments.EntitySelectorArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.model.ChannelModel
+import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.components
-import dev.slne.surf.chat.bukkit.util.sendText
+import dev.slne.surf.chat.bukkit.util.utils.sendText
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
@@ -17,21 +18,21 @@ import org.bukkit.OfflinePlayer
 class ChannelInviteCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission(ChatPermissionRegistry.COMMAND_CHANNEL_INVITE)
-        withArguments(EntitySelectorArgument.OneEntity("player"))
+        withArguments(EntitySelectorArgument.OnePlayer("player"))
         playerExecutor { player, args ->
             val channel: ChannelModel? = channelService.getChannel(player)
             val target = args.getUnchecked<OfflinePlayer>("player") ?: return@playerExecutor
 
+            if(channel == null) {
+                surfChatApi.sendText(player, buildText {
+                    error("Du bist in keinem Nachrichtenkanal.")
+                })
+                return@playerExecutor
+            }
+
             plugin.launch {
                 val user = databaseService.getUser(player.uniqueId)
                 val targetUser = databaseService.getUser(target.uniqueId)
-
-                if (channel == null) {
-                    user.sendText(buildText {
-                        error("Du bist in keinem Nachrichtenkanal.")
-                    })
-                    return@launch
-                }
 
                 if (channel.isInvited(targetUser)) {
                     user.sendText(buildText {
@@ -51,7 +52,7 @@ class ChannelInviteCommand(commandName: String) : CommandAPICommand(commandName)
                     return@launch
                 }
 
-                if (!channel.isModerator(user)) {
+                if (!channel.hasModeratorPermissions(user)) {
                     user.sendText(buildText {
                         error("Du verfügst nicht über die erforderliche Berechtigung.")
                     })
@@ -68,7 +69,7 @@ class ChannelInviteCommand(commandName: String) : CommandAPICommand(commandName)
                     info(" eingeladen.")
                 })
 
-                if (!targetUser.isIgnoringChannelInvites()) {
+                if (targetUser.channelInvites) {
                     targetUser.sendText(buildText {
                         info("Du wurdest in den Nachrichtenkanal ")
                         variableValue(channel.name)

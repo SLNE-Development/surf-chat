@@ -5,7 +5,7 @@ import com.google.common.io.ByteStreams
 import com.google.gson.reflect.TypeToken
 import dev.slne.surf.chat.api.SurfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
-import dev.slne.surf.chat.bukkit.util.gson
+import dev.slne.surf.chat.bukkit.util.utils.gson
 import dev.slne.surf.chat.core.service.messaging.MessagingReceiverService
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectSet

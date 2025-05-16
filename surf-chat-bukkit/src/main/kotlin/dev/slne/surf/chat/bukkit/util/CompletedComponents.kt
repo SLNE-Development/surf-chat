@@ -1,6 +1,7 @@
 package dev.slne.surf.chat.bukkit.util
 
 import dev.slne.surf.chat.api.model.ChannelModel
+import dev.slne.surf.chat.bukkit.util.utils.formatTime
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
@@ -20,9 +21,9 @@ class CompletedComponents {
             darkSpacer("]")
             darkSpacer(" ")
             clickEvent(ClickEvent.runCommand("/surfchat delete $messageID"))
-            hoverEvent(HoverEvent.showText(buildText {
+            hoverEvent(buildText {
                 warning("Klicke, um die Nachricht zu löschen")
-            }))
+            })
         }
     }
 
@@ -37,9 +38,9 @@ class CompletedComponents {
             darkSpacer("]")
             darkSpacer(" ")
             clickEvent(ClickEvent.runCommand("/tp $name"))
-            hoverEvent(HoverEvent.showText(buildText {
+            hoverEvent(buildText {
                 info("Klicke, um dich zu $name zu teleportieren")
-            }))
+            })
         }
     }
 
@@ -49,9 +50,9 @@ class CompletedComponents {
         darkSpacer("]")
         darkSpacer(" ")
         clickEvent(ClickEvent.runCommand("/channel transferOwnership $target confirm"))
-        hoverEvent(HoverEvent.showText(buildText {
+        hoverEvent(buildText {
             success("Klicke, um die Aktion zu bestätigen")
-        }))
+        })
     }
 
     fun getChannelComponent(channel: String): Component = buildText {
@@ -66,9 +67,9 @@ class CompletedComponents {
         success("AKZEPTIEREN")
         darkSpacer("] ")
         clickEvent(ClickEvent.runCommand("/channel accept ${channel.name}"))
-        hoverEvent(HoverEvent.showText(buildText {
+        hoverEvent(buildText {
             success("Klicke, um die Einladung zu ${channel.name} anzunehmen")
-        }))
+        })
     }
 
     fun getInviteDeclineComponent(channel: ChannelModel): Component = buildText {
@@ -76,9 +77,9 @@ class CompletedComponents {
         error("ABLEHNEN")
         darkSpacer("] ")
         clickEvent(ClickEvent.runCommand("/channel decline ${channel.name}"))
-        hoverEvent(HoverEvent.showText(buildText {
+        hoverEvent(buildText {
             error("Klicke, um die Einladung zu ${channel.name} abzulehnen")
-        }))
+        })
     }
 
     fun getMessageHoverComponent(sender: String, time: Long, server: String): Component =

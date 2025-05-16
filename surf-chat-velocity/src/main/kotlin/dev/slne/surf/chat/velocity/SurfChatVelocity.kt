@@ -13,6 +13,7 @@ import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier
 import dev.slne.surf.chat.api.SurfChatApi
 import dev.slne.surf.chat.velocity.service.VelocityMessagingReceiverService
+import dev.slne.surf.chat.velocity.util.ChatPermissionRegistry
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import java.nio.file.Path
@@ -60,4 +61,4 @@ val plugin get() = SurfChatVelocity.INSTANCE
 val gson get() = Gson()
 
 fun teamMembers(): ObjectSet<Player> =
-    plugin.proxy.allPlayers.filter { it.hasPermission("surf.chat.command.teamchat") }.toObjectSet()
+    plugin.proxy.allPlayers.filter { it.hasPermission(ChatPermissionRegistry.TEAM_CHAT) }.toObjectSet()

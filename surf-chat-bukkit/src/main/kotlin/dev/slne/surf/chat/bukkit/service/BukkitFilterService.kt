@@ -4,7 +4,7 @@ import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.type.MessageValidationResult
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
-import dev.slne.surf.chat.bukkit.util.toPlainText
+import dev.slne.surf.chat.bukkit.util.utils.toPlainText
 import dev.slne.surf.chat.core.service.FilterService
 import dev.slne.surf.chat.core.service.denylistService
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf

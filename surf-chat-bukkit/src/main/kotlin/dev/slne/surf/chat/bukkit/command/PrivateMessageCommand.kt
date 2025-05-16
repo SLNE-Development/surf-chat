@@ -12,8 +12,8 @@ import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.components
-import dev.slne.surf.chat.bukkit.util.sendRawText
-import dev.slne.surf.chat.bukkit.util.sendText
+import dev.slne.surf.chat.bukkit.util.utils.sendRawText
+import dev.slne.surf.chat.bukkit.util.utils.sendText
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.chat.core.service.replyService
 import dev.slne.surf.chat.core.service.spyService
@@ -28,7 +28,7 @@ import java.util.*
 
 class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
-        withArguments(EntitySelectorArgument.OneEntity("player"))
+        withArguments(EntitySelectorArgument.OnePlayer("player"))
         greedyStringArgument("message")
 
         withAliases("tell", "w", "pm", "dm")
@@ -39,15 +39,15 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
                 val message = args.getUnchecked<String>("message") ?: return@launch
                 val messageComponent = Component.text(message)
 
-                val user = databaseService.getUser(player.uniqueId)
-                val targetUser = databaseService.getUser(target.uniqueId)
-
-                if (targetUser.uuid == user.uuid) {
-                    user.sendText(buildText {
+                if(target.uniqueId == player.uniqueId) {
+                    surfChatApi.sendText(player, buildText {
                         error("Du kannst dir selbst keine Nachrichten senden.")
                     })
                     return@launch
                 }
+
+                val user = databaseService.getUser(player.uniqueId)
+                val targetUser = databaseService.getUser(target.uniqueId)
 
                 if (targetUser.isIgnoring(user.uuid)) {
                     targetUser.sendText(buildText {
@@ -96,13 +96,13 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
                                 info("[${player.name} -> ${target.name}] ")
                                 append(messageComponent)
 
-                                hoverEvent(HoverEvent.showText {
+                                hoverEvent(
                                     components.getMessageHoverComponent(
                                         player.name,
                                         System.currentTimeMillis(),
                                         "N/A"
                                     )
-                                })
+                                )
                                 clickEvent(ClickEvent.suggestCommand("/msg ${player.name} "))
                             }
                         }

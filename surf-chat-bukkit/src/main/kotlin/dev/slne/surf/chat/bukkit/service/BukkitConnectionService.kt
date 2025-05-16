@@ -1,7 +1,7 @@
 package dev.slne.surf.chat.bukkit.service
 
 import com.google.auto.service.AutoService
-import dev.slne.surf.chat.bukkit.util.pluginConfig
+import dev.slne.surf.chat.bukkit.util.utils.pluginConfig
 import dev.slne.surf.chat.core.service.ConnectionService
 import net.kyori.adventure.util.Services
 

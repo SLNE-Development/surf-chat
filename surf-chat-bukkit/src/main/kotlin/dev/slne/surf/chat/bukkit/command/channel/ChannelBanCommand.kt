@@ -7,7 +7,7 @@ import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.bukkit.command.argument.ChannelMembersArgument
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
-import dev.slne.surf.chat.bukkit.util.sendText
+import dev.slne.surf.chat.bukkit.util.utils.sendText
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
@@ -32,14 +32,14 @@ class ChannelBanCommand(commandName: String) : CommandAPICommand(commandName) {
                     return@launch
                 }
 
-                if (!channel.isModerator(user)) {
+                if (!channel.hasModeratorPermissions(user)) {
                     user.sendText(buildText {
                         error("Du verfügst nicht über die erforderliche Berechtigung.")
                     })
                     return@launch
                 }
 
-                if (channel.isModerator(targetUser) && channel.isModerator(user)) {
+                if (channel.hasModeratorPermissions(targetUser) && channel.hasModeratorPermissions(user)) {
                     user.sendText(buildText {
                         error("Du kannst diesen Spieler nicht entfernen.")
                     })

@@ -37,14 +37,9 @@ interface HistoryEntryModel {
     val message: String
 
     /**
-     * Indicates whether the history entry has been deleted.
-     */
-    val deleted: Boolean
-
-    /**
      * The identifier (e.g., username or UUID) of the person who deleted the history entry.
      */
-    val deletedBy: String
+    val deletedBy: String?
 
     /**
      * The name of the server where the history entry was created.

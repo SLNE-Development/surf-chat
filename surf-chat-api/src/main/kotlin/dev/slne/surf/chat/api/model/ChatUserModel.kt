@@ -23,7 +23,7 @@ interface ChatUserModel {
     /**
      * Indicates whether private messages (PMs) are toggled on or off.
      */
-    var pmToggled: Boolean
+    var pmDisabled: Boolean
 
     /**
      * Indicates whether the user likes sound notifications.
@@ -36,26 +36,10 @@ interface ChatUserModel {
     var channelInvites: Boolean
 
     /**
-     * Ignores all channel invites for the user.
-     */
-    fun ignoreChannelInvites()
-
-    /**
-     * Stops ignoring channel invites for the user.
-     */
-    fun unignoreChannelInvites()
-
-    /**
      * Toggles the user's preference for receiving channel invites.
      * @return The new state of the channel invite preference.
      */
     fun toggleChannelInvites(): Boolean
-
-    /**
-     * Checks if the user is currently ignoring channel invites.
-     * @return True if the user is ignoring channel invites, false otherwise.
-     */
-    fun isIgnoringChannelInvites(): Boolean
 
     /**
      * Checks if the user is ignoring a specific target user.
@@ -74,10 +58,10 @@ interface ChatUserModel {
      * Removes a target user from the ignore list.
      * @param target The UUID of the target user to unignore.
      */
-    fun unIgnore(target: UUID)
+    fun stopIgnoring(target: UUID)
 
     /**
-     * Toggles the ignore state for a target user.
+     * Toggles the ignored state for a target user.
      * @param target The UUID of the target user.
      * @return The new ignore state for the target user.
      */
@@ -90,13 +74,13 @@ interface ChatUserModel {
     fun toggleSound(): Boolean
 
     /**
-     * Accepts an invite to a specific channel.
+     * Accepts an invitation to a specific channel.
      * @param channel The channel to accept the invite for.
      */
     fun acceptInvite(channel: ChannelModel)
 
     /**
-     * Declines an invite to a specific channel.
+     * Declines an invitation to a specific channel.
      * @param channel The channel to decline the invite for.
      */
     fun declineInvite(channel: ChannelModel)

@@ -7,9 +7,9 @@ import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.bukkit.extension.LuckPermsExtension
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.components
-import dev.slne.surf.chat.bukkit.util.pluginConfig
-import dev.slne.surf.chat.bukkit.util.serverPlayers
-import dev.slne.surf.chat.bukkit.util.toPlainText
+import dev.slne.surf.chat.bukkit.util.utils.pluginConfig
+import dev.slne.surf.chat.bukkit.util.utils.serverPlayers
+import dev.slne.surf.chat.bukkit.util.utils.toPlainText
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
@@ -49,13 +49,13 @@ class BukkitChatFormat : ChatFormatModel {
                     darkSpacer(" >> ")
                     append(formatItemTag(highlightPlayers(rawMessage), sender, warn))
 
-                    hoverEvent(HoverEvent.showText {
+                    hoverEvent(
                         components.getMessageHoverComponent(
                             sender.name,
                             System.currentTimeMillis(),
                             currentServerNiceName
                         )
-                    })
+                    )
                     clickEvent(ClickEvent.suggestCommand("/msg ${sender.name} "))
                 }
             }
@@ -72,13 +72,13 @@ class BukkitChatFormat : ChatFormatModel {
                     darkSpacer(" >> ")
                     append(formatItemTag(rawMessage, sender, warn))
 
-                    hoverEvent(HoverEvent.showText {
+                    hoverEvent(
                         components.getMessageHoverComponent(
                             sender.name,
                             System.currentTimeMillis(),
                             currentServerNiceName
                         )
-                    })
+                    )
                     clickEvent(ClickEvent.suggestCommand("/msg ${sender.name} "))
                 }
             }
@@ -97,13 +97,13 @@ class BukkitChatFormat : ChatFormatModel {
                     darkSpacer(" >> ")
                     append(formatItemTag(rawMessage, sender, warn))
 
-                    hoverEvent(HoverEvent.showText {
+                    hoverEvent(
                         components.getMessageHoverComponent(
                             sender.name,
                             System.currentTimeMillis(),
                             currentServerNiceName
                         )
-                    })
+                    )
                     clickEvent(ClickEvent.suggestCommand("/msg ${viewer.name} "))
                 }
             }
@@ -122,13 +122,13 @@ class BukkitChatFormat : ChatFormatModel {
                     darkSpacer(" >> ")
                     append(formatItemTag(rawMessage, sender, warn))
 
-                    hoverEvent(HoverEvent.showText {
+                    hoverEvent(
                         components.getMessageHoverComponent(
                             sender.name,
                             System.currentTimeMillis(),
                             currentServerNiceName
                         )
-                    })
+                    )
                     clickEvent(ClickEvent.suggestCommand("/msg ${sender.name} "))
                 }
             }
@@ -145,13 +145,13 @@ class BukkitChatFormat : ChatFormatModel {
                     darkSpacer(" >> ")
                     append(formatItemTag(rawMessage, sender, warn))
 
-                    hoverEvent(HoverEvent.showText {
+                    hoverEvent(
                         components.getMessageHoverComponent(
                             sender.name,
                             System.currentTimeMillis(),
                             currentServerNiceName
                         )
-                    })
+                    )
                     clickEvent(ClickEvent.suggestCommand("/msg ${sender.name} "))
                 }
             }

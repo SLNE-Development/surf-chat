@@ -1,30 +1,33 @@
 package dev.slne.surf.chat.bukkit.command.channel
 
 import com.github.shynixn.mccoroutine.folia.launch
+
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.jorel.commandapi.kotlindsl.stringArgument
+
 import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.api.type.ChannelRoleType
 import dev.slne.surf.chat.bukkit.command.argument.ChannelMembersArgument
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
-import dev.slne.surf.chat.bukkit.util.components
-import dev.slne.surf.chat.bukkit.util.sendText
+import dev.slne.surf.chat.bukkit.util.utils.sendText
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+
+import net.kyori.adventure.text.event.ClickEvent
+import net.kyori.adventure.text.Component
+
 import org.bukkit.OfflinePlayer
 
 class ChannelTransferOwnerShipCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission(ChatPermissionRegistry.COMMAND_CHANNEL_TRANSFER)
         withArguments(ChannelMembersArgument("member"))
-        stringArgument("confirm", optional = true)
+
         playerExecutor { player, args ->
             val channel: ChannelModel? = channelService.getChannel(player)
             val target = args.getUnchecked<OfflinePlayer>("member") ?: return@playerExecutor
-            val confirm = args.getOrDefaultUnchecked("confirm", "")
 
             plugin.launch {
                 val user = databaseService.getUser(player.uniqueId)
@@ -53,44 +56,43 @@ class ChannelTransferOwnerShipCommand(commandName: String) : CommandAPICommand(c
                     return@launch
                 }
 
-                if (!confirm.equals("confirm", ignoreCase = true) && !confirm.equals(
-                        "yes",
-                        ignoreCase = true
-                    ) && !confirm.equals("true", ignoreCase = true) && !confirm.equals(
-                        "ja",
-                        ignoreCase = true
-                    )
-                ) {
-                    user.sendText(buildText {
-                        info("Bitte bestätige die Übertragung des Besitzes des Nachrichtenkanals an den Spieler ")
-                        variableValue(targetUser.getName())
-                        info(". ")
-                        append(components.getTransferConfirmComponent(targetUser.getName()))
+                val confirmComponent: Component = buildText {
+                    info("Klicke hier, um den Vorgang zu bestätigen.")
+                    hoverEvent (buildText {
+                        info("Klicke hier, um den Vorgang zu bestätigen.")
                     })
-                    return@launch
-                }
+                    clickEvent(ClickEvent.callback {
+                        ClickEvent.callback {
+                            plugin.launch {
+                                if (channel.members.none { it.value == ChannelRoleType.OWNER }) {
+                                    user.sendText(buildText {
+                                        error("Der Nachrichtenkanal benötigt mindestens einen Besitzer.")
+                                    })
+                                    return@launch
+                                }
 
-                if (channel.members.filter { it.value == ChannelRoleType.OWNER }.isEmpty()) {
-                    user.sendText(buildText {
-                        error("Der Nachrichtenkanal benötigt mindestens einen Besitzer.")
+                                channel.transferOwnership(targetUser)
+
+                                user.sendText(buildText {
+                                    success("Du hast den Nachrichtenkanal ")
+                                    variableValue(channel.name)
+                                    success(" an ")
+                                    variableValue(target.name ?: target.uniqueId.toString())
+                                    success(" übertragen.")
+                                })
+
+                                targetUser.sendText(buildText {
+                                    info("Du bist jetzt der Besitzer des Nachrichtenkanals ")
+                                    variableValue(channel.name)
+                                    info(".")
+                                })
+                            }
+                        }
                     })
-                    return@launch
                 }
-
-                channel.transferOwnership(targetUser)
 
                 user.sendText(buildText {
-                    success("Du hast den Nachrichtenkanal ")
-                    variableValue(channel.name)
-                    success(" an ")
-                    variableValue(target.name ?: target.uniqueId.toString())
-                    success(" übertragen.")
-                })
-
-                targetUser.sendText(buildText {
-                    info("Du bist jetzt der Besitzer des Nachrichtenkanals ")
-                    variableValue(channel.name)
-                    info(".")
+                    append(confirmComponent)
                 })
             }
         }

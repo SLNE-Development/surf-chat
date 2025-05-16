@@ -1,4 +1,4 @@
-package dev.slne.surf.chat.bukkit.util
+package dev.slne.surf.chat.bukkit.util.utils
 
 import dev.slne.surf.chat.api.model.ChatUserModel
 import dev.slne.surf.chat.api.surfChatApi

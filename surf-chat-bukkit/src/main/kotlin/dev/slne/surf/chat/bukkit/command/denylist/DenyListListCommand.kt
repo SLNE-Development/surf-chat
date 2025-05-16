@@ -12,6 +12,7 @@ import dev.slne.surf.chat.bukkit.util.PageableMessageBuilder
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import dev.slne.surf.surfapi.core.api.messages.adventure.clickCopiesToClipboard
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
@@ -55,7 +56,7 @@ class DenyListListCommand(commandName: String) : CommandAPICommand(commandName) 
                             append(Component.text(it.word, Colors.WHITE))
                             spacer(" (hinzugefügt von ${it.addedBy})")
 
-                            hoverEvent(HoverEvent.showText(buildText {
+                            hoverEvent(buildText {
 
                                 primary("Eintrag: ")
                                 info(it.word)
@@ -70,9 +71,9 @@ class DenyListListCommand(commandName: String) : CommandAPICommand(commandName) 
                                 info(getString(it.addedAt))
                                 appendNewline()
                                 darkSpacer("Klicke, um den Eintrag zu kopieren.")
-                            }))
+                            })
 
-                            clickEvent(ClickEvent.copyToClipboard(it.word))
+                            clickCopiesToClipboard(it.word)
                         }
                     }
 

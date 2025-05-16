@@ -9,8 +9,8 @@ import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.api.type.ChannelStatusType
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
-import dev.slne.surf.chat.bukkit.util.edit
-import dev.slne.surf.chat.bukkit.util.sendText
+import dev.slne.surf.chat.bukkit.util.utils.edit
+import dev.slne.surf.chat.bukkit.util.utils.sendText
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
@@ -18,7 +18,7 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 class ChannelPrivacyModeCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission(ChatPermissionRegistry.COMMAND_CHANNEL_MODE)
-        multiLiteralArgument(nodeName = "mode", "public", "private")
+        multiLiteralArgument(nodeName = "mode", MODE_PUBLIC, MODE_PRIVATE)
         playerExecutor { player, args ->
             val channel: ChannelModel? = channelService.getChannel(player)
 
@@ -38,7 +38,7 @@ class ChannelPrivacyModeCommand(commandName: String) : CommandAPICommand(command
                 val mode: String by args
 
                 when (mode) {
-                    "public" -> {
+                    MODE_PUBLIC -> {
                         if (channel.status == ChannelStatusType.PUBLIC) {
                             user.sendText(buildText { error("Der Nachrichtenkanal ist bereits öffentlich.") })
                             return@launch
@@ -55,7 +55,7 @@ class ChannelPrivacyModeCommand(commandName: String) : CommandAPICommand(command
                         })
                     }
 
-                    "private" -> {
+                    MODE_PRIVATE -> {
                         if (channel.status == ChannelStatusType.PRIVATE) {
                             user.sendText(buildText { error("Der Nachrichtenkanal ist bereits privat.") })
                             return@launch
@@ -78,5 +78,10 @@ class ChannelPrivacyModeCommand(commandName: String) : CommandAPICommand(command
                 }
             }
         }
+    }
+
+    companion object {
+        private const val MODE_PUBLIC = "public"
+        private const val MODE_PRIVATE = "private"
     }
 }

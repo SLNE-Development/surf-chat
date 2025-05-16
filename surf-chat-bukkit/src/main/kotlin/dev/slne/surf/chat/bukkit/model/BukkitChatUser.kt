@@ -2,35 +2,24 @@ package dev.slne.surf.chat.bukkit.model
 
 import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.api.model.ChatUserModel
-import dev.slne.surf.chat.bukkit.util.toPlayer
+import dev.slne.surf.chat.bukkit.util.utils.toPlayer
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
+import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import java.util.*
 
 class BukkitChatUser(
     override val uuid: UUID,
-    override val ignoreList: ObjectSet<UUID> = ObjectArraySet(),
-    override var pmToggled: Boolean = false,
+    override val ignoreList: ObjectSet<UUID> = mutableObjectSetOf(),
+    override var pmDisabled: Boolean = false,
     override var soundEnabled: Boolean = true,
     override var channelInvites: Boolean = true
 ) : ChatUserModel {
-    override fun ignoreChannelInvites() {
-        channelInvites = false
-    }
-
-    override fun unignoreChannelInvites() {
-        channelInvites = true
-    }
-
     override fun toggleChannelInvites(): Boolean {
         channelInvites = !channelInvites
         return channelInvites
-    }
-
-    override fun isIgnoringChannelInvites(): Boolean {
-        return !channelInvites
     }
 
     override fun isIgnoring(target: UUID): Boolean {
@@ -41,7 +30,7 @@ class BukkitChatUser(
         ignoreList.add(target)
     }
 
-    override fun unIgnore(target: UUID) {
+    override fun stopIgnoring(target: UUID) {
         ignoreList.remove(target)
     }
 
@@ -70,12 +59,12 @@ class BukkitChatUser(
     }
 
     override fun hasOpenPms(): Boolean {
-        return pmToggled
+        return pmDisabled
     }
 
     override fun togglePm(): Boolean {
-        pmToggled = !pmToggled
-        return pmToggled
+        pmDisabled = !pmDisabled
+        return pmDisabled
     }
 
     override fun moveToChannel(channel: ChannelModel) {

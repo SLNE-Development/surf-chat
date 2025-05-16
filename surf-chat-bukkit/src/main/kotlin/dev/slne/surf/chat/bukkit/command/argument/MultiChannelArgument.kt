@@ -9,6 +9,7 @@ import dev.jorel.commandapi.arguments.GreedyStringArgument
 import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
 
@@ -27,9 +28,9 @@ class MultiChannelArgument(nodeName: String) :
             }
         }
 
-        val returnedChannels: ObjectSet<ChannelModel> = ObjectArraySet()
+        val returnedChannels: ObjectSet<ChannelModel> = mutableObjectSetOf()
 
-        if (input.equals("all", ignoreCase = true)) {
+        if (input.equals("#all", ignoreCase = true)) {
             returnedChannels.addAll(channelService.getAllChannels())
         } else {
             val channelNames = input.split("\\s+".toRegex())
@@ -60,7 +61,7 @@ class MultiChannelArgument(nodeName: String) :
     }) {
     init {
         replaceSuggestions(ArgumentSuggestions.stringCollection {
-            listOf("all") + channelService.getAllChannels().map { it.name }
+            listOf("#all") + channelService.getAllChannels().map { it.name }
         }
         )
     }

@@ -13,7 +13,7 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 
 class ChannelDeleteCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
-        withPermission(ChatPermissionRegistry.COMMAND_CHANNEL_DECLINE)
+        withPermission(ChatPermissionRegistry.COMMAND_CHANNEL_DELETE)
         playerExecutor { player, _ ->
             val channel: ChannelModel? = channelService.getChannel(player)
 

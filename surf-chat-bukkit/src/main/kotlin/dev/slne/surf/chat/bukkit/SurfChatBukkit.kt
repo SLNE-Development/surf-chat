@@ -54,8 +54,7 @@ class SurfChatBukkit() : SuspendingJavaPlugin() {
             SurfChatApi.MESSAGING_CHANNEL_IDENTIFIER,
             BukkitMessagingReceiverService()
         )
-        Bukkit.getMessenger()
-            .registerOutgoingPluginChannel(this, SurfChatApi.MESSAGING_CHANNEL_IDENTIFIER)
+        Bukkit.getMessenger().registerOutgoingPluginChannel(this, SurfChatApi.MESSAGING_CHANNEL_IDENTIFIER)
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, SurfChatApi.TEAM_CHAT_IDENTIFIER)
 
         /**

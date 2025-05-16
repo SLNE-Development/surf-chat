@@ -70,7 +70,7 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
 
         val channelInvites = bool("channelInvites").default(true)
         val pmDisabled = bool("pmDisabled").default(false)
-        val soundEnabled = bool("likesSound").default(true)
+        val soundEnabled = bool("soundEnabled").default(true)
 
         override val primaryKey = PrimaryKey(uuid)
     }

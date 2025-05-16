@@ -94,7 +94,7 @@ class CompletedComponents {
             variableValue(server)
         }
 
-    fun getIgnoreListHoverComponent(user : String): Component =
+    fun getIgnoreListHoverComponent(user: String): Component =
         buildText {
             info("Klicke, um die Blockierung des Spielers ")
             variableValue(user)

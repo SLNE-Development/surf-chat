@@ -5,7 +5,6 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.integerArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.model.ChannelModel
-import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.ChannelStatusType
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
@@ -15,8 +14,8 @@ import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import dev.slne.surf.surfapi.core.api.messages.adventure.clickSuggestsCommand
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.TextDecoration
 
 class ChannelListCommand(commandName: String) : CommandAPICommand(commandName) {
@@ -57,6 +56,7 @@ class ChannelListCommand(commandName: String) : CommandAPICommand(commandName) {
                             )
                             spacer(")")
                             hoverEvent(createInfoMessage(it))
+                            clickSuggestsCommand("/channel join ${it.name}")
                         }
                     }
                 }.send(player, page)

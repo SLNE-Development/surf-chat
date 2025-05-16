@@ -13,6 +13,7 @@ import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
+import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 
 import net.kyori.adventure.text.event.ClickEvent
@@ -20,7 +21,7 @@ import net.kyori.adventure.text.Component
 
 import org.bukkit.OfflinePlayer
 
-class ChannelTransferOwnerShipCommand(commandName: String) : CommandAPICommand(commandName) {
+class ChannelTransferCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission(ChatPermissionRegistry.COMMAND_CHANNEL_TRANSFER)
         withArguments(ChannelMembersArgument("member"))
@@ -57,35 +58,34 @@ class ChannelTransferOwnerShipCommand(commandName: String) : CommandAPICommand(c
                 }
 
                 val confirmComponent: Component = buildText {
-                    info("Klicke hier, um den Vorgang zu bestätigen.")
-                    hoverEvent (buildText {
+                    info("Klicke hier, um den Vorgang zu bestätigen. ")
+                    success("[BESTÄTIGEN]")
+                    hoverEvent(buildText {
                         info("Klicke hier, um den Vorgang zu bestätigen.")
                     })
                     clickEvent(ClickEvent.callback {
-                        ClickEvent.callback {
-                            plugin.launch {
-                                if (channel.members.none { it.value == ChannelRoleType.OWNER }) {
-                                    user.sendPrefixed {
-                                        error("Der Nachrichtenkanal benötigt mindestens einen Besitzer.")
-                                    }
-                                    return@launch
-                                }
-
-                                channel.transferOwnership(targetUser)
-
+                        plugin.launch {
+                            if (channel.members.none { it.value == ChannelRoleType.OWNER }) {
                                 user.sendPrefixed {
-                                    success("Du hast den Nachrichtenkanal ")
-                                    variableValue(channel.name)
-                                    success(" an ")
-                                    variableValue(target.name ?: target.uniqueId.toString())
-                                    success(" übertragen.")
+                                    error("Der Nachrichtenkanal benötigt mindestens einen Besitzer.")
                                 }
+                                return@launch
+                            }
 
-                                targetUser.sendPrefixed {
-                                    info("Du bist jetzt der Besitzer des Nachrichtenkanals ")
-                                    variableValue(channel.name)
-                                    info(".")
-                                }
+                            channel.transferOwnership(targetUser)
+
+                            user.sendPrefixed {
+                                success("Du hast den Nachrichtenkanal ")
+                                variableValue(channel.name)
+                                success(" an ")
+                                variableValue(target.name ?: target.uniqueId.toString())
+                                success(" übertragen.")
+                            }
+
+                            targetUser.sendPrefixed {
+                                info("Du bist jetzt der Besitzer des Nachrichtenkanals ")
+                                variableValue(channel.name)
+                                info(".")
                             }
                         }
                     })

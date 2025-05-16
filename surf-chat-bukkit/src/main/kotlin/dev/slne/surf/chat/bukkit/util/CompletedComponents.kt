@@ -17,7 +17,7 @@ class CompletedComponents {
 
         return buildText {
             darkSpacer("[")
-            error("X")
+            warning("X")
             darkSpacer("]")
             darkSpacer(" ")
             clickEvent(ClickEvent.runCommand("/surfchat delete $messageID"))
@@ -68,7 +68,7 @@ class CompletedComponents {
         darkSpacer("] ")
         clickEvent(ClickEvent.runCommand("/channel accept ${channel.name}"))
         hoverEvent(buildText {
-            success("Klicke, um die Einladung zu ${channel.name} anzunehmen")
+            info("Klicke, um die Einladung zu ${channel.name} anzunehmen")
         })
     }
 
@@ -78,7 +78,7 @@ class CompletedComponents {
         darkSpacer("] ")
         clickEvent(ClickEvent.runCommand("/channel decline ${channel.name}"))
         hoverEvent(buildText {
-            error("Klicke, um die Einladung zu ${channel.name} abzulehnen")
+            info("Klicke, um die Einladung zu ${channel.name} abzulehnen")
         })
     }
 

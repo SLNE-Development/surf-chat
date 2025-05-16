@@ -24,6 +24,12 @@ class SurfChatDeleteCommand(commandName: String) : CommandAPICommand(commandName
                     variableValue(messageID.toString())
                     error(" existiert nicht.")
                 }
+                return@playerExecutor
+            }
+            player.sendPrefixed {
+                success("Die Nachricht mit der ID ")
+                variableValue(messageID.toString())
+                success(" wurde erfolgreich gelöscht.")
             }
         }
     }

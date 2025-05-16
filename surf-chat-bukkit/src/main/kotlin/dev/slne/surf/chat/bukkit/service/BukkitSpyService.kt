@@ -3,7 +3,6 @@ package dev.slne.surf.chat.bukkit.service
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.model.ChannelModel
 import dev.slne.surf.chat.core.service.SpyService
-import dev.slne.surf.surfapi.core.api.util.mutableObjectListOf
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
@@ -17,15 +16,15 @@ class BukkitSpyService : SpyService, Services.Fallback {
     val privateMessageSpys = Object2ObjectOpenHashMap<Player, ObjectList<Player>>()
 
     override fun getChannelSpys(channel: ChannelModel): ObjectList<Player> {
-        return channelsSpys.getOrDefault(channel, mutableObjectListOf())
+        return channelsSpys.getOrDefault(channel, ObjectArrayList())
     }
 
     override fun getPrivateMessageSpys(player: Player): ObjectList<Player> {
-        return privateMessageSpys.getOrDefault(player, mutableObjectListOf())
+        return privateMessageSpys.getOrDefault(player, ObjectArrayList())
     }
 
     override fun addChannelSpy(player: Player, channel: ChannelModel) {
-        channelsSpys.computeIfAbsent(channel) { mutableObjectListOf() }.add(player)
+        channelsSpys.computeIfAbsent(channel) { ObjectArrayList() }.add(player)
     }
 
     override fun removeChannelSpy(
@@ -38,7 +37,7 @@ class BukkitSpyService : SpyService, Services.Fallback {
     }
 
     override fun addPrivateMessageSpy(player: Player, target: Player) {
-        privateMessageSpys.computeIfAbsent(target) { mutableObjectListOf() }.add(player)
+        privateMessageSpys.computeIfAbsent(target) { ObjectArrayList() }.add(player)
     }
 
     override fun removePrivateMessageSpy(player: Player, target: Player) {

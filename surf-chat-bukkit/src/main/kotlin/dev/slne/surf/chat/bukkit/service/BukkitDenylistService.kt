@@ -4,7 +4,6 @@ import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.model.DenyListEntry
 import dev.slne.surf.chat.core.service.DenylistService
 import dev.slne.surf.chat.core.service.databaseService
-import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import it.unimi.dsi.fastutil.objects.ObjectSet
@@ -14,7 +13,7 @@ import net.kyori.adventure.util.Services.Fallback
 
 @AutoService(DenylistService::class)
 class BukkitDenylistService() : DenylistService, Fallback {
-    private var denylist: ObjectSet<String> = mutableObjectSetOf()
+    private var denylist: ObjectSet<String> = ObjectArraySet()
 
     override fun isDenylisted(word: String): Boolean {
         return denylist.contains(word)

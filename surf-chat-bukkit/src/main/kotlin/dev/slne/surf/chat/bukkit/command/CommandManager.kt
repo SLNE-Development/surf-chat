@@ -23,6 +23,5 @@ object CommandManager {
         TeamChatCommand("teamchat").register()
         DenyListCommand("denylist").register()
         PrivateMessageSpyCommand("pmspy").register()
-        IgnoreListCommand("ignorelist").register()
     }
 }

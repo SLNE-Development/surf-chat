@@ -10,7 +10,6 @@ import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.service.HistoryService
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.bukkit.api.util.forEachPlayer
-import dev.slne.surf.surfapi.core.api.util.mutableObject2ObjectMapOf
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import it.unimi.dsi.fastutil.objects.ObjectList
@@ -25,7 +24,7 @@ import java.util.*
 @AutoService(HistoryService::class)
 class BukkitHistoryService() : HistoryService, Fallback {
     private val messageCache: Object2ObjectMap<UUID, SignedMessage.Signature> =
-        mutableObject2ObjectMapOf()
+        Object2ObjectOpenHashMap()
 
     override suspend fun write(
         user: UUID,

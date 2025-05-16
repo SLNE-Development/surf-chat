@@ -7,7 +7,6 @@ import dev.jorel.commandapi.arguments.CustomArgument
 import dev.jorel.commandapi.arguments.GreedyStringArgument
 
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
-import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import it.unimi.dsi.fastutil.objects.ObjectSet
@@ -27,7 +26,7 @@ class MultiPlayerArgument(nodeName: String) : CustomArgument<ObjectSet<Player>, 
             }
         }
 
-        val returnedPlayers: ObjectSet<Player> = mutableObjectSetOf()
+        val returnedPlayers: ObjectSet<Player> = ObjectArraySet()
 
         if (input.equals("#all", ignoreCase = true)) {
             returnedPlayers.addAll(Bukkit.getOnlinePlayers())

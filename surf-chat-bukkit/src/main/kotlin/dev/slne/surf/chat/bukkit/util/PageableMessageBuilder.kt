@@ -4,7 +4,7 @@ import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.clickRunsCommand
 import dev.slne.surf.surfapi.core.api.messages.builder.SurfComponentBuilder
-import dev.slne.surf.surfapi.core.api.util.mutableObjectListOf
+import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
 import kotlin.math.ceil
@@ -16,7 +16,7 @@ annotation class PageableMessageBuilderDsl
 @PageableMessageBuilderDsl
 class PageableMessageBuilder(private val linesPerPage: Int = 10) {
 
-    private val lines = mutableObjectListOf<Component>()
+    private val lines = ObjectArrayList<Component>()
     var pageCommand = "An error occurred while trying to display the page."
     private var title: Component = Component.empty()
 

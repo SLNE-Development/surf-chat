@@ -9,6 +9,7 @@ import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.chatMotdService
 import dev.slne.surf.chat.core.service.connectionService
+import dev.slne.surf.chat.core.service.filterService
 import dev.slne.surf.chat.core.service.messaging.messagingSenderService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 
@@ -25,6 +26,7 @@ class SurfChatReloadCommand(commandName: String) : CommandAPICommand(commandName
                 plugin.chatFormat.loadServer()
                 connectionService.reloadMessages()
                 chatMotdService.loadMotd()
+                filterService.loadDomains()
             }
 
             player.sendPrefixed {

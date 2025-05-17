@@ -55,6 +55,7 @@ class SurfChatBukkit() : SuspendingJavaPlugin() {
         databaseService.connect()
         denylistService.fetch()
         chatMotdService.loadMotd()
+        filterService.loadDomains()
         filterService.loadMessageLimit()
         chatFormat.loadServer()
         messagingSenderService.loadServers()

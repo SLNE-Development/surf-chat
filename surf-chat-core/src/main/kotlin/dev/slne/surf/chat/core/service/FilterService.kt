@@ -23,6 +23,8 @@ interface FilterService {
     fun setMessageLimit(seconds: Int, count: Int)
     fun getMessageLimit(): Pair<Int, Int>
 
+    fun loadDomains()
+
     fun loadMessageLimit()
     fun saveMessageLimit()
 

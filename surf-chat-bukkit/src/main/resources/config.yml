@@ -10,6 +10,9 @@ connection:
     join: "<yellow>%player% <green>grüßt Keviro."
     leave: "<yellow>%player% <red>verabschiedet sich von Keviro."
 
+whitelisted-domains:
+  - "castcrafter.de"
+
 chat-message-of-the-day-status: false
 chat-message-of-the-day:
   lines:

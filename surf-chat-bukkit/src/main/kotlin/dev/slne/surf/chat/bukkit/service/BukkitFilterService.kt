@@ -11,6 +11,7 @@ import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.util.Services.Fallback
 import org.bukkit.entity.Player
+import java.net.URI
 import java.util.*
 
 @AutoService(FilterService::class)
@@ -51,11 +52,22 @@ class BukkitFilterService : FilterService, Fallback {
     }
 
     override fun containsLink(message: Component): Boolean {
-        return urlRegex.findAll(message.toPlainText()).any { result ->
-            val domain = result.groupValues.getOrNull(3) ?: return@any false
-            allowedDomains.none { domain.endsWith(it) }
+        val text = message.toPlainText()
+
+        return urlRegex.findAll(text).any { result ->
+            val rawUrl = result.value
+            val formattedUrl = if (rawUrl.startsWith("http", ignoreCase = true)) rawUrl else "http://$rawUrl"
+
+            val domain = try {
+                URI(formattedUrl).host?.lowercase(Locale.getDefault())?.removePrefix("www.")
+            } catch (e: Exception) {
+                return@any true
+            }
+
+            domain == null || allowedDomains.none { domain.endsWith(it.lowercase(Locale.getDefault())) }
         }
     }
+
 
     override fun isValidInput(input: Component): Boolean {
         return validCharactersRegex.matches(input.toPlainText())
@@ -83,6 +95,12 @@ class BukkitFilterService : FilterService, Fallback {
 
     override fun getMessageLimit(): Pair<Int, Int> {
         return messageLimitCount to messageLimitSeconds
+    }
+
+    override fun loadDomains() {
+        val config = plugin.config
+        allowedDomains.clear()
+        allowedDomains.addAll(config.getStringList("whitelisted-domains"))
     }
 
     override fun loadMessageLimit() {

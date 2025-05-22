@@ -15,6 +15,7 @@ interface SurfChatApi {
      * @param player The UUID of the player.
      * @param type The type of chat message.
      * @param message The message to log.
+     * @param messageID The unique identifier for the logged message.
      */
     suspend fun logMessage(player: UUID, type: MessageType, message: Component, messageID: UUID)
 

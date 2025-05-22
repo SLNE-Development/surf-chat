@@ -18,7 +18,7 @@ interface Channel {
     val name: String
 
     /**
-     * The current status of the channel (e.g., active, inactive).
+     * The current status of the channel (e.g., PUBLIC, PRIVATE).
      */
     var status: ChannelStatus
 

@@ -23,7 +23,7 @@ interface Channel {
     var status: ChannelStatus
 
     /**
-     * A map of channel members and their roles within the channel.
+     * A set of channel members within the channel.
      */
     val members: ObjectSet<ChannelMember>
 

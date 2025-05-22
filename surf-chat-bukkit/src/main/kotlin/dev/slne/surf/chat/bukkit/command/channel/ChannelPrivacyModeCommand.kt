@@ -5,8 +5,8 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.multiLiteralArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.chat.api.model.ChannelModel
-import dev.slne.surf.chat.api.type.ChannelStatusType
+import dev.slne.surf.chat.api.channel.Channel
+import dev.slne.surf.chat.api.channel.ChannelStatus
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.utils.edit
@@ -19,7 +19,7 @@ class ChannelPrivacyModeCommand(commandName: String) : CommandAPICommand(command
         withPermission(ChatPermissionRegistry.COMMAND_CHANNEL_MODE)
         multiLiteralArgument(nodeName = "mode", MODE_PUBLIC, MODE_PRIVATE)
         playerExecutor { player, args ->
-            val channel: ChannelModel? = channelService.getChannel(player)
+            val channel: Channel? = channelService.getChannel(player)
 
             plugin.launch {
                 val user = databaseService.getUser(player.uniqueId)
@@ -38,13 +38,13 @@ class ChannelPrivacyModeCommand(commandName: String) : CommandAPICommand(command
 
                 when (mode) {
                     MODE_PUBLIC -> {
-                        if (channel.status == ChannelStatusType.PUBLIC) {
+                        if (channel.status == ChannelStatus.PUBLIC) {
                             user.sendPrefixed { error("Der Nachrichtenkanal ist bereits öffentlich.") }
                             return@launch
                         }
 
                         channel.edit {
-                            status = ChannelStatusType.PUBLIC
+                            status = ChannelStatus.PUBLIC
                         }
 
                         user.sendPrefixed {
@@ -55,13 +55,13 @@ class ChannelPrivacyModeCommand(commandName: String) : CommandAPICommand(command
                     }
 
                     MODE_PRIVATE -> {
-                        if (channel.status == ChannelStatusType.PRIVATE) {
+                        if (channel.status == ChannelStatus.PRIVATE) {
                             user.sendPrefixed { error("Der Nachrichtenkanal ist bereits privat.") }
                             return@launch
                         }
 
                         channel.edit {
-                            status = ChannelStatusType.PRIVATE
+                            status = ChannelStatus.PRIVATE
                         }
 
                         user.sendPrefixed {

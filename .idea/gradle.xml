@@ -11,6 +11,7 @@
             <option value="$PROJECT_DIR$/surf-chat-api" />
             <option value="$PROJECT_DIR$/surf-chat-bukkit" />
             <option value="$PROJECT_DIR$/surf-chat-core" />
+            <option value="$PROJECT_DIR$/surf-chat-fallback" />
             <option value="$PROJECT_DIR$/surf-chat-velocity" />
           </set>
         </option>

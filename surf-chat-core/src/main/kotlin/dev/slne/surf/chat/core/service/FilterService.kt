@@ -1,9 +1,9 @@
 package dev.slne.surf.chat.core.service
 
+import dev.slne.surf.chat.api.model.ChatUser
 import dev.slne.surf.chat.api.type.MessageValidationResult
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import net.kyori.adventure.text.Component
-import org.bukkit.entity.Player
 import java.util.*
 
 interface FilterService {
@@ -11,10 +11,10 @@ interface FilterService {
      *
      * Checks if the message is valid.
      * @param message The message to check.
-     * @param sender The player who sent the message.
+     * @param user The player who sent the message.
      * @return The validation error if the message is invalid, or MessageValidationError.SUCCESS if the message is valid.
      */
-    fun find(message: Component, sender: Player): MessageValidationResult
+    fun find(message: Component, user: ChatUser): MessageValidationResult
 
     fun containsLink(message: Component): Boolean
     fun isValidInput(input: Component): Boolean

@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.api.model
 
-import dev.slne.surf.chat.api.type.ChatMessageType
+import dev.slne.surf.chat.api.type.MessageType
 import java.util.*
 
 /**
@@ -9,7 +9,7 @@ import java.util.*
  * a specific entry in the chat history, including metadata such as
  * the message, timestamp, and deletion details.
  */
-interface HistoryEntryModel {
+interface HistoryEntry {
 
     /**
      * The unique identifier (UUID) of the history entry.
@@ -24,7 +24,7 @@ interface HistoryEntryModel {
     /**
      * The type of the history entry (e.g., message type or category).
      */
-    val type: ChatMessageType
+    val type: MessageType
 
     /**
      * The timestamp (in milliseconds since epoch) when the history entry was created.

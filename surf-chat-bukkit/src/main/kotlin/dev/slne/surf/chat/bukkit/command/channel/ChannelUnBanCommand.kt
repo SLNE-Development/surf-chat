@@ -5,14 +5,12 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.EntitySelectorArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.chat.api.model.ChannelModel
-import dev.slne.surf.chat.api.surfChatApi
+import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
@@ -26,7 +24,7 @@ class ChannelUnBanCommand(commandName: String) : CommandAPICommand(commandName) 
             }))
         playerExecutor { player, args ->
             val target = args.getUnchecked<Player>("player") ?: return@playerExecutor
-            val channel: ChannelModel? = channelService.getChannel(player)
+            val channel: Channel? = channelService.getChannel(player)
 
             if(channel == null) {
                 player.sendPrefixed {

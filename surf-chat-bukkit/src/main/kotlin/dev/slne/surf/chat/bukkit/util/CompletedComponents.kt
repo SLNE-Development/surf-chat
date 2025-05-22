@@ -1,11 +1,10 @@
 package dev.slne.surf.chat.bukkit.util
 
-import dev.slne.surf.chat.api.model.ChannelModel
+import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.bukkit.util.utils.formatTime
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
-import net.kyori.adventure.text.event.HoverEvent
 import org.bukkit.entity.Player
 import java.util.*
 
@@ -62,7 +61,7 @@ class CompletedComponents {
         darkSpacer(" ")
     }
 
-    fun getInviteAcceptComponent(channel: ChannelModel): Component = buildText {
+    fun getInviteAcceptComponent(channel: Channel): Component = buildText {
         darkSpacer("[")
         success("AKZEPTIEREN")
         darkSpacer("] ")
@@ -72,7 +71,7 @@ class CompletedComponents {
         })
     }
 
-    fun getInviteDeclineComponent(channel: ChannelModel): Component = buildText {
+    fun getInviteDeclineComponent(channel: Channel): Component = buildText {
         darkSpacer("[")
         error("ABLEHNEN")
         darkSpacer("] ")

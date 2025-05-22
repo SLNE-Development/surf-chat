@@ -1,17 +1,16 @@
-package dev.slne.surf.chat.api.model
+package dev.slne.surf.chat.api.channel
 
-import dev.slne.surf.chat.api.type.ChannelRoleType
-import dev.slne.surf.chat.api.type.ChannelStatusType
+import dev.slne.surf.chat.api.model.ChatUser
+import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap
 import it.unimi.dsi.fastutil.objects.ObjectSet
-import org.bukkit.command.CommandSender
 
 /**
  * Represents a chat channel model.
  * This interface defines the structure and behavior of a chat channel,
  * including its members, status, and various operations for managing the channel.
  */
-interface ChannelModel {
+interface Channel {
 
     /**
      * The name of the channel.
@@ -21,149 +20,129 @@ interface ChannelModel {
     /**
      * The current status of the channel (e.g., active, inactive).
      */
-    var status: ChannelStatusType
+    var status: ChannelStatus
 
     /**
      * A map of channel members and their roles within the channel.
      */
-    val members: Object2ObjectMap<ChatUserModel, ChannelRoleType>
+    val members: ObjectSet<ChannelMember>
 
     /**
      * A set of players who are banned from the channel.
      */
-    val bannedPlayers: ObjectSet<ChatUserModel>
+    val bannedPlayers: ObjectSet<ChatUser>
 
     /**
      * A set of players who have been invited to the channel.
      */
-    val invites: ObjectSet<ChatUserModel>
+    val invites: ObjectSet<ChatUser>
 
     /**
      * Allows a user to join the channel.
      * @param user The user joining the channel.
      * @param silent Whether the join action should be silent.
      */
-    fun join(user: ChatUserModel, silent: Boolean = false)
+    fun join(user: ChatUser, silent: Boolean = false)
 
     /**
      * Allows a user to leave the channel.
      * @param user The user leaving the channel.
      * @param silent Whether the leave action should be silent.
      */
-    fun leave(user: ChatUserModel, silent: Boolean = false)
+    fun leave(user: ChatUser, silent: Boolean = false)
 
     /**
      * Checks if a user is invited to the channel.
      * @param user The user to check.
      * @return True if the user is invited, false otherwise.
      */
-    fun isInvited(user: ChatUserModel): Boolean
-
-    /**
-     * Checks if a command sender is invited to the channel.
-     * @param user The command sender to check.
-     * @return True if the sender is invited, false otherwise.
-     */
-    fun isInvited(user: CommandSender): Boolean
+    fun isInvited(user: ChatUser): Boolean
 
     /**
      * Invites a user to the channel.
      * @param user The user to invite.
      */
-    fun invite(user: ChatUserModel)
+    fun invite(user: ChatUser)
 
     /**
      * Revokes an invitation for a user.
      * @param user The user whose invitation is revoked.
      */
-    fun revokeInvite(user: ChatUserModel)
+    fun revokeInvite(user: ChatUser)
 
     /**
      * Transfers ownership of the channel to another user.
-     * @param user The new owner of the channel.
+     * @param member The new owner of the channel.
      */
-    fun transferOwnership(user: ChatUserModel)
+    fun transferOwnership(member: ChannelMember)
 
     /**
      * Promotes a user to a higher role in the channel.
-     * @param user The user to promote.
+     * @param member The member to promote.
      */
-    fun promote(user: ChatUserModel)
+    fun promote(member: ChannelMember)
 
     /**
      * Demotes a user to a lower role in the channel.
-     * @param user The user to demote.
+     * @param member The member to demote.
      */
-    fun demote(user: ChatUserModel)
+    fun demote(member: ChannelMember)
 
     /**
      * Kicks a user from the channel.
-     * @param user The user to kick.
+     * @param member The member to kick.
      */
-    fun kick(user: ChatUserModel)
+    fun kick(member: ChannelMember)
 
     /**
      * Bans a user from the channel.
      * @param user The user to ban.
      */
-    fun ban(user: ChatUserModel)
+    fun ban(user: ChatUser)
 
     /**
      * Unbans a user from the channel.
      * @param user The user to unban.
      */
-    fun unban(user: ChatUserModel)
+    fun unban(user: ChatUser)
 
     /**
      * Checks if a user is banned from the channel.
      * @param user The user to check.
      * @return True if the user is banned, false otherwise.
      */
-    fun isBanned(user: ChatUserModel): Boolean
+    fun isBanned(user: ChatUser): Boolean
 
     /**
      * Gets the owner of the channel.
      * @return The owner of the channel.
      */
-    fun getOwner(): ChatUserModel
+    fun getOwner(): ChannelMember
 
     /**
      * Gets members of the channel.
      * @return A set of all channel members.
      */
-    fun getMembers(includeElevatedUsers: Boolean = true): ObjectSet<ChatUserModel>
-
-    /**
-     * Gets all moderators of the channel.
-     * @return A set of channel moderators.
-     */
-    fun getModerators(): ObjectSet<ChatUserModel>
+    fun getMembers(): ObjectSet<ChannelMember>
 
     /**
      * Checks if a user is the owner of the channel.
-     * @param user The user to check.
+     * @param member The member to check.
      * @return True if the user is the owner, false otherwise.
      */
-    fun isOwner(user: ChatUserModel): Boolean
+    fun isOwner(member: ChannelMember): Boolean
 
     /**
      * Checks if a user is a moderator of the channel.
-     * @param user The user to check.
+     * @param member The member to check.
      * @return True if the user is a moderator, false otherwise.
      */
-    fun hasModeratorPermissions(user: ChatUserModel): Boolean
+    fun hasModeratorPermissions(member: ChannelMember): Boolean
 
     /**
      * Checks if a user is a member of the channel.
      * @param user The user to check.
      * @return True if the user is a member, false otherwise.
      */
-    fun isMember(user: ChatUserModel): Boolean
-
-    /**
-     * Checks if a command sender is a member of the channel.
-     * @param user The command sender to check.
-     * @return True if the sender is a member, false otherwise.
-     */
-    fun isMember(user: CommandSender): Boolean
+    fun isMember(user: ChatUser): Boolean
 }

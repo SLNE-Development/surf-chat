@@ -3,8 +3,8 @@ package dev.slne.surf.chat.bukkit.command.channel
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.chat.api.model.ChannelModel
-import dev.slne.surf.chat.api.type.ChannelStatusType
+import dev.slne.surf.chat.api.channel.Channel
+import dev.slne.surf.chat.api.channel.ChannelStatus
 import dev.slne.surf.chat.bukkit.command.argument.ChannelArgument
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
@@ -17,7 +17,7 @@ class ChannelJoinCommand(commandName: String) : CommandAPICommand(commandName) {
         withPermission(ChatPermissionRegistry.COMMAND_CHANNEL_JOIN)
         withArguments(ChannelArgument("channel"))
         playerExecutor { player, args ->
-            val channel = args.getUnchecked<ChannelModel>("channel") ?: return@playerExecutor
+            val channel = args.getUnchecked<Channel>("channel") ?: return@playerExecutor
 
             plugin.launch {
                 val user = databaseService.getUser(player.uniqueId)
@@ -36,7 +36,7 @@ class ChannelJoinCommand(commandName: String) : CommandAPICommand(commandName) {
                     return@launch
                 }
 
-                if (channel.status != ChannelStatusType.PUBLIC && !channel.isInvited(user)) {
+                if (channel.status != ChannelStatus.PUBLIC && !channel.isInvited(user)) {
                     user.sendPrefixed {
                         error("Der Nachrichtenkanal ")
                         variableValue(channel.name)

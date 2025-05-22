@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.bukkit.util.utils
 
-import dev.slne.surf.chat.api.model.ChatUserModel
+import dev.slne.surf.chat.api.model.ChatUser
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.builder.SurfComponentBuilder
@@ -11,24 +11,24 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
 
-suspend fun Player.toChatUser(): ChatUserModel {
+suspend fun Player.toChatUser(): ChatUser {
     return databaseService.getUser(this.uniqueId)
 }
 
 
-fun ChatUserModel.sendRawText(text: Component) {
+fun ChatUser.sendRawText(text: Component) {
     val player = Bukkit.getPlayer(this.uuid) ?: return
 
     player.sendMessage(text)
 }
 
-inline fun ChatUserModel.sendPrefixed(builder: SurfComponentBuilder.() -> Unit) { sendPrefixed(SurfComponentBuilder(builder)) }
+inline fun ChatUser.sendPrefixed(builder: SurfComponentBuilder.() -> Unit) { sendPrefixed(SurfComponentBuilder(builder)) }
 inline fun Player.sendPrefixed(builder: SurfComponentBuilder.() -> Unit) { sendPrefixed(SurfComponentBuilder(builder)) }
 
-fun ChatUserModel.sendPrefixed(text: Component) = sendRawText(Colors.PREFIX.append { text })
+fun ChatUser.sendPrefixed(text: Component) = sendRawText(Colors.PREFIX.append { text })
 fun Player.sendPrefixed(text: Component) = this.sendMessage { Colors.PREFIX.append { text } }
 
-fun ChatUserModel.toPlayer(): Player? {
+fun ChatUser.toPlayer(): Player? {
     return Bukkit.getPlayer(this.uuid)
 }
 

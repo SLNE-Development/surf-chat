@@ -1,7 +1,7 @@
 package dev.slne.surf.chat.bukkit.model
 
-import dev.slne.surf.chat.api.model.ChannelModel
-import dev.slne.surf.chat.api.model.ChatUserModel
+import dev.slne.surf.chat.api.channel.Channel
+import dev.slne.surf.chat.api.model.ChatUser
 import dev.slne.surf.chat.bukkit.util.utils.toPlayer
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
@@ -15,7 +15,7 @@ class BukkitChatUser(
     override var pmDisabled: Boolean = false,
     override var soundEnabled: Boolean = true,
     override var channelInvites: Boolean = true
-) : ChatUserModel {
+) : ChatUser {
     override fun toggleChannelInvites(): Boolean {
         channelInvites = !channelInvites
         return channelInvites
@@ -48,12 +48,12 @@ class BukkitChatUser(
         return soundEnabled
     }
 
-    override fun acceptInvite(channel: ChannelModel) {
+    override fun acceptInvite(channel: Channel) {
         channel.join(this)
         channel.invites.remove(this)
     }
 
-    override fun declineInvite(channel: ChannelModel) {
+    override fun declineInvite(channel: Channel) {
         channel.invites.remove(this)
     }
 
@@ -66,7 +66,7 @@ class BukkitChatUser(
         return pmDisabled
     }
 
-    override fun moveToChannel(channel: ChannelModel) {
+    override fun moveToChannel(channel: Channel) {
         val player = this.toPlayer() ?: return
 
         channelService.move(player, channel)

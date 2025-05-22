@@ -4,8 +4,8 @@ import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.integerArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.chat.api.model.ChannelModel
-import dev.slne.surf.chat.api.type.ChannelStatusType
+import dev.slne.surf.chat.api.channel.Channel
+import dev.slne.surf.chat.api.channel.ChannelStatus
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.PageableMessageBuilder
@@ -50,8 +50,8 @@ class ChannelListCommand(commandName: String) : CommandAPICommand(commandName) {
                             spacer(" (")
                             info(
                                 when (it.status) {
-                                    ChannelStatusType.PUBLIC -> "Öffentlich"
-                                    ChannelStatusType.PRIVATE -> "Privat"
+                                    ChannelStatus.PUBLIC -> "Öffentlich"
+                                    ChannelStatus.PRIVATE -> "Privat"
                                 }
                             )
                             spacer(")")
@@ -64,15 +64,15 @@ class ChannelListCommand(commandName: String) : CommandAPICommand(commandName) {
         }
     }
 
-    private fun createInfoMessage(channel: ChannelModel): Component {
+    private fun createInfoMessage(channel: Channel): Component {
         return buildText {
             info("Informationen".toSmallCaps()).appendNewline()
             spacer("Name: ".toSmallCaps()).text(channel.name, Colors.WHITE).appendNewline()
             spacer("Besitzer: ".toSmallCaps()).text(channel.getOwner().getName(), Colors.WHITE).appendNewline()
             spacer("Modus: ".toSmallCaps()).text(
                 when (channel.status) {
-                    ChannelStatusType.PUBLIC -> "Öffentlich"
-                    ChannelStatusType.PRIVATE -> "Privat"
+                    ChannelStatus.PUBLIC -> "Öffentlich"
+                    ChannelStatus.PRIVATE -> "Privat"
                 }, Colors.WHITE
             ).appendNewline()
             spacer("Mitglieder: ".toSmallCaps()).text(channel.members.size, Colors.WHITE).appendNewline()

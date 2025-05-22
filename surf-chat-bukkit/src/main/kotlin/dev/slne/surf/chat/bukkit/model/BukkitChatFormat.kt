@@ -1,9 +1,8 @@
 package dev.slne.surf.chat.bukkit.model
 
 import com.github.shynixn.mccoroutine.folia.launch
-import dev.slne.surf.chat.api.model.ChatFormatModel
-import dev.slne.surf.chat.api.surfChatApi
-import dev.slne.surf.chat.api.type.ChatMessageType
+import dev.slne.surf.chat.api.model.ChatFormat
+import dev.slne.surf.chat.api.type.MessageType
 import dev.slne.surf.chat.bukkit.extension.LuckPermsExtension
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.components
@@ -18,7 +17,6 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.sound
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextReplacementConfig
 import net.kyori.adventure.text.event.ClickEvent
-import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Material
@@ -26,20 +24,20 @@ import org.bukkit.Sound
 import org.bukkit.entity.Player
 import java.util.*
 
-class BukkitChatFormat : ChatFormatModel {
+class BukkitChatFormat : ChatFormat {
     private var currentServerNiceName: String = "Unknown"
 
     override fun formatMessage(
         rawMessage: Component,
         sender: Player,
         viewer: Player,
-        messageType: ChatMessageType,
+        messageType: MessageType,
         channel: String,
         messageID: UUID,
         warn: Boolean
     ): Component {
         return when (messageType) {
-            ChatMessageType.GLOBAL -> {
+            MessageType.GLOBAL -> {
                 buildText {
                     append(components.getDeleteComponent(messageID, viewer))
                     append(components.getTeleportComponent(sender.name, viewer))
@@ -61,7 +59,7 @@ class BukkitChatFormat : ChatFormatModel {
                 }
             }
 
-            ChatMessageType.CHANNEL -> {
+            MessageType.CHANNEL -> {
                 buildText {
                     append(components.getDeleteComponent(messageID, viewer))
                     append(components.getTeleportComponent(sender.name, viewer))
@@ -84,7 +82,7 @@ class BukkitChatFormat : ChatFormatModel {
                 }
             }
 
-            ChatMessageType.PRIVATE_TO -> {
+            MessageType.PRIVATE_TO -> {
                 buildText {
                     darkSpacer(">> ")
                     append(Component.text("PM", Colors.RED))
@@ -109,7 +107,7 @@ class BukkitChatFormat : ChatFormatModel {
                 }
             }
 
-            ChatMessageType.PRIVATE_FROM -> {
+            MessageType.PRIVATE_FROM -> {
                 buildText {
                     darkSpacer(">> ")
                     append(Component.text("PM", Colors.RED))
@@ -134,7 +132,7 @@ class BukkitChatFormat : ChatFormatModel {
                 }
             }
 
-            ChatMessageType.TEAM -> {
+            MessageType.TEAM -> {
                 buildText {
                     darkSpacer(">> ")
                     append(Component.text("TEAM", Colors.RED).decorate(TextDecoration.BOLD))
@@ -162,7 +160,7 @@ class BukkitChatFormat : ChatFormatModel {
              * no message should be sent with this type.
              */
 
-            ChatMessageType.PRIVATE -> {
+            MessageType.PRIVATE -> {
                 buildText {
                     darkSpacer(">> ")
                     append(Component.text("PM", Colors.RED))
@@ -177,7 +175,7 @@ class BukkitChatFormat : ChatFormatModel {
              * This is a special case for internal messages,
              * which are not sent to players but are logged
              */
-            ChatMessageType.INTERNAL -> {
+            MessageType.INTERNAL -> {
                 buildText {
                     darkSpacer(">> ")
                     append(Component.text("INTERNAL", Colors.DARK_RED))
@@ -195,7 +193,7 @@ class BukkitChatFormat : ChatFormatModel {
              * This is a special case for private messages,
              * no message should be sent with this type.
              */
-            ChatMessageType.REPLY -> {
+            MessageType.REPLY -> {
                 buildText {
                     darkSpacer(">> ")
                     append(Component.text("Antwort", Colors.RED))

@@ -2,8 +2,8 @@ package dev.slne.surf.chat.bukkit.command.channel
 
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.chat.api.model.ChannelModel
-import dev.slne.surf.chat.api.type.ChannelStatusType
+import dev.slne.surf.chat.api.channel.Channel
+import dev.slne.surf.chat.api.channel.ChannelStatus
 import dev.slne.surf.chat.bukkit.command.argument.ChannelArgument
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
@@ -11,7 +11,6 @@ import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
-import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 
@@ -20,7 +19,7 @@ class ChannelInfoCommand(commandName: String) : CommandAPICommand(commandName) {
         withPermission(ChatPermissionRegistry.COMMAND_CHANNEL_INFO)
         withOptionalArguments(ChannelArgument("channel"))
         playerExecutor { player, args ->
-            val channel = args.getOrDefaultUnchecked<ChannelModel?>(
+            val channel = args.getOrDefaultUnchecked<Channel?>(
                 "channel",
                 channelService.getChannel(player)
             ) ?: run {
@@ -34,7 +33,7 @@ class ChannelInfoCommand(commandName: String) : CommandAPICommand(commandName) {
         }
     }
 
-    private fun createInfoMessage(channel: ChannelModel): Component {
+    private fun createInfoMessage(channel: Channel): Component {
         return buildText {
             info("Informationen".toSmallCaps()).appendNewline()
             append {
@@ -50,8 +49,8 @@ class ChannelInfoCommand(commandName: String) : CommandAPICommand(commandName) {
                 decorate(TextDecoration.BOLD)
             }.spacer("Modus: ".toSmallCaps()).text(
                 when (channel.status) {
-                    ChannelStatusType.PUBLIC -> "Öffentlich"
-                    ChannelStatusType.PRIVATE -> "Privat"
+                    ChannelStatus.PUBLIC -> "Öffentlich"
+                    ChannelStatus.PRIVATE -> "Privat"
                 }, Colors.WHITE
             ).appendNewline()
             append {

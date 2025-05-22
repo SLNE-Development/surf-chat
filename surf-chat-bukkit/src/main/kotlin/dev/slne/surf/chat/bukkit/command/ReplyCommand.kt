@@ -5,7 +5,7 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.greedyStringArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.surfChatApi
-import dev.slne.surf.chat.api.type.ChatMessageType
+import dev.slne.surf.chat.api.type.MessageType
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.utils.sendRawText
@@ -55,7 +55,7 @@ class ReplyCommand(commandName: String) : CommandAPICommand(commandName) {
 
                 plugin.messageValidator.parse(
                     messageComponent,
-                    ChatMessageType.PRIVATE_TO,
+                    MessageType.PRIVATE_TO,
                     player
                 ) {
                     targetUser.sendRawText(
@@ -63,7 +63,7 @@ class ReplyCommand(commandName: String) : CommandAPICommand(commandName) {
                             messageComponent,
                             player,
                             target,
-                            ChatMessageType.PRIVATE_FROM,
+                            MessageType.PRIVATE_FROM,
                             "",
                             UUID.randomUUID(),
                             true
@@ -74,7 +74,7 @@ class ReplyCommand(commandName: String) : CommandAPICommand(commandName) {
                             messageComponent,
                             player,
                             target,
-                            ChatMessageType.PRIVATE_TO,
+                            MessageType.PRIVATE_TO,
                             "",
                             UUID.randomUUID(),
                             true
@@ -84,7 +84,7 @@ class ReplyCommand(commandName: String) : CommandAPICommand(commandName) {
                     plugin.launch {
                         surfChatApi.logMessage(
                             player.uniqueId,
-                            ChatMessageType.REPLY,
+                            MessageType.REPLY,
                             messageComponent,
                             UUID.randomUUID()
                         )

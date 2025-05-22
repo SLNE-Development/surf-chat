@@ -2,9 +2,9 @@ package dev.slne.surf.chat.bukkit.service
 
 import com.github.shynixn.mccoroutine.folia.launch
 import com.google.auto.service.AutoService
-import dev.slne.surf.chat.api.model.ChatUserModel
-import dev.slne.surf.chat.api.model.HistoryEntryModel
-import dev.slne.surf.chat.api.type.ChatMessageType
+import dev.slne.surf.chat.api.model.ChatUser
+import dev.slne.surf.chat.api.model.HistoryEntry
+import dev.slne.surf.chat.api.type.MessageType
 import dev.slne.surf.chat.bukkit.model.BukkitHistoryEntry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.service.HistoryService
@@ -12,7 +12,6 @@ import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.bukkit.api.util.forEachPlayer
 import dev.slne.surf.surfapi.core.api.util.mutableObject2ObjectMapOf
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import it.unimi.dsi.fastutil.objects.ObjectList
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.chat.SignedMessage
@@ -29,7 +28,7 @@ class BukkitHistoryService() : HistoryService, Fallback {
 
     override suspend fun write(
         user: UUID,
-        type: ChatMessageType,
+        type: MessageType,
         message: Component,
         messageID: UUID
     ) {
@@ -45,7 +44,7 @@ class BukkitHistoryService() : HistoryService, Fallback {
         )
     }
 
-    override suspend fun getHistory(user: ChatUserModel): ObjectList<HistoryEntryModel> {
+    override suspend fun getHistory(user: ChatUser): ObjectList<HistoryEntry> {
         return databaseService.loadHistory(user.uuid)
     }
 

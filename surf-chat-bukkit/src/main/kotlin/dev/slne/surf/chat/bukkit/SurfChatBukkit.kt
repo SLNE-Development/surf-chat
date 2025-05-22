@@ -2,8 +2,8 @@ package dev.slne.surf.chat.bukkit
 
 import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
 import dev.slne.surf.chat.api.SurfChatApi
-import dev.slne.surf.chat.api.model.ChatFormatModel
-import dev.slne.surf.chat.api.model.MessageValidatorModel
+import dev.slne.surf.chat.api.model.ChatFormat
+import dev.slne.surf.chat.api.model.MessageValidator
 import dev.slne.surf.chat.bukkit.command.CommandManager
 import dev.slne.surf.chat.bukkit.extension.LuckPermsExtension
 import dev.slne.surf.chat.bukkit.listener.BukkitChatListener
@@ -20,8 +20,8 @@ import org.bukkit.plugin.java.JavaPlugin
 import kotlin.system.measureTimeMillis
 
 class SurfChatBukkit() : SuspendingJavaPlugin() {
-    val chatFormat: ChatFormatModel = BukkitChatFormat()
-    val messageValidator: MessageValidatorModel = BukkitMessageValidator()
+    val chatFormat: ChatFormat = BukkitChatFormat()
+    val messageValidator: MessageValidator = BukkitMessageValidator()
 
     override suspend fun onEnableAsync() {
 

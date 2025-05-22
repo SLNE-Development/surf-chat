@@ -1,13 +1,9 @@
 [versions]
-paper-api = "1.21.4-R0.1-SNAPSHOT"
-velocity-api = "3.4.0-SNAPSHOT"
 surf-database = "1.0.5-SNAPSHOT"
 luckperms-api = "5.4"
-fastutil = "8.2.1"
+packetevents-velocity = "2.8.0"
 
 [libraries]
 surf-database = { module = "dev.slne.surf:surf-database", version.ref = "surf-database" }
-paper-api = { module = "io.papermc.paper:paper-api", version.ref = "paper-api" }
-velocity-api = { module = "com.velocitypowered:velocity-api", version.ref = "velocity-api" }
 luckperms-api = { module = "net.luckperms:api", version.ref = "luckperms-api" }
-fastutil = { module = "it.unimi.dsi:fastutil", version.ref = "fastutil" }
+packetevents-velocity = { module = "com.github.retrooper:packetevents-velocity", version.ref = "packetevents-velocity" }

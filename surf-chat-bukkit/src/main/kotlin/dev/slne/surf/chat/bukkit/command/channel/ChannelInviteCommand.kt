@@ -5,15 +5,13 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.EntitySelectorArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.chat.api.model.ChannelModel
-import dev.slne.surf.chat.api.surfChatApi
+import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.components
 import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 
@@ -26,7 +24,7 @@ class ChannelInviteCommand(commandName: String) : CommandAPICommand(commandName)
                 players.toSet()
             }))
         playerExecutor { player, args ->
-            val channel: ChannelModel? = channelService.getChannel(player)
+            val channel: Channel? = channelService.getChannel(player)
             val target = args.getUnchecked<OfflinePlayer>("player") ?: return@playerExecutor
 
             if(channel == null) {

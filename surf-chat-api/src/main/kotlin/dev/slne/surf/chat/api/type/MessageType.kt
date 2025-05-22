@@ -5,7 +5,7 @@ package dev.slne.surf.chat.api.type
  * This enum defines the categories of messages that can be sent or received
  * within the chat system.
  */
-enum class ChatMessageType {
+enum class MessageType {
     /**
      * A global message visible to all users.
      */

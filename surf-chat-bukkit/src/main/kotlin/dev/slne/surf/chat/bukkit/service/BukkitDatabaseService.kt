@@ -8,9 +8,9 @@ import com.sksamuel.aedile.core.asLoadingCache
 import com.sksamuel.aedile.core.expireAfterWrite
 import com.sksamuel.aedile.core.withRemovalListener
 import dev.slne.surf.chat.api.model.DenyListEntry
-import dev.slne.surf.chat.api.model.ChatUserModel
-import dev.slne.surf.chat.api.model.HistoryEntryModel
-import dev.slne.surf.chat.api.type.ChatMessageType
+import dev.slne.surf.chat.api.model.ChatUser
+import dev.slne.surf.chat.api.model.HistoryEntry
+import dev.slne.surf.chat.api.type.MessageType
 import dev.slne.surf.chat.bukkit.model.BukkitDenyListEntry
 import dev.slne.surf.chat.bukkit.model.BukkitChatUser
 import dev.slne.surf.chat.bukkit.model.BukkitHistoryEntry
@@ -48,10 +48,10 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
         .expireAfterWrite(15.minutes)
         .withRemovalListener { uuid, data, _ ->
             if (uuid != null && data != null) {
-                saveUser(data as ChatUserModel)
+                saveUser(data as ChatUser)
             }
         }
-        .asLoadingCache<UUID, ChatUserModel> { loadUser(it) }
+        .asLoadingCache<UUID, ChatUser> { loadUser(it) }
 
     private val nameCache: LoadingCache<UUID, String> = Caffeine.newBuilder()
         .expireAfterWrite(1.hours)
@@ -79,7 +79,7 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
     object ChatHistory : Table() {
         val entryUuid = varchar("id", 36).transform({ UUID.fromString(it) }, { it.toString() })
         val userUuid = varchar("uuid", 36).transform({ UUID.fromString(it) }, { it.toString() })
-        val type = text("type").transform({ ChatMessageType.valueOf(it)}, { it.toString()} )
+        val type = text("type").transform({ MessageType.valueOf(it)}, { it.toString()} )
         val timeStamp = long("timeStamp")
         val message = text("message")
         val deletedBy = varchar("deletedBy", 16).nullable()
@@ -108,11 +108,11 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
         }
     }
 
-    override suspend fun getUser(uuid: UUID): ChatUserModel {
+    override suspend fun getUser(uuid: UUID): ChatUser {
         return dataCache.get(uuid)
     }
 
-    override suspend fun loadUser(uuid: UUID): ChatUserModel {
+    override suspend fun loadUser(uuid: UUID): ChatUser {
         return withContext(Dispatchers.IO) {
             newSuspendedTransaction {
                 val selected = Users.selectAll().where(Users.uuid eq uuid).firstOrNull()
@@ -131,7 +131,7 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
         }
     }
 
-    override suspend fun saveUser(user: ChatUserModel) {
+    override suspend fun saveUser(user: ChatUser) {
         withContext(Dispatchers.IO) {
             newSuspendedTransaction {
                 Users.upsert {
@@ -168,7 +168,7 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
         deleted: Boolean?,
         deletedBy: String?,
         server: String?
-    ): ObjectList<HistoryEntryModel> {
+    ): ObjectList<HistoryEntry> {
         return withContext(Dispatchers.IO) {
             withTimeout(10_000L) {
                 loadHistoryMutex.withLock {
@@ -181,7 +181,7 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
                         }
 
                         if (type != null) {
-                            conditions += ChatHistory.type eq ChatMessageType.valueOf(type)
+                            conditions += ChatHistory.type eq MessageType.valueOf(type)
                         }
 
                         if (rangeMillis != null) {
@@ -276,7 +276,7 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
     }
 
 
-    override suspend fun insertHistoryEntry(user: UUID, entry: HistoryEntryModel) {
+    override suspend fun insertHistoryEntry(user: UUID, entry: HistoryEntry) {
         withContext(Dispatchers.IO) {
             newSuspendedTransaction {
                 ChatHistory.insert {

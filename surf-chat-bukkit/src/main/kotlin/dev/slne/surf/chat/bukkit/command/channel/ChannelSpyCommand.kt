@@ -2,13 +2,11 @@ package dev.slne.surf.chat.bukkit.command.channel
 
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.chat.api.model.ChannelModel
-import dev.slne.surf.chat.api.surfChatApi
+import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.bukkit.command.argument.multiChannelArgument
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.spyService
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.util.emptyObjectSet
 
 class ChannelSpyCommand(commandName: String) : CommandAPICommand(commandName) {
@@ -18,7 +16,7 @@ class ChannelSpyCommand(commandName: String) : CommandAPICommand(commandName) {
         multiChannelArgument("channels", optional = true)
 
         playerExecutor { player, args ->
-            val channels = args.getOrDefaultUnchecked("channels", emptyObjectSet<ChannelModel>())
+            val channels = args.getOrDefaultUnchecked("channels", emptyObjectSet<Channel>())
 
             if (channels.isEmpty()) {
                 if (!spyService.isChannelSpying(player)) {

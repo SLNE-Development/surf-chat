@@ -6,17 +6,16 @@ import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.CustomArgument
 import dev.jorel.commandapi.arguments.GreedyStringArgument
 
-import dev.slne.surf.chat.api.model.ChannelModel
+import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
-import it.unimi.dsi.fastutil.objects.ObjectArraySet
 
 import it.unimi.dsi.fastutil.objects.ObjectSet
 
 class MultiChannelArgument(nodeName: String) :
-    CustomArgument<ObjectSet<ChannelModel>, String>(GreedyStringArgument(nodeName), { info ->
+    CustomArgument<ObjectSet<Channel>, String>(GreedyStringArgument(nodeName), { info ->
         val input = info.input.trim()
 
         if (input.isEmpty()) {
@@ -28,7 +27,7 @@ class MultiChannelArgument(nodeName: String) :
             }
         }
 
-        val returnedChannels: ObjectSet<ChannelModel> = mutableObjectSetOf()
+        val returnedChannels: ObjectSet<Channel> = mutableObjectSetOf()
 
         if (input.equals("#all", ignoreCase = true)) {
             returnedChannels.addAll(channelService.getAllChannels())

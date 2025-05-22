@@ -5,7 +5,7 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.EntitySelectorArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.chat.api.model.ChannelModel
+import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.bukkit.command.argument.ChannelArgument
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
@@ -28,7 +28,7 @@ class ChannelMoveCommand(commandName: String) : CommandAPICommand(commandName) {
 
         playerExecutor { player, args ->
             val target = args.getUnchecked<Player>("player") ?: return@playerExecutor
-            val channel = args.getUnchecked<ChannelModel>("channel") ?: return@playerExecutor
+            val channel = args.getUnchecked<Channel>("channel") ?: return@playerExecutor
 
             plugin.launch {
                 val user = databaseService.getUser(player.uniqueId)

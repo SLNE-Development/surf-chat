@@ -3,8 +3,8 @@ package dev.slne.surf.chat.bukkit.command.channel
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.chat.api.model.ChannelModel
-import dev.slne.surf.chat.api.type.ChannelRoleType
+import dev.slne.surf.chat.api.channel.Channel
+import dev.slne.surf.chat.api.channel.ChannelRole
 import dev.slne.surf.chat.bukkit.command.argument.ChannelMembersArgument
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
@@ -18,7 +18,7 @@ class ChannelDemoteCommand(commandName: String) : CommandAPICommand(commandName)
         withPermission(ChatPermissionRegistry.COMMAND_CHANNEL_DEMOTE)
         withArguments(ChannelMembersArgument("player"))
         playerExecutor { player, args ->
-            val channel: ChannelModel? = channelService.getChannel(player)
+            val channel: Channel? = channelService.getChannel(player)
             val target = args.getUnchecked<Player>("player") ?: return@playerExecutor
 
             plugin.launch {
@@ -64,7 +64,7 @@ class ChannelDemoteCommand(commandName: String) : CommandAPICommand(commandName)
                     return@launch
                 }
 
-                if (channel.members.filter { it.value == ChannelRoleType.OWNER }.isEmpty()) {
+                if (channel.members.filter { it.value == ChannelRole.OWNER }.isEmpty()) {
                     user.sendPrefixed {
                         error("Der Nachrichtenkanal benötigt mindestens einen Besitzer.")
                     }

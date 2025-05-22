@@ -1,22 +1,21 @@
 package dev.slne.surf.chat.bukkit.service
 
 import com.google.auto.service.AutoService
-import dev.slne.surf.chat.api.model.ChannelModel
+import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.core.service.SpyService
 import dev.slne.surf.surfapi.core.api.util.mutableObjectListOf
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
-import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import it.unimi.dsi.fastutil.objects.ObjectList
 import net.kyori.adventure.util.Services
 import org.bukkit.entity.Player
 
 @AutoService(SpyService::class)
 class BukkitSpyService : SpyService, Services.Fallback {
-    val channelsSpys = Object2ObjectOpenHashMap<ChannelModel, ObjectList<Player>>()
+    val channelsSpys = Object2ObjectOpenHashMap<Channel, ObjectList<Player>>()
     val privateMessageSpys = Object2ObjectOpenHashMap<Player, ObjectList<Player>>()
 
-    override fun getChannelSpys(channel: ChannelModel): ObjectList<Player> {
+    override fun getChannelSpys(channel: Channel): ObjectList<Player> {
         return channelsSpys.getOrDefault(channel, mutableObjectListOf())
     }
 
@@ -24,13 +23,13 @@ class BukkitSpyService : SpyService, Services.Fallback {
         return privateMessageSpys.getOrDefault(player, mutableObjectListOf())
     }
 
-    override fun addChannelSpy(player: Player, channel: ChannelModel) {
+    override fun addChannelSpy(player: Player, channel: Channel) {
         channelsSpys.computeIfAbsent(channel) { mutableObjectListOf() }.add(player)
     }
 
     override fun removeChannelSpy(
         player: Player,
-        channel: ChannelModel
+        channel: Channel
     ) {
         if (channelsSpys.containsKey(channel)) {
             channelsSpys[channel]?.remove(player)
@@ -47,7 +46,7 @@ class BukkitSpyService : SpyService, Services.Fallback {
         }
     }
 
-    override fun hasChannelSpies(channel: ChannelModel): Boolean {
+    override fun hasChannelSpies(channel: Channel): Boolean {
         return channelsSpys.containsKey(channel) && channelsSpys[channel]?.isNotEmpty() == true
     }
 

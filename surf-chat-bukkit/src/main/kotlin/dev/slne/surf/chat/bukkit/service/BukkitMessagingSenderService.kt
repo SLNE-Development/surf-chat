@@ -3,7 +3,7 @@ package dev.slne.surf.chat.bukkit.service
 import com.google.auto.service.AutoService
 import com.google.common.io.ByteStreams
 import dev.slne.surf.chat.api.SurfChatApi
-import dev.slne.surf.chat.api.type.ChatMessageType
+import dev.slne.surf.chat.api.type.MessageType
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.utils.gson
 import dev.slne.surf.chat.core.service.messaging.MessagingSenderService
@@ -32,7 +32,7 @@ class BukkitMessagingSenderService : MessagingSenderService, Fallback {
         player: String,
         target: String,
         message: Component,
-        type: ChatMessageType,
+        type: MessageType,
         messageID: UUID,
         channel: String,
         forwardingServers: ObjectSet<String>

@@ -4,7 +4,7 @@ import com.google.auto.service.AutoService
 import com.google.common.io.ByteStreams
 import com.google.gson.reflect.TypeToken
 import dev.slne.surf.chat.api.SurfChatApi
-import dev.slne.surf.chat.api.type.ChatMessageType
+import dev.slne.surf.chat.api.type.MessageType
 import dev.slne.surf.chat.bukkit.util.utils.gson
 import dev.slne.surf.chat.core.service.messaging.MessagingReceiverService
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
@@ -26,7 +26,7 @@ class BukkitMessagingReceiverService : MessagingReceiverService, PluginMessageLi
         val sender = input.readUTF()
         val target = input.readUTF()
         val message = GsonComponentSerializer.gson().deserialize(input.readUTF())
-        val type = gson.fromJson(input.readUTF(), ChatMessageType::class.java)
+        val type = gson.fromJson(input.readUTF(), MessageType::class.java)
         val messageId = UUID.fromString(input.readUTF())
         val chatChannel = input.readUTF()
         val forwardingServers: Set<String> =
@@ -47,7 +47,7 @@ class BukkitMessagingReceiverService : MessagingReceiverService, PluginMessageLi
         player: String,
         target: String,
         message: Component,
-        type: ChatMessageType,
+        type: MessageType,
         messageID: UUID,
         channel: String,
         forwardingServers: ObjectSet<String>

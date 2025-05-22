@@ -1,17 +1,17 @@
 package dev.slne.surf.chat.bukkit.util.utils
 
-import dev.slne.surf.chat.api.model.ChannelModel
-import dev.slne.surf.chat.api.model.ChatUserModel
+import dev.slne.surf.chat.api.channel.Channel
+import dev.slne.surf.chat.api.model.ChatUser
 import dev.slne.surf.chat.core.service.channelService
 
-fun ChannelModel.edit(block: ChannelModel.() -> Unit): ChannelModel {
+fun Channel.edit(block: Channel.() -> Unit): Channel {
     channelService.unregister(this)
     block(this)
     channelService.register(this)
     return this
 }
 
-fun ChannelModel.handleLeave(user: ChatUserModel) {
+fun Channel.handleLeave(user: ChatUser) {
     if (this.isOwner(user)) {
         var nextOwner = this.getModerators().firstOrNull()
 

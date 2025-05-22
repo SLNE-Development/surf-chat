@@ -1,16 +1,14 @@
 package dev.slne.surf.chat.api.model
 
-import dev.slne.surf.chat.api.type.ChatMessageType
+import dev.slne.surf.chat.api.type.MessageType
 import net.kyori.adventure.text.Component
-import org.bukkit.entity.Player
 import java.util.*
 
 /**
  * Represents the model for formatting chat messages.
- * This interface defines methods for formatting messages, loading server-specific data,
- * and retrieving server information.
+ * This interface defines methods for formatting messages.
  */
-interface ChatFormatModel {
+interface ChatFormat {
 
     /**
      * Formats a chat message based on the provided parameters.
@@ -26,24 +24,11 @@ interface ChatFormatModel {
      */
     fun formatMessage(
         rawMessage: Component,
-        sender: Player,
-        viewer: Player,
-        messageType: ChatMessageType,
+        sender: ChatUser,
+        viewer: ChatUser,
+        messageType: MessageType,
         channel: String,
         messageID: UUID,
         warn: Boolean
     ): Component
-
-    /**
-     * Loads server-specific data required for chat formatting.
-     * This method is typically used to initialize or update server-related settings.
-     */
-    fun loadServer()
-
-    /**
-     * Retrieves the name of the current server.
-     *
-     * @return The name of the server as a `String`.
-     */
-    fun getServer(): String
 }

@@ -5,7 +5,7 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.greedyStringArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.surfChatApi
-import dev.slne.surf.chat.api.type.ChatMessageType
+import dev.slne.surf.chat.api.type.MessageType
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.core.service.messaging.messagingSenderService
@@ -27,7 +27,7 @@ class TeamChatCommand(commandName: String) : CommandAPICommand(commandName) {
                     Component.text(message),
                     player,
                     player,
-                    ChatMessageType.TEAM,
+                    MessageType.TEAM,
                     "",
                     messageID,
                     true
@@ -37,7 +37,7 @@ class TeamChatCommand(commandName: String) : CommandAPICommand(commandName) {
             plugin.launch {
                 surfChatApi.logMessage(
                     player.uniqueId,
-                    ChatMessageType.TEAM,
+                    MessageType.TEAM,
                     Component.text(message),
                     messageID
                 )

@@ -1,10 +1,10 @@
-package dev.slne.surf.chat.api.type
+package dev.slne.surf.chat.api.channel
 
 /**
  * Represents the status of a chat channel.
  * This enum defines whether a channel is publicly accessible or private.
  */
-enum class ChannelStatusType {
+enum class ChannelStatus {
     /**
      * A public channel that is accessible to all users.
      */

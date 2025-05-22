@@ -1,11 +1,9 @@
 package dev.slne.surf.chat.core.service
 
-import dev.slne.surf.chat.api.model.ChannelModel
-import dev.slne.surf.chat.api.model.ChatUserModel
+import dev.slne.surf.chat.api.channel.Channel
+import dev.slne.surf.chat.api.model.ChatUser
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectSet
-import org.bukkit.command.CommandSender
-import org.bukkit.entity.Player
 
 interface ChannelService {
     /**
@@ -15,14 +13,14 @@ interface ChannelService {
      * @param owner The owner of the channel.
      * @return The created ChannelModel.
      */
-    fun createChannel(name: String, owner: ChatUserModel): ChannelModel
+    fun createChannel(name: String, owner: ChatUser): Channel
 
     /**
      * Deletes and unregisters an existing channel.
      *
      * @param channel The ChannelModel to delete.
      */
-    fun deleteChannel(channel: ChannelModel)
+    fun deleteChannel(channel: Channel)
 
     /**
      * Returns a channel by its name.
@@ -30,44 +28,44 @@ interface ChannelService {
      * @param name The name of the channel.
      * @return The ChannelModel or null if the channel does not exist.
      */
-    fun getChannel(name: String): ChannelModel?
+    fun getChannel(name: String): Channel?
 
     /**
-     * Returns a channel by a CommandSender.
+     * Returns a channel by a user.
      *
-     * @param player The CommandSender (e.g., a player).
+     * @param user The user.
      * @return The ChannelModel or null if the channel does not exist.
      */
-    fun getChannel(player: CommandSender): ChannelModel?
+    fun getChannel(user: ChatUser): Channel?
 
     /**
      * Returns all channels.
      *
      * @return A set of all ChannelModel objects.
      */
-    fun getAllChannels(): ObjectSet<ChannelModel>
+    fun getAllChannels(): ObjectSet<Channel>
 
     /**
      * Registers a channel.
      *
      * @param channel The ChannelModel to register.
      */
-    fun register(channel: ChannelModel)
+    fun register(channel: Channel)
 
     /**
      * Unregisters a channel.
      *
      * @param channel The ChannelModel to unregister.
      */
-    fun unregister(channel: ChannelModel)
+    fun unregister(channel: Channel)
 
     /**
      * Moves a player to a specified channel.
      *
-     * @param player The player to move.
+     * @param user The user to move.
      * @param channel The channel to move the player to.
      */
-    fun move(player: Player, channel: ChannelModel)
+    fun move(user: ChatUser, channel: Channel)
 
     /**
      * Handles the disconnection of a player from a specific channel.
@@ -76,9 +74,9 @@ interface ChannelService {
      * It ensures that any necessary cleanup or state updates related to the player's
      * association with the channel are performed.
      *
-     * @param player The player who is disconnecting.
+     * @param user The player who is disconnecting.
      */
-    fun handleDisconnect(player: Player)
+    fun handleDisconnect(user: ChatUser)
 
     companion object {
         val INSTANCE = requiredService<ChannelService>()

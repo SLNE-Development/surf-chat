@@ -5,15 +5,14 @@ import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 
-import dev.slne.surf.chat.api.model.ChannelModel
-import dev.slne.surf.chat.api.type.ChannelRoleType
+import dev.slne.surf.chat.api.channel.Channel
+import dev.slne.surf.chat.api.channel.ChannelRole
 import dev.slne.surf.chat.bukkit.command.argument.ChannelMembersArgument
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
-import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 
 import net.kyori.adventure.text.event.ClickEvent
@@ -27,7 +26,7 @@ class ChannelTransferCommand(commandName: String) : CommandAPICommand(commandNam
         withArguments(ChannelMembersArgument("member"))
 
         playerExecutor { player, args ->
-            val channel: ChannelModel? = channelService.getChannel(player)
+            val channel: Channel? = channelService.getChannel(player)
             val target = args.getUnchecked<OfflinePlayer>("member") ?: return@playerExecutor
 
             plugin.launch {
@@ -65,7 +64,7 @@ class ChannelTransferCommand(commandName: String) : CommandAPICommand(commandNam
                     })
                     clickEvent(ClickEvent.callback {
                         plugin.launch {
-                            if (channel.members.none { it.value == ChannelRoleType.OWNER }) {
+                            if (channel.members.none { it.value == ChannelRole.OWNER }) {
                                 user.sendPrefixed {
                                     error("Der Nachrichtenkanal benötigt mindestens einen Besitzer.")
                                 }

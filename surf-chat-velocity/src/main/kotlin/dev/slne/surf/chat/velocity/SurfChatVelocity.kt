@@ -1,51 +1,22 @@
 package dev.slne.surf.chat.velocity
 
-import com.google.gson.Gson
 import com.google.inject.Inject
+
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
-import com.velocitypowered.api.event.proxy.ProxyShutdownEvent
-import com.velocitypowered.api.plugin.Plugin
-import com.velocitypowered.api.plugin.PluginContainer
 import com.velocitypowered.api.plugin.annotation.DataDirectory
-import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.ProxyServer
-import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier
-import dev.slne.surf.chat.api.SurfChatApi
-import dev.slne.surf.chat.velocity.service.VelocityMessagingReceiverService
-import dev.slne.surf.chat.velocity.util.ChatPermissionRegistry
-import dev.slne.surf.surfapi.core.api.util.toObjectSet
-import it.unimi.dsi.fastutil.objects.ObjectSet
-import java.nio.file.Path
 
-@Plugin(
-    id = "surf-chat-velocity",
-    version = "1.21.4-1.0.0-SNAPSHOT",
-    name = "surf-chat-velocity",
-    description = "Velocity instance of the surf chat plugin",
-    authors = ["red"],
-    url = "https://server.castcrafter.de/",
-    dependencies = []
-)
+import java.nio.file.Path
+import kotlin.jvm.optionals.getOrNull
+
 class SurfChatVelocity @Inject constructor(
     val proxy: ProxyServer,
     @DataDirectory val dataPath: Path
 ) {
-    @Inject
-    lateinit var pluginContainer: PluginContainer
-
     @Subscribe
     fun onInitialization(event: ProxyInitializeEvent) {
         INSTANCE = this
-
-        proxy.channelRegistrar.register(messageChannel)
-        proxy.channelRegistrar.register(teamChatChannel)
-        proxy.eventManager.register(this, VelocityMessagingReceiverService())
-    }
-
-    @Subscribe
-    fun onShutdown(event: ProxyShutdownEvent) {
-
     }
 
     companion object {
@@ -54,11 +25,5 @@ class SurfChatVelocity @Inject constructor(
     }
 }
 
-val messageChannel: MinecraftChannelIdentifier get() = MinecraftChannelIdentifier.from(SurfChatApi.MESSAGING_CHANNEL_IDENTIFIER)
-val teamChatChannel: MinecraftChannelIdentifier get() = MinecraftChannelIdentifier.from(SurfChatApi.TEAM_CHAT_IDENTIFIER)
-
 val plugin get() = SurfChatVelocity.INSTANCE
-val gson get() = Gson()
-
-fun teamMembers(): ObjectSet<Player> =
-    plugin.proxy.allPlayers.filter { it.hasPermission(ChatPermissionRegistry.TEAM_CHAT) }.toObjectSet()
+val container get() = plugin.proxy.pluginManager.getPlugin("surf-chat-velocity").getOrNull() ?: error("The providing plugin container is not available. Got the plugin ID changed?")

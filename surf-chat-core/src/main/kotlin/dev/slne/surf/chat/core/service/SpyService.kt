@@ -1,30 +1,30 @@
 package dev.slne.surf.chat.core.service
 
-import dev.slne.surf.chat.api.model.ChannelModel
+import dev.slne.surf.chat.api.channel.Channel
+import dev.slne.surf.chat.api.model.ChatUser
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectList
-import org.bukkit.entity.Player
 
 interface SpyService {
-    fun getChannelSpys(channel: ChannelModel): ObjectList<Player>
-    fun getPrivateMessageSpys(player: Player): ObjectList<Player>
+    fun getChannelSpys(channel: Channel): ObjectList<ChatUser>
+    fun getPrivateMessageSpys(user: ChatUser): ObjectList<ChatUser>
 
-    fun addChannelSpy(player: Player, channel: ChannelModel)
-    fun removeChannelSpy(player: Player, channel: ChannelModel)
+    fun addChannelSpy(user: ChatUser, channel: Channel)
+    fun removeChannelSpy(user: ChatUser, channel: Channel)
 
-    fun addPrivateMessageSpy(player: Player, target: Player)
-    fun removePrivateMessageSpy(player: Player, target: Player)
+    fun addPrivateMessageSpy(user: ChatUser, target: ChatUser)
+    fun removePrivateMessageSpy(user: ChatUser, target: ChatUser)
 
-    fun hasChannelSpies(channel: ChannelModel): Boolean
-    fun hasPrivateMessageSpies(player: Player): Boolean
+    fun hasChannelSpies(channel: Channel): Boolean
+    fun hasPrivateMessageSpies(user: ChatUser): Boolean
 
-    fun isChannelSpying(player: Player): Boolean
-    fun isPrivateMessageSpying(player: Player): Boolean
+    fun isChannelSpying(user: ChatUser): Boolean
+    fun isPrivateMessageSpying(user: ChatUser): Boolean
 
-    fun clearChannelSpys(player: Player)
-    fun clearPrivateMessageSpys(player: Player)
+    fun clearChannelSpys(user: ChatUser)
+    fun clearPrivateMessageSpys(user: ChatUser)
 
-    fun handleDisconnect(player: Player)
+    fun handleDisconnect(user: ChatUser)
 
     companion object {
         val INSTANCE = requiredService<SpyService>()

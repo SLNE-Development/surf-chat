@@ -1,8 +1,8 @@
 package dev.slne.surf.chat.core.service
 
 import dev.slne.surf.chat.api.model.DenyListEntry
-import dev.slne.surf.chat.api.model.ChatUserModel
-import dev.slne.surf.chat.api.model.HistoryEntryModel
+import dev.slne.surf.chat.api.model.ChatUser
+import dev.slne.surf.chat.api.model.HistoryEntry
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectList
 import it.unimi.dsi.fastutil.objects.ObjectSet
@@ -13,9 +13,9 @@ interface DatabaseService {
     @Blocking
     fun connect()
 
-    suspend fun getUser(uuid: UUID): ChatUserModel
-    suspend fun loadUser(uuid: UUID): ChatUserModel
-    suspend fun saveUser(user: ChatUserModel)
+    suspend fun getUser(uuid: UUID): ChatUser
+    suspend fun loadUser(uuid: UUID): ChatUser
+    suspend fun saveUser(user: ChatUser)
     suspend fun handleDisconnect(user: UUID)
     suspend fun markMessageDeleted(deleter: String, messageID: UUID)
     suspend fun loadHistory(
@@ -26,13 +26,13 @@ interface DatabaseService {
         deleted: Boolean? = null,
         deletedBy: String? = null,
         server: String? = null
-    ): ObjectList<HistoryEntryModel>
+    ): ObjectList<HistoryEntry>
 
     suspend fun loadDenyList(): ObjectSet<DenyListEntry>
     suspend fun addToDenylist(entry: DenyListEntry): Boolean
     suspend fun removeFromDenylist(word: String): Boolean
 
-    suspend fun insertHistoryEntry(user: UUID, entry: HistoryEntryModel)
+    suspend fun insertHistoryEntry(user: UUID, entry: HistoryEntry)
 
     suspend fun saveAll()
 

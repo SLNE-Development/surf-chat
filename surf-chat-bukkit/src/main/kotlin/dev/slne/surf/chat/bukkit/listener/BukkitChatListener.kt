@@ -2,7 +2,7 @@ package dev.slne.surf.chat.bukkit.listener
 
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.api.surfChatApi
-import dev.slne.surf.chat.api.type.ChatMessageType
+import dev.slne.surf.chat.api.type.MessageType
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.service.BukkitMessagingSenderService
 import dev.slne.surf.chat.bukkit.util.utils.toPlainText
@@ -33,7 +33,7 @@ class BukkitChatListener() : Listener {
             message,
             player,
             player,
-            ChatMessageType.GLOBAL,
+            MessageType.GLOBAL,
             "N/A",
             messageID,
             true
@@ -69,7 +69,7 @@ class BukkitChatListener() : Listener {
                     message,
                     player,
                     player,
-                    ChatMessageType.CHANNEL,
+                    MessageType.CHANNEL,
                     channel.name,
                     messageID,
                     true
@@ -77,7 +77,7 @@ class BukkitChatListener() : Listener {
             }
 
             plugin.launch {
-                surfChatApi.logMessage(player.uniqueId, ChatMessageType.CHANNEL, message, messageID)
+                surfChatApi.logMessage(player.uniqueId, MessageType.CHANNEL, message, messageID)
             }
 
             return
@@ -86,7 +86,7 @@ class BukkitChatListener() : Listener {
         plugin.launch {
             surfChatApi.logMessage(
                 player.uniqueId,
-                ChatMessageType.GLOBAL,
+                MessageType.GLOBAL,
                 cleanedMessage,
                 messageID
             )
@@ -94,12 +94,12 @@ class BukkitChatListener() : Listener {
 
         var formatted = false
 
-        plugin.messageValidator.parse(cleanedMessage, ChatMessageType.GLOBAL, player) {
+        plugin.messageValidator.parse(cleanedMessage, MessageType.GLOBAL, player) {
             messagingSenderService.sendData(
                 player.name,
                 player.name,
                 formattedMessage,
-                ChatMessageType.GLOBAL,
+                MessageType.GLOBAL,
                 messageID,
                 "N/A",
                 BukkitMessagingSenderService.getForwardingServers()
@@ -110,7 +110,7 @@ class BukkitChatListener() : Listener {
                     cleanedMessage,
                     player,
                     viewer as? Player ?: player,
-                    ChatMessageType.GLOBAL,
+                    MessageType.GLOBAL,
                     "N/A",
                     messageID,
                     false

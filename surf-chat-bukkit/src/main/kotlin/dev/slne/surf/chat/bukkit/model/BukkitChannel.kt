@@ -1,10 +1,10 @@
 package dev.slne.surf.chat.bukkit.model
 
 import com.github.shynixn.mccoroutine.folia.launch
-import dev.slne.surf.chat.api.model.ChannelModel
-import dev.slne.surf.chat.api.model.ChatUserModel
-import dev.slne.surf.chat.api.type.ChannelRoleType
-import dev.slne.surf.chat.api.type.ChannelStatusType
+import dev.slne.surf.chat.api.channel.Channel
+import dev.slne.surf.chat.api.model.ChatUser
+import dev.slne.surf.chat.api.channel.ChannelRole
+import dev.slne.surf.chat.api.channel.ChannelStatus
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.surfapi.core.api.util.mutableObject2ObjectMapOf
@@ -17,13 +17,13 @@ import org.bukkit.entity.Player
 
 class BukkitChannel(
     override val name: String,
-    override var status: ChannelStatusType = ChannelStatusType.PRIVATE,
-    override val members: Object2ObjectMap<ChatUserModel, ChannelRoleType> = mutableObject2ObjectMapOf(),
-    override val bannedPlayers: ObjectSet<ChatUserModel> = mutableObjectSetOf(),
-    override val invites: ObjectSet<ChatUserModel> = mutableObjectSetOf()
-) : ChannelModel {
-    override fun join(user: ChatUserModel, silent: Boolean) {
-        members[user] = ChannelRoleType.MEMBER
+    override var status: ChannelStatus = ChannelStatus.PRIVATE,
+    override val members: Object2ObjectMap<ChatUser, ChannelRole> = mutableObject2ObjectMapOf(),
+    override val bannedPlayers: ObjectSet<ChatUser> = mutableObjectSetOf(),
+    override val invites: ObjectSet<ChatUser> = mutableObjectSetOf()
+) : Channel {
+    override fun join(user: ChatUser, silent: Boolean) {
+        members[user] = ChannelRole.MEMBER
 
         if (!silent) {
             members.filter { it.key != user }.forEach {
@@ -37,7 +37,7 @@ class BukkitChannel(
         }
     }
 
-    override fun leave(user: ChatUserModel, silent: Boolean) {
+    override fun leave(user: ChatUser, silent: Boolean) {
         members.remove(user)
 
         if (!silent) {
@@ -52,7 +52,7 @@ class BukkitChannel(
         }
     }
 
-    override fun isInvited(user: ChatUserModel): Boolean {
+    override fun isInvited(user: ChatUser): Boolean {
         return invites.contains(user)
     }
 
@@ -63,19 +63,19 @@ class BukkitChannel(
         return false
     }
 
-    override fun invite(user: ChatUserModel) {
+    override fun invite(user: ChatUser) {
         invites.add(user)
     }
 
-    override fun revokeInvite(user: ChatUserModel) {
+    override fun revokeInvite(user: ChatUser) {
         invites.remove(user)
     }
 
-    override fun transferOwnership(user: ChatUserModel) {
+    override fun transferOwnership(user: ChatUser) {
         val oldOwner = this.getOwner()
 
-        members[user] = ChannelRoleType.OWNER
-        members[oldOwner] = ChannelRoleType.MODERATOR
+        members[user] = ChannelRole.OWNER
+        members[oldOwner] = ChannelRole.MODERATOR
 
         members.filter { it.key != user && it.key != oldOwner }.forEach {
             it.key.sendPrefixed {
@@ -87,9 +87,9 @@ class BukkitChannel(
         }
     }
 
-    override fun promote(user: ChatUserModel) {
-        if (members[user] == ChannelRoleType.MEMBER) {
-            members[user] = ChannelRoleType.MODERATOR
+    override fun promote(user: ChatUser) {
+        if (members[user] == ChannelRole.MEMBER) {
+            members[user] = ChannelRole.MODERATOR
         }
 
         members.filter { it.key != user }.forEach {
@@ -102,9 +102,9 @@ class BukkitChannel(
         }
     }
 
-    override fun demote(user: ChatUserModel) {
-        if (members[user] == ChannelRoleType.MODERATOR) {
-            members[user] = ChannelRoleType.MEMBER
+    override fun demote(user: ChatUser) {
+        if (members[user] == ChannelRole.MODERATOR) {
+            members[user] = ChannelRole.MEMBER
         }
 
         members.filter { it.key != user }.forEach {
@@ -117,48 +117,48 @@ class BukkitChannel(
         }
     }
 
-    override fun kick(user: ChatUserModel) {
+    override fun kick(user: ChatUser) {
         this.leave(user)
     }
 
-    override fun ban(user: ChatUserModel) {
+    override fun ban(user: ChatUser) {
         this.leave(user)
         bannedPlayers.add(user)
     }
 
-    override fun unban(user: ChatUserModel) {
+    override fun unban(user: ChatUser) {
         bannedPlayers.remove(user)
     }
 
-    override fun isBanned(user: ChatUserModel): Boolean {
+    override fun isBanned(user: ChatUser): Boolean {
         return bannedPlayers.contains(user)
     }
 
-    override fun getOwner(): ChatUserModel {
-        return members.entries.first { it.value == ChannelRoleType.OWNER }.key
+    override fun getOwner(): ChatUser {
+        return members.entries.first { it.value == ChannelRole.OWNER }.key
     }
 
-    override fun getMembers(includeElevatedUsers: Boolean): ObjectSet<ChatUserModel> {
+    override fun getMembers(includeElevatedUsers: Boolean): ObjectSet<ChatUser> {
         return when(includeElevatedUsers) {
             true -> members.keys
-            false -> members.entries.filter { it.value == ChannelRoleType.MEMBER }.map { it.key }.toObjectSet()
+            false -> members.entries.filter { it.value == ChannelRole.MEMBER }.map { it.key }.toObjectSet()
         }
     }
 
-    override fun getModerators(): ObjectSet<ChatUserModel> {
-        return members.entries.filter { it.value == ChannelRoleType.MODERATOR }.map { it.key }
+    override fun getModerators(): ObjectSet<ChatUser> {
+        return members.entries.filter { it.value == ChannelRole.MODERATOR }.map { it.key }
             .toObjectSet()
     }
 
-    override fun isOwner(user: ChatUserModel): Boolean {
-        return members[user] == ChannelRoleType.OWNER
+    override fun isOwner(user: ChatUser): Boolean {
+        return members[user] == ChannelRole.OWNER
     }
 
-    override fun hasModeratorPermissions(user: ChatUserModel): Boolean {
-        return members[user] == ChannelRoleType.MODERATOR || members[user] == ChannelRoleType.OWNER
+    override fun hasModeratorPermissions(user: ChatUser): Boolean {
+        return members[user] == ChannelRole.MODERATOR || members[user] == ChannelRole.OWNER
     }
 
-    override fun isMember(user: ChatUserModel): Boolean {
+    override fun isMember(user: ChatUser): Boolean {
         return members.contains(user)
     }
 

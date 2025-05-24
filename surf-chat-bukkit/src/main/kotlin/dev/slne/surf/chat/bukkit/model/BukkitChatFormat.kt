@@ -254,6 +254,7 @@ class BukkitChatFormat : ChatFormatModel {
 
     private fun highlightPlayers(rawMessage: Component): Component {
         var message = rawMessage
+        val alreadyPinged = mutableSetOf<UUID>()
 
         for (onlinePlayer in serverPlayers) {
             val name = onlinePlayer.name
@@ -263,20 +264,22 @@ class BukkitChatFormat : ChatFormatModel {
                 continue
             }
 
-            plugin.launch {
-                val user = databaseService.getUser(onlinePlayer.uniqueId)
+            if (onlinePlayer.uniqueId !in alreadyPinged) {
+                alreadyPinged += onlinePlayer.uniqueId
 
-                if (user.soundEnabled) {
-                    onlinePlayer.playSound(sound {
-                        type(Sound.BLOCK_NOTE_BLOCK_PLING)
-                        source(net.kyori.adventure.sound.Sound.Source.PLAYER)
-                        volume(0.25f)
-                        pitch(2f)
-                    })
+                plugin.launch {
+                    val user = databaseService.getUser(onlinePlayer.uniqueId)
+
+                    if (user.soundEnabled) {
+                        onlinePlayer.playSound(sound {
+                            type(Sound.BLOCK_NOTE_BLOCK_PLING)
+                            source(net.kyori.adventure.sound.Sound.Source.PLAYER)
+                            volume(0.25f)
+                            pitch(2f)
+                        })
+                    }
                 }
             }
-
-
 
             message = message.replaceText(
                 TextReplacementConfig
@@ -292,6 +295,7 @@ class BukkitChatFormat : ChatFormatModel {
 
         return message
     }
+
 
     fun convertLegacy(input: String): String {
         val regex = Regex("&#[A-Fa-f0-9]{6}")

@@ -65,10 +65,6 @@ class FallbackChannel(
         TODO("Not yet implemented")
     }
 
-    override fun getMembers(): ObjectSet<ChannelMember> {
-        TODO("Not yet implemented")
-    }
-
     override fun isOwner(member: ChannelMember): Boolean {
         TODO("Not yet implemented")
     }

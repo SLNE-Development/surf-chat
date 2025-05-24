@@ -120,12 +120,6 @@ interface Channel {
     fun getOwner(): ChannelMember
 
     /**
-     * Gets members of the channel.
-     * @return A set of all channel members.
-     */
-    fun getMembers(): ObjectSet<ChannelMember>
-
-    /**
      * Checks if a user is the owner of the channel.
      * @param member The member to check.
      * @return True if the user is the owner, false otherwise.

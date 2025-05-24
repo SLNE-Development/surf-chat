@@ -1,11 +1,14 @@
 package dev.slne.surf.chat.velocity
 
+import com.github.retrooper.packetevents.PacketEvents
+import com.github.retrooper.packetevents.event.PacketListenerPriority
 import com.google.inject.Inject
 
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
 import com.velocitypowered.api.plugin.annotation.DataDirectory
 import com.velocitypowered.api.proxy.ProxyServer
+import dev.slne.surf.chat.velocity.listener.ChatListener
 
 import java.nio.file.Path
 import kotlin.jvm.optionals.getOrNull
@@ -17,6 +20,8 @@ class SurfChatVelocity @Inject constructor(
     @Subscribe
     fun onInitialization(event: ProxyInitializeEvent) {
         INSTANCE = this
+
+        PacketEvents.getAPI().eventManager.registerListener(ChatListener(), PacketListenerPriority.NORMAL)
     }
 
     companion object {

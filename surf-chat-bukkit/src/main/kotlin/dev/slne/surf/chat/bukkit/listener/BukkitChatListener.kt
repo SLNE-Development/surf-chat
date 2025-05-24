@@ -68,7 +68,7 @@ class BukkitChatListener() : Listener {
                 plugin.chatFormat.formatMessage(
                     message,
                     player,
-                    player,
+                    viewer as? Player ?: player,
                     ChatMessageType.CHANNEL,
                     channel.name,
                     messageID,

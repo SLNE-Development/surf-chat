@@ -48,7 +48,7 @@ class BukkitChatFormat : ChatFormatModel {
                             .deserialize(convertLegacy(LuckPermsExtension.getPrefix(sender) + " " + sender.name))
                     )
                     darkSpacer(" >> ")
-                    append(formatItemTag(updateLinks(highlightPlayers(rawMessage)), sender, warn))
+                    append(formatItemTag(updateLinks(highlightPlayers(rawMessage, viewer)), sender, warn))
 
                     hoverEvent(
                         components.getMessageHoverComponent(
@@ -252,9 +252,8 @@ class BukkitChatFormat : ChatFormatModel {
         return message
     }
 
-    private fun highlightPlayers(rawMessage: Component): Component {
+    private fun highlightPlayers(rawMessage: Component, player: Player): Component {
         var message = rawMessage
-        val alreadyPinged = mutableSetOf<UUID>()
 
         for (onlinePlayer in serverPlayers) {
             val name = onlinePlayer.name
@@ -264,9 +263,7 @@ class BukkitChatFormat : ChatFormatModel {
                 continue
             }
 
-            if (onlinePlayer.uniqueId !in alreadyPinged) {
-                alreadyPinged += onlinePlayer.uniqueId
-
+            if(onlinePlayer == player) {
                 plugin.launch {
                     val user = databaseService.getUser(onlinePlayer.uniqueId)
 

@@ -2,7 +2,6 @@ package dev.slne.surf.chat.bukkit.model
 
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.api.model.ChatFormatModel
-import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.bukkit.extension.LuckPermsExtension
 import dev.slne.surf.chat.bukkit.plugin
@@ -14,6 +13,7 @@ import dev.slne.surf.chat.bukkit.util.utils.toPlainText
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import dev.slne.surf.surfapi.core.api.messages.adventure.clickOpensUrl
 import dev.slne.surf.surfapi.core.api.messages.adventure.sound
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextReplacementConfig
@@ -48,7 +48,7 @@ class BukkitChatFormat : ChatFormatModel {
                             .deserialize(convertLegacy(LuckPermsExtension.getPrefix(sender) + " " + sender.name))
                     )
                     darkSpacer(" >> ")
-                    append(formatItemTag(highlightPlayers(rawMessage), sender, warn))
+                    append(formatItemTag(updateLinks(highlightPlayers(rawMessage)), sender, warn))
 
                     hoverEvent(
                         components.getMessageHoverComponent(
@@ -71,7 +71,7 @@ class BukkitChatFormat : ChatFormatModel {
                             .deserialize(convertLegacy(LuckPermsExtension.getPrefix(sender) + " " + sender.name))
                     )
                     darkSpacer(" >> ")
-                    append(formatItemTag(rawMessage, sender, warn))
+                    append(updateLinks(formatItemTag(rawMessage, sender, warn)))
 
                     hoverEvent(
                         components.getMessageHoverComponent(
@@ -96,7 +96,7 @@ class BukkitChatFormat : ChatFormatModel {
                             .deserialize(convertLegacy(LuckPermsExtension.getPrefix(viewer) + " " + viewer.name))
                     )
                     darkSpacer(" >> ")
-                    append(formatItemTag(rawMessage, sender, warn))
+                    append(updateLinks(formatItemTag(rawMessage, sender, warn)))
 
                     hoverEvent(
                         components.getMessageHoverComponent(
@@ -121,7 +121,7 @@ class BukkitChatFormat : ChatFormatModel {
                     darkSpacer(" -> ")
                     variableValue("Dir")
                     darkSpacer(" >> ")
-                    append(formatItemTag(rawMessage, sender, warn))
+                    append(updateLinks(formatItemTag(rawMessage, sender, warn)))
 
                     hoverEvent(
                         components.getMessageHoverComponent(
@@ -144,7 +144,7 @@ class BukkitChatFormat : ChatFormatModel {
                             .deserialize(convertLegacy(LuckPermsExtension.getPrefix(sender) + " " + sender.name))
                     )
                     darkSpacer(" >> ")
-                    append(formatItemTag(rawMessage, sender, warn))
+                    append(updateLinks(formatItemTag(rawMessage, sender, warn)))
 
                     hoverEvent(
                         components.getMessageHoverComponent(
@@ -299,5 +299,35 @@ class BukkitChatFormat : ChatFormatModel {
             val hex = matchResult.value.removePrefix("&#")
             "<#$hex>"
         }
+    }
+
+    private fun updateLinks(rawMessage: Component): Component {
+        val pattern = Regex("(?i)\\b(https?://[\\w-]+(\\.[\\w-]+)+(/\\S*)?)\\b")
+
+        var message = rawMessage
+        val text = rawMessage.toPlainText()
+
+        for (match in pattern.findAll(text)) {
+            val url = match.value
+
+            if (!message.toPlainText().contains(url)) continue
+
+            message = message.replaceText(
+                TextReplacementConfig.builder()
+                    .match(Regex.escape(url))
+                    .replacement(
+                        buildText {
+                            text(url)
+                                hoverEvent (buildText {
+                                    info("Klicke hier, um den Link zu öffnen!")
+                                })
+                                .clickOpensUrl(url)
+                        }
+                    )
+                    .build()
+            )
+        }
+
+        return message
     }
 }

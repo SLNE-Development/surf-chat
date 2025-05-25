@@ -14,6 +14,7 @@ import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.clickOpensUrl
+import dev.slne.surf.surfapi.core.api.messages.adventure.clickSuggestsCommand
 import dev.slne.surf.surfapi.core.api.messages.adventure.sound
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextReplacementConfig
@@ -153,7 +154,7 @@ class BukkitChatFormat : ChatFormatModel {
                             currentServerNiceName
                         )
                     )
-                    clickEvent(ClickEvent.suggestCommand("/msg ${sender.name} "))
+                    clickSuggestsCommand("/teamchat ")
                 }
             }
 

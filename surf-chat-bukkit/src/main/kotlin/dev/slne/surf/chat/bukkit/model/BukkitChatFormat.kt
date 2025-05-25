@@ -303,7 +303,7 @@ class BukkitChatFormat : ChatFormatModel {
     }
 
     private fun updateLinks(rawMessage: Component): Component {
-        val pattern = Regex("(?i)\\b(https?://[\\w-]+(\\.[\\w-]+)+(/\\S*)?)\\b")
+        val pattern = Regex("(?i)\\b((https?://)?[\\w-]+(\\.[\\w-]+)+(/\\S*)?)\\b")
 
         var message = rawMessage
         val text = rawMessage.toPlainText()
@@ -320,7 +320,7 @@ class BukkitChatFormat : ChatFormatModel {
                         buildText {
                             text(url)
                                 hoverEvent (buildText {
-                                    info("Klicke hier, um den Link zu öffnen!")
+                                    info("Klicke hier, um den Link zu öffnen.")
                                 })
                                 .clickOpensUrl(url)
                         }

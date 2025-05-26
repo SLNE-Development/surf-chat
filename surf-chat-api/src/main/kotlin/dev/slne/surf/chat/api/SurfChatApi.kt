@@ -17,7 +17,7 @@ interface SurfChatApi {
      * @param message The message to log.
      * @param messageID The unique identifier for the logged message.
      */
-    suspend fun logMessage(player: UUID, type: MessageType, message: Component, messageID: UUID)
+    suspend fun logMessage(player: UUID, type: MessageType, message: Component, messageID: UUID, server: String)
 
     /**
      * Creates a new chat channel with the specified name and owner.

@@ -6,6 +6,9 @@ import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.user.ChatUser
 import dev.slne.surf.chat.api.type.MessageType
 import dev.slne.surf.chat.core.service.channelService
+import dev.slne.surf.chat.core.service.databaseService
+import dev.slne.surf.chat.fallback.model.entry.FallbackHistoryEntry
+import dev.slne.surf.chat.fallback.util.toPlainText
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.util.Services
 import java.util.UUID
@@ -16,9 +19,18 @@ class FallbackSurfChatApi : SurfChatApi, Services.Fallback {
         player: UUID,
         type: MessageType,
         message: Component,
-        messageID: UUID
+        messageID: UUID,
+        server: String
     ) {
-        TODO("Not yet implemented")
+        databaseService.insertHistoryEntry(player, FallbackHistoryEntry(
+            entryUuid = messageID,
+            userUuid = player,
+            type = type,
+            timestamp = System.currentTimeMillis(),
+            message = message.toPlainText(),
+            deletedBy = null,
+            server = server
+        ))
     }
 
     override fun createChannel(name: String, owner: ChatUser) {

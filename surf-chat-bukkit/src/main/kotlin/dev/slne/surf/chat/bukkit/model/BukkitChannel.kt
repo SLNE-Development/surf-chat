@@ -2,7 +2,7 @@ package dev.slne.surf.chat.bukkit.model
 
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.api.channel.Channel
-import dev.slne.surf.chat.api.model.ChatUser
+import dev.slne.surf.chat.api.user.ChatUser
 import dev.slne.surf.chat.api.channel.ChannelRole
 import dev.slne.surf.chat.api.channel.ChannelStatus
 import dev.slne.surf.chat.bukkit.plugin

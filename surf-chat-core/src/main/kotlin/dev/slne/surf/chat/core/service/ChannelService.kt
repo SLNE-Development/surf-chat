@@ -1,7 +1,7 @@
 package dev.slne.surf.chat.core.service
 
 import dev.slne.surf.chat.api.channel.Channel
-import dev.slne.surf.chat.api.model.ChatUser
+import dev.slne.surf.chat.api.user.ChatUser
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectSet
 

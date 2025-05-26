@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.core.service
 
-import dev.slne.surf.chat.api.model.ChatUser
+import dev.slne.surf.chat.api.user.ChatUser
 import dev.slne.surf.chat.api.model.HistoryEntry
 import dev.slne.surf.chat.api.type.MessageType
 import dev.slne.surf.surfapi.core.api.util.requiredService

@@ -3,7 +3,7 @@ package dev.slne.surf.chat.fallback
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.SurfChatApi
 import dev.slne.surf.chat.api.channel.Channel
-import dev.slne.surf.chat.api.model.ChatUser
+import dev.slne.surf.chat.api.user.ChatUser
 import dev.slne.surf.chat.api.type.MessageType
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.util.Services

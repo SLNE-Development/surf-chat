@@ -16,7 +16,7 @@ interface DenyListEntry {
     /**
      * The reason why the word was denylisted.
      */
-    val reason: String
+    val reason: String?
 
     /**
      * The timestamp (in milliseconds since epoch) when the word was added to the denylisted.

@@ -2,7 +2,7 @@ package dev.slne.surf.chat.fallback.service
 
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.channel.Channel
-import dev.slne.surf.chat.api.model.ChatUser
+import dev.slne.surf.chat.api.user.ChatUser
 import dev.slne.surf.chat.core.service.ChannelService
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.util.Services

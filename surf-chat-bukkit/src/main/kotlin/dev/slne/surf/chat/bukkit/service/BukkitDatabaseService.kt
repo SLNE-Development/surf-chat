@@ -8,7 +8,7 @@ import com.sksamuel.aedile.core.asLoadingCache
 import com.sksamuel.aedile.core.expireAfterWrite
 import com.sksamuel.aedile.core.withRemovalListener
 import dev.slne.surf.chat.api.model.DenyListEntry
-import dev.slne.surf.chat.api.model.ChatUser
+import dev.slne.surf.chat.api.user.ChatUser
 import dev.slne.surf.chat.api.model.HistoryEntry
 import dev.slne.surf.chat.api.type.MessageType
 import dev.slne.surf.chat.bukkit.model.BukkitDenyListEntry

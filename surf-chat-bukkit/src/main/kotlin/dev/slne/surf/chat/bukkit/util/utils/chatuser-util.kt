@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.bukkit.util.utils
 
-import dev.slne.surf.chat.api.model.ChatUser
+import dev.slne.surf.chat.api.user.ChatUser
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.builder.SurfComponentBuilder

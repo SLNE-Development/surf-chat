@@ -2,7 +2,7 @@ package dev.slne.surf.chat.bukkit.service
 
 import com.github.shynixn.mccoroutine.folia.launch
 import com.google.auto.service.AutoService
-import dev.slne.surf.chat.api.model.ChatUser
+import dev.slne.surf.chat.api.user.ChatUser
 import dev.slne.surf.chat.api.model.HistoryEntry
 import dev.slne.surf.chat.api.type.MessageType
 import dev.slne.surf.chat.bukkit.model.BukkitHistoryEntry

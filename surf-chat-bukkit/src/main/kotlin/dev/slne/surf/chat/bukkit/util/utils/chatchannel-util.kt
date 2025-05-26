@@ -1,7 +1,7 @@
 package dev.slne.surf.chat.bukkit.util.utils
 
 import dev.slne.surf.chat.api.channel.Channel
-import dev.slne.surf.chat.api.model.ChatUser
+import dev.slne.surf.chat.api.user.ChatUser
 import dev.slne.surf.chat.core.service.channelService
 
 fun Channel.edit(block: Channel.() -> Unit): Channel {

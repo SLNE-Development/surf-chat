@@ -1,7 +1,7 @@
 package dev.slne.surf.chat.fallback.service
 
 import com.google.auto.service.AutoService
-import dev.slne.surf.chat.api.model.ChatUser
+import dev.slne.surf.chat.api.user.ChatUser
 import dev.slne.surf.chat.api.type.MessageValidationResult
 import dev.slne.surf.chat.core.service.FilterService
 import net.kyori.adventure.text.Component

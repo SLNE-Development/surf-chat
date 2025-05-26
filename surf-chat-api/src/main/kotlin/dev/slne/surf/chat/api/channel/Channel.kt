@@ -1,8 +1,6 @@
 package dev.slne.surf.chat.api.channel
 
-import dev.slne.surf.chat.api.model.ChatUser
-import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap
+import dev.slne.surf.chat.api.user.ChatUser
 import it.unimi.dsi.fastutil.objects.ObjectSet
 
 /**

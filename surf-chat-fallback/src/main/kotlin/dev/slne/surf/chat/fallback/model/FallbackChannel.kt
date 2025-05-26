@@ -3,7 +3,7 @@ package dev.slne.surf.chat.fallback.model
 import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.channel.ChannelMember
 import dev.slne.surf.chat.api.channel.ChannelStatus
-import dev.slne.surf.chat.api.model.ChatUser
+import dev.slne.surf.chat.api.user.ChatUser
 import it.unimi.dsi.fastutil.objects.ObjectSet
 
 class FallbackChannel(

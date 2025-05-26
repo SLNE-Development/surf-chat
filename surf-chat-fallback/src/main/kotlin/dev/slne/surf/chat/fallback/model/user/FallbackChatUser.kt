@@ -1,16 +1,15 @@
-package dev.slne.surf.chat.fallback.model
+package dev.slne.surf.chat.fallback.model.user
 
 import dev.slne.surf.chat.api.channel.Channel
-import dev.slne.surf.chat.api.model.ChatUser
+import dev.slne.surf.chat.api.user.ChatUser
+import dev.slne.surf.chat.api.user.ChatUserSettings
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import java.util.UUID
 
-class FallbackChatUser(
+data class FallbackChatUser (
     override val uuid: UUID,
     override val ignoreList: ObjectSet<UUID>,
-    override var pmDisabled: Boolean,
-    override var soundEnabled: Boolean,
-    override var channelInvites: Boolean
+    override val settings: ChatUserSettings,
 ) : ChatUser {
     override suspend fun toggleChannelInvites(): Boolean {
         TODO("Not yet implemented")

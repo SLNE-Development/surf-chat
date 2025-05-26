@@ -1,8 +1,8 @@
-package dev.slne.surf.chat.api.model
+package dev.slne.surf.chat.api.user
 
 import dev.slne.surf.chat.api.channel.Channel
 import it.unimi.dsi.fastutil.objects.ObjectSet
-import java.util.*
+import java.util.UUID
 
 /**
  * Represents a chat user model.
@@ -22,19 +22,9 @@ interface ChatUser {
     val ignoreList: ObjectSet<UUID>
 
     /**
-     * Indicates whether private messages (PMs) are toggled on or off.
+     * A data class containing the user's chat settings.
      */
-    var pmDisabled: Boolean
-
-    /**
-     * Indicates whether the user likes sound notifications.
-     */
-    var soundEnabled: Boolean
-
-    /**
-     * Indicates whether the user allows channel invites.
-     */
-    var channelInvites: Boolean
+    val settings: ChatUserSettings
 
     /**
      * Toggles the user's preference for receiving channel invites.

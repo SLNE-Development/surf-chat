@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.fallback.model.valdiator
 
-import dev.slne.surf.chat.api.model.ChatUser
+import dev.slne.surf.chat.api.user.ChatUser
 import dev.slne.surf.chat.api.model.MessageValidator
 import dev.slne.surf.chat.api.type.MessageType
 import dev.slne.surf.chat.api.type.MessageValidationResult

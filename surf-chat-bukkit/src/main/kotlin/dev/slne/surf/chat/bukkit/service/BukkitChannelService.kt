@@ -3,7 +3,7 @@ package dev.slne.surf.chat.bukkit.service
 import com.github.shynixn.mccoroutine.folia.launch
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.channel.Channel
-import dev.slne.surf.chat.api.model.ChatUser
+import dev.slne.surf.chat.api.user.ChatUser
 import dev.slne.surf.chat.api.channel.ChannelRole
 import dev.slne.surf.chat.bukkit.model.BukkitChannel
 import dev.slne.surf.chat.bukkit.plugin

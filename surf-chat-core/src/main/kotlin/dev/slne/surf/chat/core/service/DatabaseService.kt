@@ -7,11 +7,12 @@ import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectList
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import org.jetbrains.annotations.Blocking
+import java.nio.file.Path
 import java.util.*
 
 interface DatabaseService {
     @Blocking
-    fun connect()
+    fun connect(path: Path)
 
     suspend fun getUser(uuid: UUID): ChatUser
     suspend fun loadUser(uuid: UUID): ChatUser

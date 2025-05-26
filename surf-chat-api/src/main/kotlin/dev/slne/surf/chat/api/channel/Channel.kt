@@ -40,14 +40,14 @@ interface Channel {
      * @param user The user joining the channel.
      * @param silent Whether the join action should be silent.
      */
-    fun join(user: ChatUser, silent: Boolean = false)
+    suspend fun join(user: ChatUser, silent: Boolean = false)
 
     /**
      * Allows a user to leave the channel.
      * @param user The user leaving the channel.
      * @param silent Whether the leave action should be silent.
      */
-    fun leave(user: ChatUser, silent: Boolean = false)
+    fun leave(user: ChannelMember, silent: Boolean = false)
 
     /**
      * Checks if a user is invited to the channel.
@@ -137,4 +137,6 @@ interface Channel {
      * @return True if the user is a member, false otherwise.
      */
     fun isMember(user: ChatUser): Boolean
+
+    fun handleLeave(member: ChannelMember)
 }

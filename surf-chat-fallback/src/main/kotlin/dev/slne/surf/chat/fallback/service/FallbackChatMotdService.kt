@@ -8,7 +8,7 @@ import net.kyori.adventure.util.Services
 @AutoService(ChatMotdService::class)
 class FallbackChatMotdService : ChatMotdService, Services.Fallback {
     override fun loadMotd() {
-        TODO("Not yet implemented")
+
     }
 
     override fun saveMotd() {

@@ -2,52 +2,75 @@ package dev.slne.surf.chat.fallback.service
 
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.channel.Channel
+import dev.slne.surf.chat.api.channel.ChannelMember
 import dev.slne.surf.chat.api.user.ChatUser
 import dev.slne.surf.chat.core.service.ChannelService
+import dev.slne.surf.chat.fallback.model.FallbackChannel
+import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.util.Services
 
 @AutoService(ChannelService::class)
 class FallbackChannelService : ChannelService, Services.Fallback {
+    val channels = mutableObjectSetOf<Channel>()
+
     override fun createChannel(
         name: String,
         owner: ChatUser
     ): Channel {
-        TODO("Not yet implemented")
+        val channel = FallbackChannel(
+            name = name
+        )
+        channels.add(channel)
+        return channel
     }
 
     override fun deleteChannel(channel: Channel) {
-        TODO("Not yet implemented")
+        channel.members.forEach {
+            channel.handleLeave(it)
+        }
+        channels.removeIf { it.name == channel.name }
     }
 
     override fun getChannel(name: String): Channel? {
-        TODO("Not yet implemented")
+        return channels.firstOrNull { it.name == name }
     }
 
     override fun getChannel(user: ChatUser): Channel? {
-        TODO("Not yet implemented")
+        return channels.firstOrNull { it.members.any { member -> member.uuid == user.uuid } }
     }
 
     override fun getAllChannels(): ObjectSet<Channel> {
-        TODO("Not yet implemented")
+        return channels
     }
 
     override fun register(channel: Channel) {
-        TODO("Not yet implemented")
+        if (channels.any { it.name == channel.name }) {
+            return
+        }
+        channels.add(channel)
     }
 
     override fun unregister(channel: Channel) {
-        TODO("Not yet implemented")
+        channels.removeIf { it.name == channel.name }
     }
 
-    override fun move(
+    override suspend fun move(
         user: ChatUser,
         channel: Channel
     ) {
-        TODO("Not yet implemented")
+        val currentChannel = this.getChannel(user)
+
+        currentChannel?.leave(currentChannel.members.firstOrNull { it.uuid == user.uuid } ?: return, silent = false)
+
+        channel.join(user, silent = false)
     }
 
-    override fun handleDisconnect(user: ChatUser) {
-        TODO("Not yet implemented")
+    override fun handleDisconnect(user: ChannelMember) {
+        channels.forEach { channel ->
+            if (channel.members.any { it.uuid == user.uuid }) {
+                channel.handleLeave(user)
+            }
+        }
     }
 }

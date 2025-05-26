@@ -5,6 +5,7 @@ import dev.slne.surf.chat.api.SurfChatApi
 import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.user.ChatUser
 import dev.slne.surf.chat.api.type.MessageType
+import dev.slne.surf.chat.core.service.channelService
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.util.Services
 import java.util.UUID
@@ -21,14 +22,14 @@ class FallbackSurfChatApi : SurfChatApi, Services.Fallback {
     }
 
     override fun createChannel(name: String, owner: ChatUser) {
-        TODO("Not yet implemented")
+        channelService.createChannel(name, owner)
     }
 
     override fun deleteChannel(name: String) {
-        TODO("Not yet implemented")
+        channelService.deleteChannel(channelService.getChannel(name) ?: return)
     }
 
     override fun getChannel(name: String): Channel? {
-        TODO("Not yet implemented")
+        return channelService.getChannel(name)
     }
 }

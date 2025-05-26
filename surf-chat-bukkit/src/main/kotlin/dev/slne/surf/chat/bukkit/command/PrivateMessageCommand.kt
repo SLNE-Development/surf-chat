@@ -52,7 +52,7 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
                 val user = databaseService.getUser(player.uniqueId)
                 val targetUser = databaseService.getUser(target.uniqueId)
 
-                if (targetUser.isIgnoring(user.uuid)) {
+                if (targetUser.ignores(user.uuid)) {
                     targetUser.sendPrefixed {
                         error("Du ignorierst diesen Spieler.")
                     }
@@ -64,7 +64,7 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
                     MessageType.PRIVATE_TO,
                     player
                 ) {
-                    if (!targetUser.isIgnoring(user.uuid)) {
+                    if (!targetUser.ignores(user.uuid)) {
                         targetUser.sendRawText(
                             plugin.chatFormat.formatMessage(
                                 messageComponent,

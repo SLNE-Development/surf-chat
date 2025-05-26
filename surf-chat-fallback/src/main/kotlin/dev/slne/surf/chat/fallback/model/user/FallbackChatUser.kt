@@ -4,6 +4,7 @@ import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.user.ChatUser
 import dev.slne.surf.chat.api.user.ChatUserSettings
 import it.unimi.dsi.fastutil.objects.ObjectSet
+import net.kyori.adventure.text.Component
 import java.util.UUID
 
 data class FallbackChatUser (
@@ -12,27 +13,57 @@ data class FallbackChatUser (
     override val settings: ChatUserSettings,
 ) : ChatUser {
     override suspend fun toggleChannelInvites(): Boolean {
-        TODO("Not yet implemented")
+        return !settings.channelInvitesEnabled.also {
+            settings.channelInvitesEnabled = it
+        }
     }
 
-    override suspend fun isIgnoring(target: UUID): Boolean {
-        TODO("Not yet implemented")
+    override suspend fun togglePingsEnabled(): Boolean {
+        return !settings.pingsEnabled.also {
+            settings.pingsEnabled = it
+        }
     }
 
-    override suspend fun ignore(target: UUID) {
-        TODO("Not yet implemented")
+    override suspend fun togglePmsEnabled(): Boolean {
+        return !settings.pmEnabled.also {
+            settings.pmEnabled = it
+        }
     }
 
-    override suspend fun stopIgnoring(target: UUID) {
-        TODO("Not yet implemented")
+    override suspend fun togglePmFriendBypassEnabled(): Boolean {
+        return !settings.pmFriendBypassEnabled.also {
+            settings.pmFriendBypassEnabled = it
+        }
+    }
+
+    override suspend fun channelInvitesEnabled(): Boolean {
+        return settings.channelInvitesEnabled
+    }
+
+    override suspend fun pingsEnabled(): Boolean {
+        return settings.pingsEnabled
+    }
+
+    override suspend fun pmEnabled(): Boolean {
+        return settings.pmEnabled
+    }
+
+    override suspend fun pmFriendBypassEnabled(): Boolean {
+        return settings.pmFriendBypassEnabled
+    }
+
+    override suspend fun ignores(target: UUID): Boolean {
+        return ignoreList.contains(target)
     }
 
     override suspend fun toggleIgnore(target: UUID): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun toggleSound(): Boolean {
-        TODO("Not yet implemented")
+        return if (ignoreList.contains(target)) {
+            this.ignoreList.remove(target)
+            false
+        } else {
+            this.ignoreList.add(target)
+            true
+        }
     }
 
     override suspend fun acceptInvite(channel: Channel) {
@@ -43,19 +74,7 @@ data class FallbackChatUser (
         TODO("Not yet implemented")
     }
 
-    override suspend fun hasOpenPms(): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun togglePm(): Boolean {
-        TODO("Not yet implemented")
-    }
-
     override suspend fun moveToChannel(channel: Channel) {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getName(): String {
         TODO("Not yet implemented")
     }
 }

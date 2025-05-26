@@ -1,15 +1,11 @@
-package dev.slne.surf.chat.velocity.util
+package dev.slne.surf.chat.fallback.util
 
-import com.velocitypowered.api.proxy.Player
-import dev.slne.surf.chat.api.user.ChatUser
-import dev.slne.surf.chat.velocity.plugin
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
-import kotlin.jvm.optionals.getOrNull
 
 val timeFormatter: DateTimeFormatter = DateTimeFormatter
     .ofPattern("dd.MM.yyyy, HH:mm:ss", Locale.GERMANY)
@@ -29,8 +25,4 @@ fun debug(message: Any) {
 
 fun Component.toPlainText(): String {
     return PlainTextComponentSerializer.plainText().serialize(this)
-}
-
-fun ChatUser.getPlayer(): Player? {
-    return plugin.proxy.getPlayer(this.uuid).getOrNull()
 }

@@ -1,6 +1,7 @@
 package dev.slne.surf.chat.core.service
 
 import dev.slne.surf.chat.api.channel.Channel
+import dev.slne.surf.chat.api.channel.ChannelMember
 import dev.slne.surf.chat.api.user.ChatUser
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectSet
@@ -65,7 +66,7 @@ interface ChannelService {
      * @param user The user to move.
      * @param channel The channel to move the player to.
      */
-    fun move(user: ChatUser, channel: Channel)
+    suspend fun move(user: ChatUser, channel: Channel)
 
     /**
      * Handles the disconnection of a player from a specific channel.
@@ -76,7 +77,7 @@ interface ChannelService {
      *
      * @param user The player who is disconnecting.
      */
-    fun handleDisconnect(user: ChatUser)
+    fun handleDisconnect(user: ChannelMember)
 
     companion object {
         val INSTANCE = requiredService<ChannelService>()

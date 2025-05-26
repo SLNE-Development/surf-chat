@@ -16,8 +16,9 @@ velocityPluginFile {
 dependencies {
     api(project(":surf-chat-core"))
     compileOnly(libs.packetevents.velocity)
+    compileOnly(libs.luckperms.api)
 
-    //runtimeOnly(project(":surf-chat-fallback"))
+    runtimeOnly(project(":surf-chat-fallback"))
 }
 
 tasks.shadowJar {

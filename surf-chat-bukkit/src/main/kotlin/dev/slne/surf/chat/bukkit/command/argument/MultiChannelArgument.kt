@@ -30,7 +30,7 @@ class MultiChannelArgument(nodeName: String) :
 
         val returnedChannels: ObjectSet<ChannelModel> = mutableObjectSetOf()
 
-        if (input.equals("#all", ignoreCase = true)) {
+        if (input.equals("-all", ignoreCase = true)) {
             returnedChannels.addAll(channelService.getAllChannels())
         } else {
             val channelNames = input.split("\\s+".toRegex())
@@ -61,7 +61,7 @@ class MultiChannelArgument(nodeName: String) :
     }) {
     init {
         replaceSuggestions(ArgumentSuggestions.stringCollection {
-            listOf("#all") + channelService.getAllChannels().map { it.name }
+            listOf("-all") + channelService.getAllChannels().map { it.name }
         }
         )
     }

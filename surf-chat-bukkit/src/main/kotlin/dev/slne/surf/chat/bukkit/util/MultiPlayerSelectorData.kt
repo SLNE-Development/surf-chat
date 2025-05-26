@@ -9,10 +9,10 @@ data class MultiPlayerSelectorData(
 ) {
     fun getString(): String {
         if (this.isWildcard) {
-            return "all"
+            return "-all"
         }
 
-        return this.player?.name ?: "all"
+        return this.player?.name ?: "-all"
     }
 
     fun parse(): UUID? {

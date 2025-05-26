@@ -1,5 +1,6 @@
 package dev.slne.surf.chat.bukkit.util
 
+import java.util.UUID
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
@@ -9,10 +10,10 @@ data class LookupFlags(
     val type: String? = null,
     val range: Long? = null,
     val message: String? = null,
-    val deleted: Boolean? = null,
     val deletedBy: String? = null,
     val page: Int? = null,
     val server: String? = null,
+    val id: UUID? = null
 ) {
     companion object {
         fun parse(input: String): LookupFlags {
@@ -46,10 +47,10 @@ data class LookupFlags(
                 type = map["type"],
                 range = parseRange(map["range"]),
                 message = map["message"],
-                deleted = map["deleted"]?.toBooleanStrictOrNull(),
                 deletedBy = map["deletedBy"],
                 page = map["page"]?.toIntOrNull(),
                 server = map["server"],
+                id = map["id"]?.let { runCatching { UUID.fromString(it) }.getOrNull() }
             )
         }
     }
@@ -59,9 +60,9 @@ data class LookupFlags(
         if (type != null) parts += "--type $type"
         if (range != null) parts += "--range ${range / 1000 / 60 / 60 / 24}d"
         if (message != null) parts += "--message \"$message\""
-        if (deleted != null) parts += "--deleted $deleted"
         if (deletedBy != null) parts += "--deletedBy \"$deletedBy\""
         if (server != null) parts += "--server \"$server\""
+        if (id != null) parts += "--id $id"
         return parts.joinToString(" ")
     }
 }

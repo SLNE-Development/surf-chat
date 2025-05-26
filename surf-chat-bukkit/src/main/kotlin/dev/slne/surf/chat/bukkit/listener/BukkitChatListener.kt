@@ -11,6 +11,7 @@ import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.chat.core.service.messaging.messagingSenderService
 import dev.slne.surf.chat.core.service.spyService
+import dev.slne.surf.chat.core.service.util.HistoryEntry
 import io.papermc.paper.event.player.AsyncChatEvent
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextReplacementConfig
@@ -49,7 +50,10 @@ class BukkitChatListener() : Listener {
         val signature = event.signedMessage().signature()
 
         if (signature != null) {
-            historyService.logCaching(signature, messageID)
+            historyService.logCaching(HistoryEntry(
+                signature,
+                message.toPlainText()
+            ), messageID)
         } else {
             plugin.logger.warning("Message signature is null for player ${player.name} with message: $message")
         }

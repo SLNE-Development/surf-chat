@@ -13,6 +13,7 @@ import dev.slne.surf.chat.bukkit.util.utils.formatTime
 import dev.slne.surf.chat.bukkit.util.utils.getUsername
 import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.databaseService
+import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.clickCopiesToClipboard
@@ -31,7 +32,8 @@ class SurfChatLookupCommand(commandName: String) : CommandAPICommand(commandName
                     "--message",
                     "--deletedBy",
                     "--page",
-                    "--server"
+                    "--server",
+                    "--id"
                 )
             )
                 .setOptional(true)
@@ -51,7 +53,7 @@ class SurfChatLookupCommand(commandName: String) : CommandAPICommand(commandName
                 val user = databaseService.getUser(sender.uniqueId)
 
                 user.sendPrefixed {
-                    info("Chat-Daten werden geladen...")
+                    info("Chat Verlauf wird geladen. Dies kann einige Sekunden dauern...")
                 }
 
                 val history = databaseService.loadHistory(
@@ -59,14 +61,14 @@ class SurfChatLookupCommand(commandName: String) : CommandAPICommand(commandName
                     type = parsed.type,
                     rangeMillis = parsed.range,
                     message = parsed.message,
-                    deleted = parsed.deleted,
                     deletedBy = parsed.deletedBy,
-                    server = parsed.server
+                    server = parsed.server,
+                    id = parsed.id
                 ).sortedByDescending { it.timestamp }
 
                 if (history.isEmpty()) {
                     user.sendPrefixed {
-                        error("Es wurden keine passenden Chat-Daten gefunden. Bitte überprüfe deinen Filter (${parsed.toFlagString()})")
+                        error("Es wurden keine passenden Chat-Daten gefunden.")
                     }
                     return@launch
                 }
@@ -81,10 +83,10 @@ class SurfChatLookupCommand(commandName: String) : CommandAPICommand(commandName
                         "/surfchat lookup ${target.getString()} ${parsed.toFlagString()} --page %page%"
 
                     title {
-                        primary("Chat-Daten")
+                        primary("Chat-Daten".toSmallCaps())
                         target.player?.let {
-                            primary(" von ")
-                            info(it.name ?: it.uniqueId.toString())
+                            primary(" von ".toSmallCaps())
+                            variableValue(it.name?.toSmallCaps() ?: it.uniqueId.toString())
                         }
                         spacer(" (${history.size} Einträge)")
                     }
@@ -93,7 +95,7 @@ class SurfChatLookupCommand(commandName: String) : CommandAPICommand(commandName
                         line {
                             darkSpacer(" - ")
                             text(entry.message, Colors.WHITE)
-                            spacer(" (${entry.type})")
+                            spacer(" (${username})")
 
                             if (entry.deletedBy != null) {
                                 appendNewline()
@@ -103,17 +105,17 @@ class SurfChatLookupCommand(commandName: String) : CommandAPICommand(commandName
                             }
 
                             hoverEvent(buildText {
-                                primary("von: ")
-                                info(username)
+                                variableKey("von: ".toSmallCaps())
+                                variableValue(username)
                                 appendNewline()
-                                primary("Typ: ")
-                                info(entry.type.name)
+                                variableKey("Typ: ".toSmallCaps())
+                                variableValue(entry.type.name)
                                 appendNewline()
-                                primary("Datum: ")
-                                info(formatTime(entry.timestamp))
+                                variableKey("Datum: ".toSmallCaps())
+                                variableValue(formatTime(entry.timestamp))
                                 appendNewline()
-                                primary("Server: ")
-                                info(entry.server)
+                                variableKey("Server: ".toSmallCaps())
+                                variableValue(entry.server)
                                 appendNewline()
                                 darkSpacer("Klicke, um die Nachricht zu kopieren.")
                             })

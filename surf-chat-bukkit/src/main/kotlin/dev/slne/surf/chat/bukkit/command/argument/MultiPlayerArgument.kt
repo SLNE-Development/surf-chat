@@ -29,7 +29,7 @@ class MultiPlayerArgument(nodeName: String) : CustomArgument<ObjectSet<Player>, 
 
         val returnedPlayers: ObjectSet<Player> = mutableObjectSetOf()
 
-        if (input.equals("#all", ignoreCase = true)) {
+        if (input.equals("-all", ignoreCase = true)) {
             returnedPlayers.addAll(Bukkit.getOnlinePlayers())
         } else {
             val names = input.split("\\s+".toRegex())
@@ -52,7 +52,7 @@ class MultiPlayerArgument(nodeName: String) : CustomArgument<ObjectSet<Player>, 
 ) {
     init {
         replaceSuggestions(ArgumentSuggestions.stringCollection {
-            listOf("#all") + Bukkit.getOnlinePlayers().map { it.name }
+            listOf("-all") + Bukkit.getOnlinePlayers().map { it.name }
         })
     }
 }

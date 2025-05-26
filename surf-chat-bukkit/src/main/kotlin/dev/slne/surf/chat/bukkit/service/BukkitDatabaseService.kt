@@ -165,9 +165,9 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
         type: String?,
         rangeMillis: Long?,
         message: String?,
-        deleted: Boolean?,
         deletedBy: String?,
-        server: String?
+        server: String?,
+        id: UUID?
     ): ObjectList<HistoryEntryModel> {
         return withContext(Dispatchers.IO) {
             withTimeout(10_000L) {
@@ -199,6 +199,10 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
 
                         if (server != null) {
                             conditions += ChatHistory.server eq server
+                        }
+
+                        if (id != null) {
+                            conditions += ChatHistory.entryUuid eq id
                         }
 
                         val query = if (conditions.isNotEmpty()) {

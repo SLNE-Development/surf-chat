@@ -3,28 +3,48 @@ package dev.slne.surf.chat.fallback.service
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.model.DenyListEntry
 import dev.slne.surf.chat.core.service.DenylistService
+import dev.slne.surf.chat.core.service.databaseService
+import dev.slne.surf.chat.fallback.util.toPlainText
+import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
+import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.util.Services
 
 @AutoService(DenylistService::class)
 class FallbackDenylistService : DenylistService, Services.Fallback {
+    var denyList: ObjectSet<DenyListEntry>? = null
+
     override fun isDenylisted(word: String): Boolean {
-        TODO("Not yet implemented")
+        if(denyList == null) {
+            return false
+        }
+
+        val list = denyList ?: return false
+
+        return list.any { it.word.equals(word, ignoreCase = true) }
     }
 
     override fun hasDenyListed(message: Component): Boolean {
-        TODO("Not yet implemented")
+        if (denyList == null) {
+            return false
+        }
+
+        val list = denyList ?: return false
+
+        return list.any { entry ->
+            message.children().any { it.toPlainText().contains(entry.word, ignoreCase = true) }
+        }
     }
 
     override suspend fun addToDenylist(word: DenyListEntry): Boolean {
-        TODO("Not yet implemented")
+        return databaseService.addToDenylist(word)
     }
 
     override suspend fun removeFromDenylist(word: String): Boolean {
-        TODO("Not yet implemented")
+        return databaseService.removeFromDenylist(word)
     }
 
     override suspend fun fetch() {
-        TODO("Not yet implemented")
+        denyList = databaseService.loadDenyList()
     }
 }

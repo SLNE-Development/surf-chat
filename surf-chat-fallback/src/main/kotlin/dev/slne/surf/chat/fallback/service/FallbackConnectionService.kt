@@ -2,27 +2,32 @@ package dev.slne.surf.chat.fallback.service
 
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.core.service.ConnectionService
+import dev.slne.surf.chat.fallback.config.ChatConfig
+import dev.slne.surf.surfapi.core.api.config.getSpongeConfig
+import dev.slne.surf.surfapi.core.api.config.surfConfigApi
 import net.kyori.adventure.util.Services
 
 @AutoService(ConnectionService::class)
 class FallbackConnectionService : ConnectionService, Services.Fallback {
+    var config: ChatConfig? = null
+
     override fun loadMessages() {
-        TODO("Not yet implemented")
+        config = surfConfigApi.getSpongeConfig(ChatConfig::class.java)
     }
 
     override fun reloadMessages() {
-        TODO("Not yet implemented")
+        config = surfConfigApi.reloadSpongeConfig(ChatConfig::class.java)
     }
 
     override fun getJoinMessage(): String {
-        TODO("Not yet implemented")
+        return config?.connectionConfig?.joinFormat ?: error("Invalid or unloaded configuration.")
     }
 
     override fun getLeaveMessage(): String {
-        TODO("Not yet implemented")
+        return config?.connectionConfig?.leaveFormat ?: error("Invalid or unloaded configuration.")
     }
 
     override fun isEnabled(): Boolean {
-        TODO("Not yet implemented")
+        return config?.connectionConfig?.enabled ?: false
     }
 }

@@ -2,40 +2,33 @@ package dev.slne.surf.chat.fallback.service
 
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.core.service.ChatMotdService
+import dev.slne.surf.chat.fallback.config.ChatConfig
+import dev.slne.surf.surfapi.core.api.config.createSpongeYmlConfig
+import dev.slne.surf.surfapi.core.api.config.surfConfigApi
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.util.Services
+import java.nio.file.Path
 
 @AutoService(ChatMotdService::class)
 class FallbackChatMotdService : ChatMotdService, Services.Fallback {
+    var config: ChatConfig? = null
+
     override fun loadMotd() {
-
-    }
-
-    override fun saveMotd() {
-        TODO("Not yet implemented")
-    }
-
-    override fun enableMotd() {
-        TODO("Not yet implemented")
-    }
-
-    override fun disableMotd() {
-        TODO("Not yet implemented")
+        config = surfConfigApi.getSpongeConfig(ChatConfig::class.java)
     }
 
     override fun isMotdEnabled(): Boolean {
-        TODO("Not yet implemented")
+        return config?.chatMotdConfig?.enabled ?: false
     }
 
     override fun getMotd(): Component {
-        TODO("Not yet implemented")
-    }
+        var component = Component.empty()
 
-    override fun setMotdLine(line: Int, message: String) {
-        TODO("Not yet implemented")
-    }
+        config?.chatMotdConfig?.lines?.forEach {
+            component = component.append(MiniMessage.miniMessage().deserialize(it))
+        }
 
-    override fun clearMotdLine(line: Int) {
-        TODO("Not yet implemented")
+        return component
     }
 }

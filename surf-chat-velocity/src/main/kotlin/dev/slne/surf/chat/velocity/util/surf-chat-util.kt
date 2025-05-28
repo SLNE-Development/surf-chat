@@ -27,10 +27,6 @@ fun Long.formatTime(): String {
     return timeFormatter.format(Instant.ofEpochMilli(this))
 }
 
-fun formatTime(millis: Long): String {
-    return timeFormatter.format(Instant.ofEpochMilli(millis))
-}
-
 fun debug(message: Any) {
     println("[SurfChat-Debug] $message")
 }

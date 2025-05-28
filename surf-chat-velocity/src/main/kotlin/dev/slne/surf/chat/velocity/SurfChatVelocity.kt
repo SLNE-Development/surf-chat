@@ -8,6 +8,7 @@ import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
 import com.velocitypowered.api.plugin.annotation.DataDirectory
 import com.velocitypowered.api.proxy.ProxyServer
+import dev.slne.surf.chat.velocity.command.CommandManager
 import dev.slne.surf.chat.velocity.listener.ChatListener
 
 import java.nio.file.Path
@@ -22,6 +23,7 @@ class SurfChatVelocity @Inject constructor(
         INSTANCE = this
 
         PacketEvents.getAPI().eventManager.registerListener(ChatListener(), PacketListenerPriority.NORMAL)
+        CommandManager.registerAll()
     }
 
     companion object {

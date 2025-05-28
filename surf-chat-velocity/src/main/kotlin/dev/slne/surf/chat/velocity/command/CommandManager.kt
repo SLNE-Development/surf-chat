@@ -10,10 +10,6 @@ import dev.slne.surf.chat.velocity.command.toggle.ToggleCommand
 
 object CommandManager {
     fun registerAll() {
-        CommandAPI.unregister("msg")
-        CommandAPI.unregister("tell")
-        CommandAPI.unregister("w")
-
         ChannelCommand("channel").register()
         SurfChatCommand("surfchat").register()
         IgnoreCommand("ignore").register()

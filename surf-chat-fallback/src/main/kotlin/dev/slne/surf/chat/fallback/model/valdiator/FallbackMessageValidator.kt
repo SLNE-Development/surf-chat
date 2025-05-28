@@ -1,12 +1,15 @@
 package dev.slne.surf.chat.fallback.model.valdiator
 
+import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.user.ChatUser
 import dev.slne.surf.chat.api.model.MessageValidator
 import dev.slne.surf.chat.api.type.MessageType
 import dev.slne.surf.chat.api.type.MessageValidationResult
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.util.Services
 
-class FallbackMessageValidator : MessageValidator {
+@AutoService(MessageValidator::class)
+class FallbackMessageValidator : MessageValidator, Services.Fallback {
     override fun validate(
         message: Component,
         type: MessageType,

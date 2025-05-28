@@ -8,7 +8,7 @@ interface DenylistService {
     fun isDenylisted(word: String): Boolean
     fun hasDenyListed(message: Component): Boolean
 
-    suspend fun addToDenylist(word: DenyListEntry): Boolean
+    suspend fun addToDenylist(word: String, reason: String, addedAt: Long, addedBy: String): Boolean
     suspend fun removeFromDenylist(word: String): Boolean
 
     suspend fun fetch()

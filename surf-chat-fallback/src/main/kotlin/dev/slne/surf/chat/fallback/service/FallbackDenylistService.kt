@@ -4,6 +4,7 @@ import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.model.DenyListEntry
 import dev.slne.surf.chat.core.service.DenylistService
 import dev.slne.surf.chat.core.service.databaseService
+import dev.slne.surf.chat.fallback.model.entry.FallbackDenylistEntry
 import dev.slne.surf.chat.fallback.util.toPlainText
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import it.unimi.dsi.fastutil.objects.ObjectSet
@@ -36,8 +37,18 @@ class FallbackDenylistService : DenylistService, Services.Fallback {
         }
     }
 
-    override suspend fun addToDenylist(word: DenyListEntry): Boolean {
-        return databaseService.addToDenylist(word)
+    override suspend fun addToDenylist(
+        word: String,
+        reason: String,
+        addedAt: Long,
+        addedBy: String
+    ): Boolean {
+        return databaseService.addToDenylist(FallbackDenylistEntry(
+            word = word,
+            reason = reason,
+            addedAt = addedAt,
+            addedBy = addedBy
+        ))
     }
 
     override suspend fun removeFromDenylist(word: String): Boolean {

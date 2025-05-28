@@ -3,6 +3,7 @@ package dev.slne.surf.chat.api.model
 import dev.slne.surf.chat.api.user.ChatUser
 import dev.slne.surf.chat.api.type.MessageType
 import dev.slne.surf.chat.api.type.MessageValidationResult
+import dev.slne.surf.surfapi.core.api.util.requiredService
 import net.kyori.adventure.text.Component
 
 /**
@@ -31,4 +32,10 @@ interface MessageValidator {
      * @param onSuccess A callback function to execute if parsing is successful.
      */
     fun parse(message: Component, type: MessageType, user: ChatUser, onSuccess: () -> Unit)
+
+    companion object {
+        val INSTANCE = requiredService<MessageValidator>()
+    }
 }
+
+val messageValidator get() = MessageValidator.INSTANCE

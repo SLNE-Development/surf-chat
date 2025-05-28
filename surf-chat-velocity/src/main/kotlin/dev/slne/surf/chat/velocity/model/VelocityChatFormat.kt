@@ -306,3 +306,5 @@ class VelocityChatFormat : ChatFormat {
         return message
     }
 }
+
+val velocityChatFormat get() = VelocityChatFormat()

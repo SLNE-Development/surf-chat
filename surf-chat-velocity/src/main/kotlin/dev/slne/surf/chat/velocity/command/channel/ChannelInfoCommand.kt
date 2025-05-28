@@ -1,35 +1,41 @@
 package dev.slne.surf.chat.velocity.command.channel
 
+import com.github.shynixn.mccoroutine.velocity.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.channel.ChannelStatus
-import dev.slne.surf.chat.bukkit.command.argument.ChannelArgument
-import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
-import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.channelService
+import dev.slne.surf.chat.velocity.command.argument.channelArgument
+import dev.slne.surf.chat.velocity.container
+import dev.slne.surf.chat.velocity.util.ChatPermissionRegistry
+import dev.slne.surf.chat.velocity.util.toChatUser
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 
 class ChannelInfoCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission(ChatPermissionRegistry.COMMAND_CHANNEL_INFO)
-        withOptionalArguments(ChannelArgument("channel"))
+        channelArgument("channel", optional = true)
         playerExecutor { player, args ->
-            val channel = args.getOrDefaultUnchecked<Channel?>(
-                "channel",
-                channelService.getChannel(player)
-            ) ?: run {
-                player.sendPrefixed {
-                    error("Der Kanal existiert nicht oder ist nicht für dich zugänglich.")
+            container.launch {
+                val channel = args.getOrDefaultUnchecked<Channel?>(
+                    "channel",
+                    channelService.getChannel(player.toChatUser())
+                ) ?: run {
+                    player.sendText {
+                        error("Der Kanal existiert nicht oder ist nicht für dich zugänglich.")
+                    }
+                    return@launch
                 }
-                return@playerExecutor
+
+                player.sendMessage(createInfoMessage(channel))
             }
 
-            player.sendMessage(createInfoMessage(channel))
         }
     }
 
@@ -43,7 +49,7 @@ class ChannelInfoCommand(commandName: String) : CommandAPICommand(commandName) {
             append {
                 info("| ")
                 decorate(TextDecoration.BOLD)
-            }.spacer("Besitzer: ".toSmallCaps()).text(channel.getOwner().getName(), Colors.WHITE).appendNewline()
+            }.spacer("Besitzer: ".toSmallCaps()).text(channel.getOwner().name, Colors.WHITE).appendNewline()
             append {
                 info("| ")
                 decorate(TextDecoration.BOLD)

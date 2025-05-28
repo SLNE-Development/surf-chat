@@ -2,7 +2,7 @@ package dev.slne.surf.chat.velocity.command.channel
 
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.subcommand
-import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
+import dev.slne.surf.chat.velocity.util.ChatPermissionRegistry
 
 class ChannelCommand(commandName: String) : CommandAPICommand(commandName) {
     init {

@@ -1,6 +1,8 @@
 package dev.slne.surf.chat.velocity.util
 
 import com.velocitypowered.api.proxy.Player
+import dev.slne.surf.chat.api.channel.Channel
+import dev.slne.surf.chat.api.channel.ChannelMember
 import dev.slne.surf.chat.api.user.ChatUser
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.chat.velocity.plugin
@@ -9,6 +11,7 @@ import dev.slne.surf.surfapi.core.api.messages.builder.SurfComponentBuilder
 import dev.slne.surf.surfapi.core.api.service.PlayerLookupService
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
+import org.gradle.internal.declarativedsl.dom.resolution.resolutionContainer
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -58,6 +61,10 @@ suspend fun ChatUser.getUsernameAsync(): String {
 
 suspend fun UUID.getUsername(): String {
     return PlayerLookupService.getUsername(this) ?: "Unknown"
+}
+
+fun ChatUser.toChannelMember(channel: Channel): ChannelMember? {
+    return channel.members.find { it.uuid == this.uuid }
 }
 
 fun ChatUser.sendText(block: SurfComponentBuilder.() -> Unit) {

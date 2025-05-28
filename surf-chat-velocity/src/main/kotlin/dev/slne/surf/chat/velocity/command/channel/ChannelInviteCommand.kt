@@ -1,63 +1,69 @@
 package dev.slne.surf.chat.velocity.command.channel
 
-import com.github.shynixn.mccoroutine.folia.launch
+import com.github.shynixn.mccoroutine.velocity.launch
+import com.velocitypowered.api.proxy.Player
 import dev.jorel.commandapi.CommandAPICommand
-import dev.jorel.commandapi.arguments.ArgumentSuggestions
-import dev.jorel.commandapi.arguments.EntitySelectorArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.channel.Channel
-import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
-import dev.slne.surf.chat.bukkit.util.components
-import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
-import org.bukkit.Bukkit
-import org.bukkit.OfflinePlayer
+import dev.slne.surf.chat.velocity.command.argument.playerArgument
+import dev.slne.surf.chat.velocity.container
+import dev.slne.surf.chat.velocity.util.ChatPermissionRegistry
+import dev.slne.surf.chat.velocity.util.components
+import dev.slne.surf.chat.velocity.util.sendText
+import dev.slne.surf.chat.velocity.util.toChannelMember
+import dev.slne.surf.chat.velocity.util.toChatUser
+import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 class ChannelInviteCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission(ChatPermissionRegistry.COMMAND_CHANNEL_INVITE)
-        withArguments(EntitySelectorArgument.OnePlayer("player").replaceSuggestions(
-            ArgumentSuggestions.stringCollection {
-                val players = Bukkit.getOnlinePlayers().map { it.name }
-                players.toSet()
-            }))
+        playerArgument("player")
         playerExecutor { player, args ->
-            val channel: Channel? = channelService.getChannel(player)
-            val target = args.getUnchecked<OfflinePlayer>("player") ?: return@playerExecutor
+            container.launch {
+                val channel: Channel? = channelService.getChannel(player.toChatUser())
+                val target = args.getUnchecked<Player>("player") ?: return@launch
 
-            if(channel == null) {
-                player.sendPrefixed {
-                    error("Du bist in keinem Nachrichtenkanal.")
+                if(channel == null) {
+                    player.sendText {
+                        error("Du bist in keinem Nachrichtenkanal.")
+                    }
+                    return@launch
                 }
-                return@playerExecutor
-            }
 
-            plugin.launch {
                 val user = databaseService.getUser(player.uniqueId)
                 val targetUser = databaseService.getUser(target.uniqueId)
 
-                if (channel.isInvited(targetUser)) {
-                    user.sendPrefixed {
+                val channelMember = targetUser.toChannelMember(channel) ?: run {
+                    user.sendText {
                         error("Der Spieler ")
-                        variableValue(target.name ?: target.uniqueId.toString())
+                        variableValue(target.username ?: target.uniqueId.toString())
+                        error(" ist in diesem Nachrichtenkanal nicht registriert.")
+                    }
+                    return@launch
+                }
+
+                if (channel.isInvited(targetUser)) {
+                    user.sendText {
+                        error("Der Spieler ")
+                        variableValue(target.username ?: target.uniqueId.toString())
                         error(" wurde bereits eingeladen.")
                     }
                     return@launch
                 }
 
                 if (channel.isMember(targetUser)) {
-                    user.sendPrefixed {
+                    user.sendText {
                         error("Der Spieler ")
-                        variableValue(target.name ?: target.uniqueId.toString())
+                        variableValue(target.username ?: target.uniqueId.toString())
                         error(" ist bereits in diesem Nachrichtenkanal.")
                     }
                     return@launch
                 }
 
-                if (!channel.hasModeratorPermissions(user)) {
-                    user.sendPrefixed {
+                if (!channel.hasModeratorPermissions(channelMember)) {
+                    user.sendText {
                         error("Du verfügst nicht über die erforderliche Berechtigung.")
                     }
                     return@launch
@@ -65,16 +71,16 @@ class ChannelInviteCommand(commandName: String) : CommandAPICommand(commandName)
 
                 channel.invite(targetUser)
 
-                user.sendPrefixed {
+                user.sendText {
                     info("Du hast ")
-                    variableValue(target.name ?: target.uniqueId.toString())
+                    variableValue(target.username ?: target.uniqueId.toString())
                     info(" in den Nachrichtenkanal ")
                     variableValue(channel.name)
                     info(" eingeladen.")
                 }
 
-                if (targetUser.channelInvites) {
-                    targetUser.sendPrefixed {
+                if (targetUser.channelInvitesEnabled()) {
+                    targetUser.sendText {
                         info("Du wurdest in den Nachrichtenkanal ")
                         variableValue(channel.name)
                         info(" eingeladen. ")

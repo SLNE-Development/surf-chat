@@ -1,12 +1,15 @@
 package dev.slne.surf.chat.velocity.command.channel
 
+import com.github.shynixn.mccoroutine.velocity.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.channel.Channel
-import dev.slne.surf.chat.bukkit.command.argument.multiChannelArgument
-import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
-import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.spyService
+import dev.slne.surf.chat.velocity.command.argument.multiChannelArgument
+import dev.slne.surf.chat.velocity.container
+import dev.slne.surf.chat.velocity.util.ChatPermissionRegistry
+import dev.slne.surf.chat.velocity.util.toChatUser
+import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.surfapi.core.api.util.emptyObjectSet
 
 class ChannelSpyCommand(commandName: String) : CommandAPICommand(commandName) {
@@ -18,36 +21,40 @@ class ChannelSpyCommand(commandName: String) : CommandAPICommand(commandName) {
         playerExecutor { player, args ->
             val channels = args.getOrDefaultUnchecked("channels", emptyObjectSet<Channel>())
 
-            if (channels.isEmpty()) {
-                if (!spyService.isChannelSpying(player)) {
-                    player.sendPrefixed {
-                        error("Du spionierst in keinem Kanal.")
+            container.launch {
+                val user = player.toChatUser()
+
+                if (channels.isEmpty()) {
+                    if (!spyService.isChannelSpying(user)) {
+                        player.sendText {
+                            error("Du spionierst in keinem Kanal.")
+                        }
+                        return@launch
                     }
-                    return@playerExecutor
-                }
 
-                spyService.clearChannelSpys(player)
+                    spyService.clearChannelSpys(user)
 
-                player.sendPrefixed {
-                    success("Du spionierst in keinem Kanal mehr.")
-                }
-                return@playerExecutor
-            }
-
-            channels.forEach {
-                if(!spyService.getChannelSpys(it).contains(player)) {
-                    spyService.addChannelSpy(player, it)
-                } else {
-                    player.sendPrefixed {
-                        error("Du spionierst bereits in dem Kanal ${it.name}.")
+                    player.sendText {
+                        success("Du spionierst in keinem Kanal mehr.")
                     }
-                    return@playerExecutor
+                    return@launch
                 }
-            }
 
-            player.sendPrefixed {
-                success("Du spionierst jetzt in den Kanälen: ")
-                variableValue(channels.joinToString(", ") { it.name })
+                channels.forEach {
+                    if(!spyService.getChannelSpys(it).contains(user)) {
+                        spyService.addChannelSpy(user, it)
+                    } else {
+                        player.sendText {
+                            error("Du spionierst bereits in dem Kanal ${it.name}.")
+                        }
+                        return@forEach
+                    }
+                }
+
+                player.sendText {
+                    success("Du spionierst jetzt in den Kanälen: ")
+                    variableValue(channels.joinToString(", ") { it.name })
+                }
             }
         }
     }

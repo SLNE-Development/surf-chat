@@ -1,74 +1,80 @@
 package dev.slne.surf.chat.velocity.command.channel
 
+import com.github.shynixn.mccoroutine.velocity.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.integerArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 
 import dev.slne.surf.chat.api.channel.Channel
-import dev.slne.surf.chat.bukkit.command.argument.ChannelArgument
-import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
-import dev.slne.surf.chat.bukkit.util.PageableMessageBuilder
-import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
+import dev.slne.surf.chat.api.channel.ChannelRole
 import dev.slne.surf.chat.core.service.channelService
+import dev.slne.surf.chat.velocity.command.argument.channelArgument
+import dev.slne.surf.chat.velocity.container
+import dev.slne.surf.chat.velocity.util.ChatPermissionRegistry
+import dev.slne.surf.chat.velocity.util.PageableMessageBuilder
+import dev.slne.surf.chat.velocity.util.toChatUser
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
+import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import net.kyori.adventure.text.format.TextDecoration
 
 class ChannelMembersCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
-        withArguments(ChannelArgument("channel").setOptional(true))
+        channelArgument("channel", optional = true)
         integerArgument("page", 1, optional = true)
         withPermission(ChatPermissionRegistry.COMMAND_CHANNEL_MEMBERS)
         playerExecutor { player, args ->
-            val page = args.getOrDefaultUnchecked("page", 1)
-            val channel: Channel? =
-                args.getOrDefaultUnchecked("channel", channelService.getChannel(player))
+            container.launch {
+                val page = args.getOrDefaultUnchecked("page", 1)
+                val channel: Channel? =
+                    args.getOrDefaultUnchecked("channel", channelService.getChannel(player.toChatUser()))
 
-            if (channel == null) {
-                player.sendPrefixed {
-                    error("Du bist in keinem Nachrichtenkanal oder der Kanal existiert nicht.")
+                if (channel == null) {
+                    player.sendText {
+                        error("Du bist in keinem Nachrichtenkanal oder der Kanal existiert nicht.")
+                    }
+                    return@launch
                 }
-                return@playerExecutor
+
+                PageableMessageBuilder {
+                    pageCommand = "/channel members ${channel.name} %page%"
+
+                    title {
+                        info("Mitglider von ".toSmallCaps())
+                        variableValue(channel.name)
+                    }
+
+                    line {
+                        append {
+                            info("| ")
+                            decorate(TextDecoration.BOLD)
+                        }
+                        variableValue(channel.getOwner().name)
+                        darkSpacer(" (Besitzer)")
+                    }
+
+                    channel.members.filter { it.role == ChannelRole.MODERATOR }.forEach {
+                        line {
+                            append {
+                                info("| ")
+                                decorate(TextDecoration.BOLD)
+                            }
+                            variableValue(it.name)
+                            darkSpacer(" (Moderator)")
+                        }
+                    }
+
+                    channel.members.filter { it.role == ChannelRole.MEMBER }.forEach {
+                        line {
+                            append {
+                                info("| ")
+                                decorate(TextDecoration.BOLD)
+                            }
+                            variableValue(it.name)
+                            darkSpacer(" (Mitglied)")
+                        }
+                    }
+                }.send(player, page)
             }
-
-            PageableMessageBuilder {
-                pageCommand = "/channel members ${channel.name} %page%"
-
-                title {
-                    info("Mitglider von ".toSmallCaps())
-                    variableValue(channel.name)
-                }
-
-                line {
-                    append {
-                        info("| ")
-                        decorate(TextDecoration.BOLD)
-                    }
-                    variableValue(channel.getOwner().getName())
-                    darkSpacer(" (Besitzer)")
-                }
-
-                channel.getModerators().forEach {
-                    line {
-                        append {
-                            info("| ")
-                            decorate(TextDecoration.BOLD)
-                        }
-                        variableValue(it.getName())
-                        darkSpacer(" (Moderator)")
-                    }
-                }
-
-                channel.getMembers(false).forEach {
-                    line {
-                        append {
-                            info("| ")
-                            decorate(TextDecoration.BOLD)
-                        }
-                        variableValue(it.getName())
-                        darkSpacer(" (Mitglied)")
-                    }
-                }
-            }.send(player, page)
         }
     }
 }

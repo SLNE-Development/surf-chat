@@ -1,20 +1,20 @@
 package dev.slne.surf.chat.velocity.command.channel
 
-import com.github.shynixn.mccoroutine.folia.launch
+import com.github.shynixn.mccoroutine.velocity.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.integerArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.channel.ChannelStatus
-import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
-import dev.slne.surf.chat.bukkit.util.PageableMessageBuilder
-import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.channelService
+import dev.slne.surf.chat.velocity.container
+import dev.slne.surf.chat.velocity.util.ChatPermissionRegistry
+import dev.slne.surf.chat.velocity.util.PageableMessageBuilder
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.clickSuggestsCommand
+import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 
@@ -26,14 +26,14 @@ class ChannelListCommand(commandName: String) : CommandAPICommand(commandName) {
             val page = args.getOrDefaultUnchecked("page", 1)
 
             if (channelService.getAllChannels().isEmpty()) {
-                player.sendPrefixed {
+                player.sendText {
                     error("Es sind keine Kanäle vorhanden.")
                 }
 
                 return@playerExecutor
             }
 
-            plugin.launch {
+            container.launch {
                 PageableMessageBuilder {
                     pageCommand = "/channel list %page%"
                     title {
@@ -68,7 +68,7 @@ class ChannelListCommand(commandName: String) : CommandAPICommand(commandName) {
         return buildText {
             info("Informationen".toSmallCaps()).appendNewline()
             spacer("Name: ".toSmallCaps()).text(channel.name, Colors.WHITE).appendNewline()
-            spacer("Besitzer: ".toSmallCaps()).text(channel.getOwner().getName(), Colors.WHITE).appendNewline()
+            spacer("Besitzer: ".toSmallCaps()).text(channel.getOwner().name, Colors.WHITE).appendNewline()
             spacer("Modus: ".toSmallCaps()).text(
                 when (channel.status) {
                     ChannelStatus.PUBLIC -> "Öffentlich"

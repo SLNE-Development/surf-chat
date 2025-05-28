@@ -4,6 +4,7 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType
 import com.velocitypowered.api.command.VelocityBrigadierMessage
+import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.arguments.Argument
 import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.CommandAPIArgumentType
@@ -54,3 +55,11 @@ class MultiChannelArgument(nodeName: String) : Argument<ObjectSet<Channel>>(node
         }
     }
 }
+
+inline fun CommandAPICommand.multiChannelArgument(
+    nodeName: String,
+    optional: Boolean = false,
+    block: Argument<*>.() -> Unit = {}
+): CommandAPICommand = withArguments(
+    MultiChannelArgument(nodeName).setOptional(optional).apply(block)
+)

@@ -1,61 +1,77 @@
 package dev.slne.surf.chat.velocity.command.channel
 
-import com.github.shynixn.mccoroutine.folia.launch
+import com.github.shynixn.mccoroutine.velocity.launch
+import com.velocitypowered.api.proxy.Player
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.channel.Channel
-import dev.slne.surf.chat.bukkit.command.argument.ChannelMembersArgument
-import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
-import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
-import org.bukkit.OfflinePlayer
+import dev.slne.surf.chat.velocity.command.argument.playerArgument
+import dev.slne.surf.chat.velocity.container
+import dev.slne.surf.chat.velocity.util.ChatPermissionRegistry
+import dev.slne.surf.chat.velocity.util.sendText
+import dev.slne.surf.chat.velocity.util.toChannelMember
+import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 class ChannelPromoteCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission(ChatPermissionRegistry.COMMAND_CHANNEL_PROMOTE)
-        withArguments(ChannelMembersArgument("player"))
+        playerArgument("player")
         playerExecutor { player, args ->
-            val channel: Channel? = channelService.getChannel(player)
-            val target = args.getUnchecked<OfflinePlayer>("player") ?: return@playerExecutor
-
-            if(channel == null) {
-                player.sendPrefixed {
-                    error("Du bist in keinem Nachrichtenkanal.")
-                }
-                return@playerExecutor
-            }
-
-            plugin.launch {
+            container.launch {
                 val user = databaseService.getUser(player.uniqueId)
+                val channel: Channel? = channelService.getChannel(user)
+                val target = args.getUnchecked<Player>("player") ?: return@launch
+
+                if(channel == null) {
+                    player.sendText {
+                        error("Du bist in keinem Nachrichtenkanal.")
+                    }
+                    return@launch
+                }
+
                 val targetUser = databaseService.getUser(target.uniqueId)
 
-                if (!channel.isOwner(user)) {
-                    user.sendPrefixed {
+                val channelMember = user.toChannelMember(channel) ?: run {
+                    user.sendText {
+                        error("Du bist in diesem Nachrichtenkanal nicht registriert.")
+                    }
+                    return@launch
+                }
+
+                val targetChannelMember = targetUser.toChannelMember(channel) ?: run {
+                    user.sendText {
+                        error("Du bist in diesem Nachrichtenkanal nicht registriert.")
+                    }
+                    return@launch
+                }
+
+                if (!channel.isOwner(channelMember)) {
+                    user.sendText {
                         error("Du verfügst nicht über die erforderliche Berechtigung.")
                     }
                     return@launch
                 }
 
-                if (channel.hasModeratorPermissions(targetUser)) {
-                    user.sendPrefixed {
+                if (channel.hasModeratorPermissions(targetChannelMember)) {
+                    user.sendText {
                         error("Der Spieler ")
-                        variableValue(target.name ?: target.uniqueId.toString())
+                        variableValue(target.username ?: target.uniqueId.toString())
                         error(" ist bereits Moderator.")
                     }
                     return@launch
                 }
 
-                channel.promote(targetUser)
+                channel.promote(targetChannelMember)
 
-                user.sendPrefixed {
+                user.sendText {
                     success("Du hast ")
-                    variableValue(target.name ?: target.uniqueId.toString())
+                    variableValue(target.username ?: target.uniqueId.toString())
                     success(" befördert.")
                 }
 
-                targetUser.sendPrefixed {
+                targetUser.sendText {
                     info("Du wurdest befördert.")
                 }
             }

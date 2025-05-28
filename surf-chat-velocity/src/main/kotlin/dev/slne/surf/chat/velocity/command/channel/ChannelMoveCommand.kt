@@ -1,50 +1,45 @@
 package dev.slne.surf.chat.velocity.command.channel
 
-import com.github.shynixn.mccoroutine.folia.launch
+import com.github.shynixn.mccoroutine.velocity.launch
+import com.velocitypowered.api.proxy.Player
 import dev.jorel.commandapi.CommandAPICommand
-import dev.jorel.commandapi.arguments.ArgumentSuggestions
-import dev.jorel.commandapi.arguments.EntitySelectorArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.channel.Channel
-import dev.slne.surf.chat.bukkit.command.argument.ChannelArgument
-import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
-import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
-import org.bukkit.Bukkit
-import org.bukkit.entity.Player
+import dev.slne.surf.chat.velocity.command.argument.channelArgument
+import dev.slne.surf.chat.velocity.command.argument.playerArgument
+import dev.slne.surf.chat.velocity.container
+import dev.slne.surf.chat.velocity.util.ChatPermissionRegistry
+import dev.slne.surf.chat.velocity.util.getUsername
+import dev.slne.surf.chat.velocity.util.sendText
 
 class ChannelMoveCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission(ChatPermissionRegistry.COMMAND_CHANNEL_ADMIN_MOVE)
-        withArguments(EntitySelectorArgument.OnePlayer("player").replaceSuggestions(
-            ArgumentSuggestions.stringCollection {
-                val players = Bukkit.getOnlinePlayers().map { it.name }
-                players.toSet()
-            }))
-        withArguments(ChannelArgument("channel"))
+        playerArgument("player")
+        channelArgument("channel")
         withPermission("surf.chat.command.channel.move")
 
         playerExecutor { player, args ->
             val target = args.getUnchecked<Player>("player") ?: return@playerExecutor
             val channel = args.getUnchecked<Channel>("channel") ?: return@playerExecutor
 
-            plugin.launch {
+            container.launch {
                 val user = databaseService.getUser(player.uniqueId)
                 val targetUser = databaseService.getUser(target.uniqueId)
 
-                channelService.move(target, channel)
+                channelService.move(targetUser, channel)
 
-                user.sendPrefixed {
+                user.sendText {
                     success("Du hast ")
-                    variableValue(targetUser.getName())
+                    variableValue(targetUser.getUsername())
                     success(" in den Nachrichtenkanal ")
                     variableValue(channel.name)
                     success(" verschoben.")
                 }
 
-                targetUser.sendPrefixed {
+                targetUser.sendText {
                     info("Du wurdest in den Nachrichtenkanal ")
                     variableValue(channel.name)
                     info(" verschoben.")

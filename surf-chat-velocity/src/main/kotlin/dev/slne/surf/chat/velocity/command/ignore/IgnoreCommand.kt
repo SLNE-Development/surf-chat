@@ -30,6 +30,7 @@ class IgnoreCommand(commandName: String) : CommandAPICommand(commandName) {
             container.launch {
                 val targetUuid = PlayerLookupService.getUuid(target) ?: run {
                     player.sendText {
+                        appendPrefix()
                         error("Der Spieler '$target' konnte nicht gefunden werden.")
                     }
                     return@launch

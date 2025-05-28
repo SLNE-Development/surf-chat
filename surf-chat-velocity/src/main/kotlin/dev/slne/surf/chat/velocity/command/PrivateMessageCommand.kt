@@ -42,6 +42,7 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
 
                 if(target.uniqueId == player.uniqueId) {
                     player.sendText {
+                        appendPrefix()
                         error("Du kannst dir selbst keine Nachrichten senden.")
                     }
                     return@launch

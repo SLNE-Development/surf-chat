@@ -28,6 +28,7 @@ class PrivateMessageSpyCommand(commandName: String) : CommandAPICommand(commandN
                 if (players.isEmpty()) {
                     if (!spyService.isPrivateMessageSpying(user)) {
                         player.sendText {
+                            appendPrefix()
                             error("Du spionierst in keinen privaten Nachrichten.")
                         }
                         return@launch
@@ -35,6 +36,7 @@ class PrivateMessageSpyCommand(commandName: String) : CommandAPICommand(commandN
 
                     spyService.clearPrivateMessageSpys(user)
                     player.sendText {
+                        appendPrefix()
                         success("Du spionierst in keinen privaten Nachrichten mehr.")
                     }
                 } else {
@@ -43,6 +45,7 @@ class PrivateMessageSpyCommand(commandName: String) : CommandAPICommand(commandN
                     }
 
                     player.sendText {
+                        appendPrefix()
                         success("Du spionierst jetzt in den privaten Nachrichten von ")
                         variableValue(players.joinToString(", ") { it.username })
                         success(".")

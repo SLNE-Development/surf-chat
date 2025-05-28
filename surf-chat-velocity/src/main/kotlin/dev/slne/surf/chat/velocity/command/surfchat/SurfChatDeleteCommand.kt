@@ -17,6 +17,7 @@ class SurfChatDeleteCommand(commandName: String) : CommandAPICommand(commandName
 
             if (!historyService.deleteMessage(player.username, UUID.fromString(messageID))) {
                 player.sendText {
+                    appendPrefix()
                     error("Eine Nachricht mit der ID ")
                     variableValue(messageID)
                     error(" existiert nicht.")

@@ -17,7 +17,7 @@ import it.unimi.dsi.fastutil.objects.ObjectSet
 import kotlin.jvm.optionals.getOrNull
 
 @Suppress("UNCHECKED_CAST")
-class PlayerArgument(nodeName: String) : Argument<ObjectSet<Player>>(nodeName, StringArgumentType.string()) {
+class MultiPlayerArgument(nodeName: String) : Argument<ObjectSet<Player>>(nodeName, StringArgumentType.string()) {
     override fun getPrimitiveType(): Class<ObjectSet<Player>> {
         return ObjectSet::class.java as Class<ObjectSet<Player>>
     }
@@ -61,5 +61,5 @@ inline fun CommandAPICommand.multiPlayerArgument(
     optional: Boolean = false,
     block: Argument<*>.() -> Unit = {}
 ): CommandAPICommand = withArguments(
-    PlayerArgument(nodeName).setOptional(optional).apply(block)
+    MultiPlayerArgument(nodeName).setOptional(optional).apply(block)
 )

@@ -9,67 +9,80 @@ import net.kyori.adventure.util.Services
 
 @AutoService(SpyService::class)
 class FallbackSpyService : SpyService, Services.Fallback {
+    val channelSpies = mutableMapOf<Channel, ObjectList<ChatUser>>()
+    val privateMessageSpies = mutableMapOf<ChatUser, ObjectList<ChatUser>>()
+
     override fun getChannelSpys(channel: Channel): ObjectList<ChatUser> {
-        TODO("Not yet implemented")
+        return channelSpies.getOrDefault(channel, ObjectList.of())
     }
 
     override fun getPrivateMessageSpys(user: ChatUser): ObjectList<ChatUser> {
-        TODO("Not yet implemented")
+        return privateMessageSpies.getOrDefault(user, ObjectList.of())
     }
 
     override fun addChannelSpy(
         user: ChatUser,
         channel: Channel
     ) {
-        TODO("Not yet implemented")
+        channelSpies.computeIfAbsent(channel) { ObjectList.of() }.add(user)
     }
 
     override fun removeChannelSpy(
         user: ChatUser,
         channel: Channel
     ) {
-        TODO("Not yet implemented")
+        channelSpies[channel]?.remove(user)
+
+        if (channelSpies[channel]?.isEmpty() == true) {
+            channelSpies.remove(channel)
+        }
     }
 
     override fun addPrivateMessageSpy(
         user: ChatUser,
         target: ChatUser
     ) {
-        TODO("Not yet implemented")
+        privateMessageSpies.computeIfAbsent(user) { ObjectList.of() }.add(target)
     }
 
     override fun removePrivateMessageSpy(
         user: ChatUser,
         target: ChatUser
     ) {
-        TODO("Not yet implemented")
+        privateMessageSpies[user]?.remove(target)
+
+        if (privateMessageSpies[user]?.isEmpty() == true) {
+            privateMessageSpies.remove(user)
+        }
     }
 
     override fun hasChannelSpies(channel: Channel): Boolean {
-        TODO("Not yet implemented")
+        return channelSpies.containsKey(channel) && channelSpies[channel]?.isNotEmpty() == true
     }
 
     override fun hasPrivateMessageSpies(user: ChatUser): Boolean {
-        TODO("Not yet implemented")
+        return privateMessageSpies.containsKey(user) && privateMessageSpies[user]?.isNotEmpty() == true
     }
 
     override fun isChannelSpying(user: ChatUser): Boolean {
-        TODO("Not yet implemented")
+        return channelSpies.values.any { it.contains(user) }
     }
 
     override fun isPrivateMessageSpying(user: ChatUser): Boolean {
-        TODO("Not yet implemented")
+        return privateMessageSpies.values.any { it.contains(user) }
     }
 
     override fun clearChannelSpys(user: ChatUser) {
-        TODO("Not yet implemented")
+        channelSpies.values.forEach { it.remove(user) }
+        channelSpies.entries.removeIf { it.value.isEmpty() }
     }
 
     override fun clearPrivateMessageSpys(user: ChatUser) {
-        TODO("Not yet implemented")
+        privateMessageSpies.remove(user)
     }
 
     override fun handleDisconnect(user: ChatUser) {
-        TODO("Not yet implemented")
+        this.clearChannelSpys(user)
+        this.clearPrivateMessageSpys(user)
     }
 }

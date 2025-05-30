@@ -11,13 +11,11 @@ import net.kyori.adventure.text.Component
 import java.util.*
 
 interface HistoryService {
-    suspend fun write(user: UUID, type: MessageType, message: Component, messageID: UUID)
-    suspend fun getHistory(user: ChatUser): ObjectList<HistoryEntry>
+    suspend fun write(user: UUID, type: MessageType, message: Component, messageID: UUID, server: String)
 
     fun logCaching(message: SignedMessage.Signature, messageID: UUID)
-    fun deleteMessage(name: String, messageID: UUID): Boolean
+    suspend fun deleteMessage(name: String, messageID: UUID): Boolean
     fun clearChat()
-    fun getMessageIds(): ObjectSet<UUID>
 
     companion object {
         val INSTANCE = requiredService<HistoryService>()

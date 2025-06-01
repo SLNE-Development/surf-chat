@@ -2,21 +2,20 @@ package dev.slne.surf.chat.fallback.service
 
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.core.service.ConnectionService
-import dev.slne.surf.chat.fallback.config.ChatConfig
-import dev.slne.surf.surfapi.core.api.config.getSpongeConfig
+import dev.slne.surf.chat.fallback.config.FallbackChatConfig
 import dev.slne.surf.surfapi.core.api.config.surfConfigApi
 import net.kyori.adventure.util.Services
 
 @AutoService(ConnectionService::class)
 class FallbackConnectionService : ConnectionService, Services.Fallback {
-    var config: ChatConfig? = null
+    var config: FallbackChatConfig? = null
 
     override fun loadMessages() {
-        config = surfConfigApi.getSpongeConfig(ChatConfig::class.java)
+        config = surfConfigApi.getSpongeConfig(FallbackChatConfig::class.java)
     }
 
     override fun reloadMessages() {
-        config = surfConfigApi.reloadSpongeConfig(ChatConfig::class.java)
+        config = surfConfigApi.reloadSpongeConfig(FallbackChatConfig::class.java)
     }
 
     override fun getJoinMessage(): String {

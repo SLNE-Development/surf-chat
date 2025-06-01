@@ -2,6 +2,8 @@ package dev.slne.surf.chat.core.service
 
 import dev.slne.surf.chat.api.user.ChatUser
 import dev.slne.surf.chat.api.type.MessageValidationResult
+import dev.slne.surf.chat.core.service.config.ChatFilterConfig
+import dev.slne.surf.chat.core.service.config.ChatSpamConfig
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import net.kyori.adventure.text.Component
 import java.util.*
@@ -20,13 +22,12 @@ interface FilterService {
     fun isValidInput(input: Component): Boolean
     fun isSpamming(uuid: UUID): Boolean
 
-    fun setMessageLimit(seconds: Int, count: Int)
-    fun getMessageLimit(): Pair<Int, Int>
+    fun setMessageLimit(milliseconds: Long, count: Int)
+    fun getMessageLimit(): Pair<Int, Long>
 
-    fun loadDomains()
+    fun loadDomains(filterConfig: ChatFilterConfig)
 
-    fun loadMessageLimit()
-    fun saveMessageLimit()
+    fun loadMessageLimit(spamConfig: ChatSpamConfig)
 
     companion object {
         val INSTANCE = requiredService<FilterService>()

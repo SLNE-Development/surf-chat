@@ -4,7 +4,11 @@ import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.user.ChatUser
 import dev.slne.surf.chat.api.type.MessageValidationResult
 import dev.slne.surf.chat.core.service.FilterService
+import dev.slne.surf.chat.core.service.config.ChatFilterConfig
+import dev.slne.surf.chat.core.service.config.ChatSpamConfig
 import dev.slne.surf.chat.core.service.denylistService
+import dev.slne.surf.chat.fallback.config.FallbackChatFilterConfig
+import dev.slne.surf.chat.fallback.config.FallbackChatSpamConfig
 import dev.slne.surf.chat.fallback.util.toPlainText
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import net.kyori.adventure.text.Component
@@ -21,8 +25,8 @@ class FallbackFilterService : FilterService, Services.Fallback {
     private val urlRegex =
         "((http|https|ftp)://)?([\\w-]+\\.)+[\\w-]+(/[\\w- ./?%&=]*)?".toRegex(RegexOption.IGNORE_CASE)
 
-    private var messageLimitSeconds = 10
-    private var messageLimitCount = 5
+    private var messageLimitSeconds = 1000L
+    private var messageLimitCount = 10
 
     override fun find(message: Component, user: ChatUser): MessageValidationResult {
         if (denylistService.hasDenyListed(message)) {
@@ -81,33 +85,24 @@ class FallbackFilterService : FilterService, Services.Fallback {
         return false
     }
 
-    override fun setMessageLimit(seconds: Int, count: Int) {
-        messageLimitSeconds = seconds
+    override fun setMessageLimit(milliseconds: Long, count: Int) {
+        messageLimitSeconds = milliseconds
         messageLimitCount = count
     }
 
-    override fun getMessageLimit(): Pair<Int, Int> {
+    override fun getMessageLimit(): Pair<Int, Long> {
         return messageLimitCount to messageLimitSeconds
     }
 
-    override fun loadDomains() {
-        val config = plugin.config
+    override fun loadDomains(filterConfig: ChatFilterConfig) {
+        val config = filterConfig as? FallbackChatFilterConfig ?: return
         allowedDomains.clear()
-        allowedDomains.addAll(config.getStringList("whitelisted-domains"))
+        allowedDomains.addAll(config.whitelistedDomains)
     }
 
-    override fun loadMessageLimit() {
-        val config = plugin.config
-        messageLimitSeconds = config.getInt("spam-protection.in-seconds", 10)
-        messageLimitCount = config.getInt("spam-protection.max-messages", 5)
-    }
-
-    override fun saveMessageLimit() {
-        val config = plugin.config
-
-        config.set("spam-protection.in-seconds", messageLimitSeconds)
-        config.set("spam-protection.max-messages", messageLimitCount)
-
-        plugin.saveConfig()
+    override fun loadMessageLimit(spamConfig: ChatSpamConfig) {
+        val config = spamConfig as? FallbackChatSpamConfig ?: return
+        messageLimitSeconds = config.timeFrame
+        messageLimitCount = config.maxMessages
     }
 }

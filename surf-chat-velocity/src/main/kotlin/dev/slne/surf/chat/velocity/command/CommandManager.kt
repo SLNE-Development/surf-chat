@@ -1,6 +1,5 @@
 package dev.slne.surf.chat.velocity.command
 
-import dev.jorel.commandapi.CommandAPI
 import dev.slne.surf.chat.velocity.command.channel.ChannelCommand
 import dev.slne.surf.chat.velocity.command.denylist.DenyListCommand
 import dev.slne.surf.chat.velocity.command.ignore.IgnoreCommand

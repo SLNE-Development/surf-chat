@@ -1,11 +1,12 @@
 package dev.slne.surf.chat.fallback.config
 
+import dev.slne.surf.chat.core.service.config.ChatMotdConfig
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 
 @ConfigSerializable
-data class ChatMotdConfig (
-    val enabled: Boolean = false,
-    val lines: List<String> = listOf(
+data class FallbackChatMotdConfig (
+    override val enabled: Boolean = false,
+    override val lines: List<String> = listOf (
         "<dark_gray>*--------------------------------------------------*",
         " ",
         "<white>Willkommen auf dem <#f9c353>CastCrafter Community Server<white>!",
@@ -16,4 +17,4 @@ data class ChatMotdConfig (
         " ",
         "<dark_gray>*--------------------------------------------------*"
     )
-)
+) : ChatMotdConfig

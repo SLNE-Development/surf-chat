@@ -7,6 +7,7 @@ import dev.slne.surf.chat.core.service.chatMotdService
 import dev.slne.surf.chat.core.service.connectionService
 import dev.slne.surf.chat.core.service.filterService
 import dev.slne.surf.chat.velocity.util.ChatPermissionRegistry
+import dev.slne.surf.surfapi.core.api.config.surfConfigApi
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 import kotlin.system.measureTimeMillis
@@ -19,7 +20,7 @@ class SurfChatReloadCommand(commandName: String) : CommandAPICommand(commandName
             val time = measureTimeMillis {
                 connectionService.reloadMessages()
                 chatMotdService.loadMotd()
-                filterService.loadDomains()
+                filterService.loadDomains(surfConfigApi.getSpongeConfig())
             }
 
             player.sendText {

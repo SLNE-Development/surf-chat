@@ -118,7 +118,7 @@ class VelocityChatFormat : ChatFormat {
                             currentServerNiceName
                         )
                     )
-                    clickSuggestsCommand("/msg $senderName ")
+                    clickSuggestsCommand("/msg $viewerName ")
                 }
             }
 

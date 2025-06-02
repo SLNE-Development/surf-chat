@@ -75,10 +75,12 @@ class FallbackChannelService : ChannelService, Services.Fallback {
         channel.join(user, silent = false)
     }
 
-    override fun handleDisconnect(user: ChannelMember) {
+    override fun handleDisconnect(user: ChatUser) {
         channels.forEach { channel ->
-            if (channel.members.any { it.uuid == user.uuid }) {
-                channel.handleLeave(user)
+            channel.members.forEach {
+                if (it.uuid == user.uuid) {
+                    channel.handleLeave(it)
+                }
             }
         }
     }

@@ -77,7 +77,7 @@ interface ChannelService {
      *
      * @param user The player who is disconnecting.
      */
-    fun handleDisconnect(user: ChannelMember)
+    fun handleDisconnect(user: ChatUser)
 
     companion object {
         val INSTANCE = requiredService<ChannelService>()

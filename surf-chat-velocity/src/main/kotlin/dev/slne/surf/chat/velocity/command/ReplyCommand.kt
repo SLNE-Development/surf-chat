@@ -9,12 +9,16 @@ import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.api.type.MessageType
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.chat.core.service.replyService
+import dev.slne.surf.chat.core.service.spyService
 import dev.slne.surf.chat.velocity.container
 import dev.slne.surf.chat.velocity.model.velocityChatFormat
 import dev.slne.surf.chat.velocity.util.ChatPermissionRegistry
+import dev.slne.surf.chat.velocity.util.components
+import dev.slne.surf.chat.velocity.util.getUsername
 import dev.slne.surf.chat.velocity.util.sendRawText
 import dev.slne.surf.chat.velocity.util.sendText
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.event.ClickEvent
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
@@ -73,6 +77,24 @@ class ReplyCommand(commandName: String) : CommandAPICommand(commandName) {
                             true
                         )
                     )
+
+                    if (spyService.hasPrivateMessageSpies(user)) {
+                        spyService.getPrivateMessageSpys(user).forEach {
+                            it.sendText {
+                                info("[${player.username} -> ${targetUser.getUsername()}] ")
+                                append(messageComponent)
+
+                                hoverEvent(
+                                    components.getMessageHoverComponent(
+                                        player.username,
+                                        System.currentTimeMillis(),
+                                        "N/A"
+                                    )
+                                )
+                                clickEvent(ClickEvent.suggestCommand("/msg ${player.username} "))
+                            }
+                        }
+                    }
 
                     container.launch {
                         surfChatApi.logMessage(

@@ -14,6 +14,7 @@ class SurfChatCommand(commandName: String) : CommandAPICommand(commandName) {
         subcommand(SurfChatDeleteCommand("delete"))
         subcommand(SurfChatChatClearCommand("clear"))
         subcommand(SurfChatLookupCommand("lookup"))
+        subcommand(SurfChatInfoCommand("info"))
         subcommand(DenyListCommand("denylist"))
         subcommand(SurfChatReloadCommand("reload"))
     }

@@ -7,7 +7,6 @@ import dev.jorel.commandapi.arguments.GreedyStringArgument
 import dev.jorel.commandapi.arguments.StringArgument
 import dev.jorel.commandapi.kotlindsl.argument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.jorel.commandapi.kotlindsl.stringArgument
 
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.chat.velocity.container
@@ -15,13 +14,14 @@ import dev.slne.surf.chat.velocity.plugin
 import dev.slne.surf.chat.velocity.util.ChatPermissionRegistry
 import dev.slne.surf.chat.velocity.util.LookupFlags
 import dev.slne.surf.chat.velocity.util.PageableMessageBuilder
+import dev.slne.surf.chat.velocity.util.formatAgo
 import dev.slne.surf.chat.velocity.util.formatTime
 import dev.slne.surf.chat.velocity.util.getUsername
 import dev.slne.surf.chat.velocity.util.sendText
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
-import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.clickCopiesToClipboard
+import dev.slne.surf.surfapi.core.api.messages.adventure.clickRunsCommand
 import dev.slne.surf.surfapi.core.api.service.PlayerLookupService
 import net.kyori.adventure.text.format.TextDecoration
 import java.util.UUID
@@ -33,15 +33,15 @@ class SurfChatLookupCommand(commandName: String) : CommandAPICommand(commandName
         withArguments(StringArgument("target").replaceSuggestions(ArgumentSuggestions.stringCollection {
             plugin.proxy.allPlayers.map { it.username }.also { "--all" }
         }))
-        argument(
-            GreedyStringArgument("filters").replaceSuggestions(
+        argument(GreedyStringArgument("filters").replaceSuggestions(
                 ArgumentSuggestions.strings(
                     "--type",
                     "--range",
                     "--message",
                     "--deletedBy",
                     "--page",
-                    "--server"
+                    "--server",
+                    "--id"
                 )
             )
                 .setOptional(true)
@@ -70,7 +70,8 @@ class SurfChatLookupCommand(commandName: String) : CommandAPICommand(commandName
                     rangeMillis = parsed.range,
                     message = parsed.message,
                     deletedBy = parsed.deletedBy,
-                    server = parsed.server
+                    server = parsed.server,
+                    id = parsed.id
                 ).sortedByDescending { it.timestamp }
 
                 if (history.isEmpty()) {
@@ -95,39 +96,67 @@ class SurfChatLookupCommand(commandName: String) : CommandAPICommand(commandName
                             info(" von ".toSmallCaps())
                             variableValue(target.toSmallCaps())
                         }
-                        spacer(" (${history.size} Einträge)")
                     }
 
                     entriesWithNames.forEach { (entry, username) ->
                         line {
-                            darkSpacer(" - ")
-                            text(entry.message, Colors.WHITE)
-                            spacer(" (${entry.type})")
+                            append {
+                                spacer("vor ${entry.timestamp.formatAgo()} - ")
+                                hoverEvent(buildText {
+                                    info(entry.timestamp.formatTime())
+                                    appendNewline()
+                                    spacer("Klicke, um die Unix-Zeit zu kopieren.")
+                                })
+                                clickCopiesToClipboard(entry.timestamp.toString())
+                            }
+                            variableKey(username)
+                            text(" texted ")
+                            spacer("'")
+                            variableValue(entry.message.reduceString())
+                            spacer("'")
+                            appendNewline()
+                            spacer("  (Typ: ${entry.type.name}, Server: ${entry.server})")
 
-                            if (entry.deletedBy != null) {
-                                appendNewline()
-                                spacer("    (Gelöscht von ${entry.deletedBy})").decorate(
-                                    TextDecoration.ITALIC
-                                )
+                            if(entry.deletedBy != null) {
+                                append {
+                                    spacer(" - gelöscht von ${entry.deletedBy}")
+                                    decorate(TextDecoration.ITALIC)
+                                }
                             }
 
                             hoverEvent(buildText {
-                                primary("von: ")
-                                info(username)
+                                append {
+                                    info("| ")
+                                    decorate(TextDecoration.BOLD)
+                                }
+                                variableKey("von: ".toSmallCaps())
+                                variableValue(username)
                                 appendNewline()
-                                primary("Typ: ")
-                                info(entry.type.name)
+                                append {
+                                    info("| ")
+                                    decorate(TextDecoration.BOLD)
+                                }
+                                variableKey("Typ: ".toSmallCaps())
+                                variableValue(entry.type.name)
                                 appendNewline()
-                                primary("Datum: ")
-                                info(entry.timestamp.formatTime())
+                                append {
+                                    info("| ")
+                                    decorate(TextDecoration.BOLD)
+                                }
+                                variableKey("Datum: ".toSmallCaps())
+                                variableValue(entry.timestamp.formatTime())
                                 appendNewline()
-                                primary("Server: ")
-                                info(entry.server)
+                                append {
+                                    info("| ")
+                                    decorate(TextDecoration.BOLD)
+                                }
+                                variableKey("Server: ".toSmallCaps())
+                                variableValue(entry.server)
                                 appendNewline()
-                                darkSpacer("Klicke, um die Nachricht zu kopieren.")
+                                spacer("Klicke, um genauere Informationen anzuzeigen.")
                             })
 
-                            clickCopiesToClipboard(entry.message)
+                            clickRunsCommand("/surfchat info ${entry.entryUuid}")
                         }
                     }
                 }.send(sender, page)
@@ -144,5 +173,9 @@ class SurfChatLookupCommand(commandName: String) : CommandAPICommand(commandName
             }
             return PlayerLookupService.getUuid(input)
         }
+    }
+
+    fun String.reduceString(): String {
+        return if (this.length > 10) this.take(10) + "..." else this
     }
 }

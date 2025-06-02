@@ -185,13 +185,14 @@ class FallbackDatabaseService : DatabaseService, Services.Fallback {
         rangeMillis: Long?,
         message: String?,
         deletedBy: String?,
-        server: String?
+        server: String?,
+        id: UUID?
     ): ObjectList<HistoryEntry> {
         return withContext(Dispatchers.IO) {
             newSuspendedTransaction {
                 val now = System.currentTimeMillis()
 
-                ChatHistory.select (
+                ChatHistory.selectAll().where (
                     Op.build {
                         listOfNotNull (
                             uuid?.let { ChatHistory.userUuid eq it },
@@ -199,7 +200,8 @@ class FallbackDatabaseService : DatabaseService, Services.Fallback {
                             rangeMillis?.let { ChatHistory.timestamp greaterEq now - it },
                             message?.let { ChatHistory.message like "%$it%" },
                             deletedBy?.let { ChatHistory.deletedBy eq it },
-                            server?.let { ChatHistory.server eq it }
+                            server?.let { ChatHistory.server eq it },
+                            id?.let { ChatHistory.entryUuid eq it }
                         ).reduceOrNull(Op<Boolean>::and) ?: Op.TRUE
                     }
                     ).mapNotNull {

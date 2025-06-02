@@ -25,7 +25,8 @@ interface DatabaseService {
         rangeMillis: Long? = null,
         message: String? = null,
         deletedBy: String? = null,
-        server: String? = null
+        server: String? = null,
+        id: UUID? = null,
     ): ObjectList<HistoryEntry>
 
     suspend fun loadDenyList(): ObjectSet<DenyListEntry>

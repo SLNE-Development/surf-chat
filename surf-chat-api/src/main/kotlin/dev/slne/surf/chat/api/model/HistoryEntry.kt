@@ -37,7 +37,7 @@ interface HistoryEntry {
     val message: String
 
     /**
-     * The identifier (e.g., username or UUID) of the person who deleted the history entry.
+     * The username of the person who deleted the history entry.
      */
     val deletedBy: String?
 

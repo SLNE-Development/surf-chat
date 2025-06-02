@@ -10,6 +10,7 @@ import dev.slne.surf.chat.velocity.util.formatTime
 import dev.slne.surf.chat.velocity.util.getUsername
 import dev.slne.surf.chat.velocity.util.isUuid
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
+import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.clickCopiesToClipboard
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import net.kyori.adventure.text.format.TextDecoration
@@ -92,7 +93,9 @@ class SurfChatInfoCommand(commandName: String) : CommandAPICommand(commandName) 
                     variableKey("Id: ".toSmallCaps())
                     variableValue(historyEntry.entryUuid.toString())
                     appendNewline()
-                    spacer("Klicke, um die Nachricht-ID zu kopieren.")
+                    hoverEvent(buildText {
+                        spacer("Klicke, um die Nachricht-ID zu kopieren.")
+                    })
                     clickCopiesToClipboard(historyEntry.entryUuid.toString())
                 }
             }

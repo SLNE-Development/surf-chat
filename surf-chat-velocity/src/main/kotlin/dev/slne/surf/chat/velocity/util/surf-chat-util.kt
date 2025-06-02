@@ -27,6 +27,48 @@ fun Long.formatTime(): String {
     return timeFormatter.format(Instant.ofEpochMilli(this))
 }
 
+fun Long.formatAgo(): String {
+    val diffMillis = System.currentTimeMillis() - this
+
+    val totalSeconds = diffMillis / 1000
+    val totalMinutes = totalSeconds / 60
+    val totalHours = totalMinutes / 60
+    val totalDays = totalHours / 24
+
+    return when {
+        totalDays >= 1 -> {
+            val remHours = totalHours % 24
+            "${totalDays}.${String.format("%02d", remHours)}d"
+        }
+        totalHours >= 1 -> {
+            val remMinutes = totalMinutes % 60
+            "${totalHours}.${String.format("%02d", remMinutes)}h"
+        }
+        totalMinutes >= 1 -> {
+            val remSeconds = totalSeconds % 60
+            "${totalMinutes}.${String.format("%02d", remSeconds)}m"
+        }
+        totalSeconds >= 1 -> {
+            val remMillis = (diffMillis % 1000) / 10
+            "${totalSeconds}.${String.format("%02d", remMillis)}s"
+        }
+        else -> {
+            val ms = diffMillis
+            "0.${String.format("%03d", ms)}ms"
+        }
+    }
+}
+
+fun String.isUuid(): Boolean {
+    return try {
+        UUID.fromString(this)
+        true
+    } catch (e: IllegalArgumentException) {
+        false
+    }
+}
+
+
 fun debug(message: Any) {
     println("[SurfChat-Debug] $message")
 }

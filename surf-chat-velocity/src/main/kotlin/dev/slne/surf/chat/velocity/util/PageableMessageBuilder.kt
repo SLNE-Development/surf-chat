@@ -15,7 +15,7 @@ import kotlin.math.min
 annotation class PageableMessageBuilderDsl
 
 @PageableMessageBuilderDsl
-class PageableMessageBuilder(private val linesPerPage: Int = 10) {
+class PageableMessageBuilder(private val linesPerPage: Int = 5) {
 
     private val lines = mutableObjectListOf<Component>()
     var pageCommand = "An error occurred while trying to display the page."
@@ -79,7 +79,7 @@ class PageableMessageBuilder(private val linesPerPage: Int = 10) {
         return buildText {
             append(navButton("[<<] ", 1, page > 1))
             append(navButton("[<] ", page - 1, page > 1))
-            darkSpacer("Seite $page/$totalPages".toSmallCaps())
+            darkSpacer("Seite $page/$totalPages (gesamt: ${totalPages * linesPerPage})".toSmallCaps())
             append(navButton(" [>] ", page + 1, page < totalPages))
             append(navButton(" [>>]", totalPages, page < totalPages))
         }

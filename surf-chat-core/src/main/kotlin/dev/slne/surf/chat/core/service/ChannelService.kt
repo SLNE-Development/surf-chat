@@ -14,7 +14,7 @@ interface ChannelService {
      * @param owner The owner of the channel.
      * @return The created ChannelModel.
      */
-    fun createChannel(name: String, owner: ChatUser): Channel
+    fun createChannel(name: String, owner: ChatUser, ownerName: String): Channel
 
     /**
      * Deletes and unregisters an existing channel.

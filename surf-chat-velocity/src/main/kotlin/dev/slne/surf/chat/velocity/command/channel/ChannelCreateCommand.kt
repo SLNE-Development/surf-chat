@@ -43,7 +43,7 @@ class ChannelCreateCommand(commandName: String) : CommandAPICommand(commandName)
                     return@launch
                 }
 
-                channelService.createChannel(name, user)
+                channelService.createChannel(name, user, player.username)
                 user.sendText {
                     success("Du hast den Nachrichtenkanal ")
                     variableValue(name)

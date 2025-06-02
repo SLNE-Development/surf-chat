@@ -33,8 +33,8 @@ class FallbackSurfChatApi : SurfChatApi, Services.Fallback {
         ))
     }
 
-    override fun createChannel(name: String, owner: ChatUser) {
-        channelService.createChannel(name, owner)
+    override fun createChannel(name: String, owner: ChatUser, ownerName: String) {
+        channelService.createChannel(name, owner, ownerName)
     }
 
     override fun deleteChannel(name: String) {

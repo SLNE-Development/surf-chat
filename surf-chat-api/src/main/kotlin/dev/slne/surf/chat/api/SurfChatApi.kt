@@ -25,7 +25,7 @@ interface SurfChatApi {
      * @param name The name of the channel to create.
      * @param owner The owner of the channel, represented as a `ChatUser`.
      */
-    fun createChannel(name: String, owner: ChatUser)
+    fun createChannel(name: String, owner: ChatUser, ownerName: String)
 
     /**
      * Deletes an existing chat channel by its name.

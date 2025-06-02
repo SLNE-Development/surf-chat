@@ -3,9 +3,11 @@ package dev.slne.surf.chat.fallback.service
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.channel.ChannelMember
+import dev.slne.surf.chat.api.channel.ChannelRole
 import dev.slne.surf.chat.api.user.ChatUser
 import dev.slne.surf.chat.core.service.ChannelService
 import dev.slne.surf.chat.fallback.model.FallbackChannel
+import dev.slne.surf.chat.fallback.model.FallbackChannelMember
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.util.Services
@@ -16,11 +18,18 @@ class FallbackChannelService : ChannelService, Services.Fallback {
 
     override fun createChannel(
         name: String,
-        owner: ChatUser
+        owner: ChatUser,
+        ownerName: String
     ): Channel {
         val channel = FallbackChannel(
             name = name
         )
+
+        channel.members.add(FallbackChannelMember (
+            uuid = owner.uuid,
+            name = ownerName,
+            role = ChannelRole.OWNER
+        ))
         channels.add(channel)
         return channel
     }

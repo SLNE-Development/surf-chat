@@ -27,6 +27,7 @@ class ChannelSpyCommand(commandName: String) : CommandAPICommand(commandName) {
                 if (channels.isEmpty()) {
                     if (!spyService.isChannelSpying(user)) {
                         player.sendText {
+                            appendPrefix()
                             error("Du spionierst in keinem Kanal.")
                         }
                         return@launch
@@ -35,6 +36,7 @@ class ChannelSpyCommand(commandName: String) : CommandAPICommand(commandName) {
                     spyService.clearChannelSpys(user)
 
                     player.sendText {
+                        appendPrefix()
                         success("Du spionierst in keinem Kanal mehr.")
                     }
                     return@launch
@@ -45,6 +47,7 @@ class ChannelSpyCommand(commandName: String) : CommandAPICommand(commandName) {
                         spyService.addChannelSpy(user, it)
                     } else {
                         player.sendText {
+                            appendPrefix()
                             error("Du spionierst bereits in dem Kanal ${it.name}.")
                         }
                         return@forEach
@@ -52,6 +55,7 @@ class ChannelSpyCommand(commandName: String) : CommandAPICommand(commandName) {
                 }
 
                 player.sendText {
+                    appendPrefix()
                     success("Du spionierst jetzt in den Kanälen: ")
                     variableValue(channels.joinToString(", ") { it.name })
                 }

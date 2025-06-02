@@ -60,8 +60,10 @@ class SurfChatLookupCommand(commandName: String) : CommandAPICommand(commandName
                 val user = databaseService.getUser(sender.uniqueId)
                 val lookupTarget = LookupTarget(target).parse()
 
-                user.sendText {
-                    info("Chat-Daten werden geladen...")
+                if(parsed.info == null || parsed.info) {
+                    user.sendText {
+                        info("Chat-Daten werden geladen...")
+                    }
                 }
 
                 val history = databaseService.loadHistory (
@@ -88,7 +90,7 @@ class SurfChatLookupCommand(commandName: String) : CommandAPICommand(commandName
 
                 PageableMessageBuilder {
                     pageCommand =
-                        "/surfchat lookup $target ${parsed.toFlagString()} --page %page%"
+                        "/surfchat lookup $target ${parsed.toFlagString()} --page %page% --info false"
 
                     title {
                         info("Chat-Daten".toSmallCaps())
@@ -110,7 +112,7 @@ class SurfChatLookupCommand(commandName: String) : CommandAPICommand(commandName
                                 clickCopiesToClipboard(entry.timestamp.toString())
                             }
                             variableKey(username)
-                            text(" texted ")
+                            text(" said ")
                             spacer("'")
                             variableValue(entry.message.reduceString())
                             spacer("'")

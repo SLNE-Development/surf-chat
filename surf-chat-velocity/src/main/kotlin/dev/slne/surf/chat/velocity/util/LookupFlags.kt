@@ -13,7 +13,8 @@ data class LookupFlags(
     val deletedBy: String? = null,
     val page: Int? = null,
     val server: String? = null,
-    val id: UUID? = null
+    val id: UUID? = null,
+    val info: Boolean? = null
 ) {
     companion object {
         fun parse(input: String): LookupFlags {
@@ -50,7 +51,8 @@ data class LookupFlags(
                 deletedBy = map["deletedBy"],
                 page = map["page"]?.toIntOrNull(),
                 server = map["server"],
-                id = map["id"]?.let { runCatching { UUID.fromString(it) }.getOrNull() }
+                id = map["id"]?.let { runCatching { UUID.fromString(it) }.getOrNull() },
+                info = map["info"]?.toBoolean()
             )
         }
     }
@@ -63,6 +65,7 @@ data class LookupFlags(
         if (deletedBy != null) parts += "--deletedBy \"$deletedBy\""
         if (server != null) parts += "--server \"$server\""
         if (id != null) parts += "--id $id"
+        if(info != null) parts += "--info $info"
         return parts.joinToString(" ")
     }
 }

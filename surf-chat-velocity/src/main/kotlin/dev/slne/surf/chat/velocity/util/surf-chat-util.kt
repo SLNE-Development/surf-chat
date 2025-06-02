@@ -66,8 +66,6 @@ fun ChatUser.toChannelMember(channel: Channel): ChannelMember? {
 fun ChatUser.sendText(block: SurfComponentBuilder.() -> Unit) {
     this.getPlayer()?.sendMessage(buildText {
         appendPrefix()
-        append {
-            block
-        }
+        append(SurfComponentBuilder(block))
     })
 }

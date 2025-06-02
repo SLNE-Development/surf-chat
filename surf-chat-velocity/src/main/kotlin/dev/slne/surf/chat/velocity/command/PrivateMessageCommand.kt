@@ -78,7 +78,7 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
                             )
                         }
 
-                        user.sendRawText(
+                        user.sendRawText (
                             velocityChatFormat.formatMessage(
                                 messageComponent,
                                 user,

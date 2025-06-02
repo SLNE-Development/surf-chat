@@ -26,68 +26,71 @@ class FallbackMessageValidator : MessageValidator, Services.Fallback {
         user: ChatUser,
         onSuccess: () -> Unit
     ) {
-        when (messageValidator.validate(
-            message,
-            type,
-            user
-        )) {
-            MessageValidationResult.SUCCESS -> {
-                onSuccess()
-            }
+        onSuccess
+        return
 
-            MessageValidationResult.FAILED_MUTED -> {
-                user.sendText {
-                    error("Du bist stummgeschaltet.")
-                }
-            }
-
-            MessageValidationResult.FAILED_SPAM -> {
-                user.sendText {
-                    error("Bitte warte einen Moment, bevor du eine weitere Nachricht sendest.")
-                }
-            }
-
-            MessageValidationResult.FAILED_SELF -> {
-                user.sendText {
-                    error("Du kannst dir nicht selbst eine Nachricht senden.")
-                }
-            }
-
-            MessageValidationResult.FAILED_BAD_LINK -> {
-                user.sendText {
-                    error("Bitte verschicke keine Links.")
-                }
-            }
-
-            MessageValidationResult.FAILED_BAD_WORD -> {
-                user.sendText {
-                    error("Bitte benutze keine verbotenen Wörter.")
-                }
-            }
-
-            MessageValidationResult.FAILED_BAD_CHARACTER -> {
-                user.sendText {
-                    error("Bitte benutze keine verbotenen Zeichen.")
-                }
-            }
-
-            MessageValidationResult.FAILED_PM_DISABLED -> {
-                user.sendText {
-                    error("Der Spieler hat Privatnachrichten deaktiviert.")
-                }
-            }
-
-            MessageValidationResult.FAILED_DENYLISTED -> {
-                user.sendText {
-                    error("Deine Nachricht enthält unerlaubte Wörter.")
-                }
-            }
-
-            MessageValidationResult.FAILED_IGNORING -> {
-                user.sendText {
-                    error("Du ignorierst den Spieler.")
-                }
-            }
-        }
+//        when (messageValidator.validate(
+//            message,
+//            type,
+//            user
+//        )) {
+//            MessageValidationResult.SUCCESS -> {
+//                onSuccess()
+//            }
+//
+//            MessageValidationResult.FAILED_MUTED -> {
+//                user.sendText {
+//                    error("Du bist stummgeschaltet.")
+//                }
+//            }
+//
+//            MessageValidationResult.FAILED_SPAM -> {
+//                user.sendText {
+//                    error("Bitte warte einen Moment, bevor du eine weitere Nachricht sendest.")
+//                }
+//            }
+//
+//            MessageValidationResult.FAILED_SELF -> {
+//                user.sendText {
+//                    error("Du kannst dir nicht selbst eine Nachricht senden.")
+//                }
+//            }
+//
+//            MessageValidationResult.FAILED_BAD_LINK -> {
+//                user.sendText {
+//                    error("Bitte verschicke keine Links.")
+//                }
+//            }
+//
+//            MessageValidationResult.FAILED_BAD_WORD -> {
+//                user.sendText {
+//                    error("Bitte benutze keine verbotenen Wörter.")
+//                }
+//            }
+//
+//            MessageValidationResult.FAILED_BAD_CHARACTER -> {
+//                user.sendText {
+//                    error("Bitte benutze keine verbotenen Zeichen.")
+//                }
+//            }
+//
+//            MessageValidationResult.FAILED_PM_DISABLED -> {
+//                user.sendText {
+//                    error("Der Spieler hat Privatnachrichten deaktiviert.")
+//                }
+//            }
+//
+//            MessageValidationResult.FAILED_DENYLISTED -> {
+//                user.sendText {
+//                    error("Deine Nachricht enthält unerlaubte Wörter.")
+//                }
+//            }
+//
+//            MessageValidationResult.FAILED_IGNORING -> {
+//                user.sendText {
+//                    error("Du ignorierst den Spieler.")
+//                }
+//            }
+//        }
     }
 }

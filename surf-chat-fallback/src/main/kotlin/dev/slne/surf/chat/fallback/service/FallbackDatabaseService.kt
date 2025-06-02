@@ -20,7 +20,10 @@ import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectList
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import net.kyori.adventure.util.Services
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -40,6 +43,7 @@ import kotlin.time.Duration.Companion.minutes
 
 @AutoService(DatabaseService::class)
 class FallbackDatabaseService : DatabaseService, Services.Fallback {
+    private val loadHistoryMutex = Mutex()
     private val userCache = Caffeine.newBuilder()
         .expireAfterWrite(30.minutes)
         .withRemovalListener { uuid, user, _ ->
@@ -189,40 +193,44 @@ class FallbackDatabaseService : DatabaseService, Services.Fallback {
         id: UUID?
     ): ObjectList<HistoryEntry> {
         return withContext(Dispatchers.IO) {
-            newSuspendedTransaction {
-                val now = System.currentTimeMillis()
+            withTimeout(10_000L) {
+                loadHistoryMutex.withLock {
+                    newSuspendedTransaction {
+                        val now = System.currentTimeMillis()
 
-                ChatHistory.selectAll().where (
-                    Op.build {
-                        listOfNotNull (
-                            uuid?.let { ChatHistory.userUuid eq it },
-                            type?.let { ChatHistory.type eq it },
-                            rangeMillis?.let { ChatHistory.timestamp greaterEq now - it },
-                            message?.let { ChatHistory.message like "%$it%" },
-                            deletedBy?.let { ChatHistory.deletedBy eq it },
-                            server?.let { ChatHistory.server eq it },
-                            id?.let { ChatHistory.entryUuid eq it }
-                        ).reduceOrNull(Op<Boolean>::and) ?: Op.TRUE
+                        ChatHistory.selectAll().where (
+                            Op.build {
+                                listOfNotNull (
+                                    uuid?.let { ChatHistory.userUuid eq it },
+                                    type?.let { ChatHistory.type eq it },
+                                    rangeMillis?.let { ChatHistory.timestamp greaterEq now - it },
+                                    message?.let { ChatHistory.message like "%$it%" },
+                                    deletedBy?.let { ChatHistory.deletedBy eq it },
+                                    server?.let { ChatHistory.server eq it },
+                                    id?.let { ChatHistory.entryUuid eq it }
+                                ).reduceOrNull(Op<Boolean>::and) ?: Op.TRUE
+                            }
+                        ).mapNotNull {
+                            val entryUuid = it[ChatHistory.entryUuid]
+                            val userUuid = it[ChatHistory.userUuid]
+                            val messageText = it[ChatHistory.message]
+                            val timestamp = it[ChatHistory.timestamp]
+                            val serverName = it[ChatHistory.server]
+                            val typeValue = it[ChatHistory.type]
+                            val deletedByValue = it[ChatHistory.deletedBy]
+
+                            FallbackHistoryEntry(
+                                entryUuid,
+                                userUuid,
+                                MessageType.valueOf(typeValue),
+                                timestamp,
+                                messageText,
+                                deletedByValue,
+                                serverName
+                            )
+                        }.toObjectList()
                     }
-                    ).mapNotNull {
-                        val entryUuid = it[ChatHistory.entryUuid]
-                        val userUuid = it[ChatHistory.userUuid]
-                        val messageText = it[ChatHistory.message]
-                        val timestamp = it[ChatHistory.timestamp]
-                        val serverName = it[ChatHistory.server]
-                        val typeValue = it[ChatHistory.type]
-                        val deletedByValue = it[ChatHistory.deletedBy]
-
-                        FallbackHistoryEntry(
-                            entryUuid,
-                            userUuid,
-                            MessageType.valueOf(typeValue),
-                            timestamp,
-                            messageText,
-                            deletedByValue,
-                            serverName
-                        )
-                }.toObjectList()
+                }
             }
         }
     }

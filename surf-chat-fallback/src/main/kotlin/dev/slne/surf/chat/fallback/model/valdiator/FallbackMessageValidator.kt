@@ -26,7 +26,7 @@ class FallbackMessageValidator : MessageValidator, Services.Fallback {
         user: ChatUser,
         onSuccess: () -> Unit
     ) {
-        onSuccess
+        onSuccess()
         return
 
 //        when (messageValidator.validate(

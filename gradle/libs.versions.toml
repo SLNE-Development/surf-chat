@@ -1,5 +1,5 @@
 [versions]
-surf-database = "1.0.5-SNAPSHOT"
+surf-database = "2.0.4-SNAPSHOT"
 luckperms-api = "5.4"
 packetevents-velocity = "2.8.0"
 

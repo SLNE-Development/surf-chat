@@ -223,7 +223,7 @@ class VelocityChatFormat : ChatFormat {
     }
 
     private fun formatItemTag(rawMessage: Component, player: Player, warn: Boolean): Component {
-        return Component.empty()
+        return rawMessage
     }
 
     private fun highlightPlayers(rawMessage: Component, player: Player): Component {

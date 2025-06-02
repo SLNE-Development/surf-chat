@@ -9,8 +9,10 @@ import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
 import com.velocitypowered.api.plugin.annotation.DataDirectory
 import com.velocitypowered.api.proxy.ProxyServer
+import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.chat.velocity.command.CommandManager
 import dev.slne.surf.chat.velocity.listener.ChatListener
+import dev.slne.surf.chat.velocity.model.LuckPermsExtension
 
 import java.nio.file.Path
 import kotlin.jvm.optionals.getOrNull
@@ -30,6 +32,9 @@ class SurfChatVelocity @Inject constructor(
 
         PacketEvents.getAPI().eventManager.registerListener(ChatListener(), PacketListenerPriority.NORMAL)
         CommandManager.registerAll()
+        LuckPermsExtension.loadApi()
+
+        databaseService.connect(dataPath)
     }
 
     companion object {

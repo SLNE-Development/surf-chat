@@ -14,7 +14,7 @@ import dev.slne.surf.chat.fallback.model.entry.FallbackDenylistEntry
 import dev.slne.surf.chat.fallback.model.entry.FallbackHistoryEntry
 import dev.slne.surf.chat.fallback.model.user.FallbackChatUser
 import dev.slne.surf.chat.fallback.model.user.FallbackChatUserSettings
-import dev.slne.surf.database.DatabaseProvider
+import dev.slne.surf.database.DatabaseManager
 import dev.slne.surf.surfapi.core.api.util.toObjectList
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectList
@@ -103,7 +103,7 @@ class FallbackDatabaseService : DatabaseService, Services.Fallback {
     }
 
     override fun connect(path: Path) {
-        DatabaseProvider(path, path).connect()
+        DatabaseManager(path, path).databaseProvider.connect()
 
         transaction {
             SchemaUtils.create(

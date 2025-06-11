@@ -1,6 +1,9 @@
 package dev.slne.surf.chat.bukkit.model
 
+import com.github.benmanes.caffeine.cache.Caffeine
+import com.github.shynixn.mccoroutine.folia.entityDispatcher
 import com.github.shynixn.mccoroutine.folia.launch
+import com.sksamuel.aedile.core.expireAfterWrite
 import dev.slne.surf.chat.api.model.ChatFormatModel
 import dev.slne.surf.chat.api.type.ChatMessageType
 import dev.slne.surf.chat.bukkit.extension.LuckPermsExtension
@@ -16,19 +19,30 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.clickOpensUrl
 import dev.slne.surf.surfapi.core.api.messages.adventure.clickSuggestsCommand
 import dev.slne.surf.surfapi.core.api.messages.adventure.sound
+import kotlinx.coroutines.withContext
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextReplacementConfig
 import net.kyori.adventure.text.event.ClickEvent
-import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
 import java.util.*
+import kotlin.time.Duration.Companion.minutes
 
 class BukkitChatFormat : ChatFormatModel {
     private var currentServerNiceName: String = "Unknown"
+
+    private val nameRegexCache = Caffeine.newBuilder()
+        .expireAfterWrite(15.minutes)
+        .build<String, Regex> {
+            Regex("(?<!\\w)@?$it(?!\\w)")
+        }
+
+    val hexRegex = Regex("&#[A-Fa-f0-9]{6}")
+    val linkRegex = Regex("(?i)\\b((https?://)?[\\w-]+(\\.[\\w-]+)+(/\\S*)?)\\b")
+    val itemRegex = Regex("\\[(?i)item]")
 
     override fun formatMessage(
         rawMessage: Component,
@@ -222,9 +236,8 @@ class BukkitChatFormat : ChatFormatModel {
     private fun formatItemTag(rawMessage: Component, player: Player, warn: Boolean): Component {
         var message = rawMessage
         val item = player.inventory.itemInMainHand
-        val pattern = Regex("\\[(?i)item]")
 
-        if (!pattern.containsMatchIn(message.toPlainText())) {
+        if (!itemRegex.containsMatchIn(message.toPlainText())) {
             return rawMessage
         }
 
@@ -240,7 +253,7 @@ class BukkitChatFormat : ChatFormatModel {
         message = message.replaceText(
             TextReplacementConfig
                 .builder()
-                .match(pattern.pattern)
+                .match(itemRegex.pattern)
                 .replacement(buildText {
                     if (item.amount > 1) {
                         variableValue("${item.amount}x ")
@@ -256,39 +269,41 @@ class BukkitChatFormat : ChatFormatModel {
     private fun highlightPlayers(rawMessage: Component, player: Player): Component {
         var message = rawMessage
 
-        for (onlinePlayer in serverPlayers) {
-            val name = onlinePlayer.name
-            val pattern = Regex("(?<!\\w)@?$name(?!\\w)")
+        plugin.launch {
+            for (onlinePlayer in serverPlayers) {
+                val name = onlinePlayer.name
+                val pattern = nameRegexCache.get(name)
 
-            if (!pattern.containsMatchIn(message.toPlainText())) {
-                continue
-            }
+                if (!pattern.containsMatchIn(message.toPlainText())) {
+                    continue
+                }
 
-            if(onlinePlayer == player) {
-                plugin.launch {
-                    val user = databaseService.getUser(onlinePlayer.uniqueId)
+                if(onlinePlayer == player) {
+                    withContext(plugin.entityDispatcher(player)) {
+                        val user = databaseService.getUser(onlinePlayer.uniqueId)
 
-                    if (user.soundEnabled) {
-                        onlinePlayer.playSound(sound {
-                            type(Sound.BLOCK_NOTE_BLOCK_PLING)
-                            source(net.kyori.adventure.sound.Sound.Source.PLAYER)
-                            volume(0.25f)
-                            pitch(2f)
-                        })
+                        if (user.soundEnabled) {
+                            onlinePlayer.playSound(sound {
+                                type(Sound.BLOCK_NOTE_BLOCK_PLING)
+                                source(net.kyori.adventure.sound.Sound.Source.PLAYER)
+                                volume(0.25f)
+                                pitch(2f)
+                            })
+                        }
                     }
                 }
-            }
 
-            message = message.replaceText(
-                TextReplacementConfig
-                    .builder()
-                    .match(pattern.pattern)
-                    .replacement(buildText {
-                        append(Component.text(name))
-                        decorate(TextDecoration.BOLD)
-                    })
-                    .build()
-            )
+                message = message.replaceText(
+                    TextReplacementConfig
+                        .builder()
+                        .match(pattern.pattern)
+                        .replacement(buildText {
+                            append(Component.text(name))
+                            decorate(TextDecoration.BOLD)
+                        })
+                        .build()
+                )
+            }
         }
 
         return message
@@ -296,20 +311,17 @@ class BukkitChatFormat : ChatFormatModel {
 
 
     fun convertLegacy(input: String): String {
-        val regex = Regex("&#[A-Fa-f0-9]{6}")
-        return regex.replace(input) { matchResult ->
+        return hexRegex.replace(input) { matchResult ->
             val hex = matchResult.value.removePrefix("&#")
             "<#$hex>"
         }
     }
 
     private fun updateLinks(rawMessage: Component): Component {
-        val pattern = Regex("(?i)\\b((https?://)?[\\w-]+(\\.[\\w-]+)+(/\\S*)?)\\b")
-
         var message = rawMessage
         val text = rawMessage.toPlainText()
 
-        for (match in pattern.findAll(text)) {
+        for (match in linkRegex.findAll(text)) {
             val url = match.value
 
             if (!message.toPlainText().contains(url)) continue

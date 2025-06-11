@@ -43,7 +43,7 @@ class BukkitChatListener() : Listener {
 
             val cleanedMessage = message.replaceText(
                 TextReplacementConfig.builder()
-                    .match(pattern)
+                    .match(pattern.pattern)
                     .replacement(Component.empty())
                     .build()
             )
@@ -63,7 +63,7 @@ class BukkitChatListener() : Listener {
 
             if (channel != null && !message.toPlainText().contains(pattern)) {
                 event.viewers().clear()
-                event.viewers().addAll(channel.getMembers().map { it.toPlayer() ?: return })
+                event.viewers().addAll(channel.getMembers().map { it.toPlayer() ?: return@launch })
 
                 if (spyService.hasChannelSpies(channel)) {
                     event.viewers().addAll(spyService.getChannelSpys(channel))
@@ -81,7 +81,7 @@ class BukkitChatListener() : Listener {
                     )
                 }
                 surfChatApi.logMessage(player.uniqueId, ChatMessageType.CHANNEL, message, messageID)
-                return
+                return@launch
             }
 
             surfChatApi.logMessage(
@@ -122,8 +122,6 @@ class BukkitChatListener() : Listener {
             if (!formatted) {
                 event.isCancelled = true
             }
-
         }
-
     }
 }

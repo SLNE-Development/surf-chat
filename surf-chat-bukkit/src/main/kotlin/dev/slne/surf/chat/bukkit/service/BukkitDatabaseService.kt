@@ -112,52 +112,42 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
         return dataCache.get(uuid)
     }
 
-    override suspend fun loadUser(uuid: UUID): ChatUserModel {
-        return withContext(Dispatchers.IO) {
-            newSuspendedTransaction {
-                val selected = Users.selectAll().where(Users.uuid eq uuid).firstOrNull()
-                    ?: return@newSuspendedTransaction BukkitChatUser(uuid)
+    override suspend fun loadUser(uuid: UUID): ChatUserModel = newSuspendedTransaction(Dispatchers.IO) {
+        val selected = Users.selectAll().where(Users.uuid eq uuid).firstOrNull()
+            ?: return@newSuspendedTransaction BukkitChatUser(uuid)
 
-                return@newSuspendedTransaction selected.let {
-                    BukkitChatUser(
-                        uuid = it[Users.uuid],
-                        ignoreList = it[Users.ignoreList],
-                        pmDisabled = it[Users.pmDisabled],
-                        soundEnabled = it[Users.soundEnabled],
-                        channelInvites = it[Users.channelInvites]
-                    )
-                }
-            }
-        }
+        return@newSuspendedTransaction BukkitChatUser(
+            uuid = selected[Users.uuid],
+            ignoreList = selected[Users.ignoreList],
+            pmDisabled = selected[Users.pmDisabled],
+            soundEnabled = selected[Users.soundEnabled],
+            channelInvites = selected[Users.channelInvites]
+        )
     }
 
-    override suspend fun saveUser(user: ChatUserModel) {
-        withContext(Dispatchers.IO) {
-            newSuspendedTransaction {
-                Users.upsert {
-                    it[uuid] = user.uuid
-                    it[ignoreList] = user.ignoreList.toMutableObjectSet()
-                    it[pmDisabled] = user.pmDisabled
-                    it[soundEnabled] = user.soundEnabled
-                    it[channelInvites] = user.channelInvites
-                }
-            }
+    override suspend fun saveUser(user: ChatUserModel) = newSuspendedTransaction(Dispatchers.IO) {
+        Users.upsert {
+            it[uuid] = user.uuid
+            it[ignoreList] = user.ignoreList.toMutableObjectSet()
+            it[pmDisabled] = user.pmDisabled
+            it[soundEnabled] = user.soundEnabled
+            it[channelInvites] = user.channelInvites
         }
+
+        return@newSuspendedTransaction
     }
 
     override suspend fun handleDisconnect(user: UUID) {
         dataCache.invalidate(user)
     }
 
-    override suspend fun markMessageDeleted(deleter: String, messageID: UUID) {
-        withContext(Dispatchers.IO) {
-            newSuspendedTransaction {
-                ChatHistory.update({ ChatHistory.entryUuid eq messageID }) {
+    override suspend fun markMessageDeleted(deleter: String, messageID: UUID) = withContext(Dispatchers.IO) {
+        ChatHistory.update({ ChatHistory.entryUuid eq messageID }) {
 
-                    it[deletedBy] = deleter
-                }
-            }
+            it[deletedBy] = deleter
         }
+
+        return@withContext
     }
 
     override suspend fun loadHistory(
@@ -168,132 +158,113 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
         deletedBy: String?,
         server: String?,
         id: UUID?
-    ): ObjectList<HistoryEntryModel> {
-        return withContext(Dispatchers.IO) {
-            withTimeout(10_000L) {
-                loadHistoryMutex.withLock {
-                    newSuspendedTransaction {
-                        val now = System.currentTimeMillis()
-                        val conditions = mutableListOf<Op<Boolean>>()
+    ): ObjectList<HistoryEntryModel> = withTimeout(10_000L) {
+        loadHistoryMutex.withLock {
+            newSuspendedTransaction(Dispatchers.IO) {
+                val now = System.currentTimeMillis()
+                val conditions = mutableListOf<Op<Boolean>>()
 
-                        if (uuid != null) {
-                            conditions += ChatHistory.userUuid eq uuid
-                        }
+                uuid?.let {
+                    conditions += ChatHistory.userUuid eq it
+                }
 
-                        if (type != null) {
-                            conditions += ChatHistory.type eq ChatMessageType.valueOf(type)
-                        }
-
-                        if (rangeMillis != null) {
-                            val minTime = now - rangeMillis
-                            conditions += ChatHistory.timeStamp greaterEq minTime
-                        }
-
-                        if (message != null) {
-                            conditions += ChatHistory.message like "%$message%"
-                        }
-
-                        if (deletedBy != null) {
-                            conditions += ChatHistory.deletedBy eq deletedBy
-                        }
-
-                        if (server != null) {
-                            conditions += ChatHistory.server eq server
-                        }
-
-                        if (id != null) {
-                            conditions += ChatHistory.entryUuid eq id
-                        }
-
-                        val query = if (conditions.isNotEmpty()) {
-                            ChatHistory.selectAll()
-                                .where(conditions.reduce { acc, condition -> acc and condition })
-                        } else {
-                            ChatHistory.selectAll()
-                        }
-
-                        return@newSuspendedTransaction query.map {
-                            BukkitHistoryEntry(
-                                entryUuid = it[ChatHistory.entryUuid],
-                                userUuid = it[ChatHistory.userUuid],
-                                type = it[ChatHistory.type],
-                                timestamp = it[ChatHistory.timeStamp],
-                                message = it[ChatHistory.message],
-                                deletedBy = it[ChatHistory.deletedBy],
-                                server = it[ChatHistory.server]
-                            )
-                        }.toObjectList()
+                type?.let {
+                    runCatching { ChatMessageType.valueOf(it) }.getOrNull()?.let { chatType ->
+                        conditions += ChatHistory.type eq chatType
                     }
                 }
-            }
-        }
-    }
 
+                rangeMillis?.let {
+                    val minTime = now - it
+                    conditions += ChatHistory.timeStamp greaterEq minTime
+                }
 
-    override suspend fun loadDenyList(): ObjectSet<DenyListEntry> {
-        return withContext(Dispatchers.IO) {
-            newSuspendedTransaction {
-                val selected = Denylist.selectAll()
+                message?.let {
+                    conditions += ChatHistory.message like "%$it%"
+                }
 
-                return@newSuspendedTransaction selected.map {
-                    BukkitDenyListEntry(
-                        word = it[Denylist.word],
-                        reason = it[Denylist.reason],
-                        addedAt = it[Denylist.addedAt],
-                        addedBy = it[Denylist.addedBy]
+                deletedBy?.let {
+                    conditions += ChatHistory.deletedBy eq it
+                }
+
+                server?.let {
+                    conditions += ChatHistory.server eq it
+                }
+
+                id?.let {
+                    conditions += ChatHistory.entryUuid eq it
+                }
+
+                val query = if (conditions.isNotEmpty()) {
+                    ChatHistory.select (conditions.reduce { acc, cond -> acc and cond })
+                } else {
+                    ChatHistory.selectAll()
+                }
+
+                query.map {
+                    BukkitHistoryEntry(
+                        entryUuid = it[ChatHistory.entryUuid],
+                        userUuid = it[ChatHistory.userUuid],
+                        type = it[ChatHistory.type],
+                        timestamp = it[ChatHistory.timeStamp],
+                        message = it[ChatHistory.message],
+                        deletedBy = it[ChatHistory.deletedBy],
+                        server = it[ChatHistory.server]
                     )
-                }.toObjectSet()
-            }
-
-        }
-    }
-
-    override suspend fun addToDenylist(entry: DenyListEntry): Boolean {
-        return withContext(Dispatchers.IO) {
-            newSuspendedTransaction {
-                if (Denylist.selectAll().where(Denylist.word eq entry.word).empty()) {
-                    Denylist.insert {
-                        it[word] = entry.word
-                        it[reason] = entry.reason
-                        it[addedAt] = entry.addedAt
-                        it[addedBy] = entry.addedBy
-                    }
-                    return@newSuspendedTransaction true
-                } else {
-                    return@newSuspendedTransaction false
-                }
-            }
-        }
-    }
-
-    override suspend fun removeFromDenylist(word: String): Boolean {
-        return withContext(Dispatchers.IO) {
-            newSuspendedTransaction {
-                if (Denylist.selectAll().where(Denylist.word eq word).empty()) {
-                    return@newSuspendedTransaction false
-                } else {
-                    Denylist.deleteWhere { Denylist.word eq word }
-                    return@newSuspendedTransaction true
-                }
+                }.toObjectList()
             }
         }
     }
 
 
-    override suspend fun insertHistoryEntry(user: UUID, entry: HistoryEntryModel) {
-        withContext(Dispatchers.IO) {
-            newSuspendedTransaction {
-                ChatHistory.insert {
-                    it[entryUuid] = entry.entryUuid
-                    it[userUuid] = user
-                    it[type] = entry.type
-                    it[timeStamp] = entry.timestamp
-                    it[message] = entry.message
-                    it[deletedBy] = entry.deletedBy
-                    it[server] = entry.server
-                }
+
+    override suspend fun loadDenyList(): ObjectSet<DenyListEntry> = newSuspendedTransaction(Dispatchers.IO) {
+        return@newSuspendedTransaction Denylist.selectAll().map {
+            BukkitDenyListEntry(
+                word = it[Denylist.word],
+                reason = it[Denylist.reason],
+                addedAt = it[Denylist.addedAt],
+                addedBy = it[Denylist.addedBy]
+            )
+        }.toObjectSet()
+    }
+
+    override suspend fun addToDenylist(entry: DenyListEntry): Boolean = newSuspendedTransaction(Dispatchers.IO) {
+        if (Denylist.selectAll().where(Denylist.word eq entry.word).empty()) {
+            Denylist.insert {
+                it[word] = entry.word
+                it[reason] = entry.reason
+                it[addedAt] = entry.addedAt
+                it[addedBy] = entry.addedBy
             }
+            return@newSuspendedTransaction true
+        } else {
+            return@newSuspendedTransaction false
         }
+    }
+
+    override suspend fun removeFromDenylist(word: String): Boolean = newSuspendedTransaction(Dispatchers.IO) {
+        if (Denylist.selectAll().where(Denylist.word eq word).empty()) {
+            return@newSuspendedTransaction false
+        } else {
+            Denylist.deleteWhere { Denylist.word eq word }
+            return@newSuspendedTransaction true
+        }
+    }
+
+
+    override suspend fun insertHistoryEntry(user: UUID, entry: HistoryEntryModel) = newSuspendedTransaction(Dispatchers.IO) {
+        ChatHistory.insert {
+            it[entryUuid] = entry.entryUuid
+            it[userUuid] = user
+            it[type] = entry.type
+            it[timeStamp] = entry.timestamp
+            it[message] = entry.message
+            it[deletedBy] = entry.deletedBy
+            it[server] = entry.server
+        }
+
+        return@newSuspendedTransaction
     }
 
     override suspend fun saveAll() {

@@ -26,106 +26,104 @@ class BukkitChatListener() : Listener {
 
     @EventHandler
     fun onAsyncChat(event: AsyncChatEvent) {
-        val player = event.player
-        val message = event.message()
-        val messageID = UUID.randomUUID()
-
-        val formattedMessage = plugin.chatFormat.formatMessage(
-            message,
-            player,
-            player,
-            ChatMessageType.GLOBAL,
-            "N/A",
-            messageID,
-            true
-        )
-
-        val cleanedMessage = message.replaceText(
-            TextReplacementConfig.builder()
-                .match(Pattern.compile("^@(all|a|here|everyone)\\b\\s*", Pattern.CASE_INSENSITIVE))
-                .replacement(Component.empty())
-                .build()
-        )
-
-        val signature = event.signedMessage().signature()
-
-        if (signature != null) {
-            historyService.logCaching(HistoryEntry(
-                signature,
-                message.toPlainText()
-            ), messageID)
-        } else {
-            plugin.logger.warning("Message signature is null for player ${player.name} with message: $message")
-        }
-
-        val channel = channelService.getChannel(player)
-
-        if (channel != null && !message.toPlainText().contains(pattern)) {
-            event.viewers().clear()
-            event.viewers().addAll(channel.getMembers().map { it.toPlayer() ?: return })
-
-            if (spyService.hasChannelSpies(channel)) {
-                event.viewers().addAll(spyService.getChannelSpys(channel))
-            }
-
-            event.renderer { _, _, _, viewer ->
-                plugin.chatFormat.formatMessage(
-                    message,
-                    player,
-                    viewer as? Player ?: player,
-                    ChatMessageType.CHANNEL,
-                    channel.name,
-                    messageID,
-                    true
-                )
-            }
-
-            plugin.launch {
-                surfChatApi.logMessage(player.uniqueId, ChatMessageType.CHANNEL, message, messageID)
-            }
-
-            return
-        }
-
         plugin.launch {
+            val player = event.player
+            val message = event.message()
+            val messageID = UUID.randomUUID()
+
+            val formattedMessage = plugin.chatFormat.formatMessage(
+                message,
+                player,
+                player,
+                ChatMessageType.GLOBAL,
+                "N/A",
+                messageID,
+                true
+            )
+
+            val cleanedMessage = message.replaceText(
+                TextReplacementConfig.builder()
+                    .match(pattern)
+                    .replacement(Component.empty())
+                    .build()
+            )
+
+            val signature = event.signedMessage().signature()
+
+            if (signature != null) {
+                historyService.logCaching(HistoryEntry(
+                    signature,
+                    message.toPlainText()
+                ), messageID)
+            } else {
+                plugin.logger.warning("Message signature is null for player ${player.name} with message: $message")
+            }
+
+            val channel = channelService.getChannel(player)
+
+            if (channel != null && !message.toPlainText().contains(pattern)) {
+                event.viewers().clear()
+                event.viewers().addAll(channel.getMembers().map { it.toPlayer() ?: return })
+
+                if (spyService.hasChannelSpies(channel)) {
+                    event.viewers().addAll(spyService.getChannelSpys(channel))
+                }
+
+                event.renderer { _, _, _, viewer ->
+                    plugin.chatFormat.formatMessage(
+                        message,
+                        player,
+                        viewer as? Player ?: player,
+                        ChatMessageType.CHANNEL,
+                        channel.name,
+                        messageID,
+                        true
+                    )
+                }
+                surfChatApi.logMessage(player.uniqueId, ChatMessageType.CHANNEL, message, messageID)
+                return
+            }
+
             surfChatApi.logMessage(
                 player.uniqueId,
                 ChatMessageType.GLOBAL,
                 cleanedMessage,
                 messageID
             )
-        }
 
-        var formatted = false
+            var formatted = false
 
-        plugin.messageValidator.parse(cleanedMessage, ChatMessageType.GLOBAL, player) {
-            messagingSenderService.sendData(
-                player.name,
-                player.name,
-                formattedMessage,
-                ChatMessageType.GLOBAL,
-                messageID,
-                "N/A",
-                BukkitMessagingSenderService.getForwardingServers()
-            )
-
-            event.renderer { _, _, _, viewer ->
-                plugin.chatFormat.formatMessage(
-                    cleanedMessage,
-                    player,
-                    viewer as? Player ?: player,
+            plugin.messageValidator.parse(cleanedMessage, ChatMessageType.GLOBAL, player) {
+                messagingSenderService.sendData(
+                    player.name,
+                    player.name,
+                    formattedMessage,
                     ChatMessageType.GLOBAL,
-                    "N/A",
                     messageID,
-                    false
+                    "N/A",
+                    BukkitMessagingSenderService.getForwardingServers()
                 )
+
+                event.renderer { _, _, _, viewer ->
+                    plugin.chatFormat.formatMessage(
+                        cleanedMessage,
+                        player,
+                        viewer as? Player ?: player,
+                        ChatMessageType.GLOBAL,
+                        "N/A",
+                        messageID,
+                        false
+                    )
+                }
+
+                formatted = true
             }
 
-            formatted = true
+            if (!formatted) {
+                event.isCancelled = true
+            }
+
         }
 
-        if (!formatted) {
-            event.isCancelled = true
-        }
     }
 }

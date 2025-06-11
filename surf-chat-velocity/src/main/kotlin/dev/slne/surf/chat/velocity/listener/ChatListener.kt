@@ -3,17 +3,12 @@ package dev.slne.surf.chat.velocity.listener
 import com.github.retrooper.packetevents.event.PacketListener
 import com.github.retrooper.packetevents.event.PacketReceiveEvent
 import com.github.retrooper.packetevents.event.PacketSendEvent
-import com.github.retrooper.packetevents.protocol.chat.ChatTypes
 import com.github.retrooper.packetevents.protocol.chat.message.ChatMessage_v1_19_3
 import com.github.retrooper.packetevents.protocol.packettype.PacketType
 import com.github.retrooper.packetevents.util.crypto.SaltSignature
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientChatMessage
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerChatMessage
-import dev.slne.surf.chat.velocity.util.toPlainText
-import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.minimessage.MiniMessage
 
 class ChatListener : PacketListener {
     override fun onPacketReceive(event: PacketReceiveEvent) {

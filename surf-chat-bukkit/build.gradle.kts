@@ -6,7 +6,7 @@ plugins {
 }
 
 surfPaperPluginApi {
-    mainClass("dev.slne.surf.chat.bukkit.SurfChatBukkit")
+    mainClass("dev.slne.surf.chat.bukkit.PaperMain")
     authors.add("red")
 
     serverDependencies {

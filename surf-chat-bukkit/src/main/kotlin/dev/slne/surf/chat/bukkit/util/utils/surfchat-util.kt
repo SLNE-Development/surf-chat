@@ -9,7 +9,6 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 val pluginConfig get() = plugin.config
-val gson = Gson()
 val serverPlayers = Bukkit.getOnlinePlayers()
 
 val timeFormatter: DateTimeFormatter = DateTimeFormatter

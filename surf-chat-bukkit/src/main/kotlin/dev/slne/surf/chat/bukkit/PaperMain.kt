@@ -2,6 +2,7 @@ package dev.slne.surf.chat.bukkit
 
 import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
 import dev.slne.surf.chat.api.model.ChatFormat
+import dev.slne.surf.chat.bukkit.extension.LPHook
 import dev.slne.surf.chat.bukkit.listener.BukkitChatListener
 import dev.slne.surf.chat.bukkit.model.BukkitChatFormat
 import dev.slne.surf.surfapi.bukkit.api.event.register
@@ -12,6 +13,8 @@ class PaperMain() : SuspendingJavaPlugin() {
 
     override fun onEnable() {
         BukkitChatListener().register()
+
+        LPHook.initialize()
     }
 }
 

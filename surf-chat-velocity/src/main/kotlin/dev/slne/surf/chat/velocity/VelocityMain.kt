@@ -12,7 +12,7 @@ import com.velocitypowered.api.proxy.ProxyServer
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.chat.velocity.command.CommandManager
 import dev.slne.surf.chat.velocity.listener.ChatListener
-import dev.slne.surf.chat.velocity.model.LuckPermsExtension
+import dev.slne.surf.chat.velocity.model.LPHook
 
 import java.nio.file.Path
 import kotlin.jvm.optionals.getOrNull
@@ -32,7 +32,7 @@ class SurfChatVelocity @Inject constructor(
 
         PacketEvents.getAPI().eventManager.registerListener(ChatListener(), PacketListenerPriority.NORMAL)
         CommandManager.registerAll()
-        LuckPermsExtension.loadApi()
+        LPHook.initialize()
 
         databaseService.connect(dataPath)
     }

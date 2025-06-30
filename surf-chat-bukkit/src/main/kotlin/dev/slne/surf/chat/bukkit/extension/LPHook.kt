@@ -4,10 +4,10 @@ import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider
 import org.bukkit.entity.Player
 
-object LuckPermsExtension {
+object LPHook {
     private var luckPermsApi: LuckPerms? = null
 
-    fun loadApi() {
+    fun initialize() {
         luckPermsApi = LuckPermsProvider.get()
     }
 

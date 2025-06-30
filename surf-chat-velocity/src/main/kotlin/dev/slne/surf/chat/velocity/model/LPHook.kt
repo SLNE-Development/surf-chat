@@ -4,10 +4,10 @@ import com.velocitypowered.api.proxy.Player
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider
 
-object LuckPermsExtension {
+object LPHook {
     private var luckPermsApi: LuckPerms? = null
 
-    fun loadApi() {
+    fun initialize() {
         luckPermsApi = LuckPermsProvider.get()
     }
 

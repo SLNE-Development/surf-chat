@@ -58,7 +58,7 @@ class VelocityChatFormat : ChatFormat {
                     append(components.getTeleportComponent(senderName, viewerPlayer))
                     append(
                         MiniMessage.miniMessage()
-                            .deserialize(convertLegacy(LPHook.getPrefix(senderPlayer) + " " + senderName))
+                            .deserialize(convertLegacy(LPHook.findPrefix(senderPlayer) + " " + senderName))
                     )
                     darkSpacer(" >> ")
                     append(formatItemTag(updateLinks(highlightPlayers(rawMessage, viewerPlayer)), senderPlayer, warn))
@@ -81,7 +81,7 @@ class VelocityChatFormat : ChatFormat {
                     append(components.getChannelComponent(channel))
                     append(
                         MiniMessage.miniMessage()
-                            .deserialize(convertLegacy(LPHook.getPrefix(senderPlayer) + " " + senderName))
+                            .deserialize(convertLegacy(LPHook.findPrefix(senderPlayer) + " " + senderName))
                     )
                     darkSpacer(" >> ")
                     append(updateLinks(formatItemTag(rawMessage, senderPlayer, warn)))
@@ -106,7 +106,7 @@ class VelocityChatFormat : ChatFormat {
                     darkSpacer(" -> ")
                     append(
                         MiniMessage.miniMessage()
-                            .deserialize(convertLegacy(LPHook.getPrefix(viewerPlayer) + " " + viewerName))
+                            .deserialize(convertLegacy(LPHook.findPrefix(viewerPlayer) + " " + viewerName))
                     )
                     darkSpacer(" >> ")
                     append(updateLinks(formatItemTag(rawMessage, senderPlayer, warn)))
@@ -129,7 +129,7 @@ class VelocityChatFormat : ChatFormat {
                     darkSpacer(" | ")
                     append(
                         MiniMessage.miniMessage()
-                            .deserialize(convertLegacy(LPHook.getPrefix(senderPlayer) + " " + senderName))
+                            .deserialize(convertLegacy(LPHook.findPrefix(senderPlayer) + " " + senderName))
                     )
                     darkSpacer(" -> ")
                     variableValue("Dir")
@@ -154,7 +154,7 @@ class VelocityChatFormat : ChatFormat {
                     darkSpacer(" | ")
                     append(
                         MiniMessage.miniMessage()
-                            .deserialize(convertLegacy(LPHook.getPrefix(senderPlayer) + " " + senderName))
+                            .deserialize(convertLegacy(LPHook.findPrefix(senderPlayer) + " " + senderName))
                     )
                     darkSpacer(" >> ")
                     append(updateLinks(formatItemTag(rawMessage, senderPlayer, warn)))
@@ -197,7 +197,7 @@ class VelocityChatFormat : ChatFormat {
                     darkSpacer(" | ")
                     append(
                         MiniMessage.miniMessage()
-                            .deserialize(convertLegacy(LPHook.getPrefix(senderPlayer) + " " + senderName))
+                            .deserialize(convertLegacy(LPHook.findPrefix(senderPlayer) + " " + senderName))
                     )
                     darkSpacer(" >> ")
                     append(rawMessage)

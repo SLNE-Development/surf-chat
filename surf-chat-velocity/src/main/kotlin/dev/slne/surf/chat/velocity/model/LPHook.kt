@@ -11,7 +11,7 @@ object LPHook {
         luckPermsApi = LuckPermsProvider.get()
     }
 
-    fun getPrefix(player: Player): String {
+    fun findPrefix(player: Player): String {
         val luckperms = luckPermsApi ?: return "Internal LP Api error"
         return luckperms.getPlayerAdapter(Player::class.java)
             .getUser(player).cachedData.metaData.prefix ?: ""

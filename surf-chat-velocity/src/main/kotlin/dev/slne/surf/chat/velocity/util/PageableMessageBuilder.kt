@@ -37,7 +37,7 @@ class PageableMessageBuilder(private val linesPerPage: Int = 5) {
 
     fun send(sender: Player, page: Int) {
         val totalPages = ceil(lines.size.toDouble() / linesPerPage).toInt().coerceAtLeast(1)
-        if (page < 1 || page > totalPages) {
+        if (page !in 1..totalPages) {
             sender.sendText {
                 error("Seite ")
                 variableValue(page.toString())

@@ -23,7 +23,7 @@ interface ChatFormat {
      * @param warn Whether to display warnings (e.g., for missing items).
      * @return The formatted message as a `Component`.
      */
-    fun formatMessage(
+    fun format(
         rawMessage: Component,
         sender: ChatUser,
         viewer: ChatUser,

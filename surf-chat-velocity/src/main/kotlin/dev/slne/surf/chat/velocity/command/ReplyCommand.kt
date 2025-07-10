@@ -56,7 +56,7 @@ class ReplyCommand(commandName: String) : CommandAPICommand(commandName) {
                     user
                 ) {
                     targetUser.sendRawText(
-                        velocityChatFormat.formatMessage(
+                        velocityChatFormat.format(
                             messageComponent,
                             user,
                             targetUser,
@@ -67,7 +67,7 @@ class ReplyCommand(commandName: String) : CommandAPICommand(commandName) {
                         )
                     )
                     user.sendRawText (
-                        velocityChatFormat.formatMessage(
+                        velocityChatFormat.format(
                             messageComponent,
                             user,
                             targetUser,

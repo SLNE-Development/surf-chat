@@ -39,7 +39,7 @@ class TeamChatCommand(commandName: String) : CommandAPICommand(commandName) {
                     container.launch {
                         val viewerUser = it.toChatUser()
                         it.sendMessage {
-                            velocityChatFormat.formatMessage(
+                            velocityChatFormat.format(
                                 Component.text(message),
                                 senderUser,
                                 viewerUser,

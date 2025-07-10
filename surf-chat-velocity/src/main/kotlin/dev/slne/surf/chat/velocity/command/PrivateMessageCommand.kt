@@ -66,7 +66,7 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
                     container.launch {
                         if (!targetUser.ignores(user.uuid)) {
                             targetUser.sendRawText(
-                                velocityChatFormat.formatMessage(
+                                velocityChatFormat.format(
                                     messageComponent,
                                     user,
                                     targetUser,
@@ -79,7 +79,7 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
                         }
 
                         user.sendRawText (
-                            velocityChatFormat.formatMessage(
+                            velocityChatFormat.format(
                                 messageComponent,
                                 user,
                                 targetUser,

@@ -27,7 +27,7 @@ import java.util.UUID
 import kotlin.jvm.optionals.getOrNull
 
 class VelocityChatFormat : ChatFormat {
-    override fun formatMessage(
+    override fun format(
         rawMessage: Component,
         sender: ChatUser,
         viewer: ChatUser,

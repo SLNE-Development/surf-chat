@@ -81,7 +81,7 @@ class CompletedComponents {
         })
     }
 
-    fun getMessageHoverComponent(sender: String, time: Long, server: String): Component =
+    fun getMessageHoverComponent(sender: String, time: Long): Component =
         buildText {
             variableKey("Gesendet von: ")
             variableValue(sender)
@@ -90,7 +90,7 @@ class CompletedComponents {
             variableValue(formatTime(time))
             appendNewline()
             variableKey("Gesendet auf: ")
-            variableValue(server)
+            variableValue("/")
         }
 
     fun getIgnoreListHoverComponent(user: String): Component =

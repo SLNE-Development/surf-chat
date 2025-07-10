@@ -17,6 +17,8 @@ interface ChatUser {
      */
     val uuid: UUID
 
+    val name: String
+
     /**
      * A set of UUIDs representing users that this user is ignoring.
      */

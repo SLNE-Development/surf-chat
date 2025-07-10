@@ -31,7 +31,7 @@ class BukkitChatListener() : Listener {
         plugin.launch {
             val senderUser = player.toChatUser()
 
-            val formattedMessage = plugin.chatFormat.formatMessage(
+            val formattedMessage = plugin.chatFormat.format(
                 message,
                 senderUser,
                 senderUser,
@@ -67,7 +67,7 @@ class BukkitChatListener() : Listener {
                 }
 
                 event.renderer { _, _, _, _ ->
-                    plugin.chatFormat.formatMessage(
+                    plugin.chatFormat.format(
                         message,
                         senderUser,
                         senderUser,
@@ -98,7 +98,7 @@ class BukkitChatListener() : Listener {
 
             messageValidator.parse(cleanedMessage, MessageType.GLOBAL, senderUser) {
                 event.renderer { _, _, _, _ ->
-                    plugin.chatFormat.formatMessage(
+                    plugin.chatFormat.format(
                         cleanedMessage,
                         senderUser,
                         senderUser,

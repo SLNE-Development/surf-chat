@@ -15,6 +15,7 @@ import dev.slne.surf.chat.fallback.model.entry.FallbackHistoryEntry
 import dev.slne.surf.chat.fallback.model.user.FallbackChatUser
 import dev.slne.surf.chat.fallback.model.user.FallbackChatUserSettings
 import dev.slne.surf.database.DatabaseManager
+import dev.slne.surf.surfapi.core.api.service.PlayerLookupService
 import dev.slne.surf.surfapi.core.api.util.toObjectList
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectList
@@ -141,7 +142,8 @@ class FallbackDatabaseService : DatabaseService, Services.Fallback {
                 FallbackChatUser (
                     uuid,
                     ignoreList,
-                    settings
+                    settings,
+                    PlayerLookupService.getUsername(uuid) ?: "Error"
                 )
             }
         }

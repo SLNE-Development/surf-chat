@@ -11,6 +11,7 @@ data class FallbackChatUser (
     override val uuid: UUID,
     override val ignoreList: ObjectSet<UUID>,
     override val settings: ChatUserSettings,
+    override val name: String,
 ) : ChatUser {
     override suspend fun toggleChannelInvites(): Boolean {
         return !settings.channelInvitesEnabled.also {

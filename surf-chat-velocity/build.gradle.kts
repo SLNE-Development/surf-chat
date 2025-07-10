@@ -2,8 +2,6 @@ plugins {
     id("dev.slne.surf.surfapi.gradle.velocity")
 }
 
-version = "2.0.0-dev"
-
 velocityPluginFile {
     id = "surf-chat-velocity"
     main = "dev.slne.surf.chat.velocity.VelocityMain"

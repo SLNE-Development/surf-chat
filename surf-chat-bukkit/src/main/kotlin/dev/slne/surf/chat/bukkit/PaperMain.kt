@@ -13,7 +13,6 @@ class PaperMain() : SuspendingJavaPlugin() {
 
     override fun onEnable() {
         BukkitChatListener().register()
-
         LPHook.initialize()
     }
 }

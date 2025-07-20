@@ -1,3 +1,5 @@
 [versions]
+playerholder-api = "2.11.6"
 
 [libraries]
+playerholder-api = { module = "me.clip:placeholderapi", version.ref = "playerholder-api" }

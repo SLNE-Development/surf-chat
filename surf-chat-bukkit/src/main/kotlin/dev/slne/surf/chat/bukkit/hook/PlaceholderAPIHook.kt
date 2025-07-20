@@ -1,22 +1,23 @@
 package dev.slne.surf.chat.bukkit.hook
 
+import me.clip.placeholderapi.PlaceholderAPI
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Bukkit
+import org.bukkit.entity.Player
 
-class PlaceholderAPIHook {
+object PlaceholderAPIHook {
     fun isEnabled() = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")
-    fun parse(input: String): String {
-        if(!this.isEnabled()) {
+    fun parse(player: Player, input: String): String {
+        if (!this.isEnabled()) {
             return input
         }
 
-        return
+        return PlaceholderAPI.setPlaceholders(player, input)
     }
-    fun parse(input: Component): Component {
-        if(!this.isEnabled()) {
-            return input
-        }
 
-        return
+    fun parse(player: Player, input: Component): Component {
+        return MiniMessage.miniMessage()
+            .deserialize(this.parse(player, MiniMessage.miniMessage().serialize(input)))
     }
 }

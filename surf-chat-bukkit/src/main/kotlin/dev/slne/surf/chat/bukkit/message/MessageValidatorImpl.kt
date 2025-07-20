@@ -54,6 +54,20 @@ class MessageValidatorImpl {
                 return false
             }
 
+            if (this.isValidInput(message)) {
+                failureMessage = buildText {
+                    error("Deine Nachricht enthält unerlaubte Zeichen.")
+                }
+                return false
+            }
+
+            if (this.isSpamming(user.uuid)) {
+                failureMessage = buildText {
+                    error("Bitte warte einen Moment, bevor du eine weitere Nachricht sendest.")
+                }
+                return false
+            }
+
             return true
         }
 
@@ -71,7 +85,7 @@ class MessageValidatorImpl {
             domain == null || allowedDomains.none { domain.endsWith(it.lowercase(Locale.getDefault())) }
         }
 
-        private fun isValidInput(input: Component) = validCharactersRegex.matches(input.plainText())
+        private fun isValidInput(input: String) = validCharactersRegex.matches(input)
         private fun isSpamming(uuid: UUID): Boolean {
             val currentTime = System.currentTimeMillis()
             val windowStart = currentTime - 3 * 1000 // 3 seconds window

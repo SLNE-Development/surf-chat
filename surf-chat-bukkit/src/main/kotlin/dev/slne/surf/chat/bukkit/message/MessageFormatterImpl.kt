@@ -11,6 +11,7 @@ import dev.slne.surf.chat.bukkit.util.player
 import dev.slne.surf.chat.bukkit.util.user
 import dev.slne.surf.chat.core.message.MessageData
 import dev.slne.surf.chat.core.message.MessageFormatter
+import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.*
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextReplacementConfig
@@ -23,7 +24,6 @@ import kotlin.time.Duration.Companion.minutes
 class MessageFormatterImpl(override val message: Component) : MessageFormatter {
     override fun formatGlobal(messageData: MessageData) = buildText {
         val viewer = messageData.receiver ?: return Component.empty()
-        val viewerPlayer = viewer.player() ?: return Component.empty()
         val player = messageData.sender.player() ?: return Component.empty()
 
         append(components.delete(messageData.messageId, viewer))
@@ -32,13 +32,79 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
         darkSpacer(" >> ")
         append(
             formatItemTag(
-                updateLinks(highlightPlayers(messageData.message, viewerPlayer)),
+                updateLinks(highlightPlayers(messageData.message, player)),
                 player
             )
         )
-        hoverEvent(
-            components.messageHover(messageData)
+        hoverEvent(components.messageHover(messageData))
+        clickSuggestsCommand("/msg ${player.name} ")
+    }
+
+    override fun formatIncomingPm(messageData: MessageData) = buildText {
+        val player = messageData.sender.player() ?: return Component.empty()
+
+        darkSpacer(">> ")
+        append(Component.text("PM", Colors.RED))
+        darkSpacer(" | ")
+        append(components.name(player))
+        darkSpacer(" -> ")
+        variableValue("Dir")
+        darkSpacer(" >> ")
+        append(updateLinks(formatItemTag(messageData.message, player)))
+        hoverEvent(components.messageHover(messageData))
+        clickSuggestsCommand("/msg ${player.name} ")
+    }
+
+    override fun formatOutgoingPm(messageData: MessageData) = buildText {
+        val player = messageData.sender.player() ?: return Component.empty()
+
+        darkSpacer(">> ")
+        append(Component.text("PM", Colors.RED))
+        darkSpacer(" | ")
+        variableValue("Du")
+        darkSpacer(" -> ")
+        append(components.name(player))
+        darkSpacer(" >> ")
+        append(updateLinks(formatItemTag(messageData.message, player)))
+
+        hoverEvent(components.messageHover(messageData))
+        clickSuggestsCommand("/msg ${player.name} ")
+    }
+
+    override fun formatTeamchat(messageData: MessageData) = buildText {
+        val player = messageData.sender.player() ?: return Component.empty()
+
+        darkSpacer(">> ")
+        append(Component.text("TEAM", Colors.RED).decorate(TextDecoration.BOLD))
+        darkSpacer(" | ")
+        append(components.name(player))
+        darkSpacer(" >> ")
+        append(updateLinks(formatItemTag(messageData.message, player)))
+
+        hoverEvent(components.messageHover(messageData))
+        clickSuggestsCommand("/teamchat ")
+    }
+
+    override fun formatChannel(messageData: MessageData) = buildText {
+        val player = messageData.sender.player() ?: return Component.empty()
+
+        append(
+            components.delete(
+                messageData.messageId,
+                messageData.receiver ?: return Component.empty()
+            )
         )
+        append(
+            components.teleport(
+                messageData.sender.name,
+                messageData.receiver ?: return Component.empty()
+            )
+        )
+        append(components.channel(messageData.channel?.channelName ?: "Unbekannter Kanal"))
+        append(components.name(player))
+        darkSpacer(" >> ")
+        append(updateLinks(formatItemTag(messageData.message, player)))
+        hoverEvent(components.messageHover(messageData))
         clickSuggestsCommand("/msg ${player.name} ")
     }
 

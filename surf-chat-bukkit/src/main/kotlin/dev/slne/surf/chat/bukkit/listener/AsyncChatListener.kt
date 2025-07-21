@@ -9,6 +9,7 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import io.papermc.paper.event.player.AsyncChatEvent
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import java.util.*
 
 class AsyncChatListener : Listener {
     @EventHandler
@@ -17,9 +18,9 @@ class AsyncChatListener : Listener {
         val user = player.user() ?: return
 
         val message = event.message()
+        val messageId = UUID.randomUUID()
         val messageFormatter = MessageFormatterImpl(message)
         val messageValidator = MessageValidatorImpl.componentValidator(message)
-
 
         if (!messageValidator.validate(user)) {
             event.cancel()
@@ -33,7 +34,12 @@ class AsyncChatListener : Listener {
         event.renderer { _, _, _, viewerAudience ->
             messageFormatter.formatGlobal(
                 MessageDataImpl(
-                    message, user, viewerAudience.user(), System.currentTimeMillis()
+                    message,
+                    user,
+                    viewerAudience.user(),
+                    System.currentTimeMillis(),
+                    messageId,
+                    "N/A"
                 )
             )
         }

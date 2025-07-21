@@ -10,4 +10,5 @@ interface MessageData {
     val sender: User
     val receiver: User?
     val sentAt: Long
+    val server: String
 }

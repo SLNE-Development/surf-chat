@@ -14,6 +14,8 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import net.kyori.adventure.util.Services.Fallback
 import org.bukkit.entity.Player
+import java.io.ByteArrayOutputStream
+import java.io.DataOutputStream
 import java.util.*
 
 @AutoService(MessagingSenderService::class)
@@ -37,33 +39,40 @@ class BukkitMessagingSenderService : MessagingSenderService, Fallback {
         channel: String,
         forwardingServers: ObjectSet<String>
     ) {
-        val out = ByteStreams.newDataOutput()
-
-        out.writeUTF(player)
-        out.writeUTF(target)
-        out.writeUTF(GsonComponentSerializer.gson().serialize(message))
-        out.writeUTF(gson.toJson(type))
-        out.writeUTF(messageID.toString())
-        out.writeUTF(channel)
-        out.writeUTF(gson.toJson(forwardingServers))
+        val bytes = ByteArrayOutputStream().use { byteStream ->
+            DataOutputStream(byteStream).use { out ->
+                out.writeUTF(player)
+                out.writeUTF(target)
+                out.writeUTF(GsonComponentSerializer.gson().serialize(message))
+                out.writeUTF(gson.toJson(type))
+                out.writeUTF(messageID.toString())
+                out.writeUTF(channel)
+                out.writeUTF(gson.toJson(forwardingServers))
+            }
+            byteStream.toByteArray()
+        }
 
         plugin.server.sendPluginMessage(
             plugin,
             SurfChatApi.MESSAGING_CHANNEL_IDENTIFIER,
-            out.toByteArray()
+            bytes
         )
     }
 
-    override fun sendTeamChatMessage(player: Audience, message: Component) {
-        val out = ByteStreams.newDataOutput()
-        out.writeUTF(GsonComponentSerializer.gson().serialize(message))
 
-        if (player !is Player) {
-            return
+    override fun sendTeamChatMessage(player: Audience, message: Component) {
+        if (player !is Player) return
+
+        val bytes = ByteArrayOutputStream().use { byteStream ->
+            DataOutputStream(byteStream).use { out ->
+                out.writeUTF(GsonComponentSerializer.gson().serialize(message))
+            }
+            byteStream.toByteArray()
         }
 
-        player.sendPluginMessage(plugin, SurfChatApi.TEAM_CHAT_IDENTIFIER, out.toByteArray())
+        player.sendPluginMessage(plugin, SurfChatApi.TEAM_CHAT_IDENTIFIER, bytes)
     }
+
 
     companion object {
         fun getCurrentServer(): String {

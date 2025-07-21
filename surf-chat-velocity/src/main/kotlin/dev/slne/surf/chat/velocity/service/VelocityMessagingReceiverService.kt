@@ -21,6 +21,7 @@ import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import net.kyori.adventure.util.Services
+import java.io.DataInputStream
 
 import java.util.*
 
@@ -32,42 +33,45 @@ class VelocityMessagingReceiverService() : MessagingReceiverService, Services.Fa
             messageChannel -> {
                 event.result = PluginMessageEvent.ForwardResult.handled()
 
-                if (event.source !is ServerConnection) {
-                    return
+                if (event.source !is ServerConnection) return
+
+                event.data.inputStream().use { byteStream ->
+                    DataInputStream(byteStream).use { input ->
+                        val sender = input.readUTF()
+                        val target = input.readUTF()
+                        val message = GsonComponentSerializer.gson().deserialize(input.readUTF())
+                        val type = gson.fromJson(input.readUTF(), ChatMessageType::class.java)
+                        val messageId = UUID.fromString(input.readUTF())
+                        val chatChannel = input.readUTF()
+                        val forwardingServers: Set<String> =
+                            gson.fromJson(input.readUTF(), object : TypeToken<Set<String>>() {}.type)
+
+                        handleReceive(
+                            player = sender,
+                            target = target,
+                            message = message,
+                            type = type,
+                            messageID = messageId,
+                            channel = chatChannel,
+                            forwardingServers = forwardingServers.toObjectSet()
+                        )
+                    }
                 }
-
-                val input = ByteStreams.newDataInput(event.data)
-
-                val sender = input.readUTF()
-                val target = input.readUTF()
-                val message = GsonComponentSerializer.gson().deserialize(input.readUTF())
-                val type = gson.fromJson(input.readUTF(), ChatMessageType::class.java)
-                val messageId = UUID.fromString(input.readUTF())
-                val chatChannel = input.readUTF()
-                val forwardingServers: Set<String> =
-                    gson.fromJson(input.readUTF(), object : TypeToken<Set<String>>() {}.type)
-
-                handleReceive(
-                    player = sender,
-                    target = target,
-                    message = message,
-                    type = type,
-                    messageID = messageId,
-                    channel = chatChannel,
-                    forwardingServers.toObjectSet()
-                )
             }
 
             teamChatChannel -> {
                 event.result = PluginMessageEvent.ForwardResult.handled()
 
-                val input = ByteStreams.newDataInput(event.data)
-                val message = GsonComponentSerializer.gson().deserialize(input.readUTF())
-
-                handeTeamChatReceive(message)
+                event.data.inputStream().use { byteStream ->
+                    DataInputStream(byteStream).use { input ->
+                        val message = GsonComponentSerializer.gson().deserialize(input.readUTF())
+                        handeTeamChatReceive(message)
+                    }
+                }
             }
         }
     }
+
 
     override fun handleReceive(
         player: String,

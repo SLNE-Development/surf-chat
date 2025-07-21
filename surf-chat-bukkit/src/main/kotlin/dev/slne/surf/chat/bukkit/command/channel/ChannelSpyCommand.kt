@@ -21,14 +21,14 @@ class ChannelSpyCommand(commandName: String) : CommandAPICommand(commandName) {
             val channels = args.getOrDefaultUnchecked("channels", emptyObjectSet<ChannelModel>())
 
             if (channels.isEmpty()) {
-                if (!spyService.isChannelSpying(player)) {
+                if (!spyService.isChannelSpying(player.uniqueId)) {
                     player.sendPrefixed {
                         error("Du spionierst in keinem Kanal.")
                     }
                     return@playerExecutor
                 }
 
-                spyService.clearChannelSpys(player)
+                spyService.clearChannelSpies(player.uniqueId)
 
                 player.sendPrefixed {
                     success("Du spionierst in keinem Kanal mehr.")
@@ -37,8 +37,8 @@ class ChannelSpyCommand(commandName: String) : CommandAPICommand(commandName) {
             }
 
             channels.forEach {
-                if(!spyService.getChannelSpys(it).contains(player)) {
-                    spyService.addChannelSpy(player, it)
+                if(!spyService.getChannelSpies(it).contains(player.uniqueId)) {
+                    spyService.addChannelSpy(player.uniqueId, it)
                 } else {
                     player.sendPrefixed {
                         error("Du spionierst bereits in dem Kanal ${it.name}.")

@@ -22,20 +22,20 @@ class PrivateMessageSpyCommand(commandName: String) : CommandAPICommand(commandN
             val players = args.getOrDefaultUnchecked("players", emptyObjectSet<Player>())
 
             if (players.isEmpty()) {
-                if (!spyService.isPrivateMessageSpying(player)) {
+                if (!spyService.isPrivateMessageSpying(player.uniqueId)) {
                     player.sendPrefixed {
                         error("Du spionierst in keinen privaten Nachrichten.")
                     }
                     return@playerExecutor
                 }
 
-                spyService.clearPrivateMessageSpys(player)
+                spyService.clearPrivateMessageSpies(player.uniqueId)
                 player.sendPrefixed {
                     success("Du spionierst in keinen privaten Nachrichten mehr.")
                 }
             } else {
                 players.forEach {
-                    spyService.addPrivateMessageSpy(player, it)
+                    spyService.addPrivateMessageSpy(player.uniqueId, it.uniqueId)
                 }
 
                 player.sendPrefixed {

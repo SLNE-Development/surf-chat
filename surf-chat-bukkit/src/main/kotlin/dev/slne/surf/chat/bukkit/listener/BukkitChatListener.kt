@@ -15,6 +15,7 @@ import dev.slne.surf.chat.core.service.util.HistoryEntry
 import io.papermc.paper.event.player.AsyncChatEvent
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextReplacementConfig
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -66,7 +67,7 @@ class BukkitChatListener() : Listener {
                 event.viewers().addAll(channel.getMembers().map { it.toPlayer() ?: return@launch })
 
                 if (spyService.hasChannelSpies(channel)) {
-                    event.viewers().addAll(spyService.getChannelSpys(channel))
+                    event.viewers().addAll(spyService.getChannelSpies(channel).mapNotNull { Bukkit.getPlayer(it) })
                 }
 
                 event.renderer { _, _, _, viewer ->

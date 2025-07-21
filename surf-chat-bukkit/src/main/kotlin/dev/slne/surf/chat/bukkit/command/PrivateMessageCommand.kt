@@ -93,9 +93,10 @@ class PrivateMessageCommand(commandName: String) : CommandAPICommand(commandName
                     replyService.updateLast(player.uniqueId, target.uniqueId)
                     replyService.updateLast(target.uniqueId, player.uniqueId)
 
-                    if (spyService.hasPrivateMessageSpies(player)) {
-                        spyService.getPrivateMessageSpys(player).forEach {
-                            it.sendPrefixed {
+                    if (spyService.hasPrivateMessageSpies(player.uniqueId)) {
+                        spyService.getPrivateMessageSpies(player.uniqueId).forEach {
+                            val player = Bukkit.getPlayer(it) ?: return@forEach
+                            player.sendPrefixed {
                                 info("[${player.name} -> ${target.name}] ")
                                 append(messageComponent)
 

@@ -28,7 +28,7 @@ class BukkitConnectionListener() : Listener {
         plugin.launch {
             channelService.handleDisconnect(event.player)
             databaseService.handleDisconnect(event.player.uniqueId)
-            spyService.handleDisconnect(event.player)
+            spyService.handleDisconnect(event.player.uniqueId)
         }
     }
 

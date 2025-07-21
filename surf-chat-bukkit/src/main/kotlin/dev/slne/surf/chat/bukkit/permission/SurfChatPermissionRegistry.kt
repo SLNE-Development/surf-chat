@@ -10,4 +10,6 @@ object SurfChatPermissionRegistry : PermissionRegistry() {
 
     val COMMAND_SURFCHAT_DELETE = create("$PREFIX_COMMAND.surfchat.delete")
     val COMMAND_SURFCHAT_TELEPORT = create("$PREFIX_COMMAND.surfchat.teleport")
+
+    val COMMAND_TEAMCHAT = create("$PREFIX_COMMAND.teamchat")
 }

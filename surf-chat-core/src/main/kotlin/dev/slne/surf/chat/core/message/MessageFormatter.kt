@@ -4,5 +4,5 @@ import net.kyori.adventure.text.Component
 
 interface MessageFormatter {
     val message: Component
-    fun format(): Boolean
+    fun formatGlobal(messageData: MessageData): Component
 }

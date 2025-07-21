@@ -82,7 +82,7 @@ class MessageValidatorImpl {
                 return@any true
             }
 
-            domain == null || allowedDomains.none { domain.endsWith(it.lowercase(Locale.getDefault())) }
+            domain == null || allowedDomains.none { domain.endsWith(it.lowercase()) }
         }
 
         private fun isValidInput(input: String) = validCharactersRegex.matches(input)

@@ -1,5 +1,6 @@
 package dev.slne.surf.chat.bukkit.listener
 
+import dev.slne.surf.chat.bukkit.message.MessageDataImpl
 import dev.slne.surf.chat.bukkit.message.MessageFormatterImpl
 import dev.slne.surf.chat.bukkit.message.MessageValidatorImpl
 import dev.slne.surf.chat.bukkit.util.cancel
@@ -29,10 +30,12 @@ class AsyncChatListener : Listener {
             return
         }
 
-        val formattedMessage = messageFormatter.format()
-
-        event.renderer { _, displayName, _, viewerAudience ->
-            message
+        event.renderer { _, _, _, viewerAudience ->
+            messageFormatter.formatGlobal(
+                MessageDataImpl(
+                    message, user, viewerAudience.user(), System.currentTimeMillis()
+                )
+            )
         }
     }
 }

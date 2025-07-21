@@ -7,4 +7,6 @@ interface User {
     val uuid: UUID
 
     fun hasPermission(permission: String): Boolean
+
+    fun configure(): ConfigurableUser
 }

@@ -1,7 +1,9 @@
 package dev.slne.surf.chat.fallback.entity
 
+import dev.slne.surf.chat.api.entity.ChannelMember
 import dev.slne.surf.chat.api.entity.ConfigurableUser
 import dev.slne.surf.chat.api.entity.User
+import dev.slne.surf.chat.api.model.Channel
 import org.bukkit.Bukkit
 import java.util.*
 
@@ -11,5 +13,9 @@ data class FallbackUser(override val name: String, override val uuid: UUID) : Us
 
     override fun configure(): ConfigurableUser {
         return FallbackConfigurableUser(uuid)
+    }
+
+    override fun channelMember(channel: Channel): ChannelMember? {
+        return channel.members.firstOrNull { it.uuid == uuid }
     }
 }

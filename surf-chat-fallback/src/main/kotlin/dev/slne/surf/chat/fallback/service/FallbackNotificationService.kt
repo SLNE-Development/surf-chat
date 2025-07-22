@@ -4,10 +4,12 @@ import com.google.auto.service.AutoService
 import dev.slne.surf.chat.core.service.NotificationService
 import kotlinx.coroutines.Dispatchers
 import net.kyori.adventure.util.Services
+import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import java.util.*
 
@@ -19,6 +21,12 @@ class FallbackNotificationService : NotificationService, Services.Fallback {
         val pingsEnabled = bool("pings_enabled").default(true)
 
         override val primaryKey = PrimaryKey(userUuid)
+    }
+
+    override fun createTable() {
+        transaction {
+            SchemaUtils.create(NotificationSettings)
+        }
     }
 
     override suspend fun pingsEnabled(uuid: UUID) =

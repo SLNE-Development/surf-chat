@@ -9,10 +9,18 @@ repositories {
 dependencies {
     api(project(":surf-chat-core"))
     compileOnly(libs.playerholder.api)
+
+    runtimeOnly(project(":surf-chat-fallback"))
 }
 
 surfPaperPluginApi {
     mainClass("dev.slne.surf.chat.bukkit.BukkitMain")
-    authors.add("red")
+    foliaSupported(true)
     generateLibraryLoader(false)
+
+    authors.add("red")
+}
+
+tasks.shadowJar {
+    archiveFileName = "surf-chat-bukkit-${project.version}.jar"
 }

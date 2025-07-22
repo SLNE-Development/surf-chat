@@ -20,7 +20,7 @@ class MessageValidatorImpl {
         }
 
         fun componentValidator(message: Component): MessageValidator<Component> {
-            return ComponentMessageValidator(message, Component.empty())
+            return ComponentMessageValidator(message, Component.text("???"))
         }
     }
 
@@ -108,7 +108,11 @@ class MessageValidatorImpl {
     ) :
         MessageValidator<Component> {
         override fun validate(user: User): Boolean {
-            return stringValidator(message.plainText()).validate(user)
+            val validator = stringValidator(message.plainText())
+            val success = validator.validate(user)
+
+            failureMessage = validator.failureMessage
+            return success
         }
     }
 }

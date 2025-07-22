@@ -7,3 +7,8 @@ buildscript {
         classpath("dev.slne.surf:surf-api-gradle-plugin:1.21.7+")
     }
 }
+
+allprojects {
+    group = "dev.slne.surf.chat"
+    version = "1.21.7-3.0.0-dev"
+}

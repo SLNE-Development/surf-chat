@@ -1,18 +1,18 @@
 package dev.slne.surf.chat.bukkit.message
 
 import com.github.benmanes.caffeine.cache.Caffeine
-import com.github.shynixn.mccoroutine.folia.entityDispatcher
 import com.github.shynixn.mccoroutine.folia.launch
 import com.sksamuel.aedile.core.expireAfterWrite
+import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.components
 import dev.slne.surf.chat.bukkit.util.plainText
 import dev.slne.surf.chat.bukkit.util.player
-import dev.slne.surf.chat.bukkit.util.user
 import dev.slne.surf.chat.core.message.MessageData
 import dev.slne.surf.chat.core.message.MessageFormatter
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.*
+import kotlinx.coroutines.Dispatchers
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextReplacementConfig
 import net.kyori.adventure.text.format.TextDecoration
@@ -32,7 +32,7 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
         darkSpacer(" >> ")
         append(
             formatItemTag(
-                updateLinks(highlightPlayers(messageData.message, player)),
+                updateLinks(highlightPlayers(messageData.message, viewer)),
                 player
             )
         )
@@ -150,36 +150,36 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
         return message
     }
 
-    private fun highlightPlayers(rawMessage: Component, viewer: Player): Component {
+    private fun highlightPlayers(rawMessage: Component, viewer: User): Component {
         var message = rawMessage
 
         val pattern = nameRegexCache.get(viewer.name)
-        val user = viewer.user() ?: return message
+        val viewerPlayer = viewer.player() ?: return message
 
         if (!pattern.containsMatchIn(message.plainText())) {
             return message
         }
 
-        plugin.launch(plugin.entityDispatcher(viewer)) {
-            if (user.configure().pingsEnabled()) {
-                viewer.playSound(sound {
+        message = message.replaceText(
+            TextReplacementConfig
+                .builder()
+                .match(pattern.pattern)
+                .replacement(buildText {
+                    append(Component.text(viewer.name))
+                    decorate(TextDecoration.BOLD)
+                })
+                .build()
+        )
+
+        plugin.launch(Dispatchers.IO) {
+            if (viewer.configure().pingsEnabled()) {
+                viewerPlayer.playSound(sound {
                     type(Sound.BLOCK_NOTE_BLOCK_PLING)
                     source(net.kyori.adventure.sound.Sound.Source.PLAYER)
                     volume(0.25f)
                     pitch(2f)
                 })
             }
-
-            message = message.replaceText(
-                TextReplacementConfig
-                    .builder()
-                    .match(pattern.pattern)
-                    .replacement(buildText {
-                        append(Component.text(viewer.name))
-                        decorate(TextDecoration.BOLD)
-                    })
-                    .build()
-            )
         }
         return message
     }

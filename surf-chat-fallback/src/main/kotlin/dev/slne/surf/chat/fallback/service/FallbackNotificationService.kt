@@ -10,7 +10,7 @@ import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
+import org.jetbrains.exposed.sql.upsert
 import java.util.*
 
 @AutoService(NotificationService::class)
@@ -38,16 +38,19 @@ class FallbackNotificationService : NotificationService, Services.Fallback {
         }
 
     override suspend fun enablePings(uuid: UUID) = newSuspendedTransaction(Dispatchers.IO) {
-        NotificationSettings.update({ NotificationSettings.userUuid eq uuid }) {
+        NotificationSettings.upsert {
+            it[userUuid] = uuid
             it[pingsEnabled] = true
         }
         return@newSuspendedTransaction
     }
 
     override suspend fun disablePings(uuid: UUID) = newSuspendedTransaction(Dispatchers.IO) {
-        NotificationSettings.update({ NotificationSettings.userUuid eq uuid }) {
+        NotificationSettings.upsert {
+            it[userUuid] = uuid
             it[pingsEnabled] = false
         }
+
         return@newSuspendedTransaction
     }
 }

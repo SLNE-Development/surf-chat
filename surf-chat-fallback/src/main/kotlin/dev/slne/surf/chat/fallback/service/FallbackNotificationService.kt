@@ -15,7 +15,7 @@ import java.util.*
 
 @AutoService(NotificationService::class)
 class FallbackNotificationService : NotificationService, Services.Fallback {
-    object NotificationSettings : Table("chat_settings_notifications") {
+    object NotificationSettings : Table("chat_notifications") {
         val userUuid =
             varchar("user_uuid", 36).transform({ UUID.fromString(it) }, { it.toString() })
         val pingsEnabled = bool("pings_enabled").default(true)

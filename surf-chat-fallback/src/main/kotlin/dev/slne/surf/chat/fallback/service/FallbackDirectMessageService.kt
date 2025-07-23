@@ -15,7 +15,7 @@ import java.util.*
 
 @AutoService(DirectMessageService::class)
 class FallbackDirectMessageService : DirectMessageService, Services.Fallback {
-    object DirectMessageSettings : Table("chat_settings_direct_messages") {
+    object DirectMessageSettings : Table("chat_direct_messages") {
         val userUuid =
             varchar("user_uuid", 36).transform({ UUID.fromString(it) }, { it.toString() })
         val directMessagesEnabled = bool("direct_messages_enabled").default(true)

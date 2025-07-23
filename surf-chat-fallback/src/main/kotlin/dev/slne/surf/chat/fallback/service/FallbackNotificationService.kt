@@ -34,7 +34,7 @@ class FallbackNotificationService : NotificationService, Services.Fallback {
             NotificationSettings.selectAll().where(NotificationSettings.userUuid eq uuid)
                 .firstOrNull()?.let {
                     it[NotificationSettings.pingsEnabled]
-                } ?: false
+                } ?: true
         }
 
     override suspend fun enablePings(uuid: UUID) = newSuspendedTransaction(Dispatchers.IO) {

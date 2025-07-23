@@ -174,11 +174,11 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
         plugin.launch(Dispatchers.IO) {
             if (viewer.configure().pingsEnabled()) {
                 viewerPlayer.playSound(sound {
-                    type(Sound.BLOCK_NOTE_BLOCK_PLING)
+                    type(Sound.BLOCK_NOTE_BLOCK_HARP)
                     source(net.kyori.adventure.sound.Sound.Source.PLAYER)
-                    volume(0.25f)
+                    volume(1f)
                     pitch(2f)
-                })
+                }, net.kyori.adventure.sound.Sound.Emitter.self())
             }
         }
         return message

@@ -34,6 +34,19 @@ class CompletedComponents {
                 }
 
                 Bukkit.getServer().deleteMessage(signature)
+
+                Bukkit.getOnlinePlayers()
+                    .filter { online -> online.hasPermission(SurfChatPermissionRegistry.TEAM_ACCESS) }
+                    .forEach { online ->
+                        online.sendText {
+                            appendPrefix()
+                            variableValue(it.name())
+                            info(" hat eine Nachricht von ")
+                            variableValue(messageData.sender.name)
+                            info(" gelöscht: ")
+                            append(messageData.message)
+                        }
+                    }
             })
             hoverEvent(buildText {
                 warning("Klicke, um die Nachricht zu löschen")

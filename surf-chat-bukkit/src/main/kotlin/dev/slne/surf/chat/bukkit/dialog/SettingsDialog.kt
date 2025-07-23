@@ -23,7 +23,6 @@ suspend fun settingsDialog(uuid: UUID): Dialog {
     return dialog {
         base {
             title { primary("Chat - Einstellungen") }
-            preventClosingWithEscape()
             afterAction(DialogBase.DialogAfterAction.NONE)
             input {
                 simpleBoolean("pings", buildText {

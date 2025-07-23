@@ -5,6 +5,7 @@ import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.core.service.userService
 import net.kyori.adventure.audience.Audience
 import org.bukkit.Bukkit
+import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 
 fun User.player() = Bukkit.getPlayer(this.uuid)
@@ -14,3 +15,4 @@ fun Audience.user() = when (this) {
 }
 
 fun ChannelMember.player() = Bukkit.getPlayer(this.uuid)
+fun Audience.isConsole() = this is ConsoleCommandSender

@@ -4,6 +4,7 @@ import dev.slne.surf.chat.bukkit.message.MessageDataImpl
 import dev.slne.surf.chat.bukkit.message.MessageFormatterImpl
 import dev.slne.surf.chat.bukkit.message.MessageValidatorImpl
 import dev.slne.surf.chat.bukkit.util.cancel
+import dev.slne.surf.chat.bukkit.util.isConsole
 import dev.slne.surf.chat.bukkit.util.player
 import dev.slne.surf.chat.bukkit.util.user
 import dev.slne.surf.chat.core.service.channelService
@@ -53,6 +54,10 @@ class AsyncChatListener : Listener {
             }
         } else {
             event.renderer { _, _, _, viewerAudience ->
+                if (viewerAudience.isConsole()) {
+                    return@renderer event.message()
+                }
+
                 messageFormatter.formatGlobal(
                     MessageDataImpl(
                         message,

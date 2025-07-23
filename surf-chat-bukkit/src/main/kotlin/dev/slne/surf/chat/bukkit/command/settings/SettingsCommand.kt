@@ -10,6 +10,7 @@ import dev.slne.surf.chat.bukkit.plugin
 fun settingsCommand() = commandAPICommand("settings") {
     withPermission(SurfChatPermissionRegistry.COMMAND_SETTINGS)
     settingsPingCommand()
+    settingsDirectMessagesCommand()
 
     playerExecutor { player, _ ->
         plugin.launch {

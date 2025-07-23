@@ -21,7 +21,6 @@ fun CommandAPICommand.settingsDirectMessagesCommand() = subcommand("directMessag
         plugin.launch {
             val user = player.user() ?: return@launch
             val configurable = user.configure()
-
             val currentValue = configurable.directMessagesEnabled()
 
             if (newValue == null) {
@@ -33,11 +32,7 @@ fun CommandAPICommand.settingsDirectMessagesCommand() = subcommand("directMessag
 
                 player.sendText {
                     appendPrefix()
-                    if (!currentValue) {
-                        success("Deine Benachrichtigungen wurden aktiviert.")
-                    } else {
-                        success("Deine Benachrichtigungen wurden deaktiviert.")
-                    }
+                    success("Deine Benachrichtigungen wurden ${if (!currentValue) "aktiviert" else "deaktiviert"}.")
                 }
             } else {
                 if (newValue == currentValue) {
@@ -56,12 +51,7 @@ fun CommandAPICommand.settingsDirectMessagesCommand() = subcommand("directMessag
 
                 player.sendText {
                     appendPrefix()
-
-                    if (newValue == true) {
-                        success("Deine Benachrichtigungen wurden aktiviert.")
-                    } else {
-                        success("Deine Benachrichtigungen wurden deaktiviert.")
-                    }
+                    success("Deine Benachrichtigungen wurden ${if (newValue == true) "aktiviert" else "deaktiviert"}.")
                 }
             }
 

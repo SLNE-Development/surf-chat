@@ -9,4 +9,8 @@ interface ConfigurableUser {
     suspend fun pingsEnabled(): Boolean
     suspend fun enablePings()
     suspend fun disablePings()
+
+    suspend fun directMessagesEnabled(): Boolean
+    suspend fun enableDirectMessages()
+    suspend fun disableDirectMessages()
 }

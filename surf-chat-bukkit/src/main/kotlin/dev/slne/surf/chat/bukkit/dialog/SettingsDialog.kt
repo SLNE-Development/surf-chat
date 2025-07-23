@@ -5,6 +5,7 @@ package dev.slne.surf.chat.bukkit.dialog
 
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.core.service.directMessageService
 import dev.slne.surf.chat.core.service.notificationService
 import dev.slne.surf.surfapi.bukkit.api.dialog.base
 import dev.slne.surf.surfapi.bukkit.api.dialog.builder.actionButton
@@ -19,6 +20,7 @@ import java.util.*
 
 suspend fun settingsDialog(uuid: UUID): Dialog {
     val pingsEnabled = notificationService.pingsEnabled(uuid)
+    val directMessagesEnabled = directMessageService.directMessagesEnabled(uuid)
 
     return dialog {
         base {
@@ -28,6 +30,9 @@ suspend fun settingsDialog(uuid: UUID): Dialog {
                 simpleBoolean("pings", buildText {
                     info("Benachrichtigungen bei Erwähnungen")
                 }, pingsEnabled)
+                simpleBoolean("dms", buildText {
+                    info("Direktnachrichten")
+                }, directMessagesEnabled)
             }
         }
 
@@ -49,6 +54,16 @@ private fun createSaveButton() = actionButton {
                             notificationService.enablePings(viewer.uniqueId)
                         } else {
                             notificationService.disablePings(viewer.uniqueId)
+                        }
+                    }
+                }
+
+                response.getBoolean("dms").let {
+                    it?.let {
+                        if (it) {
+                            directMessageService.enableDirectMessages(viewer.uniqueId)
+                        } else {
+                            directMessageService.disableDirectMessages(viewer.uniqueId)
                         }
                     }
                 }

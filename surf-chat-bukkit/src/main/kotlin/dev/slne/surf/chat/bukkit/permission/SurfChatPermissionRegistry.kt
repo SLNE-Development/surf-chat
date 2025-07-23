@@ -14,6 +14,7 @@ object SurfChatPermissionRegistry : PermissionRegistry() {
 
     val COMMAND_SETTINGS = create("$PREFIX_COMMAND.settings")
     val COMMAND_SETTINGS_PING = create("$PREFIX_COMMAND.settings.ping")
+    val COMMAND_SETTINGS_DIRECT_MESSAGES = create("$PREFIX_COMMAND.settings.direct-messages")
 
     val COMMAND_TEAMCHAT = create("$PREFIX_COMMAND.teamchat")
 }

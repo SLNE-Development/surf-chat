@@ -11,8 +11,8 @@ import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.user
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
-fun CommandAPICommand.settingsPingCommand() = subcommand("pings") {
-    withPermission(SurfChatPermissionRegistry.COMMAND_SETTINGS_PING)
+fun CommandAPICommand.settingsDirectMessagesCommand() = subcommand("directMessages") {
+    withPermission(SurfChatPermissionRegistry.COMMAND_SETTINGS_DIRECT_MESSAGES)
     niceToggleArgument("newValue", true)
 
     playerExecutor { player, args ->
@@ -22,13 +22,13 @@ fun CommandAPICommand.settingsPingCommand() = subcommand("pings") {
             val user = player.user() ?: return@launch
             val configurable = user.configure()
 
-            val currentValue = configurable.pingsEnabled()
+            val currentValue = configurable.directMessagesEnabled()
 
             if (newValue == null) {
                 if (currentValue) {
-                    configurable.disablePings()
+                    configurable.disableDirectMessages()
                 } else {
-                    configurable.enablePings()
+                    configurable.enableDirectMessages()
                 }
 
                 player.sendText {
@@ -49,9 +49,9 @@ fun CommandAPICommand.settingsPingCommand() = subcommand("pings") {
                 }
 
                 if (newValue == true) {
-                    configurable.enablePings()
+                    configurable.enableDirectMessages()
                 } else {
-                    configurable.disablePings()
+                    configurable.disableDirectMessages()
                 }
 
                 player.sendText {

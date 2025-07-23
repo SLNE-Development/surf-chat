@@ -11,7 +11,7 @@ import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.user
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
-fun CommandAPICommand.settingsPingCommand() = subcommand("settings") {
+fun CommandAPICommand.settingsPingCommand() = subcommand("pings") {
     withPermission(SurfChatPermissionRegistry.COMMAND_SETTINGS)
     niceToggleArgument("newValue", true)
 
@@ -22,9 +22,9 @@ fun CommandAPICommand.settingsPingCommand() = subcommand("settings") {
             val user = player.user() ?: return@launch
             val configurable = user.configure()
 
-            if (newValue == null) {
-                val currentValue = configurable.pingsEnabled()
+            val currentValue = configurable.pingsEnabled()
 
+            if (newValue == null) {
                 if (currentValue) {
                     configurable.disablePings()
                 } else {
@@ -48,6 +48,12 @@ fun CommandAPICommand.settingsPingCommand() = subcommand("settings") {
 
                 player.sendText {
                     appendPrefix()
+                    if (newValue == currentValue) {
+                        appendPrefix()
+                        error("Deine Benachrichtigungen sind bereits ${if (newValue == true) "aktiviert" else "deaktiviert"}.")
+                        return@launch
+                    }
+
                     if (newValue == true) {
                         success("Deine Benachrichtigungen wurden aktiviert.")
                     } else {

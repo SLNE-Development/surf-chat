@@ -53,24 +53,9 @@ private fun createSaveButton() = actionButton {
                     }
                 }
 
-                viewer.showDialog(createSettingsSavedNotice())
+                viewer.clearDialogs()
             }
         }
-    }
-}
-
-private fun createSettingsSavedNotice() = dialog {
-    base {
-        title { primary("Chat — Einstellungen gespeichert") }
-        afterAction(DialogBase.DialogAfterAction.NONE)
-        body {
-            plainMessage {
-                success("Die Einstellungen wurden erfolgreich gespeichert.")
-            }
-        }
-    }
-    type {
-        notice(createCloseButton())
     }
 }
 

@@ -26,7 +26,7 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
         val viewer = messageData.receiver ?: return Component.empty()
         val player = messageData.sender.player() ?: return Component.empty()
 
-        append(components.delete(messageData.messageId, viewer))
+        append(components.delete(messageData, viewer))
         append(components.teleport(messageData.sender.name, viewer))
         append(components.name(player))
         darkSpacer(" >> ")
@@ -90,7 +90,7 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
 
         append(
             components.delete(
-                messageData.messageId,
+                messageData,
                 messageData.receiver ?: return Component.empty()
             )
         )

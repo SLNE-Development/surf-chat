@@ -48,7 +48,9 @@ class AsyncChatListener : Listener {
                         viewerAudience.user(),
                         System.currentTimeMillis(),
                         messageId,
-                        "N/A"
+                        "N/A",
+                        channel,
+                        event.signedMessage().signature()
                     )
                 )
             }
@@ -63,7 +65,9 @@ class AsyncChatListener : Listener {
                         viewerAudience.user(),
                         System.currentTimeMillis(),
                         messageId,
-                        "N/A"
+                        "N/A",
+                        null,
+                        event.signedMessage().signature()
                     )
                 )
             }

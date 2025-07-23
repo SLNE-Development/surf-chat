@@ -6,14 +6,15 @@ import dev.slne.surf.chat.bukkit.hook.PlaceholderAPIHook
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.core.message.MessageData
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.minimessage.MiniMessage
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
-import java.util.*
 
 class CompletedComponents {
-    fun delete(messageID: UUID, viewer: User): Component {
+    fun delete(messageData: MessageData, viewer: User): Component {
         if (!viewer.hasPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_DELETE)) {
             return Component.empty()
         }
@@ -23,7 +24,17 @@ class CompletedComponents {
             error("X")
             darkSpacer("]")
             darkSpacer(" ")
-            clickEvent(ClickEvent.runCommand("/surfchat delete $messageID"))
+            clickEvent(ClickEvent.callback {
+                val signature = messageData.signature ?: run {
+                    it.sendText {
+                        appendPrefix()
+                        error("Die Nachricht besitzt eine ungültige Signatur.")
+                    }
+                    return@callback
+                }
+
+                Bukkit.getServer().deleteMessage(signature)
+            })
             hoverEvent(buildText {
                 warning("Klicke, um die Nachricht zu löschen")
             })

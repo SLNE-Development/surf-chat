@@ -14,5 +14,5 @@ interface MessageData {
     val sentAt: Long
     val server: String
     val channel: Channel?
-    val signature: SignedMessage.Signature?
+    val signedMessage: SignedMessage?
 }

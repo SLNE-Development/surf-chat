@@ -15,5 +15,5 @@ data class MessageDataImpl(
     override val messageId: UUID,
     override val server: String,
     override val channel: Channel? = null,
-    override val signature: SignedMessage.Signature? = null
+    override val signedMessage: SignedMessage? = null
 ) : MessageData

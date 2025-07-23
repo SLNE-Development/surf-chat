@@ -50,7 +50,7 @@ class AsyncChatListener : Listener {
                         messageId,
                         "N/A",
                         channel,
-                        event.signedMessage().signature()
+                        event.signedMessage()
                     )
                 )
             }
@@ -66,7 +66,7 @@ class AsyncChatListener : Listener {
                         messageId,
                         "N/A",
                         null,
-                        event.signedMessage().signature()
+                        event.signedMessage()
                     )
                 )
             }

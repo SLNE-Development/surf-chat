@@ -25,7 +25,7 @@ class CompletedComponents {
             darkSpacer("]")
             darkSpacer(" ")
             clickEvent(ClickEvent.callback {
-                val signature = messageData.signature ?: run {
+                val signature = messageData.signedMessage?.signature() ?: run {
                     it.sendText {
                         appendPrefix()
                         error("Die Nachricht besitzt eine ungültige Signatur.")

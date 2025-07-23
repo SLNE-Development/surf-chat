@@ -13,22 +13,28 @@ import dev.slne.surf.surfapi.bukkit.api.dialog.dialog
 import dev.slne.surf.surfapi.bukkit.api.dialog.type
 import dev.slne.surf.surfapi.bukkit.api.nms.NmsUseWithCaution
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import io.papermc.paper.dialog.Dialog
 import io.papermc.paper.registry.data.dialog.DialogBase
+import java.util.*
 
-fun settingsDialog() = dialog {
-    base {
-        title { primary("Chat - Einstellungen") }
-        preventClosingWithEscape()
-        afterAction(DialogBase.DialogAfterAction.NONE)
-        input {
-            simpleBoolean("pings", buildText {
-                info("Benachrichtigungen bei Erwähnungen")
-            }, true)
+suspend fun settingsDialog(uuid: UUID): Dialog {
+    val pingsEnabled = notificationService.pingsEnabled(uuid)
+
+    return dialog {
+        base {
+            title { primary("Chat - Einstellungen") }
+            preventClosingWithEscape()
+            afterAction(DialogBase.DialogAfterAction.NONE)
+            input {
+                simpleBoolean("pings", buildText {
+                    info("Benachrichtigungen bei Erwähnungen")
+                }, pingsEnabled)
+            }
         }
-    }
 
-    type {
-        confirmation(createSaveButton(), createCloseButton())
+        type {
+            confirmation(createSaveButton(), createCloseButton())
+        }
     }
 }
 
@@ -70,7 +76,7 @@ private fun createSettingsSavedNotice() = dialog {
 }
 
 private fun createCloseButton() = actionButton {
-    label { error("Abbrechen") }
+    label { error("Schließen") }
     action {
         playerCallback { it.clearDialogs() }
     }

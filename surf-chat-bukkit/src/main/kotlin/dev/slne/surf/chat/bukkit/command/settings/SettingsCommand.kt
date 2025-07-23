@@ -1,15 +1,19 @@
 package dev.slne.surf.chat.bukkit.command.settings
 
+import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.bukkit.dialog.settingsDialog
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.plugin
 
 fun settingsCommand() = commandAPICommand("settings") {
     withPermission(SurfChatPermissionRegistry.COMMAND_SETTINGS)
     settingsPingCommand()
 
     playerExecutor { player, _ ->
-        player.showDialog(settingsDialog())
+        plugin.launch {
+            player.showDialog(settingsDialog(player.uniqueId))
+        }
     }
 }

@@ -38,11 +38,6 @@ class CompletedComponents {
         appendNewline()
         info("Gesendet auf Server ")
         variableValue(messageData.server)
-
-        if (messageData.receiver != null) {
-            info("an ")
-            variableValue(messageData.receiver?.name ?: "Error")
-        }
     }
 
     fun name(player: Player) = buildText {

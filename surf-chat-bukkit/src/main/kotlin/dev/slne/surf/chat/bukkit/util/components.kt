@@ -88,7 +88,7 @@ class CompletedComponents {
             info("TP")
             darkSpacer("]")
             darkSpacer(" ")
-            clickEvent(ClickEvent.runCommand("/tp $name"))
+            clickEvent(ClickEvent.runCommand("/teleport ${viewer.name} $name"))
             hoverEvent(buildText {
                 info("Klicke, um dich zu $name zu teleportieren")
             })

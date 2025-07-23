@@ -33,8 +33,16 @@ class CompletedComponents {
     fun messageHover(messageData: MessageData) = buildText {
         info("Gesendet von ")
         variableValue(messageData.sender.name)
-        info(" um ")
+        info(" am ")
         variableValue(messageData.sentAt.unixTime())
+        appendNewline()
+        info("Gesendet auf Server ")
+        variableValue(messageData.server)
+
+        if (messageData.receiver != null) {
+            info("an ")
+            variableValue(messageData.receiver?.name ?: "Error")
+        }
     }
 
     fun name(player: Player) = buildText {

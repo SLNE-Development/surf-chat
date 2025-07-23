@@ -8,7 +8,7 @@ import java.util.*
 
 interface MessageData {
     val message: Component
-    val messageId: UUID
+    val messageUuid: UUID
     val sender: User
     val receiver: User?
     val sentAt: Long

@@ -28,7 +28,7 @@ class CompletedComponents {
                 val signature = messageData.signedMessage?.signature() ?: run {
                     it.sendText {
                         appendPrefix()
-                        error("Die Nachricht besitzt eine ungültige Signatur.")
+                        error("Die Nachricht besitzt eine ungültige Signatur und konnte nicht gelöscht werden.")
                     }
                     return@callback
                 }

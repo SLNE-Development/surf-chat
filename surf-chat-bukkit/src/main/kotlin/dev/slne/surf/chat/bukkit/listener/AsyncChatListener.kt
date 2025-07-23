@@ -1,13 +1,16 @@
 package dev.slne.surf.chat.bukkit.listener
 
+import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.bukkit.message.MessageDataImpl
 import dev.slne.surf.chat.bukkit.message.MessageFormatterImpl
 import dev.slne.surf.chat.bukkit.message.MessageValidatorImpl
+import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.cancel
 import dev.slne.surf.chat.bukkit.util.isConsole
 import dev.slne.surf.chat.bukkit.util.player
 import dev.slne.surf.chat.bukkit.util.user
 import dev.slne.surf.chat.core.service.channelService
+import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import io.papermc.paper.event.player.AsyncChatEvent
 import org.bukkit.event.EventHandler
@@ -36,6 +39,7 @@ class AsyncChatListener : Listener {
         }
 
         val channel = channelService.getChannel(user)
+        val time = System.currentTimeMillis()
 
         if (channel != null) {
             event.viewers().clear()
@@ -46,7 +50,7 @@ class AsyncChatListener : Listener {
                         message,
                         user,
                         viewerAudience.user(),
-                        System.currentTimeMillis(),
+                        time,
                         messageId,
                         "N/A",
                         channel,
@@ -62,7 +66,7 @@ class AsyncChatListener : Listener {
                         message,
                         user,
                         viewerAudience.user(),
-                        System.currentTimeMillis(),
+                        time,
                         messageId,
                         "N/A",
                         null,
@@ -70,6 +74,14 @@ class AsyncChatListener : Listener {
                     )
                 )
             }
+        }
+
+        plugin.launch {
+            historyService.logMessage(
+                MessageDataImpl(
+                    message, user, null, time, messageId, "N/A", channel, event.signedMessage()
+                )
+            )
         }
     }
 }

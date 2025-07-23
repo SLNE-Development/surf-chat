@@ -12,7 +12,7 @@ data class MessageDataImpl(
     override val sender: User,
     override val receiver: User?,
     override val sentAt: Long,
-    override val messageId: UUID,
+    override val messageUuid: UUID,
     override val server: String,
     override val channel: Channel? = null,
     override val signedMessage: SignedMessage? = null

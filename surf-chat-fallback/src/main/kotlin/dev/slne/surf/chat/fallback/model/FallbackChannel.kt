@@ -21,7 +21,7 @@ data class FallbackChannel(
     override fun addMember(user: User) {
         members.add(
             FallbackChannelMember(
-                user.uuid, ChannelRole.MEMBER
+                user.uuid, user.name, ChannelRole.MEMBER
             )
         )
     }

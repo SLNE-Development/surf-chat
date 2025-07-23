@@ -6,5 +6,6 @@ import java.util.*
 
 class FallbackChannelMember(
     override val uuid: UUID,
+    override val name: String,
     override var role: ChannelRole
 ) : ChannelMember

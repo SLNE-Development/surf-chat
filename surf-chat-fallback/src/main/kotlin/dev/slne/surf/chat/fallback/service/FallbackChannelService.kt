@@ -1,7 +1,6 @@
 package dev.slne.surf.chat.fallback.service
 
 import com.google.auto.service.AutoService
-import dev.slne.surf.chat.api.entity.ChannelMember
 import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.model.Channel
 import dev.slne.surf.chat.core.service.ChannelService
@@ -30,8 +29,8 @@ class FallbackChannelService : ChannelService, Services.Fallback {
         TODO("Not yet implemented")
     }
 
-    override fun getChannel(member: ChannelMember): Channel? {
-        TODO("Not yet implemented")
+    override fun getChannel(user: User): Channel? {
+        return null
     }
 
     override fun getChannels(): ObjectSet<Channel> {

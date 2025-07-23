@@ -35,7 +35,7 @@ class MessageValidatorImpl {
             "((http|https|ftp)://)?([\\w-]+\\.)+[\\w-]+(/[\\w- ./?%&=]*)?".toRegex(RegexOption.IGNORE_CASE)
         private val messageTimestamps = mutableObject2ObjectMapOf<UUID, ObjectList<Long>>()
 
-        override fun validate(user: User): Boolean {
+        override fun isSuccess(user: User): Boolean {
             if (user.hasPermission(SurfChatPermissionRegistry.FILTER_BYPASS)) {
                 return true
             }
@@ -54,7 +54,7 @@ class MessageValidatorImpl {
                 return false
             }
 
-            if (this.isValidInput(message)) {
+            if (!this.isValidInput(message)) {
                 failureMessage = buildText {
                     error("Deine Nachricht enthält unerlaubte Zeichen.")
                 }
@@ -93,7 +93,7 @@ class MessageValidatorImpl {
 
             timestamps.removeIf { it < windowStart }
 
-            if (timestamps.size >= 5) { // the maximum number of messages allowed in the time window
+            if (timestamps.size >= 2) { // the maximum number of messages allowed in the time window
                 return true
             }
 
@@ -107,9 +107,9 @@ class MessageValidatorImpl {
         override var failureMessage: Component
     ) :
         MessageValidator<Component> {
-        override fun validate(user: User): Boolean {
+        override fun isSuccess(user: User): Boolean {
             val validator = stringValidator(message.plainText())
-            val success = validator.validate(user)
+            val success = validator.isSuccess(user)
 
             failureMessage = validator.failureMessage
             return success

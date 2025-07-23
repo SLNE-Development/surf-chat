@@ -4,7 +4,9 @@ import dev.slne.surf.chat.bukkit.message.MessageDataImpl
 import dev.slne.surf.chat.bukkit.message.MessageFormatterImpl
 import dev.slne.surf.chat.bukkit.message.MessageValidatorImpl
 import dev.slne.surf.chat.bukkit.util.cancel
+import dev.slne.surf.chat.bukkit.util.player
 import dev.slne.surf.chat.bukkit.util.user
+import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import io.papermc.paper.event.player.AsyncChatEvent
 import org.bukkit.event.EventHandler
@@ -22,26 +24,46 @@ class AsyncChatListener : Listener {
         val messageFormatter = MessageFormatterImpl(message)
         val messageValidator = MessageValidatorImpl.componentValidator(message)
 
-        if (!messageValidator.validate(user)) {
+        if (!messageValidator.isSuccess(user)) {
             event.cancel()
 
             player.sendText {
-                messageValidator.failureMessage
+                appendPrefix()
+                append(messageValidator.failureMessage)
             }
             return
         }
 
-        event.renderer { _, _, _, viewerAudience ->
-            messageFormatter.formatGlobal(
-                MessageDataImpl(
-                    message,
-                    user,
-                    viewerAudience.user(),
-                    System.currentTimeMillis(),
-                    messageId,
-                    "N/A"
+        val channel = channelService.getChannel(user)
+
+        if (channel != null) {
+            event.viewers().clear()
+            event.viewers().addAll(channel.members.mapNotNull { it.player() })
+            event.renderer { _, _, _, viewerAudience ->
+                messageFormatter.formatChannel(
+                    MessageDataImpl(
+                        message,
+                        user,
+                        viewerAudience.user(),
+                        System.currentTimeMillis(),
+                        messageId,
+                        "N/A"
+                    )
                 )
-            )
+            }
+        } else {
+            event.renderer { _, _, _, viewerAudience ->
+                messageFormatter.formatGlobal(
+                    MessageDataImpl(
+                        message,
+                        user,
+                        viewerAudience.user(),
+                        System.currentTimeMillis(),
+                        messageId,
+                        "N/A"
+                    )
+                )
+            }
         }
     }
 }

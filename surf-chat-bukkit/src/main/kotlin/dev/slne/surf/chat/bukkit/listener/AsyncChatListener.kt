@@ -56,7 +56,6 @@ class AsyncChatListener : Listener {
             }
         } else {
             event.viewers().removeIf { it.isConsole() } //TODO: Add config option
-
             event.renderer { _, _, _, viewerAudience ->
                 messageFormatter.formatGlobal(
                     MessageDataImpl(

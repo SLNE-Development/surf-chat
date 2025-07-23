@@ -40,6 +40,14 @@ fun CommandAPICommand.settingsPingCommand() = subcommand("pings") {
                     }
                 }
             } else {
+                if (newValue == currentValue) {
+                    player.sendText {
+                        appendPrefix()
+                        error("Deine Benachrichtigungen sind bereits ${if (newValue == true) "aktiviert" else "deaktiviert"}.")
+                    }
+                    return@launch
+                }
+
                 if (newValue == true) {
                     configurable.enablePings()
                 } else {
@@ -48,11 +56,6 @@ fun CommandAPICommand.settingsPingCommand() = subcommand("pings") {
 
                 player.sendText {
                     appendPrefix()
-                    if (newValue == currentValue) {
-                        appendPrefix()
-                        error("Deine Benachrichtigungen sind bereits ${if (newValue == true) "aktiviert" else "deaktiviert"}.")
-                        return@launch
-                    }
 
                     if (newValue == true) {
                         success("Deine Benachrichtigungen wurden aktiviert.")

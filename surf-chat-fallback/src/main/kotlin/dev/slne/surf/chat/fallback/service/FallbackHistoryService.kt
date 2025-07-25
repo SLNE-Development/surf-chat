@@ -147,4 +147,13 @@ class FallbackHistoryService : HistoryService, Services.Fallback {
         return loadHistoryMutex.isLocked
     }
 
+    override suspend fun markDeleted(messageUuid: UUID, deleter: String) =
+        newSuspendedTransaction(
+            Dispatchers.IO
+        ) {
+            HistoryEntries.update({ HistoryEntries.messageUuid eq messageUuid }) {
+                it[deletedBy] = deleter
+            }
+            return@newSuspendedTransaction
+        }
 }

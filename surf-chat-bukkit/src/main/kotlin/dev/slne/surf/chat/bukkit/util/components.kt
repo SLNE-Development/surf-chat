@@ -1,10 +1,13 @@
 package dev.slne.surf.chat.bukkit.util
 
+import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.model.Channel
 import dev.slne.surf.chat.bukkit.hook.PlaceholderAPIHook
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.message.MessageData
+import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import net.kyori.adventure.text.Component
@@ -35,6 +38,7 @@ class CompletedComponents {
 
                 Bukkit.getServer().deleteMessage(signature)
 
+
                 Bukkit.getOnlinePlayers()
                     .filter { online -> online.hasPermission(SurfChatPermissionRegistry.TEAM_ACCESS) }
                     .forEach { online ->
@@ -47,6 +51,10 @@ class CompletedComponents {
                             append(messageData.message)
                         }
                     }
+
+                plugin.launch {
+                    historyService.markDeleted(messageData.messageUuid, it.name())
+                }
             })
             hoverEvent(buildText {
                 warning("Klicke, um die Nachricht zu löschen")

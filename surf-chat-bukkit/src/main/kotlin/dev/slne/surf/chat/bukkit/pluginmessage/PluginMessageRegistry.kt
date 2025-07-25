@@ -18,9 +18,6 @@ object PluginMessageRegistry : PluginMessageListener {
     }
 
     override fun onPluginMessageReceived(channel: String, player: Player, message: ByteArray) {
-        val plugin = Bukkit.getPluginManager().getPlugin("MyPlugin")!!
-        if (!plugin.isEnabled) return
-
         handlers[channel]?.let { handler ->
             message.inputStream().use { byteIn ->
                 DataInputStream(byteIn).use { dataIn ->

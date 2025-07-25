@@ -51,16 +51,17 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
 
     playerExecutor { player, args ->
         val query: Map<String, String> by args
-        val filter = query.parseFilters()
-
-        val page = query["--page"]?.toIntOrNull() ?: 1
-
-        player.sendText {
-            appendPrefix()
-            info("Es wird nach Ergebnissen gesucht...")
-        }
 
         plugin.launch {
+            val filter = query.parseFilters()
+
+            val page = query["--page"]?.toIntOrNull() ?: 1
+
+            player.sendText {
+                appendPrefix()
+                info("Es wird nach Ergebnissen gesucht...")
+            }
+
             if (historyService.isLookupRunning()) {
                 player.sendText {
                     appendPrefix()
@@ -116,25 +117,20 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
             }
 
             player.sendText {
-                appendPrefix()
-                success("Der Suchvorgang wurde in ")
-                variableValue("N/Ams")
-                success(" abgeschlossen.")
-                appendNewline()
                 append(pagination.renderComponent(history, page))
             }
         }
     }
 }
 
-private fun Map<String, String>.parseFilters(): HistoryFilter {
+private suspend fun Map<String, String>.parseFilters(): HistoryFilter {
+    val senderUuid = this["--sender"]?.let { PlayerLookupService.getUuid(it) }
+    val receiverUuid = this["--receiver"]?.let { PlayerLookupService.getUuid(it) }
     return object : HistoryFilter {
         override val messageUuid: UUID? =
             this@parseFilters["--messageUuid"]?.let { runCatching { UUID.fromString(it) }.getOrNull() }
-        override val senderUuid: UUID? =
-            this@parseFilters["--sender"]?.let { runCatching { UUID.fromString(it) }.getOrNull() }
-        override val receiverUuid: UUID? =
-            this@parseFilters["--receiver"]?.let { runCatching { UUID.fromString(it) }.getOrNull() }
+        override val senderUuid: UUID? = senderUuid
+        override val receiverUuid: UUID? = receiverUuid
         override val messageType: MessageType? =
             this@parseFilters["--type"]?.let { runCatching { MessageType.valueOf(it.uppercase()) }.getOrNull() }
         override val range: Long? =

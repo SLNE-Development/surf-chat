@@ -1,5 +1,5 @@
 [versions]
-paper-api = "1.21.4-R0.1-SNAPSHOT"
+paper-api = "1.21.7-R0.1-SNAPSHOT"
 velocity-api = "3.4.0-SNAPSHOT"
 surf-database = "1.0.5-SNAPSHOT"
 luckperms-api = "5.4"

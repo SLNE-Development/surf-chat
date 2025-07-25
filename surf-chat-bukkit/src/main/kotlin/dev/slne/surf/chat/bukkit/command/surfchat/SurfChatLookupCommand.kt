@@ -14,6 +14,7 @@ import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
+import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.CommonComponents
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.clickCopiesToClipboard
@@ -25,7 +26,6 @@ import java.util.*
 
 fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
     withPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_LOOKUP)
-    withAliases("sc", "chat")
     argument(
         MapArgumentBuilder<String, String>("query")
             .withKeyMapper { it }
@@ -95,16 +95,20 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
                             variableValue(senderNames[entry.senderUuid] ?: "Unbekannt")
                             spacer(":")
                             appendSpace()
-                            variableValue(entry.message)
+                            text(entry.message, Colors.WHITE)
 
                             if (entry.deletedBy != null) {
                                 appendNewline()
                                 appendSpace()
                                 appendSpace()
                                 appendSpace()
+                                appendSpace()
+                                appendSpace()
                                 append(CommonComponents.EM_DASH)
+                                appendSpace()
                                 spacer("Gelöscht von ")
-                                variableValue(entry.deletedBy ?: "Unbekannt", TextDecoration.ITALIC)
+                                variableValue(entry.deletedBy ?: "Unbekannt")
+                                decorate(TextDecoration.ITALIC)
                             }
                             hoverEvent(buildText {
                                 info("Klicke, um die Nachrichten Id zu kopieren.")

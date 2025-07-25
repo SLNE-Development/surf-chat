@@ -9,6 +9,7 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory
 import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier
 import dev.slne.surf.chat.core.Constants
+import dev.slne.surf.chat.velocity.command.directMessageCommand
 import dev.slne.surf.chat.velocity.handler.TeamchatHandler
 
 import java.nio.file.Path
@@ -29,6 +30,8 @@ class VelocityMain @Inject constructor(
 
         plugin.proxy.eventManager.register(plugin, TeamchatHandler())
         plugin.proxy.channelRegistrar.register(MinecraftChannelIdentifier.from(Constants.CHANNEL_TEAM))
+
+        directMessageCommand()
     }
 
     companion object {

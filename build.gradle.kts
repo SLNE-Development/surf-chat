@@ -10,5 +10,5 @@ buildscript {
 
 allprojects {
     group = "dev.slne.surf.chat"
-    version = "1.21.4-1.0.0-SNAPSHOT"
+    version = "1.21.7-1.0.0-SNAPSHOT"
 }

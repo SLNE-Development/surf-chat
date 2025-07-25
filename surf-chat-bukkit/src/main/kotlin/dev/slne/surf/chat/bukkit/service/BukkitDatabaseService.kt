@@ -7,17 +7,17 @@ import com.google.gson.reflect.TypeToken
 import com.sksamuel.aedile.core.asLoadingCache
 import com.sksamuel.aedile.core.expireAfterWrite
 import com.sksamuel.aedile.core.withRemovalListener
-import dev.slne.surf.chat.api.model.DenyListEntry
 import dev.slne.surf.chat.api.model.ChatUserModel
+import dev.slne.surf.chat.api.model.DenyListEntry
 import dev.slne.surf.chat.api.model.HistoryEntryModel
 import dev.slne.surf.chat.api.type.ChatMessageType
-import dev.slne.surf.chat.bukkit.model.BukkitDenyListEntry
 import dev.slne.surf.chat.bukkit.model.BukkitChatUser
+import dev.slne.surf.chat.bukkit.model.BukkitDenyListEntry
 import dev.slne.surf.chat.bukkit.model.BukkitHistoryEntry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.utils.gson
 import dev.slne.surf.chat.core.service.DatabaseService
-import dev.slne.surf.database.DatabaseProvider
+import dev.slne.surf.database.DatabaseManager
 import dev.slne.surf.surfapi.core.api.util.toMutableObjectSet
 import dev.slne.surf.surfapi.core.api.util.toObjectList
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
@@ -79,7 +79,7 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
     object ChatHistory : Table() {
         val entryUuid = varchar("id", 36).transform({ UUID.fromString(it) }, { it.toString() })
         val userUuid = varchar("uuid", 36).transform({ UUID.fromString(it) }, { it.toString() })
-        val type = text("type").transform({ ChatMessageType.valueOf(it)}, { it.toString()} )
+        val type = text("type").transform({ ChatMessageType.valueOf(it) }, { it.toString() })
         val timeStamp = long("timeStamp")
         val message = text("message")
         val deletedBy = varchar("deletedBy", 16).nullable()
@@ -101,7 +101,7 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
 
 
     override fun connect() {
-        DatabaseProvider(plugin.dataPath, plugin.dataPath).connect()
+        DatabaseManager(plugin.dataPath, plugin.dataPath).databaseProvider.connect()
 
         transaction {
             SchemaUtils.create(Users, ChatHistory, Denylist)
@@ -112,18 +112,19 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
         return dataCache.get(uuid)
     }
 
-    override suspend fun loadUser(uuid: UUID): ChatUserModel = newSuspendedTransaction(Dispatchers.IO) {
-        val selected = Users.selectAll().where(Users.uuid eq uuid).firstOrNull()
-            ?: return@newSuspendedTransaction BukkitChatUser(uuid)
+    override suspend fun loadUser(uuid: UUID): ChatUserModel =
+        newSuspendedTransaction(Dispatchers.IO) {
+            val selected = Users.selectAll().where(Users.uuid eq uuid).firstOrNull()
+                ?: return@newSuspendedTransaction BukkitChatUser(uuid)
 
-        return@newSuspendedTransaction BukkitChatUser(
-            uuid = selected[Users.uuid],
-            ignoreList = selected[Users.ignoreList],
-            pmDisabled = selected[Users.pmDisabled],
-            soundEnabled = selected[Users.soundEnabled],
-            channelInvites = selected[Users.channelInvites]
-        )
-    }
+            return@newSuspendedTransaction BukkitChatUser(
+                uuid = selected[Users.uuid],
+                ignoreList = selected[Users.ignoreList],
+                pmDisabled = selected[Users.pmDisabled],
+                soundEnabled = selected[Users.soundEnabled],
+                channelInvites = selected[Users.channelInvites]
+            )
+        }
 
     override suspend fun saveUser(user: ChatUserModel) = newSuspendedTransaction(Dispatchers.IO) {
         Users.upsert {
@@ -141,14 +142,15 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
         dataCache.invalidate(user)
     }
 
-    override suspend fun markMessageDeleted(deleter: String, messageID: UUID) = withContext(Dispatchers.IO) {
-        ChatHistory.update({ ChatHistory.entryUuid eq messageID }) {
+    override suspend fun markMessageDeleted(deleter: String, messageID: UUID) =
+        withContext(Dispatchers.IO) {
+            ChatHistory.update({ ChatHistory.entryUuid eq messageID }) {
 
-            it[deletedBy] = deleter
+                it[deletedBy] = deleter
+            }
+
+            return@withContext
         }
-
-        return@withContext
-    }
 
     override suspend fun loadHistory(
         uuid: UUID?,
@@ -196,7 +198,7 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
                 }
 
                 val query = if (conditions.isNotEmpty()) {
-                    ChatHistory.select (conditions.reduce { acc, cond -> acc and cond })
+                    ChatHistory.select(conditions.reduce { acc, cond -> acc and cond })
                 } else {
                     ChatHistory.selectAll()
                 }
@@ -217,55 +219,58 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
     }
 
 
+    override suspend fun loadDenyList(): ObjectSet<DenyListEntry> =
+        newSuspendedTransaction(Dispatchers.IO) {
+            return@newSuspendedTransaction Denylist.selectAll().map {
+                BukkitDenyListEntry(
+                    word = it[Denylist.word],
+                    reason = it[Denylist.reason],
+                    addedAt = it[Denylist.addedAt],
+                    addedBy = it[Denylist.addedBy]
+                )
+            }.toObjectSet()
+        }
 
-    override suspend fun loadDenyList(): ObjectSet<DenyListEntry> = newSuspendedTransaction(Dispatchers.IO) {
-        return@newSuspendedTransaction Denylist.selectAll().map {
-            BukkitDenyListEntry(
-                word = it[Denylist.word],
-                reason = it[Denylist.reason],
-                addedAt = it[Denylist.addedAt],
-                addedBy = it[Denylist.addedBy]
-            )
-        }.toObjectSet()
-    }
-
-    override suspend fun addToDenylist(entry: DenyListEntry): Boolean = newSuspendedTransaction(Dispatchers.IO) {
-        if (Denylist.selectAll().where(Denylist.word eq entry.word).empty()) {
-            Denylist.insert {
-                it[word] = entry.word
-                it[reason] = entry.reason
-                it[addedAt] = entry.addedAt
-                it[addedBy] = entry.addedBy
+    override suspend fun addToDenylist(entry: DenyListEntry): Boolean =
+        newSuspendedTransaction(Dispatchers.IO) {
+            if (Denylist.selectAll().where(Denylist.word eq entry.word).empty()) {
+                Denylist.insert {
+                    it[word] = entry.word
+                    it[reason] = entry.reason
+                    it[addedAt] = entry.addedAt
+                    it[addedBy] = entry.addedBy
+                }
+                return@newSuspendedTransaction true
+            } else {
+                return@newSuspendedTransaction false
             }
-            return@newSuspendedTransaction true
-        } else {
-            return@newSuspendedTransaction false
-        }
-    }
-
-    override suspend fun removeFromDenylist(word: String): Boolean = newSuspendedTransaction(Dispatchers.IO) {
-        if (Denylist.selectAll().where(Denylist.word eq word).empty()) {
-            return@newSuspendedTransaction false
-        } else {
-            Denylist.deleteWhere { Denylist.word eq word }
-            return@newSuspendedTransaction true
-        }
-    }
-
-
-    override suspend fun insertHistoryEntry(user: UUID, entry: HistoryEntryModel) = newSuspendedTransaction(Dispatchers.IO) {
-        ChatHistory.insert {
-            it[entryUuid] = entry.entryUuid
-            it[userUuid] = user
-            it[type] = entry.type
-            it[timeStamp] = entry.timestamp
-            it[message] = entry.message
-            it[deletedBy] = entry.deletedBy
-            it[server] = entry.server
         }
 
-        return@newSuspendedTransaction
-    }
+    override suspend fun removeFromDenylist(word: String): Boolean =
+        newSuspendedTransaction(Dispatchers.IO) {
+            if (Denylist.selectAll().where(Denylist.word eq word).empty()) {
+                return@newSuspendedTransaction false
+            } else {
+                Denylist.deleteWhere { Denylist.word eq word }
+                return@newSuspendedTransaction true
+            }
+        }
+
+
+    override suspend fun insertHistoryEntry(user: UUID, entry: HistoryEntryModel) =
+        newSuspendedTransaction(Dispatchers.IO) {
+            ChatHistory.insert {
+                it[entryUuid] = entry.entryUuid
+                it[userUuid] = user
+                it[type] = entry.type
+                it[timeStamp] = entry.timestamp
+                it[message] = entry.message
+                it[deletedBy] = entry.deletedBy
+                it[server] = entry.server
+            }
+
+            return@newSuspendedTransaction
+        }
 
     override suspend fun saveAll() {
         dataCache.asMap().forEach {

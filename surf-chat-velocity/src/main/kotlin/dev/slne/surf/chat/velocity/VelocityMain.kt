@@ -7,6 +7,9 @@ import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
 import com.velocitypowered.api.plugin.annotation.DataDirectory
 import com.velocitypowered.api.proxy.ProxyServer
+import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier
+import dev.slne.surf.chat.core.Constants
+import dev.slne.surf.chat.velocity.handler.TeamchatHandler
 
 import java.nio.file.Path
 import kotlin.jvm.optionals.getOrNull
@@ -23,6 +26,9 @@ class VelocityMain @Inject constructor(
     @Subscribe
     fun onInitialization(event: ProxyInitializeEvent) {
         INSTANCE = this
+
+        plugin.proxy.eventManager.register(plugin, TeamchatHandler())
+        plugin.proxy.channelRegistrar.register(MinecraftChannelIdentifier.from(Constants.CHANNEL_TEAM))
     }
 
     companion object {

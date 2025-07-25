@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    api(project(":surf-chat-api"))
+    api(project(":surf-chat-core"))
 }

@@ -3,7 +3,6 @@ package dev.slne.surf.chat.bukkit.pluginmessage
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.plugin.messaging.PluginMessageListener
-import java.io.ByteArrayInputStream
 import java.io.DataInputStream
 
 object PluginMessageRegistry : PluginMessageListener {
@@ -24,7 +23,7 @@ object PluginMessageRegistry : PluginMessageListener {
         if (!plugin.isEnabled) return
 
         handlers[channel]?.let { handler ->
-            ByteArrayInputStream(message).use { byteIn ->
+            message.inputStream().use { byteIn ->
                 DataInputStream(byteIn).use { dataIn ->
                     handler(dataIn, player)
                 }

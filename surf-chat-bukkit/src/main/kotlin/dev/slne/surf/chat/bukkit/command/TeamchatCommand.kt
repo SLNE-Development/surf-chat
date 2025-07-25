@@ -1,7 +1,6 @@
 package dev.slne.surf.chat.bukkit.command
 
 import com.github.shynixn.mccoroutine.folia.launch
-import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.greedyStringArgument
@@ -17,7 +16,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import java.util.*
 
-fun CommandAPICommand.teamchatCommand() = commandAPICommand("teamchat") {
+fun teamchatCommand() = commandAPICommand("teamchat") {
     withAliases("tc")
     greedyStringArgument("message")
 

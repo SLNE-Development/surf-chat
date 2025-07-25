@@ -10,9 +10,11 @@ data class HistoryEntryImpl(
     override val senderUuid: UUID,
     override val messageType: MessageType,
     override val sentAt: Long,
-    override val messageLike: String,
+    override val message: String,
     override val server: String,
-    override val deletedBy: String?
+    override val deletedBy: String?,
+    override val receiverUuid: UUID?,
+    override val channel: String?
 ) : HistoryEntry
 
 data class HistoryFilterImpl(
@@ -22,5 +24,9 @@ data class HistoryFilterImpl(
     override val range: Long?,
     override val messageLike: String?,
     override val server: String?,
-    override val deletedBy: String?
+    override val deletedBy: String?,
+    override val receiverUuid: UUID?,
+    override val channel: String?,
+    override val type: MessageType?,
+    override val limit: Int?
 ) : HistoryFilter

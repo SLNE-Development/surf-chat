@@ -13,4 +13,8 @@ interface ConfigurableUser {
     suspend fun directMessagesEnabled(): Boolean
     suspend fun enableDirectMessages()
     suspend fun disableDirectMessages()
+
+    suspend fun invitesEnabled(): Boolean
+    suspend fun enableInvites()
+    suspend fun disableInvites()
 }

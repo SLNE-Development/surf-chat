@@ -14,6 +14,13 @@ interface ChannelService {
     fun getChannel(user: User): Channel?
     fun getChannels(): ObjectSet<Channel>
 
+    fun invite(channel: Channel, user: User): Boolean
+    fun uninvite(channel: Channel, user: User): Boolean
+    fun isInvited(channel: Channel, user: User): Boolean
+
+    fun acceptInvite(channel: Channel, user: User): Boolean
+    fun declineInvite(channel: Channel, user: User): Boolean
+
     fun registerChannel(channel: Channel)
     fun unregisterChannel(channel: Channel)
     fun getRegisteredChannels(): ObjectSet<Channel>

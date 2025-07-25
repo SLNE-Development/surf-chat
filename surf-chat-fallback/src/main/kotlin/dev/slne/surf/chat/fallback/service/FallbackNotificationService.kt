@@ -19,6 +19,7 @@ class FallbackNotificationService : NotificationService, Services.Fallback {
         val userUuid =
             varchar("user_uuid", 36).transform({ UUID.fromString(it) }, { it.toString() })
         val pingsEnabled = bool("pings_enabled").default(true)
+        val invitesEnabled = bool("invites_enabled").default(true)
 
         override val primaryKey = PrimaryKey(userUuid)
     }
@@ -51,6 +52,30 @@ class FallbackNotificationService : NotificationService, Services.Fallback {
             it[pingsEnabled] = false
         }
 
+        return@newSuspendedTransaction
+    }
+
+    override suspend fun invitesEnabled(uuid: UUID) = newSuspendedTransaction(Dispatchers.IO) {
+        NotificationSettings.selectAll().where(NotificationSettings.userUuid eq uuid)
+            .firstOrNull()?.let {
+                it[NotificationSettings.invitesEnabled]
+            } ?: true
+    }
+
+    override suspend fun enableInvites(uuid: UUID) = newSuspendedTransaction(Dispatchers.IO) {
+        NotificationSettings.upsert {
+            it[userUuid] = uuid
+            it[invitesEnabled] = true
+        }
+        return@newSuspendedTransaction
+    }
+
+
+    override suspend fun disableInvites(uuid: UUID) = newSuspendedTransaction(Dispatchers.IO) {
+        NotificationSettings.upsert {
+            it[userUuid] = uuid
+            it[invitesEnabled] = false
+        }
         return@newSuspendedTransaction
     }
 }

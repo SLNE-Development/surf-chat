@@ -37,6 +37,41 @@ class FallbackChannelService : ChannelService, Services.Fallback {
         TODO("Not yet implemented")
     }
 
+    override fun invite(
+        channel: Channel,
+        user: User
+    ): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun uninvite(
+        channel: Channel,
+        user: User
+    ): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun isInvited(
+        channel: Channel,
+        user: User
+    ): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun acceptInvite(
+        channel: Channel,
+        user: User
+    ): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun declineInvite(
+        channel: Channel,
+        user: User
+    ): Boolean {
+        TODO("Not yet implemented")
+    }
+
     override fun registerChannel(channel: Channel) {
         TODO("Not yet implemented")
     }

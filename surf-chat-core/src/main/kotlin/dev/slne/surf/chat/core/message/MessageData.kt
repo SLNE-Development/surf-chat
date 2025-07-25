@@ -2,6 +2,7 @@ package dev.slne.surf.chat.core.message
 
 import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.model.Channel
+import dev.slne.surf.chat.api.model.MessageType
 import net.kyori.adventure.chat.SignedMessage
 import net.kyori.adventure.text.Component
 import java.util.*
@@ -15,4 +16,5 @@ interface MessageData {
     val server: String
     val channel: Channel?
     val signedMessage: SignedMessage?
+    val type: MessageType
 }

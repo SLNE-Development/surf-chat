@@ -13,4 +13,8 @@ class FallbackConfigurableUser(override val uuid: UUID) : ConfigurableUser {
     override suspend fun directMessagesEnabled() = directMessageService.directMessagesEnabled(uuid)
     override suspend fun enableDirectMessages() = directMessageService.enableDirectMessages(uuid)
     override suspend fun disableDirectMessages() = directMessageService.disableDirectMessages(uuid)
+    
+    override suspend fun invitesEnabled() = notificationService.invitesEnabled(uuid)
+    override suspend fun enableInvites() = notificationService.enableInvites(uuid)
+    override suspend fun disableInvites() = notificationService.disableInvites(uuid)
 }

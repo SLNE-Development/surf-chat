@@ -8,6 +8,10 @@ interface NotificationService : ServiceUsingDatabase {
     suspend fun enablePings(uuid: UUID)
     suspend fun disablePings(uuid: UUID)
 
+    suspend fun invitesEnabled(uuid: UUID): Boolean
+    suspend fun enableInvites(uuid: UUID)
+    suspend fun disableInvites(uuid: UUID)
+
     companion object {
         val INSTANCE = requiredService<NotificationService>()
     }

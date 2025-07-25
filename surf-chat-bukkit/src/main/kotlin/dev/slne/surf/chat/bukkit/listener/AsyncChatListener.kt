@@ -1,6 +1,7 @@
 package dev.slne.surf.chat.bukkit.listener
 
 import com.github.shynixn.mccoroutine.folia.launch
+import dev.slne.surf.chat.api.model.MessageType
 import dev.slne.surf.chat.bukkit.message.MessageDataImpl
 import dev.slne.surf.chat.bukkit.message.MessageFormatterImpl
 import dev.slne.surf.chat.bukkit.message.MessageValidatorImpl
@@ -54,7 +55,8 @@ class AsyncChatListener : Listener {
                         messageId,
                         "N/A",
                         channel,
-                        event.signedMessage()
+                        event.signedMessage(),
+                        MessageType.CHANNEL
                     )
                 )
             }
@@ -70,7 +72,8 @@ class AsyncChatListener : Listener {
                         messageId,
                         "N/A",
                         null,
-                        event.signedMessage()
+                        event.signedMessage(),
+                        MessageType.GLOBAL
                     )
                 )
             }
@@ -79,7 +82,8 @@ class AsyncChatListener : Listener {
         plugin.launch {
             historyService.logMessage(
                 MessageDataImpl(
-                    message, user, null, time, messageId, "N/A", channel, event.signedMessage()
+                    message, user, null, time, messageId, "N/A", channel, event.signedMessage(),
+                    if (channel != null) MessageType.CHANNEL else MessageType.GLOBAL
                 )
             )
         }

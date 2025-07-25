@@ -20,6 +20,7 @@ import java.util.*
 
 suspend fun settingsDialog(uuid: UUID): Dialog {
     val pingsEnabled = notificationService.pingsEnabled(uuid)
+    val invitesEnabled = notificationService.invitesEnabled(uuid)
     val directMessagesEnabled = directMessageService.directMessagesEnabled(uuid)
 
     return dialog {
@@ -30,6 +31,9 @@ suspend fun settingsDialog(uuid: UUID): Dialog {
                 simpleBoolean("pings", buildText {
                     info("Benachrichtigungen bei Erwähnungen")
                 }, pingsEnabled)
+                simpleBoolean("invites", buildText {
+                    info("Einladungen für Nachrichtenkanäle")
+                }, invitesEnabled)
                 simpleBoolean("dms", buildText {
                     info("Direktnachrichten")
                 }, directMessagesEnabled)
@@ -64,6 +68,16 @@ private fun createSaveButton() = actionButton {
                             directMessageService.enableDirectMessages(viewer.uniqueId)
                         } else {
                             directMessageService.disableDirectMessages(viewer.uniqueId)
+                        }
+                    }
+                }
+
+                response.getBoolean("invites").let {
+                    it?.let {
+                        if (it) {
+                            notificationService.enableInvites(viewer.uniqueId)
+                        } else {
+                            notificationService.disableInvites(viewer.uniqueId)
                         }
                     }
                 }

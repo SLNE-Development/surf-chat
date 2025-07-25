@@ -20,6 +20,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.greaterEq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
 @AutoService(HistoryService::class)
@@ -45,7 +46,9 @@ class FallbackHistoryService : HistoryService, Services.Fallback {
     }
 
     override fun createTable() {
-        SchemaUtils.create(HistoryEntries)
+        transaction {
+            SchemaUtils.create(HistoryEntries)
+        }
     }
 
     override suspend fun logMessage(messageData: MessageData) =
@@ -58,6 +61,8 @@ class FallbackHistoryService : HistoryService, Services.Fallback {
                 it[sentAt] = messageData.sentAt
                 it[server] = messageData.server
                 it[channel] = messageData.channel?.channelName
+                it[type] = messageData.type
+                it[deletedBy] = null
             }
 
             return@newSuspendedTransaction
@@ -74,7 +79,15 @@ class FallbackHistoryService : HistoryService, Services.Fallback {
                         conditions += HistoryEntries.senderUuid eq it
                     }
 
+                    filter.receiverUuid?.let {
+                        conditions += HistoryEntries.receiverUuid eq it
+                    }
+
                     filter.messageType?.let {
+                        conditions += HistoryEntries.type eq it
+                    }
+
+                    filter.type?.let {
                         conditions += HistoryEntries.type eq it
                     }
 
@@ -95,30 +108,40 @@ class FallbackHistoryService : HistoryService, Services.Fallback {
                         conditions += HistoryEntries.server eq it
                     }
 
+                    filter.channel?.let {
+                        conditions += HistoryEntries.channel eq it
+                    }
+
                     filter.messageUuid?.let {
                         conditions += HistoryEntries.messageUuid eq it
                     }
 
                     val query = if (conditions.isNotEmpty()) {
-                        HistoryEntries.select(conditions.reduce { acc, cond -> acc and cond })
+                        HistoryEntries.selectAll()
+                            .where(conditions.reduce { acc, cond -> acc and cond })
                     } else {
                         HistoryEntries.selectAll()
                     }
 
-                    query.map {
+                    val limitedQuery = filter.limit?.let { query.limit(it) } ?: query
+
+                    limitedQuery.map {
                         HistoryEntryImpl(
                             messageUuid = it[HistoryEntries.messageUuid],
                             senderUuid = it[HistoryEntries.senderUuid],
                             messageType = it[HistoryEntries.type],
                             sentAt = it[HistoryEntries.sentAt],
-                            messageLike = it[HistoryEntries.message],
+                            message = it[HistoryEntries.message],
                             server = it[HistoryEntries.server],
-                            deletedBy = it[HistoryEntries.deletedBy]
+                            deletedBy = it[HistoryEntries.deletedBy],
+                            receiverUuid = it[HistoryEntries.receiverUuid],
+                            channel = it[HistoryEntries.channel]
                         )
                     }.toObjectSet()
                 }
             }
         }
+
 
     override suspend fun isLookupRunning(): Boolean {
         return loadHistoryMutex.isLocked

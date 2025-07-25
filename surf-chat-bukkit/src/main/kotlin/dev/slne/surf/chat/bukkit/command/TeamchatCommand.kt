@@ -8,6 +8,7 @@ import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.model.MessageType
 import dev.slne.surf.chat.bukkit.message.MessageDataImpl
 import dev.slne.surf.chat.bukkit.message.MessageFormatterImpl
+import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.pluginmessage.pluginMessageSender
 import dev.slne.surf.chat.bukkit.util.user
@@ -19,6 +20,7 @@ import java.util.*
 fun teamchatCommand() = commandAPICommand("teamchat") {
     withAliases("tc")
     greedyStringArgument("message")
+    withPermission(SurfChatPermissionRegistry.COMMAND_TEAMCHAT)
 
     playerExecutor { player, args ->
         val message: String by args

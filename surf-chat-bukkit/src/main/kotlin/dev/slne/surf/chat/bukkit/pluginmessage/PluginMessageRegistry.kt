@@ -1,5 +1,6 @@
 package dev.slne.surf.chat.bukkit.pluginmessage
 
+import dev.slne.surf.chat.bukkit.plugin
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.plugin.messaging.PluginMessageListener
@@ -9,8 +10,6 @@ object PluginMessageRegistry : PluginMessageListener {
     private val handlers = mutableMapOf<String, (DataInputStream, Player) -> Unit>()
 
     fun register(channel: String, handler: (DataInputStream, Player) -> Unit) {
-        val plugin = Bukkit.getPluginManager().getPlugin("MyPlugin")!!
-
         if (!Bukkit.getMessenger().isIncomingChannelRegistered(plugin, channel)) {
             Bukkit.getMessenger().registerIncomingPluginChannel(plugin, channel, this)
         }

@@ -1,5 +1,6 @@
 package dev.slne.surf.chat.bukkit.util
 
+import net.kyori.adventure.chat.SignedMessage
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.event.Cancellable
@@ -27,3 +28,11 @@ fun Cancellable.cancel() {
 }
 
 fun Component.plainText(): String = PlainTextComponentSerializer.plainText().serialize(this)
+
+fun SignedMessage.serialize(): String {
+
+}
+
+fun String.deserializeSignedMessage(): SignedMessage {
+    return SignedMessage
+}

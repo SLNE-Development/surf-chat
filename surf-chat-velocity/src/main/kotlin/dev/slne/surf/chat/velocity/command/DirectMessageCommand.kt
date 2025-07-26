@@ -14,7 +14,7 @@ import java.io.DataOutputStream
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
-private val channel = MinecraftChannelIdentifier.from(Constants.CHANEL_DM)
+private val channel = MinecraftChannelIdentifier.from(Constants.CHANNEL_DM)
 
 fun directMessageCommand() = commandAPICommand("msg") {
     withAliases("dm", "w", "whisper", "tell")

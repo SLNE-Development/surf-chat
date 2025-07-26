@@ -17,7 +17,7 @@ class DirectMessageListener : PluginMessageListener {
         player: Player,
         message: ByteArray
     ) {
-        if (channel != Constants.CHANEL_DM) {
+        if (channel != Constants.CHANNEL_DM) {
             return
         }
 

@@ -17,6 +17,8 @@ interface Channel {
     fun addMember(user: User)
     fun removeMember(member: ChannelMember) = members.remove(member)
     fun isMember(user: User): Boolean = members.any { it.uuid == user.uuid }
+    fun isOwner(user: User): Boolean =
+        members.any { it.uuid == user.uuid && it.role == ChannelRole.OWNER }
 
     fun isInvited(user: User) = invitedPlayers.contains(user)
     fun invite(user: User) = invitedPlayers.add(user)

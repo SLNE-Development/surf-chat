@@ -41,34 +41,34 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
     }
 
     override fun formatIncomingPm(messageData: MessageData) = buildText {
-        val player = messageData.sender.player() ?: return Component.empty()
+        val senderName = messageData.sender.name
 
         darkSpacer(">> ")
         append(Component.text("PM", Colors.RED))
         darkSpacer(" | ")
-        append(components.name(player))
+        variableValue(senderName)
         darkSpacer(" -> ")
         variableValue("Dir")
         darkSpacer(" >> ")
-        append(updateLinks(formatItemTag(messageData.message, player)))
+        append(updateLinks(messageData.message))
         hoverEvent(components.messageHover(messageData))
-        clickSuggestsCommand("/msg ${player.name} ")
+        clickSuggestsCommand("/msg $senderName ")
     }
 
     override fun formatOutgoingPm(messageData: MessageData) = buildText {
-        val player = messageData.sender.player() ?: return Component.empty()
+        val receiverName = messageData.receiver?.name ?: "Error"
 
         darkSpacer(">> ")
         append(Component.text("PM", Colors.RED))
         darkSpacer(" | ")
         variableValue("Du")
         darkSpacer(" -> ")
-        append(components.name(player))
+        variableValue(receiverName)
         darkSpacer(" >> ")
-        append(updateLinks(formatItemTag(messageData.message, player)))
+        append(updateLinks(messageData.message))
 
         hoverEvent(components.messageHover(messageData))
-        clickSuggestsCommand("/msg ${player.name} ")
+        clickSuggestsCommand("/msg $receiverName ")
     }
 
     override fun formatTeamchat(messageData: MessageData) = buildText {

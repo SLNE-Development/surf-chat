@@ -6,12 +6,10 @@ import dev.slne.surf.chat.bukkit.message.MessageDataImpl
 import dev.slne.surf.chat.bukkit.message.MessageFormatterImpl
 import dev.slne.surf.chat.bukkit.message.MessageValidatorImpl
 import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.bukkit.pluginmessage.pluginMessageSender
 import dev.slne.surf.chat.bukkit.util.cancel
 import dev.slne.surf.chat.bukkit.util.isConsole
 import dev.slne.surf.chat.bukkit.util.player
 import dev.slne.surf.chat.bukkit.util.user
-import dev.slne.surf.chat.core.Constants
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
@@ -79,12 +77,6 @@ class AsyncChatListener : Listener {
                     )
                 )
             }
-
-            pluginMessageSender(Constants.CHANNEL_CHAT, player) {
-
-            }
-
-            player.sendMessage(message)
         }
 
         plugin.launch {

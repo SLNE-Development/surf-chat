@@ -30,6 +30,8 @@ class VelocityMain @Inject constructor(
 
         plugin.proxy.eventManager.register(plugin, TeamchatHandler())
         plugin.proxy.channelRegistrar.register(MinecraftChannelIdentifier.from(Constants.CHANNEL_TEAM))
+        plugin.proxy.channelRegistrar.register(MinecraftChannelIdentifier.from(Constants.CHANNEL_DM))
+        plugin.proxy.channelRegistrar.register(MinecraftChannelIdentifier.from(Constants.CHANNEL_CHAT))
 
         directMessageCommand()
     }

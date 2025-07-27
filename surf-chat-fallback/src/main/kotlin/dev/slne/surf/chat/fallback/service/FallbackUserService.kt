@@ -12,4 +12,9 @@ class FallbackUserService : UserService, Services.Fallback {
     override fun getUser(uuid: UUID) = Bukkit.getPlayer(uuid)?.let { FallbackUser(it.name, uuid) }
     override fun getUser(name: String) =
         Bukkit.getPlayer(name)?.let { FallbackUser(name, it.uniqueId) }
+
+    override fun getOfflineUser(
+        uuid: UUID,
+        name: String
+    ) = FallbackUser(name, uuid)
 }

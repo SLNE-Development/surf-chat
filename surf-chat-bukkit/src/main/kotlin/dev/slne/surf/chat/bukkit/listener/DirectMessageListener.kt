@@ -1,11 +1,18 @@
 package dev.slne.surf.chat.bukkit.listener
 
+import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.api.model.MessageType
 import dev.slne.surf.chat.bukkit.message.MessageDataImpl
-import dev.slne.surf.chat.bukkit.util.user
+import dev.slne.surf.chat.bukkit.message.MessageFormatterImpl
+import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.bukkit.util.player
 import dev.slne.surf.chat.core.Constants
+import dev.slne.surf.chat.core.DirectMessageUpdateType
+import dev.slne.surf.chat.core.message.MessageData
+import dev.slne.surf.chat.core.service.historyService
+import dev.slne.surf.chat.core.service.userService
+import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import net.kyori.adventure.text.Component
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.plugin.messaging.PluginMessageListener
 import java.io.DataInputStream
@@ -23,51 +30,68 @@ class DirectMessageListener : PluginMessageListener {
 
         message.inputStream().use { byteSteam ->
             DataInputStream(byteSteam).use { input ->
+                val type = DirectMessageUpdateType.valueOf(input.readUTF())
                 val senderUuid = UUID.fromString(input.readUTF())
+                val senderName = input.readUTF()
                 val targetUuid = UUID.fromString(input.readUTF())
+                val targetName = input.readUTF()
                 val messageUuid = UUID.fromString(input.readUTF())
-                val message = input.readUTF()
+                val messageContent = input.readUTF()
                 val sentAt = input.readLong()
                 val serverName = input.readUTF()
 
-                val sender = Bukkit.getPlayer(senderUuid)
+                val messageData = MessageDataImpl(
+                    Component.text(messageContent),
+                    userService.getOfflineUser(senderUuid, senderName),
+                    userService.getOfflineUser(targetUuid, targetName),
+                    sentAt,
+                    messageUuid,
+                    serverName,
+                    null,
+                    null,
+                    MessageType.DIRECT
+                )
 
-                if (sender != null) {
-                    val user = sender.user() ?: return
-                    val target = Bukkit.getPlayer(targetUuid)
-
-                    val messageData = MessageDataImpl(
-                        Component.text(message),
-                        user,
-                        target?.user(),
-                        sentAt,
-                        messageUuid,
-                        serverName,
-                        null,
-                        null,
-                        MessageType.DIRECT
-                    )
-                }
-
-                val target = Bukkit.getPlayer(targetUuid)
-
-                if (sender != null) {
-                    val user = sender.user() ?: return
-                    val target = Bukkit.getPlayer(targetUuid)
-
-                    val messageData = MessageDataImpl(
-                        Component.text(message),
-                        user,
-                        target?.user(),
-                        sentAt,
-                        messageUuid,
-                        serverName,
-                        null,
-                        null,
-                        MessageType.DIRECT
-                    )
+                when (type) {
+                    DirectMessageUpdateType.SEND_MESSAGE -> handleSendMessage(messageData)
+                    DirectMessageUpdateType.RECEIVE_MESSAGE -> handleReceiveMessage(messageData)
+                    DirectMessageUpdateType.LOG_MESSAGE -> handleLogMessage(messageData)
+                    DirectMessageUpdateType.SEND_AND_LOG_MESSAGE -> {
+                        handleSendMessage(messageData)
+                        handleLogMessage(messageData)
+                    }
                 }
             }
+        }
+    }
+
+    private fun handleSendMessage(
+        messageData: MessageData
+    ) {
+        val formatter = MessageFormatterImpl(messageData.message)
+        val sender = messageData.sender.player() ?: return
+
+        sender.sendText {
+            append(formatter.formatOutgoingPm(messageData))
+        }
+    }
+
+    private fun handleReceiveMessage(
+        messageData: MessageData
+    ) {
+        val formatter = MessageFormatterImpl(messageData.message)
+        val receiver = messageData.receiver?.player() ?: return
+
+        receiver.sendText {
+            append(formatter.formatIncomingPm(messageData))
+        }
+    }
+
+    private fun handleLogMessage(
+        messageData: MessageData
+    ) {
+        plugin.launch {
+            historyService.logMessage(messageData)
         }
     }
 }

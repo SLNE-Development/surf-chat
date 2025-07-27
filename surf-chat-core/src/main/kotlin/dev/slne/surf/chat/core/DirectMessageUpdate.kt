@@ -18,5 +18,6 @@ data class DirectMessageUpdate(
 enum class DirectMessageUpdateType {
     SEND_MESSAGE,
     RECEIVE_MESSAGE,
-    LOG_MESSAGE
+    LOG_MESSAGE,
+    SEND_AND_LOG_MESSAGE,
 }

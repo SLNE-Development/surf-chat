@@ -43,6 +43,15 @@ fun directMessageCommand() = commandAPICommand("msg") {
             }
         }
 
+        if (player == target) {
+            return@playerExecutor run {
+                player.sendText {
+                    appendPrefix()
+                    error("Du kannst dir keine Nachrichten senden.")
+                }
+            }
+        }
+
         senderServer.sendPluginMessage(
             channel,
             ByteArrayOutputStream().use { byteStream ->

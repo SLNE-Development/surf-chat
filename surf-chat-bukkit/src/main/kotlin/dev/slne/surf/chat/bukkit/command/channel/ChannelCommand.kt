@@ -5,5 +5,9 @@ import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 
 fun channelCommand() = commandAPICommand("channel") {
     withPermission(SurfChatPermissionRegistry.COMMAND_CHANNEL)
-    inviteAcceptCommand()
+
+    channelCreateCommand()
+    channelBanCommand()
+    channelAcceptInviteCommand()
+    channelDeclineInviteCommand()
 }

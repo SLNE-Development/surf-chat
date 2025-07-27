@@ -1,6 +1,5 @@
 package dev.slne.surf.chat.velocity.command
 
-import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
@@ -8,9 +7,8 @@ import dev.jorel.commandapi.kotlindsl.greedyStringArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.core.Constants
 import dev.slne.surf.chat.core.DirectMessageUpdateType
-import dev.slne.surf.chat.velocity.command.argument.playerArgument
+import dev.slne.surf.chat.velocity.plugin
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
-import dev.slne.surf.surfapi.core.api.util.mutableObject2ObjectMapOf
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import java.util.*
@@ -18,16 +16,12 @@ import kotlin.jvm.optionals.getOrNull
 
 private val channel = MinecraftChannelIdentifier.from(Constants.CHANNEL_DM)
 
-val latestDirectMessages = mutableObject2ObjectMapOf<UUID, UUID>()
-
-fun directMessageCommand() = commandAPICommand("msg") {
-    withAliases("dm", "w", "whisper", "tell")
-    withPermission("surf.chat.command.msg")
-    playerArgument("target")
+fun replyCommand() = commandAPICommand("reply") {
+    withAliases("r")
+    withPermission("surf.chat.command.reply")
     greedyStringArgument("message")
 
     playerExecutor { player, args ->
-        val target: Player by args
         val message: String by args
         val sentAt = System.currentTimeMillis()
         val messageId = UUID.randomUUID()
@@ -38,6 +32,22 @@ fun directMessageCommand() = commandAPICommand("msg") {
                 error("Ein interner Fehler ist aufgetreten. Bitte versuche es später erneut.")
             }
         }
+
+        val targetUuid = latestDirectMessages[player.uniqueId]
+            ?: return@playerExecutor run {
+                player.sendText {
+                    appendPrefix()
+                    error("Du hast noch keine Nachrichten erhalten.")
+                }
+            }
+
+        val target = plugin.proxy.getPlayer(targetUuid).getOrNull()
+            ?: return@playerExecutor run {
+                player.sendText {
+                    appendPrefix()
+                    error("Du hast noch keine Nachrichten erhalten.")
+                }
+            }
 
         val targetServer = target.currentServer.getOrNull() ?: return@playerExecutor run {
             player.sendText {
@@ -55,24 +65,20 @@ fun directMessageCommand() = commandAPICommand("msg") {
             }
         }
 
-        latestDirectMessages[target.uniqueId] = player.uniqueId
-
-        senderServer.sendPluginMessage(
-            channel,
-            ByteArrayOutputStream().use { byteStream ->
-                DataOutputStream(byteStream).use { out ->
-                    out.writeUTF(DirectMessageUpdateType.SEND_AND_LOG_MESSAGE.toString())
-                    out.writeUTF(player.uniqueId.toString())
-                    out.writeUTF(player.username)
-                    out.writeUTF(target.uniqueId.toString())
-                    out.writeUTF(target.username)
-                    out.writeUTF(messageId.toString())
-                    out.writeUTF(message)
-                    out.writeLong(sentAt)
-                    out.writeUTF(senderServer.serverInfo.name)
-                }
-                byteStream.toByteArray()
-            })
+        senderServer.sendPluginMessage(channel, ByteArrayOutputStream().use { byteStream ->
+            DataOutputStream(byteStream).use { out ->
+                out.writeUTF(DirectMessageUpdateType.SEND_AND_LOG_MESSAGE.toString())
+                out.writeUTF(player.uniqueId.toString())
+                out.writeUTF(player.username)
+                out.writeUTF(target.uniqueId.toString())
+                out.writeUTF(target.username)
+                out.writeUTF(messageId.toString())
+                out.writeUTF(message)
+                out.writeLong(sentAt)
+                out.writeUTF(senderServer.serverInfo.name)
+            }
+            byteStream.toByteArray()
+        })
 
         targetServer.sendPluginMessage(channel, ByteArrayOutputStream().use { byteStream ->
             DataOutputStream(byteStream).use { out ->

@@ -28,8 +28,17 @@ class AsyncChatListener : Listener {
 
         val message = event.message()
         val messageId = UUID.randomUUID()
-        val messageFormatter = MessageFormatterImpl(message)
         val messageValidator = MessageValidatorImpl.componentValidator(message)
+
+        val cleanedMessage = if (bypassChannelPattern.containsMatchIn(message.plainText())) {
+            message.replaceText {
+                it.match(bypassChannelPattern.pattern)
+                    .replacement("")
+            }
+        } else {
+            message
+        }
+        val messageFormatter = MessageFormatterImpl(cleanedMessage)
 
         if (!messageValidator.isSuccess(user)) {
             event.cancel()

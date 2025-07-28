@@ -12,7 +12,7 @@ import dev.slne.surf.chat.bukkit.util.user
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
-fun CommandAPICommand.channelAcceptInviteCommand() = subcommand("accept") {
+fun CommandAPICommand.channelInviteAcceptCommand() = subcommand("accept") {
     channelInviteArgument("channel")
     withPermission(SurfChatPermissionRegistry.COMMAND_CHANNEL_ACCEPT)
     playerExecutor { player, args ->

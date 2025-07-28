@@ -102,6 +102,8 @@ private fun createInfoMessage(channel: Channel): Component {
             variableValue(channel.members.size)
         }
         appendNewline {
+            append(CommonComponents.EM_DASH)
+            appendSpace()
             spacer("Einladungen: ".toSmallCaps())
             variableValue(channel.invitedPlayers.size)
         }

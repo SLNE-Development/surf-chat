@@ -7,7 +7,25 @@ fun channelCommand() = commandAPICommand("channel") {
     withPermission(SurfChatPermissionRegistry.COMMAND_CHANNEL)
 
     channelCreateCommand()
-    channelBanCommand()
+    channelDeleteCommand()
+    channelJoinCommand()
+    channelLeaveCommand()
+
+    channelListCommand()
+    channelMembersCommand()
+    channelInfoCommand()
+
+    channelInviteCommand()
     channelInviteAcceptCommand()
     channelInviteDeclineCommand()
+    channelInviteRevokeCommand()
+
+    channelPromoteCommand()
+    channelDeleteCommand()
+
+    channelKickCommand()
+    channelBanCommand()
+    channelUnBanCommand()
+    channelTransferCommand()
+    channelVisibilityCommand()
 }

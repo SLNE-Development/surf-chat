@@ -1,7 +1,6 @@
 package dev.slne.surf.chat.bukkit.command.channel
 
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
-import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 
 fun channelAdminCommand() = commandAPICommand("channeladmin") {
@@ -9,7 +8,6 @@ fun channelAdminCommand() = commandAPICommand("channeladmin") {
 
     channelForceJoinCommand()
     channelForceDeleteCommand()
-
-    subcommand(ChannelMoveCommand("move"))
-    subcommand(ChannelSpyCommand("spy"))
+    channelSpyCommand()
+    channelMoveCommand()
 }

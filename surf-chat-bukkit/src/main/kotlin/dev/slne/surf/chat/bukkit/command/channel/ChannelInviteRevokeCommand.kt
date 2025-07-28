@@ -17,7 +17,7 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 fun CommandAPICommand.channelInviteRevokeCommand() = subcommand("revoke") {
     withPermission(SurfChatPermissionRegistry.COMMAND_CHANNEL_REVOKE)
-    userArgument("player")
+    userArgument("target")
     playerExecutor { player, args ->
         val user = player.user() ?: return@playerExecutor
         val channel: Channel = channelService.getChannel(user) ?: return@playerExecutor run {

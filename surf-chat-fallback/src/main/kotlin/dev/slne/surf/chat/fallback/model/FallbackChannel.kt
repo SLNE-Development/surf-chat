@@ -39,7 +39,8 @@ data class FallbackChannel(
 
     override fun leaveAndTransfer(member: ChannelMember) {
         if (this.isOwner(member)) {
-            var nextOwner = this.members.firstOrNull { it.hasModeratorPermissions() }
+            var nextOwner =
+                this.members.firstOrNull { it.hasModeratorPermissions() && it.uuid != member.uuid }
 
             if (nextOwner == null) {
                 nextOwner = this.members.firstOrNull { it.uuid != member.uuid }

@@ -30,5 +30,12 @@ fun CommandAPICommand.channelLeaveCommand() = subcommand("leave") {
         }
 
         channel.leaveAndTransfer(channelMember)
+
+        player.sendText {
+            appendPrefix()
+            success("Du hast den Nachrichtenkanal ")
+            variableValue(channel.channelName)
+            success(" verlassen.")
+        }
     }
 }

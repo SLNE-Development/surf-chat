@@ -12,7 +12,7 @@ import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.user
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
-fun CommandAPICommand.channelDeclineInviteCommand() = subcommand("decline") {
+fun CommandAPICommand.channelInviteDeclineCommand() = subcommand("decline") {
     channelInviteArgument("channel")
     withPermission(SurfChatPermissionRegistry.COMMAND_CHANNEL_DECLINE)
     playerExecutor { player, args ->

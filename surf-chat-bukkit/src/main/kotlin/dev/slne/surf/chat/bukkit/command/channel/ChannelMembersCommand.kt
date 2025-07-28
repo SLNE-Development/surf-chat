@@ -56,7 +56,7 @@ fun CommandAPICommand.channelMembersCommand() = subcommand("members") {
         }
 
         player.sendText {
-            append(pagination.renderComponent(channel.members.sortedByDescending { it.role }, page))
+            append(pagination.renderComponent(channel.members.sortedBy { it.role }, page))
         }
     }
 }

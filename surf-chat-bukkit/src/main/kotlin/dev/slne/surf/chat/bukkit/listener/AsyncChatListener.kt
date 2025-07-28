@@ -12,8 +12,10 @@ import dev.slne.surf.chat.bukkit.util.player
 import dev.slne.surf.chat.bukkit.util.user
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.historyService
+import dev.slne.surf.chat.core.service.spyService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import io.papermc.paper.event.player.AsyncChatEvent
+import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import java.util.*
@@ -45,6 +47,8 @@ class AsyncChatListener : Listener {
         if (channel != null) {
             event.viewers().clear()
             event.viewers().addAll(channel.members.mapNotNull { it.player() })
+            event.viewers()
+                .addAll(spyService.getChannelSpies(channel).mapNotNull { Bukkit.getPlayer(it) })
             event.renderer { _, _, _, viewerAudience ->
                 messageFormatter.formatChannel(
                     MessageDataImpl(

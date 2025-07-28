@@ -12,7 +12,7 @@ import dev.slne.surf.chat.core.service.userService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.util.emptyObjectSet
 
-class ChannelMembersArgument(nodeName: String) :
+class ChannelMemberArgument(nodeName: String) :
     CustomArgument<ChannelMember, String>(StringArgument(nodeName), { info ->
         val target =
             userService.getUser(info.input) ?: throw CustomArgumentException.fromMessageBuilder(
@@ -62,9 +62,9 @@ class ChannelMembersArgument(nodeName: String) :
     }
 }
 
-inline fun CommandAPICommand.channelMembersArgument(
+inline fun CommandAPICommand.channelMemberArgument(
     nodeName: String,
     optional: Boolean = false,
     block: Argument<*>.() -> Unit = {}
 ): CommandAPICommand =
-    withArguments(ChannelMembersArgument(nodeName).setOptional(optional).apply(block))
+    withArguments(ChannelMemberArgument(nodeName).setOptional(optional).apply(block))

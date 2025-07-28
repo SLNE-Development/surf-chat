@@ -17,6 +17,7 @@ fun Audience.user() = when (this) {
 }
 
 fun ChannelMember.player() = Bukkit.getPlayer(this.uuid)
+fun ChannelMember.user() = userService.getUser(uuid)
 fun Audience.isConsole() = this is ConsoleCommandSender
 
 fun Audience.name() = when (this) {

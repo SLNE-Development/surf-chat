@@ -4,20 +4,20 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
+import dev.slne.surf.chat.api.entity.ChannelMember
 import dev.slne.surf.chat.api.model.Channel
 import dev.slne.surf.chat.api.model.ChannelRole
-import dev.slne.surf.chat.bukkit.command.argument.channelMembersArgument
+import dev.slne.surf.chat.bukkit.command.argument.channelMemberArgument
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.bukkit.util.user
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import net.kyori.adventure.text.event.ClickEvent
-import org.bukkit.entity.Player
 
 fun CommandAPICommand.channelTransferCommand() = subcommand("transfer") {
     withPermission(SurfChatPermissionRegistry.COMMAND_CHANNEL_TRANSFER)
-    channelMembersArgument("member")
+    channelMemberArgument("member")
     playerExecutor { player, args ->
         val user = player.user() ?: return@playerExecutor
         val channel: Channel = channelService.getChannel(user) ?: run {
@@ -27,7 +27,7 @@ fun CommandAPICommand.channelTransferCommand() = subcommand("transfer") {
             }
             return@playerExecutor
         }
-        val target: Player by args
+        val target: ChannelMember by args
 
         if (!channel.isOwner(user)) {
             user.sendText {
@@ -71,17 +71,7 @@ fun CommandAPICommand.channelTransferCommand() = subcommand("transfer") {
                     return@callback
                 }
 
-                val targetMember = targetUser.channelMember(channel) ?: run {
-                    user.sendText {
-                        appendPrefix()
-                        error("Der Spieler ")
-                        variableValue(target.name)
-                        error(" ist nicht im Nachrichtenkanal.")
-                    }
-                    return@callback
-                }
-
-                channel.transfer(targetMember)
+                channel.transfer(target)
 
                 user.sendText {
                     appendPrefix()

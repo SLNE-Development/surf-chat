@@ -4,22 +4,22 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
+import dev.slne.surf.chat.api.entity.ChannelMember
 import dev.slne.surf.chat.api.model.Channel
-import dev.slne.surf.chat.bukkit.command.argument.channelMembersArgument
+import dev.slne.surf.chat.bukkit.command.argument.channelMemberArgument
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.bukkit.util.user
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
-import org.bukkit.entity.Player
 
 fun CommandAPICommand.channelKickCommand() = subcommand("kick") {
     withPermission(SurfChatPermissionRegistry.COMMAND_CHANNEL_KICK)
-    channelMembersArgument("target")
+    channelMemberArgument("target")
     playerExecutor { player, args ->
         val user = player.user() ?: return@playerExecutor
         val channel: Channel? = channelService.getChannel(user)
-        val target: Player by args
+        val target: ChannelMember by args
 
         if (channel == null) {
             player.sendText {
@@ -45,14 +45,7 @@ fun CommandAPICommand.channelKickCommand() = subcommand("kick") {
             return@playerExecutor
         }
 
-        val targetMember = target.user()?.channelMember(channel) ?: return@playerExecutor run {
-            user.sendText {
-                appendPrefix()
-                error("Der Spieler ist nicht in deinem Nachrichtenkanal.")
-            }
-        }
-
-        if (targetMember.hasModeratorPermissions()) {
+        if (target.hasModeratorPermissions()) {
             user.sendText {
                 appendPrefix()
                 error("Du kannst diesen Spieler nicht aus dem Nachrichtenkanal entfernen.")
@@ -61,11 +54,11 @@ fun CommandAPICommand.channelKickCommand() = subcommand("kick") {
         }
 
 
-        channel.kick(targetMember)
+        channel.kick(target)
         user.sendText {
             appendPrefix()
             info("Du hast ")
-            variableValue(targetMember.name)
+            variableValue(target.name)
             info(" aus dem Nachrichtenkanal ")
             variableValue(channel.channelName)
             info(" geworfen.")

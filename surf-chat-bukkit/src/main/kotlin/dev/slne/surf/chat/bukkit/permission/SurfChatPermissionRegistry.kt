@@ -33,7 +33,7 @@ object SurfChatPermissionRegistry : PermissionRegistry() {
     val COMMAND_CHANNEL_REVOKE = create("surf.chat.command.channel.uninvite")
     val COMMAND_CHANNEL_DECLINE = create("surf.chat.command.channel.deny")
     val COMMAND_CHANNEL_MEMBERS = create("surf.chat.command.channel.members")
-    val COMMAND_CHANNEL_MODE = create("surf.chat.command.channel.mode")
+    val COMMAND_CHANNEL_VISIBILITY = create("surf.chat.command.channel.mode")
 
     val COMMAND_CHANNEL_ADMIN = create("surf.chat.command.channel.admin")
     val COMMAND_CHANNEL_ADMIN_MOVE = create("surf.chat.command.channel.admin.move")

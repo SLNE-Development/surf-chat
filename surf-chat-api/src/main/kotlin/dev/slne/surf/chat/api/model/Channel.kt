@@ -11,7 +11,7 @@ interface Channel {
     val members: ObjectSet<ChannelMember>
     val bannedPlayers: ObjectSet<User>
     val invitedPlayers: ObjectSet<User>
-    val visibility: ChannelVisibility
+    var visibility: ChannelVisibility
     val createdAt: Long
 
     fun join(user: User)

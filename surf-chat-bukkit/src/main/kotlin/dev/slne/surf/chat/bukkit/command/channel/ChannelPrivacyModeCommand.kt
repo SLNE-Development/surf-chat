@@ -1,9 +1,9 @@
 package dev.slne.surf.chat.bukkit.command.channel
 
 import dev.jorel.commandapi.CommandAPICommand
-import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
+import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.model.Channel
 import dev.slne.surf.chat.api.model.ChannelVisibility
 import dev.slne.surf.chat.bukkit.command.argument.channelVisibilityArgument
@@ -12,7 +12,7 @@ import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.bukkit.util.user
 import dev.slne.surf.chat.core.service.channelService
 
-fun CommandAPICommand.channelVisibilityCommand() = commandAPICommand("visibility") {
+fun CommandAPICommand.channelVisibilityCommand() = subcommand("visibility") {
     withPermission(SurfChatPermissionRegistry.COMMAND_CHANNEL_VISIBILITY)
     channelVisibilityArgument("visibility")
     playerExecutor { player, args ->

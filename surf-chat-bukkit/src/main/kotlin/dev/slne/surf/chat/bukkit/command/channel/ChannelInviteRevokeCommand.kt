@@ -2,75 +2,79 @@ package dev.slne.surf.chat.bukkit.command.channel
 
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
-import dev.jorel.commandapi.arguments.ArgumentSuggestions
-import dev.jorel.commandapi.arguments.EntitySelectorArgument
+import dev.jorel.commandapi.kotlindsl.getValue
+import dev.jorel.commandapi.kotlindsl.playerArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.chat.api.model.ChannelModel
-import dev.slne.surf.chat.api.surfChatApi
+import dev.jorel.commandapi.kotlindsl.subcommand
+import dev.slne.surf.chat.api.model.Channel
+import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
-import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
+import dev.slne.surf.chat.bukkit.util.user
 import dev.slne.surf.chat.core.service.channelService
-import dev.slne.surf.chat.core.service.databaseService
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
-import org.bukkit.Bukkit
-import org.bukkit.OfflinePlayer
+import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
+import org.bukkit.entity.Player
 
-class ChannelInviteRevokeCommand(commandName: String) : CommandAPICommand(commandName) {
-    init {
-        withPermission(ChatPermissionRegistry.COMMAND_CHANNEL_REVOKE)
-        withArguments(EntitySelectorArgument.OnePlayer("player").replaceSuggestions(
-            ArgumentSuggestions.stringCollection {
-                val players = Bukkit.getOnlinePlayers().map { it.name }
-                players.toSet()
-            }))
-        playerExecutor { player, args ->
-            val channel: ChannelModel? = channelService.getChannel(player)
-            val target = args.getUnchecked<OfflinePlayer>("player") ?: return@playerExecutor
-
-            if(channel == null) {
-                player.sendPrefixed {
-                    error("Du bist in keinem Nachrichtenkanal.")
-                }
-                return@playerExecutor
+fun CommandAPICommand.channelInviteRevokeCommand() = subcommand("revoke") {
+    withPermission(SurfChatPermissionRegistry.COMMAND_CHANNEL_REVOKE)
+    playerArgument("player")
+    playerExecutor { player, args ->
+        val user = player.user() ?: return@playerExecutor
+        val channel: Channel = channelService.getChannel(user) ?: return@playerExecutor run {
+            player.sendText {
+                appendPrefix()
+                error("Du bist in keinem Nachrichtenkanal.")
             }
+        }
 
-            plugin.launch {
-                val user = databaseService.getUser(player.uniqueId)
-                val targetUser = databaseService.getUser(target.uniqueId)
+        val target: Player by args
+        val targetUser = target.user() ?: return@playerExecutor run {
+            player.sendText {
+                appendPrefix()
+                error("Der Spieler ")
+                variableValue(target.name)
+                error(" ist nicht im System registriert.")
+            }
+        }
+        val userMember = user.channelMember(channel) ?: return@playerExecutor run {
+            player.sendText {
+                appendPrefix()
+                error("Du bist in keinem Nachrichtenkanal.")
+            }
+        }
 
-                if (!channel.hasModeratorPermissions(user)) {
-                    user.sendPrefixed {
-                        error("Du hast keine Moderationsrechte in diesem Nachrichtenkanal.")
-                    }
-                    return@launch
-                }
+        if (!userMember.hasModeratorPermissions()) {
+            player.sendText {
+                error("Du hast keine Moderationsrechte in diesem Nachrichtenkanal.")
+            }
+            return@playerExecutor
+        }
 
-                if (!channel.isInvited(targetUser)) {
-                    user.sendPrefixed {
-                        info("Der Spieler ")
-                        variableValue(targetUser.getName())
-                        info(" hat keine Einladung für diesen Nachrichtenkanal.")
-                    }
-                    return@launch
-                }
+        if (!channel.isInvited(targetUser)) {
+            player.sendText {
+                info("Der Spieler ")
+                variableValue(targetUser.name)
+                info(" hat keine Einladung für diesen Nachrichtenkanal.")
+            }
+            return@playerExecutor
+        }
 
-                channel.revokeInvite(targetUser)
+        channel.revoke(targetUser)
 
-                user.sendPrefixed {
-                    info("Du hast die Einladung des Spielers ")
-                    variableValue(targetUser.getName())
-                    info(" im Nachrichtenkanal ")
-                    variableValue(channel.name)
-                    info(" zurückgezogen.")
-                }
+        player.sendText {
+            info("Du hast die Einladung des Spielers ")
+            variableValue(targetUser.name)
+            info(" im Nachrichtenkanal ")
+            variableValue(channel.channelName)
+            info(" zurückgezogen.")
+        }
 
-                if (targetUser.channelInvites) {
-                    targetUser.sendPrefixed {
-                        info("Deine Einladung in den Nachrichtenkanal ")
-                        variableValue(channel.name)
-                        info(" wurde zurückgezogen.")
-                    }
+        plugin.launch {
+            if (targetUser.configure().invitesEnabled()) {
+                target.sendText {
+                    appendPrefix()
+                    info("Deine Einladung in den Nachrichtenkanal ")
+                    variableValue(channel.channelName)
+                    info(" wurde zurückgezogen.")
                 }
             }
         }

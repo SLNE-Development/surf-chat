@@ -21,7 +21,7 @@ private val channel = MinecraftChannelIdentifier.from(Constants.CHANNEL_DM)
 val latestDirectMessages = mutableObject2ObjectMapOf<UUID, UUID>()
 
 fun directMessageCommand() = commandAPICommand("msg") {
-    withAliases("dm", "w", "whisper", "tell")
+    withAliases("dm", "w", "whisper", "tell", "pm")
     withPermission("surf.chat.command.msg")
     playerArgument("target")
     greedyStringArgument("message")

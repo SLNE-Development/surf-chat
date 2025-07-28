@@ -5,31 +5,32 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.EntitySelectorArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
+import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.model.ChannelModel
-import dev.slne.surf.chat.api.surfChatApi
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.components
 import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.databaseService
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 
-class ChannelInviteCommand(commandName: String) : CommandAPICommand(commandName) {
+fun CommandAPICommand.channelInviteCommand() = subcommand("invite") {
     init {
         withPermission(ChatPermissionRegistry.COMMAND_CHANNEL_INVITE)
-        withArguments(EntitySelectorArgument.OnePlayer("player").replaceSuggestions(
-            ArgumentSuggestions.stringCollection {
-                val players = Bukkit.getOnlinePlayers().map { it.name }
-                players.toSet()
-            }))
+        withArguments(
+            EntitySelectorArgument.OnePlayer("player").replaceSuggestions(
+                ArgumentSuggestions.stringCollection {
+                    val players = Bukkit.getOnlinePlayers().map { it.name }
+                    players.toSet()
+                })
+        )
         playerExecutor { player, args ->
             val channel: ChannelModel? = channelService.getChannel(player)
             val target = args.getUnchecked<OfflinePlayer>("player") ?: return@playerExecutor
 
-            if(channel == null) {
+            if (channel == null) {
                 player.sendPrefixed {
                     error("Du bist in keinem Nachrichtenkanal.")
                 }

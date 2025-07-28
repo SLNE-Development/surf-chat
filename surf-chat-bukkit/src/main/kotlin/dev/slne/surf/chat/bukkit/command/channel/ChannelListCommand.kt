@@ -35,8 +35,7 @@ fun CommandAPICommand.channelListCommand() = subcommand("list") {
 
         val pagination = Pagination<Channel> {
             title {
-                primary("Kanalübersicht".toSmallCaps())
-                decorate(TextDecoration.BOLD)
+                primary("Kanalübersicht".toSmallCaps(), TextDecoration.BOLD)
             }
 
             rowRenderer { channel, index ->

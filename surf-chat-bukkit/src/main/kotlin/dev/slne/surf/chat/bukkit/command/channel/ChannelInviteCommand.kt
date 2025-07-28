@@ -3,10 +3,11 @@ package dev.slne.surf.chat.bukkit.command.channel
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
-import dev.jorel.commandapi.kotlindsl.playerArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
+import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.model.Channel
+import dev.slne.surf.chat.bukkit.command.argument.userArgument
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.components
@@ -14,11 +15,10 @@ import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.bukkit.util.user
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
-import org.bukkit.entity.Player
 
 fun CommandAPICommand.channelInviteCommand() = subcommand("invite") {
     withPermission(SurfChatPermissionRegistry.COMMAND_CHANNEL_INVITE)
-    playerArgument("target")
+    userArgument("target")
     playerExecutor { player, args ->
         val user = player.user() ?: return@playerExecutor
         val channel: Channel = channelService.getChannel(user) ?: run {
@@ -29,10 +29,9 @@ fun CommandAPICommand.channelInviteCommand() = subcommand("invite") {
             return@playerExecutor
         }
 
-        val target: Player by args
-        val targetUser = target.user() ?: return@playerExecutor
+        val target: User by args
 
-        if (channel.isInvited(targetUser)) {
+        if (channel.isInvited(target)) {
             user.sendText {
                 appendPrefix()
                 error("Der Spieler ")
@@ -42,7 +41,7 @@ fun CommandAPICommand.channelInviteCommand() = subcommand("invite") {
             return@playerExecutor
         }
 
-        if (channel.isMember(targetUser)) {
+        if (channel.isMember(target)) {
             user.sendText {
                 appendPrefix()
                 error("Der Spieler ")
@@ -68,7 +67,7 @@ fun CommandAPICommand.channelInviteCommand() = subcommand("invite") {
             return@playerExecutor
         }
 
-        channel.invite(targetUser)
+        channel.invite(target)
 
         user.sendText {
             appendPrefix()
@@ -80,7 +79,7 @@ fun CommandAPICommand.channelInviteCommand() = subcommand("invite") {
         }
 
         plugin.launch {
-            if (targetUser.configure().invitesEnabled()) {
+            if (target.configure().invitesEnabled()) {
                 target.sendText {
                     appendPrefix()
                     info("Du wurdest in den Nachrichtenkanal ")

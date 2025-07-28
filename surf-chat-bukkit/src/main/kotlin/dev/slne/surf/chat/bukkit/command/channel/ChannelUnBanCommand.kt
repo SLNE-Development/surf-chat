@@ -1,76 +1,81 @@
 package dev.slne.surf.chat.bukkit.command.channel
 
-import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
-import dev.jorel.commandapi.arguments.ArgumentSuggestions
-import dev.jorel.commandapi.arguments.EntitySelectorArgument
+import dev.jorel.commandapi.kotlindsl.getValue
+import dev.jorel.commandapi.kotlindsl.playerArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.chat.api.model.ChannelModel
-import dev.slne.surf.chat.api.surfChatApi
-import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
-import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
+import dev.jorel.commandapi.kotlindsl.subcommand
+import dev.slne.surf.chat.api.model.Channel
+import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.util.sendText
+import dev.slne.surf.chat.bukkit.util.user
 import dev.slne.surf.chat.core.service.channelService
-import dev.slne.surf.chat.core.service.databaseService
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
-class ChannelUnBanCommand(commandName: String) : CommandAPICommand(commandName) {
-    init {
-        withPermission(ChatPermissionRegistry.COMMAND_CHANNEL_UNBAN)
-        withArguments(EntitySelectorArgument.OnePlayer("player").replaceSuggestions(
-            ArgumentSuggestions.stringCollection {
-                val players = Bukkit.getOnlinePlayers().map { it.name }
-                players.toSet()
-            }))
-        playerExecutor { player, args ->
-            val target = args.getUnchecked<Player>("player") ?: return@playerExecutor
-            val channel: ChannelModel? = channelService.getChannel(player)
-
-            if(channel == null) {
-                player.sendPrefixed {
-                    error("Du bist in keinem Nachrichtenkanal.")
-                }
-                return@playerExecutor
+fun CommandAPICommand.channelUnBanCommand() = subcommand("unban") {
+    withPermission(SurfChatPermissionRegistry.COMMAND_CHANNEL_UNBAN)
+    playerArgument("target")
+    playerExecutor { player, args ->
+        val user = player.user() ?: return@playerExecutor
+        val target: Player by args
+        val channel: Channel = channelService.getChannel(user) ?: run {
+            user.sendText {
+                appendPrefix()
+                error("Du bist in keinem Nachrichtenkanal.")
             }
+            return@playerExecutor
+        }
 
-            plugin.launch {
-                val user = databaseService.getUser(player.uniqueId)
-                val targetUser = databaseService.getUser(target.uniqueId)
-
-                if (!channel.hasModeratorPermissions(user)) {
-                    user.sendPrefixed {
-                        error("Du verfügst nicht über die erforderliche Berechtigung.")
-                    }
-                    return@launch
-                }
-
-                if (!channel.isBanned(targetUser)) {
-                    user.sendPrefixed {
-                        error("Der Spieler ")
-                        variableValue(targetUser.getName())
-                        error(" ist nicht im Nachrichtenkanal gebannt.")
-                    }
-                    return@launch
-                }
-
-                channel.unban(targetUser)
-
-                user.sendPrefixed {
-                    success("Du hast den Spieler ")
-                    variableValue(target.name)
-                    success(" im Nachrichtenkanal ")
-                    variableValue(channel.name)
-                    success(" entbannt.")
-                }
-
-                targetUser.sendPrefixed {
-                    info("Du wurdest im Nachrichtenkanal ")
-                    variableValue(channel.name)
-                    info(" entbannt.")
-                }
+        val targetUser = target.user() ?: run {
+            user.sendText {
+                appendPrefix()
+                error("Der Spieler ist nicht online oder existiert nicht.")
             }
+            return@playerExecutor
+        }
+
+        val userMember = user.channelMember(channel) ?: run {
+            user.sendText {
+                appendPrefix()
+                error("Du bist kein Mitglied in diesem Nachrichtenkanal.")
+            }
+            return@playerExecutor
+        }
+
+        if (!userMember.hasModeratorPermissions()) {
+            user.sendText {
+                appendPrefix()
+                error("Du verfügst nicht über die erforderliche Berechtigung.")
+            }
+            return@playerExecutor
+        }
+
+        if (!channel.isBanned(targetUser)) {
+            user.sendText {
+                appendPrefix()
+                error("Der Spieler ")
+                variableValue(targetUser.name)
+                error(" ist nicht im Nachrichtenkanal gebannt.")
+            }
+            return@playerExecutor
+        }
+
+        channel.unban(targetUser)
+
+        user.sendText {
+            appendPrefix()
+            success("Du hast den Spieler ")
+            variableValue(target.name)
+            success(" im Nachrichtenkanal ")
+            variableValue(channel.channelName)
+            success(" entbannt.")
+        }
+
+        targetUser.sendText {
+            appendPrefix()
+            info("Du wurdest im Nachrichtenkanal ")
+            variableValue(channel.channelName)
+            info(" entbannt.")
         }
     }
 }

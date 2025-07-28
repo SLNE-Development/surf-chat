@@ -55,6 +55,12 @@ fun CommandAPICommand.channelKickCommand() = subcommand("kick") {
 
 
         channel.kick(target)
+        channel.sendText {
+            appendPrefix()
+            variableValue(user.name)
+            info(" hat den Nachrichtenkanal verlassen.")
+        }
+
         user.sendText {
             appendPrefix()
             info("Du hast ")

@@ -8,6 +8,7 @@ import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.model.Channel
 import dev.slne.surf.chat.bukkit.command.argument.channelInviteArgument
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.bukkit.util.user
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
@@ -29,7 +30,13 @@ fun CommandAPICommand.channelInviteAcceptCommand() = subcommand("accept") {
             return@playerExecutor
         }
 
-        channelService.acceptInvite(channel, user)
+        if (channelService.acceptInvite(channel, user)) {
+            channel.sendText {
+                appendPrefix()
+                variableValue(user.name)
+                info(" hat den Nachrichtenkanal betreten.")
+            }
+        }
         player.sendText {
             appendPrefix()
             info("Du hast die Einladung für den Nachrichtenkanal ")

@@ -12,6 +12,7 @@ import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.pluginmessage.pluginMessageSender
 import dev.slne.surf.chat.bukkit.util.user
+import dev.slne.surf.chat.core.Constants
 import dev.slne.surf.chat.core.service.historyService
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
@@ -38,7 +39,7 @@ fun teamchatCommand() = commandAPICommand("teamchat") {
             MessageType.TEAM
         )
 
-        pluginMessageSender("surf-chat:teamchat", player) {
+        pluginMessageSender(Constants.CHANNEL_TEAM, player) {
             writeUTF(
                 GsonComponentSerializer.gson()
                     .serialize(MessageFormatterImpl(messageComponent).formatTeamchat(messageData))

@@ -82,6 +82,13 @@ fun CommandAPICommand.channelTransferCommand() = subcommand("transfer") {
                     success(" übertragen.")
                 }
 
+                channel.sendText {
+                    appendPrefix()
+                    info("Der Nachrichtenkanal wurde an ")
+                    variableValue(target.name)
+                    info(" übertragen.")
+                }
+
                 targetUser.sendText {
                     appendPrefix()
                     info("Du bist jetzt der Besitzer des Nachrichtenkanals ")

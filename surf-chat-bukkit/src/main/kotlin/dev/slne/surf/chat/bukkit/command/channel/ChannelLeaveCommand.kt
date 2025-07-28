@@ -5,6 +5,7 @@ import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.model.Channel
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.bukkit.util.user
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
@@ -30,6 +31,12 @@ fun CommandAPICommand.channelLeaveCommand() = subcommand("leave") {
         }
 
         channel.leaveAndTransfer(channelMember)
+
+        channel.sendText {
+            appendPrefix()
+            variableValue(user.name)
+            info(" hat den Nachrichtenkanal verlassen.")
+        }
 
         player.sendText {
             appendPrefix()

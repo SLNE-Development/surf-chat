@@ -46,11 +46,10 @@ fun CommandAPICommand.channelJoinCommand() = subcommand("join") {
         }
 
         channel.join(user)
-        user.sendText {
+        channel.sendText {
             appendPrefix()
-            info("Du bist dem Nachrichtenkanal ")
-            variableValue(channel.channelName)
-            info(" beigetreten.")
+            variableValue(user.name)
+            info(" hat den Nachrichtenkanal betreten.")
         }
     }
 }

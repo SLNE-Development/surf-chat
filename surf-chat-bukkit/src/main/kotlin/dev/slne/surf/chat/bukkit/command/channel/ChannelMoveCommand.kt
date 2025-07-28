@@ -32,6 +32,12 @@ fun CommandAPICommand.channelMoveCommand() = subcommand("move") {
             success(" verschoben.")
         }
 
+        channel.sendText {
+            appendPrefix()
+            variableValue(target.name)
+            info(" hat den Nachrichtenkanal betreten.")
+        }
+
         target.sendText {
             appendPrefix()
             info("Du wurdest in den Nachrichtenkanal ")

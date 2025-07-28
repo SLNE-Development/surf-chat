@@ -16,7 +16,6 @@ object BukkitListenerManager {
             plugin, Constants.CHANNEL_DM,
             DirectMessageListener()
         )
-
     }
 
     fun registerPacketListeners() {

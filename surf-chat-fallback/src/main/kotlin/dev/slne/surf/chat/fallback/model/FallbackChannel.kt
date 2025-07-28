@@ -5,7 +5,6 @@ import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.model.Channel
 import dev.slne.surf.chat.api.model.ChannelRole
 import dev.slne.surf.chat.api.model.ChannelVisibility
-import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.fallback.entity.FallbackChannelMember
 import it.unimi.dsi.fastutil.objects.ObjectSet
@@ -17,7 +16,7 @@ data class FallbackChannel(
     override val members: ObjectSet<ChannelMember>,
     override val bannedPlayers: ObjectSet<User>,
     override val invitedPlayers: ObjectSet<User>,
-    override val visibility: ChannelVisibility,
+    override var visibility: ChannelVisibility,
     override val createdAt: Long
 ) : Channel {
     override fun join(user: User) {
@@ -36,11 +35,6 @@ data class FallbackChannel(
         members.removeIf { it.role == ChannelRole.OWNER }
         members.removeIf { it.uuid == member.uuid }
         members.add(FallbackChannelMember(member.uuid, member.name, ChannelRole.OWNER))
-
-        member.sendText {
-            success("Du bist jetzt der Besitzer des Nachrichtenkanals ")
-            variableValue(channelName)
-        }
     }
 
     override fun leaveAndTransfer(member: ChannelMember) {
@@ -53,10 +47,6 @@ data class FallbackChannel(
 
             if (nextOwner == null) {
                 channelService.deleteChannel(this)
-
-                member.sendText {
-                    info("Der Kanal wurde aufgelöst.")
-                }
                 return
             }
 
@@ -64,17 +54,6 @@ data class FallbackChannel(
         }
 
         this.removeMember(member)
-
-        member.sendText {
-            success("Du hast den Nachrichtenkanal ")
-            variableValue(channelName)
-            success(" verlassen.")
-        }
-
-        this.sendText {
-            variableValue(member.name)
-            info(" hat den Nachrichtenkanal verlasen.")
-        }
     }
 
     override fun promote(member: ChannelMember): Boolean {

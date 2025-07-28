@@ -114,9 +114,10 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
     private val itemRegex = Regex("\\[(?i)item]")
     private val nameRegexCache = Caffeine.newBuilder()
         .expireAfterWrite(15.minutes)
-        .build<String, Regex> {
-            Regex("(?<!\\w)@?$it(?!\\w)")
+        .build<String, Regex> { name ->
+            Regex("(?<!\\w)@?${Regex.escape(name)}(?!\\w)")
         }
+
 
     private fun formatItemTag(rawMessage: Component, player: Player): Component {
         var message = rawMessage
@@ -153,7 +154,8 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
     private fun highlightPlayers(rawMessage: Component, viewer: User): Component {
         var message = rawMessage
 
-        val pattern = nameRegexCache.get(viewer.name)
+        val name = viewer.name
+        val pattern = nameRegexCache.get(name)
         val viewerPlayer = viewer.player() ?: return message
 
         if (!pattern.containsMatchIn(message.plainText())) {
@@ -161,13 +163,15 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
         }
 
         message = message.replaceText(
-            TextReplacementConfig
-                .builder()
+            TextReplacementConfig.builder()
                 .match(pattern.pattern)
-                .replacement(buildText {
-                    append(Component.text(viewer.name))
-                    decorate(TextDecoration.BOLD)
-                })
+                .replacement { matchResult ->
+                    val matchedText = matchResult.content()
+                    buildText {
+                        text(matchedText)
+                        decorate(TextDecoration.BOLD)
+                    }
+                }
                 .build()
         )
 
@@ -181,6 +185,7 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
                 }, net.kyori.adventure.sound.Sound.Emitter.self())
             }
         }
+
         return message
     }
 

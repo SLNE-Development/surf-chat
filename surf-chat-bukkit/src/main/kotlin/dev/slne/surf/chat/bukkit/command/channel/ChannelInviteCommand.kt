@@ -23,6 +23,7 @@ fun CommandAPICommand.channelInviteCommand() = subcommand("invite") {
         val user = player.user() ?: return@playerExecutor
         val channel: Channel = channelService.getChannel(user) ?: run {
             player.sendText {
+                appendPrefix()
                 error("Du bist in keinem Nachrichtenkanal.")
             }
             return@playerExecutor
@@ -33,6 +34,7 @@ fun CommandAPICommand.channelInviteCommand() = subcommand("invite") {
 
         if (channel.isInvited(targetUser)) {
             user.sendText {
+                appendPrefix()
                 error("Der Spieler ")
                 variableValue(target.name)
                 error(" wurde bereits eingeladen.")
@@ -42,6 +44,7 @@ fun CommandAPICommand.channelInviteCommand() = subcommand("invite") {
 
         if (channel.isMember(targetUser)) {
             user.sendText {
+                appendPrefix()
                 error("Der Spieler ")
                 variableValue(target.name)
                 error(" ist bereits in diesem Nachrichtenkanal.")
@@ -51,6 +54,7 @@ fun CommandAPICommand.channelInviteCommand() = subcommand("invite") {
 
         val userMember = user.channelMember(channel) ?: run {
             user.sendText {
+                appendPrefix()
                 error("Du bist in keinem Nachrichtenkanal.")
             }
             return@playerExecutor
@@ -58,6 +62,7 @@ fun CommandAPICommand.channelInviteCommand() = subcommand("invite") {
 
         if (!userMember.hasModeratorPermissions()) {
             user.sendText {
+                appendPrefix()
                 error("Du verfügst nicht über die erforderliche Berechtigung.")
             }
             return@playerExecutor
@@ -66,6 +71,7 @@ fun CommandAPICommand.channelInviteCommand() = subcommand("invite") {
         channel.invite(targetUser)
 
         user.sendText {
+            appendPrefix()
             info("Du hast ")
             variableValue(target.name)
             info(" in den Nachrichtenkanal ")

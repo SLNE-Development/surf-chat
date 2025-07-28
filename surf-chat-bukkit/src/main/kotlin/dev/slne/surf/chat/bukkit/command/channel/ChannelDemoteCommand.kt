@@ -29,12 +29,14 @@ fun CommandAPICommand.channelDemoteCommand() = subcommand("demote") {
         val targetUser = target.user() ?: return@playerExecutor
         val userMember = user.channelMember(channel) ?: run {
             player.sendText {
+                appendPrefix()
                 error("Du bist kein Mitglied in dem Nachrichtenkanal.")
             }
             return@playerExecutor
         }
         val targetMember = targetUser.channelMember(channel) ?: run {
             player.sendText {
+                appendPrefix()
                 error("Der Spieler ")
                 variableValue(target.name)
                 error(" ist kein Mitglied in dem Nachrichtenkanal.")
@@ -44,6 +46,7 @@ fun CommandAPICommand.channelDemoteCommand() = subcommand("demote") {
 
         if (target.uniqueId == player.uniqueId) {
             player.sendText {
+                appendPrefix()
                 error("Du kannst dich nicht selbst degradieren.")
             }
             return@playerExecutor
@@ -51,6 +54,7 @@ fun CommandAPICommand.channelDemoteCommand() = subcommand("demote") {
 
         if (!channel.isOwner(user)) {
             player.sendText {
+                appendPrefix()
                 error("Du verfügst nicht über die erforderliche Berechtigung.")
             }
             return@playerExecutor
@@ -58,6 +62,7 @@ fun CommandAPICommand.channelDemoteCommand() = subcommand("demote") {
 
         if (!channel.isMember(targetUser)) {
             player.sendText {
+                appendPrefix()
                 error("Der Spieler ")
                 variableValue(target.name)
                 error(" ist kein Mitglied in dem Nachrichtenkanal.")
@@ -67,6 +72,7 @@ fun CommandAPICommand.channelDemoteCommand() = subcommand("demote") {
 
         if (!targetMember.hasModeratorPermissions()) {
             player.sendText {
+                appendPrefix()
                 error("Der Spieler ")
                 variableValue(target.name)
                 error(" ist bereits ein Mitglied.")
@@ -76,6 +82,7 @@ fun CommandAPICommand.channelDemoteCommand() = subcommand("demote") {
 
         if (channel.members.none { it.role == ChannelRole.OWNER }) {
             player.sendText {
+                appendPrefix()
                 error("Der Nachrichtenkanal benötigt mindestens einen Besitzer.")
             }
             return@playerExecutor
@@ -84,12 +91,14 @@ fun CommandAPICommand.channelDemoteCommand() = subcommand("demote") {
         channel.demote(targetMember)
 
         player.sendText {
+            appendPrefix()
             success("Du hast ")
             variableValue(target.name)
             success(" degradiert.")
         }
 
         target.sendText {
+            appendPrefix()
             info("Du wurdest degradiert.")
         }
     }

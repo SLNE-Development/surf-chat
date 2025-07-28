@@ -70,6 +70,7 @@ fun CommandAPICommand.channelBanCommand() = subcommand("ban") {
             channel.ban(targetUser)
 
             player.sendText {
+                appendPrefix()
                 success("Du hast ")
                 variableValue(target.name)
                 success(" aus dem Nachrichtenkanal ")
@@ -77,6 +78,7 @@ fun CommandAPICommand.channelBanCommand() = subcommand("ban") {
                 success(" verbannt.")
             }
             target.sendText {
+                appendPrefix()
                 info("Du wurdest aus dem Nachrichtenkanal ")
                 variableValue(channel.channelName)
                 info(" verbannt.")

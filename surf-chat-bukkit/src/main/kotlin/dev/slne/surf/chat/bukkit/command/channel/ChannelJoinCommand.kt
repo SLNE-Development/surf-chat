@@ -21,6 +21,7 @@ fun CommandAPICommand.channelJoinCommand() = subcommand("join") {
 
         if (channelService.getChannel(user) != null) {
             user.sendText {
+                appendPrefix()
                 error("Du bist bereits in einem Nachrichtenkanal.")
             }
             return@playerExecutor
@@ -28,6 +29,7 @@ fun CommandAPICommand.channelJoinCommand() = subcommand("join") {
 
         if (channel.isBanned(user)) {
             user.sendText {
+                appendPrefix()
                 error("Du wurdest von diesem Nachrichtenkanal ausgeschlossen.")
             }
             return@playerExecutor
@@ -35,6 +37,7 @@ fun CommandAPICommand.channelJoinCommand() = subcommand("join") {
 
         if (channel.visibility != ChannelVisibility.PUBLIC && !channel.isInvited(user)) {
             user.sendText {
+                appendPrefix()
                 error("Der Nachrichtenkanal ")
                 variableValue(channel.channelName)
                 error(" ist privat.")
@@ -44,6 +47,7 @@ fun CommandAPICommand.channelJoinCommand() = subcommand("join") {
 
         channel.addMember(user)
         user.sendText {
+            appendPrefix()
             info("Du bist dem Nachrichtenkanal ")
             variableValue(channel.channelName)
             info(" beigetreten.")

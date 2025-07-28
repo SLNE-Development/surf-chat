@@ -44,6 +44,7 @@ fun CommandAPICommand.channelInviteRevokeCommand() = subcommand("revoke") {
 
         if (!userMember.hasModeratorPermissions()) {
             player.sendText {
+                appendPrefix()
                 error("Du hast keine Moderationsrechte in diesem Nachrichtenkanal.")
             }
             return@playerExecutor
@@ -51,6 +52,7 @@ fun CommandAPICommand.channelInviteRevokeCommand() = subcommand("revoke") {
 
         if (!channel.isInvited(targetUser)) {
             player.sendText {
+                appendPrefix()
                 info("Der Spieler ")
                 variableValue(targetUser.name)
                 info(" hat keine Einladung für diesen Nachrichtenkanal.")
@@ -61,6 +63,7 @@ fun CommandAPICommand.channelInviteRevokeCommand() = subcommand("revoke") {
         channel.revoke(targetUser)
 
         player.sendText {
+            appendPrefix()
             info("Du hast die Einladung des Spielers ")
             variableValue(targetUser.name)
             info(" im Nachrichtenkanal ")

@@ -20,6 +20,7 @@ fun CommandAPICommand.channelDeleteCommand() = subcommand("delete") {
         plugin.launch {
             if (channel == null) {
                 player.sendText {
+                    appendPrefix()
                     error("Du bist in keinem Nachrichtenkanal.")
                 }
                 return@launch
@@ -27,6 +28,7 @@ fun CommandAPICommand.channelDeleteCommand() = subcommand("delete") {
 
             if (!channel.isOwner(user)) {
                 player.sendText {
+                    appendPrefix()
                     error("Du bist nicht berechtigt diesen Nachrichtenkanal zu löschen.")
                 }
                 return@launch
@@ -34,6 +36,7 @@ fun CommandAPICommand.channelDeleteCommand() = subcommand("delete") {
 
             channelService.deleteChannel(channel)
             player.sendText {
+                appendPrefix()
                 success("Du hast den Nachrichtenkanal ")
                 variableValue(channel.channelName)
                 success(" gelöscht.")

@@ -29,6 +29,7 @@ fun CommandAPICommand.channelCreateCommand() = subcommand("create") {
 
             if (channelService.getChannel(name) != null) {
                 player.sendText {
+                    appendPrefix()
                     error("Es existiert bereits ein Nachrichtenkanal mit dem Namen")
                     variableValue(name)
                     error(".")
@@ -38,6 +39,7 @@ fun CommandAPICommand.channelCreateCommand() = subcommand("create") {
 
             if (!name.isValidChannelName()) {
                 player.sendText {
+                    appendPrefix()
                     error("Der Kanalname muss zwischen 3 und 16 Zeichen lang sein und darf nur Buchstaben und Zahlen enthalten.")
                 }
                 return@launch
@@ -45,6 +47,7 @@ fun CommandAPICommand.channelCreateCommand() = subcommand("create") {
 
             channelService.createChannel(name, user)
             player.sendText {
+                appendPrefix()
                 success("Du hast den Nachrichtenkanal ")
                 variableValue(name)
                 success(" erfolgreich erstellt.")

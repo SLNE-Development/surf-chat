@@ -19,6 +19,7 @@ fun CommandAPICommand.channelForceDeleteCommand() = subcommand("delete") {
         channelService.deleteChannel(channel)
 
         player.sendText {
+            appendPrefix()
             success("Der Nachrichtenkanal ")
             variableValue(channel.channelName)
             success(" wurde gelöscht.")

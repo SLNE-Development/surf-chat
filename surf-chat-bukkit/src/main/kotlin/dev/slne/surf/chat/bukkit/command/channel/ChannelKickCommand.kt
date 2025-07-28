@@ -23,6 +23,7 @@ fun CommandAPICommand.channelKickCommand() = subcommand("kick") {
 
         if (channel == null) {
             player.sendText {
+                appendPrefix()
                 error("Du bist in keinem Nachrichtenkanal.")
             }
             return@playerExecutor
@@ -31,12 +32,14 @@ fun CommandAPICommand.channelKickCommand() = subcommand("kick") {
         val userMember = user.channelMember(channel)
             ?: return@playerExecutor run {
                 player.sendText {
+                    appendPrefix()
                     error("Du bist in keinem Nachrichtenkanal.")
                 }
             }
 
         if (!userMember.hasModeratorPermissions()) {
             user.sendText {
+                appendPrefix()
                 error("Du verfügst nicht über die erforderliche Berechtigung.")
             }
             return@playerExecutor
@@ -51,6 +54,7 @@ fun CommandAPICommand.channelKickCommand() = subcommand("kick") {
 
         if (targetMember.hasModeratorPermissions()) {
             user.sendText {
+                appendPrefix()
                 error("Du kannst diesen Spieler nicht aus dem Nachrichtenkanal entfernen.")
             }
             return@playerExecutor
@@ -59,6 +63,7 @@ fun CommandAPICommand.channelKickCommand() = subcommand("kick") {
 
         channel.kick(targetMember)
         user.sendText {
+            appendPrefix()
             info("Du hast ")
             variableValue(targetMember.name)
             info(" aus dem Nachrichtenkanal ")
@@ -67,6 +72,7 @@ fun CommandAPICommand.channelKickCommand() = subcommand("kick") {
         }
 
         target.sendText {
+            appendPrefix()
             info("Du wurdest aus dem Nachrichtenkanal ")
             variableValue(channel.channelName)
             info(" geworfen.")

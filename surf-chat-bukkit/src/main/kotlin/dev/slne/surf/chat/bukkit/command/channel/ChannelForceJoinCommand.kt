@@ -20,6 +20,7 @@ fun CommandAPICommand.channelForceJoinCommand() = subcommand("join") {
 
         if (channelService.getChannel(user) != null) {
             player.sendText {
+                appendPrefix()
                 error("Du bist bereits in einem Nachrichtenkanal.")
             }
             return@playerExecutor
@@ -28,6 +29,7 @@ fun CommandAPICommand.channelForceJoinCommand() = subcommand("join") {
         channel.addMember(user)
 
         player.sendText {
+            appendPrefix()
             success("Du bist dem Nachrichtenkanal ")
             variableValue(channel.channelName)
             success(" beigetreten.")

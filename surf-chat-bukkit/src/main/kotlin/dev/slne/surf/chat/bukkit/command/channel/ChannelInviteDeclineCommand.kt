@@ -22,6 +22,7 @@ fun CommandAPICommand.channelInviteDeclineCommand() = subcommand("decline") {
         plugin.launch {
             if (!channel.isInvited(user)) {
                 player.sendText {
+                    appendPrefix()
                     error("Du hast keine Einladung für den Nachrichtenkanal ")
                     variableValue(channel.channelName)
                     error(" erhalten.")
@@ -32,6 +33,7 @@ fun CommandAPICommand.channelInviteDeclineCommand() = subcommand("decline") {
             channel.invite(user)
 
             player.sendText {
+                appendPrefix()
                 info("Du hast die Einladung für den Nachrichtenkanal ")
                 variableValue(channel.channelName)
                 success(" abgelehnt.")

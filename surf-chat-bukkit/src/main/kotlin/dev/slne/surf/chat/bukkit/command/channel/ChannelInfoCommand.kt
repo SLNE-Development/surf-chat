@@ -14,6 +14,7 @@ import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import net.kyori.adventure.text.format.TextDecoration
 
 fun CommandAPICommand.channelInfoCommand() = subcommand("info") {
@@ -25,12 +26,10 @@ fun CommandAPICommand.channelInfoCommand() = subcommand("info") {
 
         if (channel == null) {
             val userChannel = channelService.getChannel(user) ?: run {
-                player.sendMessage(
-                    buildText {
-                        appendPrefix()
-                        error("Du bist in keinem Nachrichtenkanal.")
-                    }
-                )
+                player.sendText {
+                    appendPrefix()
+                    error("Du bist in keinem Nachrichtenkanal.")
+                }
                 return@playerExecutor
             }
 
@@ -39,12 +38,10 @@ fun CommandAPICommand.channelInfoCommand() = subcommand("info") {
         }
 
         player.sendMessage(createInfoMessage(channel ?: run {
-            player.sendMessage(
-                buildText {
-                    appendPrefix()
-                    error("Der Nachrichtenkanal wurde nicht gefunden.")
-                }
-            )
+            player.sendText {
+                appendPrefix()
+                error("Du bist in keinem Nachrichtenkanal.")
+            }
             return@playerExecutor
         }))
     }

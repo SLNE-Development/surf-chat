@@ -26,7 +26,7 @@ fun CommandAPICommand.channelForceJoinCommand() = subcommand("join") {
             return@playerExecutor
         }
 
-        channel.addMember(user)
+        channel.join(user)
 
         player.sendText {
             appendPrefix()

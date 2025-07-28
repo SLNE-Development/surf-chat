@@ -45,7 +45,7 @@ fun CommandAPICommand.channelJoinCommand() = subcommand("join") {
             return@playerExecutor
         }
 
-        channel.addMember(user)
+        channel.join(user)
         user.sendText {
             appendPrefix()
             info("Du bist dem Nachrichtenkanal ")

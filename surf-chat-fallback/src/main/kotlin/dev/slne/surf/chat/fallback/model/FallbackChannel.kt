@@ -20,7 +20,7 @@ data class FallbackChannel(
     override val visibility: ChannelVisibility,
     override val createdAt: Long
 ) : Channel {
-    override fun addMember(user: User) {
+    override fun join(user: User) {
         members.add(
             FallbackChannelMember(
                 user.uuid, user.name, ChannelRole.MEMBER

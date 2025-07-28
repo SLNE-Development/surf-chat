@@ -14,7 +14,7 @@ interface Channel {
     val visibility: ChannelVisibility
     val createdAt: Long
 
-    fun addMember(user: User)
+    fun join(user: User)
     fun removeMember(member: ChannelMember) = members.remove(member)
     fun isMember(user: User): Boolean = members.any { it.uuid == user.uuid }
     fun isOwner(user: User): Boolean =

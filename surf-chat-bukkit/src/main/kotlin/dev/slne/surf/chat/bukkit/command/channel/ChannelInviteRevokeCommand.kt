@@ -58,7 +58,7 @@ fun CommandAPICommand.channelInviteRevokeCommand() = subcommand("revoke") {
         player.sendText {
             appendPrefix()
             info("Du hast die Einladung des Spielers ")
-            variableValue(user.name)
+            variableValue(target.name)
             info(" im Nachrichtenkanal ")
             variableValue(channel.channelName)
             info(" zurückgezogen.")

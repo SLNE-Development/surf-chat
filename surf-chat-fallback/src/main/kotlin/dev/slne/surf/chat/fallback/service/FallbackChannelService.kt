@@ -77,6 +77,10 @@ class FallbackChannelService : ChannelService, Services.Fallback {
             return false
         }
 
+        this.getChannel(user)?.let {
+            it.leaveAndTransfer(user.channelMember(it) ?: return@let)
+        }
+
         channel.join(user)
         channel.revoke(user)
         return true

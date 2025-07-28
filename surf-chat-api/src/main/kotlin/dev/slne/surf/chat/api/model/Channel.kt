@@ -33,8 +33,8 @@ interface Channel {
     fun promote(member: ChannelMember): Boolean
     fun demote(member: ChannelMember): Boolean
 
-    fun ban(user: User) = bannedPlayers.add(user)
+    fun ban(user: User)
     fun unban(user: User) = bannedPlayers.remove(user)
     fun isBanned(user: User): Boolean = bannedPlayers.contains(user)
-    fun kick(member: ChannelMember): Boolean
+    fun kick(member: ChannelMember)
 }

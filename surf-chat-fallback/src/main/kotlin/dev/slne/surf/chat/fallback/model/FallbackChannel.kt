@@ -79,11 +79,20 @@ data class FallbackChannel(
         return members.add(member)
     }
 
-    override fun kick(member: ChannelMember): Boolean {
-        if (!members.contains(member)) {
-            return false
+    override fun ban(user: User) {
+        if (this.isBanned(user)) {
+            return
         }
 
-        return members.remove(member)
+        members.removeIf { it.uuid == user.uuid }
+        bannedPlayers.add(user)
+    }
+
+    override fun kick(member: ChannelMember) {
+        if (!members.contains(member)) {
+            return
+        }
+
+        leaveAndTransfer(member)
     }
 }

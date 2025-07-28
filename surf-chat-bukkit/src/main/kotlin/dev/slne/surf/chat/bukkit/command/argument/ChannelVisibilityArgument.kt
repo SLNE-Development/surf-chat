@@ -16,7 +16,7 @@ class ChannelVisibilityArgument(nodeName: String) :
             else -> throw CustomArgumentException.fromAdventureComponent {
                 buildText {
                     appendPrefix()
-                    error("Bitte gebe entweder 'public', 'private', 'öffentlich' oder 'privat' an.")
+                    error("Bitte gebe entweder 'public', 'private' oder 'privat' an.")
                 }
             }
         }
@@ -24,7 +24,7 @@ class ChannelVisibilityArgument(nodeName: String) :
     init {
         this.replaceSuggestions(
             ArgumentSuggestions.strings(
-                "public", "öffentlich", "offen", "private", "privat", "geschlossen"
+                "public", "offen", "private", "privat", "geschlossen"
             )
         )
     }

@@ -17,7 +17,7 @@ import net.kyori.adventure.text.event.ClickEvent
 
 fun CommandAPICommand.channelTransferCommand() = subcommand("transfer") {
     withPermission(SurfChatPermissionRegistry.COMMAND_CHANNEL_TRANSFER)
-    channelMemberArgument("member")
+    channelMemberArgument("target")
     playerExecutor { player, args ->
         val user = player.user() ?: return@playerExecutor
         val channel: Channel = channelService.getChannel(user) ?: run {

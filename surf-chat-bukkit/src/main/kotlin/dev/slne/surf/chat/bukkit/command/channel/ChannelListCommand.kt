@@ -1,82 +1,110 @@
 package dev.slne.surf.chat.bukkit.command.channel
 
-import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.integerArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.chat.api.model.ChannelModel
-import dev.slne.surf.chat.api.type.ChannelStatusType
-import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.bukkit.util.ChatPermissionRegistry
-import dev.slne.surf.chat.bukkit.util.PageableMessageBuilder
-import dev.slne.surf.chat.bukkit.util.utils.sendPrefixed
+import dev.jorel.commandapi.kotlindsl.subcommand
+import dev.slne.surf.chat.api.model.Channel
+import dev.slne.surf.chat.api.model.ChannelRole
+import dev.slne.surf.chat.api.model.ChannelVisibility
+import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
-import dev.slne.surf.surfapi.core.api.messages.Colors
+import dev.slne.surf.surfapi.core.api.messages.CommonComponents
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.clickSuggestsCommand
+import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
+import dev.slne.surf.surfapi.core.api.messages.pagination.Pagination
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 
-class ChannelListCommand(commandName: String) : CommandAPICommand(commandName) {
-    init {
-        withPermission(ChatPermissionRegistry.COMMAND_CHANNEL_LIST)
-        integerArgument("page", min = 1, optional = true)
-        playerExecutor { player, args ->
-            val page = args.getOrDefaultUnchecked("page", 1)
+fun CommandAPICommand.channelListCommand() = subcommand("list") {
+    withPermission(SurfChatPermissionRegistry.COMMAND_CHANNEL_LIST)
+    integerArgument("page", min = 1, optional = true)
+    playerExecutor { player, args ->
+        val page = args.getOrDefaultUnchecked("page", 1)
 
-            if (channelService.getAllChannels().isEmpty()) {
-                player.sendPrefixed {
-                    error("Es sind keine Kanäle vorhanden.")
-                }
-
-                return@playerExecutor
+        if (channelService.getChannels().isEmpty()) {
+            player.sendText {
+                appendPrefix()
+                error("Es sind keine Kanäle vorhanden.")
             }
 
-            plugin.launch {
-                PageableMessageBuilder {
-                    pageCommand = "/channel list %page%"
-                    title {
-                        info("ᴋᴀɴᴀʟüʙᴇʀѕɪᴄʜᴛ")
-                    }
+            return@playerExecutor
+        }
 
-                    channelService.getAllChannels().forEach {
-                        line {
-                            append {
-                                info("| ")
-                                decorate(TextDecoration.BOLD)
+        val pagination = Pagination<Channel> {
+            title {
+                primary("Kanalübersicht".toSmallCaps())
+                decorate(TextDecoration.BOLD)
+            }
+
+            rowRenderer { channel, index ->
+                listOf(
+                    buildText {
+                        append(CommonComponents.EM_DASH)
+                        appendSpace()
+                        variableKey(channel.channelName)
+                        appendSpace()
+                        spacer("(")
+                        info(
+                            when (channel.visibility) {
+                                ChannelVisibility.PUBLIC -> "Öffentlich"
+                                ChannelVisibility.PRIVATE -> "Privat"
                             }
-                            text(it.name, Colors.WHITE)
-                            spacer(" (")
-                            info(
-                                when (it.status) {
-                                    ChannelStatusType.PUBLIC -> "Öffentlich"
-                                    ChannelStatusType.PRIVATE -> "Privat"
-                                }
-                            )
-                            spacer(")")
-                            hoverEvent(createInfoMessage(it))
-                            clickSuggestsCommand("/channel join ${it.name}")
-                        }
+                        )
+                        spacer(")")
+                        hoverEvent(createInfoMessage(channel))
+                        clickSuggestsCommand("/channel join ${channel.channelName}")
                     }
-                }.send(player, page)
+                )
             }
         }
-    }
 
-    private fun createInfoMessage(channel: ChannelModel): Component {
-        return buildText {
-            info("Informationen".toSmallCaps()).appendNewline()
-            spacer("Name: ".toSmallCaps()).text(channel.name, Colors.WHITE).appendNewline()
-            spacer("Besitzer: ".toSmallCaps()).text(channel.getOwner().getName(), Colors.WHITE).appendNewline()
-            spacer("Modus: ".toSmallCaps()).text(
-                when (channel.status) {
-                    ChannelStatusType.PUBLIC -> "Öffentlich"
-                    ChannelStatusType.PRIVATE -> "Privat"
-                }, Colors.WHITE
-            ).appendNewline()
-            spacer("Mitglieder: ".toSmallCaps()).text(channel.members.size, Colors.WHITE).appendNewline()
-            spacer("Einladungen: ".toSmallCaps()).text(channel.invites.size, Colors.WHITE)
+        player.sendText {
+            append(pagination.renderComponent(channelService.getChannels(), page))
+        }
+    }
+}
+
+private fun createInfoMessage(channel: Channel): Component {
+    return buildText {
+        info("Informationen".toSmallCaps())
+        appendNewline {
+            append(CommonComponents.EM_DASH)
+            appendSpace()
+            spacer("Name: ".toSmallCaps())
+            variableValue(channel.channelName)
+        }
+
+        appendNewline {
+            append(CommonComponents.EM_DASH)
+            appendSpace()
+            spacer("Besitzer: ".toSmallCaps())
+            variableValue(
+                channel.members.firstOrNull { it.role == ChannelRole.OWNER }?.name ?: "Error"
+            )
+        }
+        appendNewline {
+            append(CommonComponents.EM_DASH)
+            appendSpace()
+            spacer("Modus: ".toSmallCaps())
+            variableValue(
+                when (channel.visibility) {
+                    ChannelVisibility.PUBLIC -> "Öffentlich"
+                    ChannelVisibility.PRIVATE -> "Privat"
+                }
+            )
+        }
+        appendNewline {
+            append(CommonComponents.EM_DASH)
+            appendSpace()
+            spacer("Mitglieder: ".toSmallCaps())
+            variableValue(channel.members.size)
+        }
+        appendNewline {
+            spacer("Einladungen: ".toSmallCaps())
+            variableValue(channel.invitedPlayers.size)
         }
     }
 }

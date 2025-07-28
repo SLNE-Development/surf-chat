@@ -40,6 +40,7 @@ object SurfChatPermissionRegistry : PermissionRegistry() {
     val COMMAND_CHANNEL_ADMIN_JOIN = create("surf.chat.command.channel.admin.join")
     val COMMAND_CHANNEL_ADMIN_DELETE = create("surf.chat.command.channel.admin.delete")
     val COMMAND_CHANNEL_ADMIN_SPY = create("surf.chat.command.channel.admin.spy")
+    val COMMAND_CHANNEL_ADMIN_SPY_CLEAR = create("surf.chat.command.channel.admin.spy.clear")
 
     val COMMAND_SETTINGS = create("$PREFIX_COMMAND.settings")
     val COMMAND_SETTINGS_PING = create("$PREFIX_COMMAND.settings.ping")

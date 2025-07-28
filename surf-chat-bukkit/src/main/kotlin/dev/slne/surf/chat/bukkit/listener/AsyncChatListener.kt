@@ -6,10 +6,7 @@ import dev.slne.surf.chat.bukkit.message.MessageDataImpl
 import dev.slne.surf.chat.bukkit.message.MessageFormatterImpl
 import dev.slne.surf.chat.bukkit.message.MessageValidatorImpl
 import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.bukkit.util.cancel
-import dev.slne.surf.chat.bukkit.util.isConsole
-import dev.slne.surf.chat.bukkit.util.player
-import dev.slne.surf.chat.bukkit.util.user
+import dev.slne.surf.chat.bukkit.util.*
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.chat.core.service.spyService
@@ -21,6 +18,9 @@ import org.bukkit.event.Listener
 import java.util.*
 
 class AsyncChatListener : Listener {
+    private val bypassChannelPattern =
+        Regex("^@(all|a|here|everyone)\\b\\s*", RegexOption.IGNORE_CASE)
+
     @EventHandler
     fun onAsyncChat(event: AsyncChatEvent) {
         val player = event.player
@@ -44,7 +44,7 @@ class AsyncChatListener : Listener {
         val channel = channelService.getChannel(user)
         val time = System.currentTimeMillis()
 
-        if (channel != null) {
+        if (channel != null && !bypassChannelPattern.containsMatchIn(message.plainText())) {
             event.viewers().clear()
             event.viewers().addAll(channel.members.mapNotNull { it.player() })
             event.viewers()

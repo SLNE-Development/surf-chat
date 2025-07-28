@@ -28,10 +28,6 @@ data class FallbackChannel(
     }
 
     override fun transfer(member: ChannelMember) {
-        if (!this.isOwner(member)) {
-            return
-        }
-
         members.removeIf { it.role == ChannelRole.OWNER }
         members.removeIf { it.uuid == member.uuid }
         members.add(FallbackChannelMember(member.uuid, member.name, ChannelRole.OWNER))

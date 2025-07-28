@@ -3,6 +3,8 @@ package dev.slne.surf.chat.bukkit.util
 import dev.slne.surf.chat.api.entity.ChannelMember
 import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.core.service.userService
+import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
+import dev.slne.surf.surfapi.core.api.messages.builder.SurfComponentBuilder
 import net.kyori.adventure.audience.Audience
 import org.bukkit.Bukkit
 import org.bukkit.command.ConsoleCommandSender
@@ -22,3 +24,7 @@ fun Audience.name() = when (this) {
     is ConsoleCommandSender -> "Console"
     else -> "Unknown"
 }
+
+
+fun User.sendText(block: SurfComponentBuilder.() -> Unit) = player()?.sendText { block() }
+fun ChannelMember.sendText(block: SurfComponentBuilder.() -> Unit) = player()?.sendText { block() }

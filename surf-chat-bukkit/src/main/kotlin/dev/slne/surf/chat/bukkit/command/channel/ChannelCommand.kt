@@ -8,6 +8,6 @@ fun channelCommand() = commandAPICommand("channel") {
 
     channelCreateCommand()
     channelBanCommand()
-    channelAcceptInviteCommand()
-    channelDeclineInviteCommand()
+    channelInviteAcceptCommand()
+    channelInviteDeclineCommand()
 }

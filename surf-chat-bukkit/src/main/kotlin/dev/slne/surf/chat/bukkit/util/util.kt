@@ -1,5 +1,8 @@
 package dev.slne.surf.chat.bukkit.util
 
+import dev.slne.surf.chat.api.entity.User
+import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
+import dev.slne.surf.surfapi.core.api.messages.builder.SurfComponentBuilder
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.event.Cancellable
@@ -26,4 +29,5 @@ fun Cancellable.cancel() {
     isCancelled = true
 }
 
+fun User.sendText(block: SurfComponentBuilder.() -> Unit) = player()?.sendText { block() }
 fun Component.plainText(): String = PlainTextComponentSerializer.plainText().serialize(this)

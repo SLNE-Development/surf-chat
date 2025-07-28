@@ -21,6 +21,14 @@ fun CommandAPICommand.channelLeaveCommand() = subcommand("leave") {
             return@playerExecutor
         }
 
-        channel.handleLeave(user)
+        val channelMember = user.channelMember(channel) ?: run {
+            player.sendText {
+                appendPrefix()
+                error("Du bist nicht in diesem Nachrichtenkanal.")
+            }
+            return@playerExecutor
+        }
+
+        channel.leaveAndTransfer(channelMember)
     }
 }

@@ -28,7 +28,7 @@ import java.util.*
 fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
     withPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_LOOKUP)
     argument(
-        MapArgumentBuilder<String, String>("query")
+        MapArgumentBuilder<String, String>("query", ' ')
             .withKeyMapper { it }
             .withValueMapper { it }
             .withKeyList(

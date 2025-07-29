@@ -1,6 +1,8 @@
 package dev.slne.surf.chat.bukkit.util
 
 import dev.slne.surf.chat.api.model.Channel
+import dev.slne.surf.surfapi.core.api.messages.Colors
+import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.builder.SurfComponentBuilder
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
@@ -31,3 +33,24 @@ fun Cancellable.cancel() {
 fun Component.plainText(): String = PlainTextComponentSerializer.plainText().serialize(this)
 fun Channel.sendText(block: SurfComponentBuilder.() -> Unit) =
     members.forEach { it.sendText { block() } }
+
+fun Long.coloredComponent(good: Long = 200L, okay: Long = 1000L) =
+    buildText {
+        when {
+            this@coloredComponent < good -> append(
+                Component.text(
+                    this@coloredComponent.toString() + "ms",
+                    Colors.GREEN
+                )
+            )
+
+            this@coloredComponent < okay -> append(
+                Component.text(
+                    this@coloredComponent.toString() + "ms",
+                    Colors.YELLOW
+                )
+            )
+
+            else -> append(Component.text(this@coloredComponent.toString() + "ms", Colors.RED))
+        }
+    }

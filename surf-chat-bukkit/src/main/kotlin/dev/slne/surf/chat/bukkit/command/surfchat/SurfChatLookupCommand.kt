@@ -49,6 +49,7 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
             .withoutValueList()
             .build()
     )
+    surfChatLookupHelpCommand()
 
     playerExecutor { player, args ->
         val query: Map<String, String> by args
@@ -154,9 +155,30 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
     }
 }
 
+private val regex = Regex("""(\d+)([smhdwMy])""", RegexOption.IGNORE_CASE)
+
 private suspend fun Map<String, String>.parseFilters(): HistoryFilter {
     val senderUuid = this["--sender"]?.let { PlayerLookupService.getUuid(it) }
     val receiverUuid = this["--receiver"]?.let { PlayerLookupService.getUuid(it) }
+
+    fun parseRangeToMillis(input: String): Long? {
+        val match = regex.matchEntire(input.trim()) ?: return null
+
+        val (valueStr, unit) = match.destructured
+        val value = valueStr.toLongOrNull() ?: return null
+
+        val millis = when (unit.lowercase()) {
+            "s" -> value * 1000
+            "m" -> value * 60 * 1000
+            "h" -> value * 60 * 60 * 1000
+            "d" -> value * 24 * 60 * 60 * 1000
+            "w" -> value * 7 * 24 * 60 * 60 * 1000
+            else -> return null
+        }
+
+        return millis
+    }
+
     return object : HistoryFilter {
         override val messageUuid: UUID? =
             this@parseFilters["--messageUuid"]?.let { runCatching { UUID.fromString(it) }.getOrNull() }
@@ -165,7 +187,7 @@ private suspend fun Map<String, String>.parseFilters(): HistoryFilter {
         override val messageType: MessageType? =
             this@parseFilters["--type"]?.let { runCatching { MessageType.valueOf(it.uppercase()) }.getOrNull() }
         override val range: Long? =
-            this@parseFilters["--range"]?.toLongOrNull()
+            this@parseFilters["--range"]?.let { parseRangeToMillis(it) }
         override val messageLike: String? =
             this@parseFilters["--message"]
         override val server: String? =
@@ -180,3 +202,4 @@ private suspend fun Map<String, String>.parseFilters(): HistoryFilter {
             this@parseFilters["--limit"]?.toIntOrNull()
     }
 }
+

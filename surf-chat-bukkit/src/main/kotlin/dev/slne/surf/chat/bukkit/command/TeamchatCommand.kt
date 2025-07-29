@@ -17,6 +17,7 @@ import dev.slne.surf.chat.core.service.historyService
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import java.util.*
+import kotlin.jvm.optionals.getOrNull
 
 fun teamchatCommand() = commandAPICommand("teamchat") {
     withAliases("tc")
@@ -33,7 +34,7 @@ fun teamchatCommand() = commandAPICommand("teamchat") {
             null,
             System.currentTimeMillis(),
             messageId,
-            "N/A",
+            plugin.serverName.getOrNull() ?: "Error",
             null,
             null,
             MessageType.TEAM

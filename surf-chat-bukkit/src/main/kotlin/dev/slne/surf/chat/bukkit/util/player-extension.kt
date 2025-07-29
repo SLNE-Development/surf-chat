@@ -23,7 +23,7 @@ fun Audience.isConsole() = this is ConsoleCommandSender
 fun Audience.name() = when (this) {
     is Player -> this.name
     is ConsoleCommandSender -> "Console"
-    else -> "Unknown"
+    else -> "Error"
 }
 
 

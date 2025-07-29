@@ -18,7 +18,7 @@ interface SurfChatApi {
         sender: User,
         receiver: User? = null,
         sentAt: Long = System.currentTimeMillis(),
-        server: String = "N/A",
+        server: String = "unspecified",
         channel: Channel? = null,
         signedMessage: SignedMessage? = null
     )

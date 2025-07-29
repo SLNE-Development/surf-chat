@@ -50,57 +50,57 @@ fun CommandAPICommand.surfChatLookupHelpCommand() = subcommand("lookuphelp") {
                                 MessageType.entries.joinToString(
                                     ", "
                                 ) { it.name.lowercase() }
-                            }", "--type:team"
+                            }", "--type team"
                         ),
                         HelpEntry(
                             "range",
                             "Nach Zeitbereich filtern. Zeitangabe z.B. 1d, 10m, 5h, 10s, 7w.",
-                            "--range:1d"
+                            "--range 1d"
                         ),
                         HelpEntry(
                             "message",
                             "Nach grobem Nachrichteninhalt filtern.",
-                            "--message:\"Hallo Welt\""
+                            "--message \"Hallo Welt\""
                         ),
                         HelpEntry(
                             "deletedBy",
                             "Nach dem Spieler filtern, der die Nachricht gelöscht hat.",
-                            "--deletedBy:Jo_field"
+                            "--deletedBy Jo_field"
                         ),
                         HelpEntry(
                             "limit",
                             "Anzahl der Ergebnisse. Die Ergebnisse sind nach Zeit sortiert.",
-                            "--limit:10"
+                            "--limit 10"
                         ),
                         HelpEntry(
                             "page",
                             "Seite der Ergebnisse.",
-                            "--page:2"
+                            "--page 2"
                         ),
                         HelpEntry(
                             "server",
                             "Nach Server filtern.",
-                            "--server:survival01"
+                            "--server survival01"
                         ),
                         HelpEntry(
                             "channel",
                             "Nach Kanal filtern.",
-                            "--channel:testkanal"
+                            "--channel testkanal"
                         ),
                         HelpEntry(
                             "sender",
                             "Nach dem Sender der Nachricht filtern.",
-                            "--sender:TheBjoRedCraft"
+                            "--sender TheBjoRedCraft"
                         ),
                         HelpEntry(
                             "receiver",
                             "Nach dem Empfänger der Nachricht filtern.",
-                            "--receiver:Keviro"
+                            "--receiver Keviro"
                         ),
                         HelpEntry(
                             "messageUuid",
                             "Nach der Uuid der Nachricht filtern.",
-                            "--messageUuid:1c779cb1-3860-4e23-9cac-7f160b2acc61"
+                            "--messageUuid 1c779cb1-3860-4e23-9cac-7f160b2acc61"
                         )
                     )
                 )

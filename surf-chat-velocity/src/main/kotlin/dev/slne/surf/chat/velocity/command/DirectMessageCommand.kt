@@ -72,7 +72,8 @@ fun directMessageCommand() = commandAPICommand("msg") {
                     out.writeUTF(senderServer.serverInfo.name)
                 }
                 byteStream.toByteArray()
-            })
+            }
+        )
 
         targetServer.sendPluginMessage(channel, ByteArrayOutputStream().use { byteStream ->
             DataOutputStream(byteStream).use { out ->

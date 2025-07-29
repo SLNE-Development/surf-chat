@@ -12,6 +12,7 @@ import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.api.model.MessageType
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.bukkit.util.unixTime
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.Colors
@@ -83,6 +84,10 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
                 .distinct()
                 .associateWith { PlayerLookupService.getUsername(it) ?: "Unbekannt" }
 
+            val receiverNames = history.mapNotNull { it.receiverUuid }
+                .distinct()
+                .associateWith { PlayerLookupService.getUsername(it) ?: "Unbekannt" }
+
             val pagination = Pagination<HistoryEntry> {
                 title {
                     info("Suchergebnisse".toSmallCaps(), TextDecoration.BOLD)
@@ -111,10 +116,32 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
                                 decorate(TextDecoration.ITALIC)
                             }
                             hoverEvent(buildText {
-                                info("Klicke, um die Nachrichten Id zu kopieren.")
+                                append(CommonComponents.EM_DASH)
+                                appendSpace()
+                                variableKey("Uuid: ")
+                                variableValue(entry.messageUuid.toString())
+                                appendNewline()
+                                append(CommonComponents.EM_DASH)
+                                appendSpace()
+                                variableKey("Empfänger: ")
+                                variableValue(receiverNames[entry.receiverUuid] ?: "Unbekannt")
+                                appendNewline()
+                                append(CommonComponents.EM_DASH)
+                                appendSpace()
+                                variableKey("Server: ")
+                                variableValue(entry.server)
+                                appendNewline()
+                                append(CommonComponents.EM_DASH)
+                                appendSpace()
+                                variableKey("Kanal: ")
+                                variableValue(entry.channel ?: "Global")
+                                appendNewline()
+                                append(CommonComponents.EM_DASH)
+                                appendSpace()
+                                variableKey("Gesendet: ")
+                                variableValue(entry.sentAt.unixTime())
                             })
                             clickCopiesToClipboard(entry.messageUuid.toString())
-
                         }
                     )
                 }

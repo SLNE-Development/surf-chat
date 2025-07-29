@@ -54,7 +54,10 @@ class DirectMessageListener : PluginMessageListener {
 
                 when (type) {
                     DirectMessageUpdateType.SEND_MESSAGE -> handleSendMessage(messageData)
-                    DirectMessageUpdateType.RECEIVE_MESSAGE -> handleReceiveMessage(messageData)
+                    DirectMessageUpdateType.RECEIVE_MESSAGE -> handleReceiveMessage(
+                        messageData
+                    )
+
                     DirectMessageUpdateType.LOG_MESSAGE -> handleLogMessage(messageData)
                     DirectMessageUpdateType.SEND_AND_LOG_MESSAGE -> {
                         handleSendMessage(messageData)

@@ -1,6 +1,7 @@
 package dev.slne.surf.chat.bukkit.listener
 
 import com.github.shynixn.mccoroutine.folia.launch
+
 import dev.slne.surf.chat.api.model.MessageType
 import dev.slne.surf.chat.bukkit.message.MessageDataImpl
 import dev.slne.surf.chat.bukkit.message.MessageFormatterImpl
@@ -11,11 +12,15 @@ import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.chat.core.service.spyService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
+
 import io.papermc.paper.event.player.AsyncChatEvent
+
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+
 import java.util.*
+import kotlin.jvm.optionals.getOrNull
 
 class AsyncChatListener : Listener {
     private val bypassChannelPattern =
@@ -29,6 +34,7 @@ class AsyncChatListener : Listener {
         val message = event.message()
         val messageId = UUID.randomUUID()
         val messageValidator = MessageValidatorImpl.componentValidator(message)
+        val server = plugin.serverName.getOrNull() ?: "Error"
 
         val cleanedMessage = if (bypassChannelPattern.containsMatchIn(message.plainText())) {
             message.replaceText {
@@ -66,7 +72,7 @@ class AsyncChatListener : Listener {
                         viewerAudience.user(),
                         time,
                         messageId,
-                        "N/A",
+                        server,
                         channel,
                         event.signedMessage(),
                         MessageType.CHANNEL
@@ -83,7 +89,7 @@ class AsyncChatListener : Listener {
                         viewerAudience.user(),
                         time,
                         messageId,
-                        "N/A",
+                        server,
                         null,
                         event.signedMessage(),
                         MessageType.GLOBAL
@@ -95,7 +101,14 @@ class AsyncChatListener : Listener {
         plugin.launch {
             historyService.logMessage(
                 MessageDataImpl(
-                    message, user, null, time, messageId, "N/A", channel, event.signedMessage(),
+                    message,
+                    user,
+                    null,
+                    time,
+                    messageId,
+                    server,
+                    channel,
+                    event.signedMessage(),
                     if (channel != null) MessageType.CHANNEL else MessageType.GLOBAL
                 )
             )

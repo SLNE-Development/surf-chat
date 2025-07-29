@@ -5,5 +5,6 @@ object Constants {
     const val CHANNEL_TEAM = "surf-chat:teamchat"
     const val CHANNEL_CHAT = "surf-chat:chat-sync"
     const val CHANNEL_DM = "surf-chat:dm-sync"
-
+    const val CHANNEL_SERVER_REQUEST = "surf-chat:server-request"
+    const val CHANNEL_SERVER_RESPONSE = "surf-chat:server-response"
 }

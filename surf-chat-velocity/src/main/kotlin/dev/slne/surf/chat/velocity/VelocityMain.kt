@@ -11,6 +11,7 @@ import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier
 import dev.slne.surf.chat.core.Constants
 import dev.slne.surf.chat.velocity.command.directMessageCommand
 import dev.slne.surf.chat.velocity.command.replyCommand
+import dev.slne.surf.chat.velocity.handler.ServerRequestHandler
 import dev.slne.surf.chat.velocity.handler.TeamchatHandler
 
 import java.nio.file.Path
@@ -30,9 +31,12 @@ class VelocityMain @Inject constructor(
         INSTANCE = this
 
         plugin.proxy.eventManager.register(plugin, TeamchatHandler())
+        plugin.proxy.eventManager.register(plugin, ServerRequestHandler())
         plugin.proxy.channelRegistrar.register(MinecraftChannelIdentifier.from(Constants.CHANNEL_TEAM))
         plugin.proxy.channelRegistrar.register(MinecraftChannelIdentifier.from(Constants.CHANNEL_DM))
         plugin.proxy.channelRegistrar.register(MinecraftChannelIdentifier.from(Constants.CHANNEL_CHAT))
+        plugin.proxy.channelRegistrar.register(MinecraftChannelIdentifier.from(Constants.CHANNEL_SERVER_RESPONSE))
+        plugin.proxy.channelRegistrar.register(MinecraftChannelIdentifier.from(Constants.CHANNEL_SERVER_REQUEST))
 
         directMessageCommand()
         replyCommand()

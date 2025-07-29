@@ -64,12 +64,12 @@ class AsyncChatListener : Listener {
             event.viewers().addAll(channel.members.mapNotNull { it.player() })
             event.viewers()
                 .addAll(spyService.getChannelSpies(channel).mapNotNull { Bukkit.getPlayer(it) })
-            event.renderer { _, _, _, _ ->
+            event.renderer { _, _, _, viewerAudience ->
                 messageFormatter.formatChannel(
                     MessageDataImpl(
                         message,
                         user,
-                        null,
+                        viewerAudience.user(),
                         time,
                         messageId,
                         server,
@@ -81,12 +81,12 @@ class AsyncChatListener : Listener {
             }
         } else {
             event.viewers().removeIf { it.isConsole() } //TODO: Add config option
-            event.renderer { _, _, _, _ ->
+            event.renderer { _, _, _, viewerAudience ->
                 messageFormatter.formatGlobal(
                     MessageDataImpl(
                         message,
                         user,
-                        null,
+                        viewerAudience.user(),
                         time,
                         messageId,
                         server,

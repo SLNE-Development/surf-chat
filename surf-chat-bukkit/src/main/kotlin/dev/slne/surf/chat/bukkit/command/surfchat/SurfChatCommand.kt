@@ -5,7 +5,8 @@ import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 
 fun surfChatCommand() = commandAPICommand("surfchat") {
     withPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT)
-    withAliases("sc", "chat")
+    withAliases("sc")
 
     surfChatLookupCommand()
+    surfChatLookupHelpCommand()
 }

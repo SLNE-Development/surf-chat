@@ -49,7 +49,6 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
             .withoutValueList()
             .build()
     )
-    surfChatLookupHelpCommand()
 
     playerExecutor { player, args ->
         val query: Map<String, String> by args

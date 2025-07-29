@@ -4,7 +4,9 @@ import dev.slne.surf.chat.api.model.Channel
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.builder.SurfComponentBuilder
+import net.kyori.adventure.text.BuildableComponent
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.ComponentBuilder
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.event.Cancellable
 import java.time.Instant
@@ -54,3 +56,7 @@ fun Long.coloredComponent(good: Long = 200L, okay: Long = 1000L) =
             else -> append(Component.text(this@coloredComponent.toString() + "ms", Colors.RED))
         }
     }
+
+fun <C : BuildableComponent<C, B>, B : ComponentBuilder<C, B>> ComponentBuilder<C, B>.appendSpace(
+    amount: Int,
+) = repeat(amount) { appendSpace() }

@@ -45,7 +45,7 @@ fun CommandAPICommand.surfChatLookupHelpCommand() = subcommand("lookuphelp") {
                 pagination.renderComponent(
                     listOf(
                         HelpEntry(
-                            "--type",
+                            "type",
                             "Nach Nachrichtentyp filtern. Mögliche Werte: ${
                                 MessageType.entries.joinToString(
                                     ", "

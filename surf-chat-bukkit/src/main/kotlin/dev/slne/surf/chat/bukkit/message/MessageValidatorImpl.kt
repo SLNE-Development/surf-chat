@@ -4,12 +4,15 @@ import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.plainText
 import dev.slne.surf.chat.core.message.MessageValidator
+import dev.slne.surf.chat.core.service.denylistService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.surfapi.core.api.util.mutableObject2ObjectMapOf
 import dev.slne.surf.surfapi.core.api.util.mutableObjectListOf
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import it.unimi.dsi.fastutil.objects.ObjectList
 import net.kyori.adventure.text.Component
+import org.bukkit.Bukkit
 import java.net.URI
 import java.util.*
 
@@ -44,6 +47,25 @@ class MessageValidatorImpl {
                 failureMessage = buildText {
                     error("Deine Nachricht darf nicht leer sein.")
                 }
+                return false
+            }
+
+            if (denylistService.getLocalEntries().any { message.contains(it.word, true) }) {
+                failureMessage = buildText {
+                    error("Bitte achte auf deine Wortwahl.")
+                }
+
+                Bukkit.getOnlinePlayers()
+                    .filter { it.hasPermission(SurfChatPermissionRegistry.TEAM_ACCESS) }.forEach {
+                        it.sendText {
+                            appendPrefix()
+                            info("Eine Nachricht von ")
+                            variableValue(user.name)
+                            info(" wurde blockiert: ")
+                            variableValue(message)
+                        }
+                    }
+
                 return false
             }
 

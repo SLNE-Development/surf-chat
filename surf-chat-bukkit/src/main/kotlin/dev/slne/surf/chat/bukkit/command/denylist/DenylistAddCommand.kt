@@ -12,10 +12,10 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 fun CommandAPICommand.denylistAddCommand() = subcommand("add") {
     withPermission(SurfChatPermissionRegistry.COMMAND_DENYLIST_ADD)
     stringArgument("word")
-    greedyStringArgument("reason")
+    greedyStringArgument("reason", optional = true)
     anyExecutor { executor, args ->
         val word: String by args
-        val reason: String by args
+        val reason: String? by args
         val addedAt = System.currentTimeMillis()
         val name = executor.realName()
 
@@ -30,7 +30,7 @@ fun CommandAPICommand.denylistAddCommand() = subcommand("add") {
             return@anyExecutor
         }
 
-        denylistService.addLocalEntry(word, reason, name, addedAt)
+        denylistService.addLocalEntry(word, reason ?: "Verbotenes Wort", name, addedAt)
 
         executor.sendText {
             appendPrefix()
@@ -50,7 +50,7 @@ fun CommandAPICommand.denylistAddCommand() = subcommand("add") {
                 return@launch
             }
 
-            denylistService.addEntry(word, reason, name, addedAt)
+            denylistService.addEntry(word, reason ?: "Verbotenes Wort", name, addedAt)
 
             executor.sendText {
                 appendPrefix()

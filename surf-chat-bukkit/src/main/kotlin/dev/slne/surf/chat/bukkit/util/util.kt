@@ -59,7 +59,7 @@ fun Long.coloredComponent(good: Long = 200L, okay: Long = 1000L) =
     }
 
 fun TextColor.miniMessage() =
-    "<#${this.asHexString().removePrefix("#")}>"
+    "<#${this.asHexString()}>"
 
 fun <C : BuildableComponent<C, B>, B : ComponentBuilder<C, B>> ComponentBuilder<C, B>.appendSpace(
     amount: Int,

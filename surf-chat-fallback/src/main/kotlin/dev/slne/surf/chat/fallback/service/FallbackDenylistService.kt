@@ -18,7 +18,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 class FallbackDenylistService : DenylistService, Services.Fallback {
     object DenylistEntries : Table("chat_denylist_entries") {
         val index = integer("index").autoIncrement().uniqueIndex()
-        val word = text("word").uniqueIndex()
+        val word = varchar("word", 255).uniqueIndex()
         val reason = text("reason")
         val addedBy = varchar("added_by", 16)
         val addedAt = long("added_at")

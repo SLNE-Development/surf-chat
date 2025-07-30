@@ -6,12 +6,14 @@ import dev.slne.surf.chat.bukkit.message.MessageDataImpl
 import dev.slne.surf.chat.bukkit.message.MessageFormatterImpl
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.player
+import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.core.Constants
 import dev.slne.surf.chat.core.DirectMessageUpdateType
 import dev.slne.surf.chat.core.message.MessageData
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.chat.core.service.userService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
+import kotlinx.coroutines.Dispatchers
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
 import org.bukkit.plugin.messaging.PluginMessageListener
@@ -83,10 +85,15 @@ class DirectMessageListener : PluginMessageListener {
         messageData: MessageData
     ) {
         val formatter = MessageFormatterImpl(messageData.message)
-        val receiver = messageData.receiver?.player() ?: return
+        val receiver = messageData.receiver ?: return
 
-        receiver.sendText {
-            append(formatter.formatIncomingPm(messageData))
+
+        plugin.launch(Dispatchers.IO) {
+            if (receiver.configure().directMessagesEnabled()) {
+                receiver.sendText {
+                    append(formatter.formatIncomingPm(messageData))
+                }
+            }
         }
     }
 

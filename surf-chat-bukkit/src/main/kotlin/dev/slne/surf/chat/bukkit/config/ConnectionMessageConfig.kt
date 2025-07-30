@@ -7,6 +7,6 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable
 @ConfigSerializable
 data class ConnectionMessageConfig(
     val enabled: Boolean = true,
-    val joinMessage: String = "${Colors.VARIABLE_VALUE.miniMessage()}%player% ${Colors.INFO.miniMessage()}grüßt Arty.",
-    val leaveMessage: String = "${Colors.VARIABLE_VALUE.miniMessage()}%player% ${Colors.INFO.miniMessage()}verabschiedet sich bei Arty.",
+    val joinMessage: String = "${Colors.DARK_SPACER.miniMessage()}[${Colors.GREEN.miniMessage()}+${Colors.DARK_SPACER.miniMessage()}] %luckperms_prefix% %player_name%",
+    val leaveMessage: String = "${Colors.DARK_SPACER.miniMessage()}[${Colors.RED.miniMessage()}-${Colors.DARK_SPACER.miniMessage()}] %luckperms_prefix% %player_name%",
 )

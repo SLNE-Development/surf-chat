@@ -1,6 +1,7 @@
 package dev.slne.surf.chat.bukkit
 
 import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
+import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.bukkit.config.ChatMotdConfigProvider
 import dev.slne.surf.chat.bukkit.config.ConnectionMessageConfigProvider
 import dev.slne.surf.chat.core.service.databaseService
@@ -22,10 +23,10 @@ class BukkitMain : SuspendingJavaPlugin() {
         BukkitCommandManager.registerCommands()
         BukkitListenerManager.registerBukkitListeners()
         BukkitListenerManager.registerPacketListeners()
-    }
 
-    override suspend fun onEnableAsync() {
-        denylistService.fetch()
+        launch {
+            denylistService.fetch()
+        }
     }
 
     override fun onDisable() {

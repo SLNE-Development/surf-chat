@@ -1,6 +1,7 @@
 package dev.slne.surf.chat.bukkit
 
 import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
+import dev.slne.surf.chat.bukkit.config.ConnectionMessageConfigProvider
 import dev.slne.surf.chat.core.service.databaseService
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
@@ -24,4 +25,6 @@ class BukkitMain : SuspendingJavaPlugin() {
     override fun onDisable() {
         databaseService.closeConnection()
     }
+
+    val connectionMessageConfig = ConnectionMessageConfigProvider()
 }

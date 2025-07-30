@@ -14,6 +14,7 @@ fun CommandAPICommand.surfChatReloadCommand() = subcommand("reload") {
     anyExecutor { executor, args ->
         val ms = measureTimeMillis {
             plugin.connectionMessageConfig.reload()
+            plugin.chatMotdConfig.reload()
         }
 
         executor.sendText {

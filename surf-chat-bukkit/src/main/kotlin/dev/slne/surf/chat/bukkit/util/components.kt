@@ -37,8 +37,6 @@ class CompletedComponents {
                 }
 
                 Bukkit.getServer().deleteMessage(signature)
-
-
                 Bukkit.getOnlinePlayers()
                     .filter { online -> online.hasPermission(SurfChatPermissionRegistry.TEAM_ACCESS) }
                     .forEach { online ->

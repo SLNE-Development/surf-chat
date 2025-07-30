@@ -4,4 +4,4 @@ surf-database = "2.0.4-SNAPSHOT"
 
 [libraries]
 playerholder-api = { module = "me.clip:placeholderapi", version.ref = "playerholder-api" }
-surf-database = { module = "dev.slne:surf-database", version.ref = "surf-database" }
+surf-database = { module = "dev.slne.surf:surf-database", version.ref = "surf-database" }

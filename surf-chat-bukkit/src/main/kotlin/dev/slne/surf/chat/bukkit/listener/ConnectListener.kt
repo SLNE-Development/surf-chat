@@ -5,6 +5,7 @@ import dev.slne.surf.chat.bukkit.hook.PlaceholderAPIHook
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.pluginmessage.pluginMessageSender
 import dev.slne.surf.chat.core.Constants
+import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -33,6 +34,19 @@ class ConnectListener : Listener {
                         .deserialize(plugin.connectionMessageConfig.config().joinMessage)
                 )
             )
+        }
+
+        if (plugin.chatMotdConfig.config().enabled) {
+            event.player.sendText {
+                append(
+                    MiniMessage.miniMessage().deserialize(
+                        PlaceholderAPIHook.parse(
+                            event.player,
+                            plugin.chatMotdConfig.config().message
+                        )
+                    )
+                )
+            }
         }
     }
 }

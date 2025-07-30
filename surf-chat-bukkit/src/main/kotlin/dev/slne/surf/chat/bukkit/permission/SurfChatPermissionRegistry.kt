@@ -17,6 +17,12 @@ object SurfChatPermissionRegistry : PermissionRegistry() {
     val COMMAND_SURFCHAT_LOOKUP = create("$PREFIX_COMMAND.surfchat.lookup")
     val COMMAND_SURFCHAT_LOOKUP_HELP = create("$PREFIX_COMMAND.surfchat.lookup.help")
 
+    val COMMAND_DENYLIST = create("$PREFIX_COMMAND.denylist")
+    val COMMAND_DENYLIST_ADD = create("$PREFIX_COMMAND.denylist.add")
+    val COMMAND_DENYLIST_REMOVE = create("$PREFIX_COMMAND.denylist.remove")
+    val COMMAND_DENYLIST_LIST = create("$PREFIX_COMMAND.denylist.list")
+    val COMMAND_DENYLIST_FETCH = create("$PREFIX_COMMAND.denylist.fetch")
+
     val COMMAND_CHANNEL = create("$PREFIX_COMMAND.channel")
     val COMMAND_CHANNEL_ACCEPT = create("$PREFIX_COMMAND.channel.accept")
     val COMMAND_CHANNEL_CREATE = create("$PREFIX_COMMAND.channel.create")

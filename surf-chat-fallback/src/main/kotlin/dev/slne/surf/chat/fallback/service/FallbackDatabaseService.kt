@@ -1,10 +1,7 @@
 package dev.slne.surf.chat.fallback.service
 
 import com.google.auto.service.AutoService
-import dev.slne.surf.chat.core.service.DatabaseService
-import dev.slne.surf.chat.core.service.directMessageService
-import dev.slne.surf.chat.core.service.historyService
-import dev.slne.surf.chat.core.service.notificationService
+import dev.slne.surf.chat.core.service.*
 import dev.slne.surf.database.DatabaseManager
 import dev.slne.surf.database.database.DatabaseProvider
 import net.kyori.adventure.util.Services
@@ -22,6 +19,7 @@ class FallbackDatabaseService : DatabaseService, Services.Fallback {
         notificationService.createTable()
         directMessageService.createTable()
         historyService.createTable()
+        denylistService.createTable()
     }
 
     override fun closeConnection() {

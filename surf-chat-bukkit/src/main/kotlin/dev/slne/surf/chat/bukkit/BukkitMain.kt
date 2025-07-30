@@ -1,9 +1,11 @@
 package dev.slne.surf.chat.bukkit
 
 import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
+import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.bukkit.config.ChatMotdConfigProvider
 import dev.slne.surf.chat.bukkit.config.ConnectionMessageConfigProvider
 import dev.slne.surf.chat.core.service.databaseService
+import dev.slne.surf.chat.core.service.denylistService
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
 
@@ -21,6 +23,10 @@ class BukkitMain : SuspendingJavaPlugin() {
         BukkitCommandManager.registerCommands()
         BukkitListenerManager.registerBukkitListeners()
         BukkitListenerManager.registerPacketListeners()
+
+        launch {
+            denylistService.fetch()
+        }
     }
 
     override fun onDisable() {

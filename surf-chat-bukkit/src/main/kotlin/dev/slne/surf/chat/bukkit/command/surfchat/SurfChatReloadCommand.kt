@@ -20,7 +20,7 @@ fun CommandAPICommand.surfChatReloadCommand() = subcommand("reload") {
         executor.sendText {
             appendPrefix()
             success("Successfully reloaded plugin in ")
-            append(ms.coloredComponent(50))
+            append(ms.coloredComponent(25))
             success("!")
         }
     }

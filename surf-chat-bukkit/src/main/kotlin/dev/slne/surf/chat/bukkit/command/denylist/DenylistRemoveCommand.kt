@@ -4,8 +4,8 @@ import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.anyExecutor
 import dev.jorel.commandapi.kotlindsl.getValue
-import dev.jorel.commandapi.kotlindsl.stringArgument
 import dev.jorel.commandapi.kotlindsl.subcommand
+import dev.slne.surf.chat.bukkit.command.argument.denylistWordArgument
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.service.denylistService
@@ -13,7 +13,7 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 fun CommandAPICommand.denylistRemoveCommand() = subcommand("remove") {
     withPermission(SurfChatPermissionRegistry.COMMAND_DENYLIST_REMOVE)
-    stringArgument("word")
+    denylistWordArgument("word")
     anyExecutor { executor, args ->
         val word: String by args
 

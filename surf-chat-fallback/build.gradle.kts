@@ -4,5 +4,5 @@ plugins {
 
 dependencies {
     api(project(":surf-chat-core"))
-    api("dev.slne.surf:surf-database:2.0.4-SNAPSHOT")
+    api(libs.surf.database)
 }

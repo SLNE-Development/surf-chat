@@ -29,7 +29,7 @@ fun CommandAPICommand.denylistFetchCommand() = subcommand("fetch") {
                 success("Die Denylist wurde erfolgreich aktualisiert")
                 appendSpace()
                 spacer("(")
-                append(ms.coloredComponent(50))
+                append(ms.coloredComponent(250))
                 spacer(")")
                 success("!")
             }

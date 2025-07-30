@@ -9,4 +9,5 @@ fun surfChatCommand() = commandAPICommand("surfchat") {
 
     surfChatLookupCommand()
     surfChatLookupHelpCommand()
+    surfChatReloadCommand()
 }

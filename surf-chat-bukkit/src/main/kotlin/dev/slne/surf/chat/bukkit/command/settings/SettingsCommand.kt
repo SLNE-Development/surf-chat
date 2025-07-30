@@ -11,6 +11,7 @@ fun settingsCommand() = commandAPICommand("settings") {
     withPermission(SurfChatPermissionRegistry.COMMAND_SETTINGS)
     settingsPingCommand()
     settingsDirectMessagesCommand()
+    settingsInviteCommand()
 
     playerExecutor { player, _ ->
         plugin.launch {

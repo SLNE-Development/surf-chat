@@ -11,6 +11,7 @@ import dev.slne.surf.chat.core.Constants
 import dev.slne.surf.chat.core.DirectMessageUpdateType
 import dev.slne.surf.chat.core.message.MessageData
 import dev.slne.surf.chat.core.service.historyService
+import dev.slne.surf.chat.core.service.ignoreService
 import dev.slne.surf.chat.core.service.userService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import kotlinx.coroutines.Dispatchers
@@ -89,7 +90,11 @@ class DirectMessageListener : PluginMessageListener {
 
 
         plugin.launch(Dispatchers.IO) {
-            if (receiver.configure().directMessagesEnabled()) {
+            if (receiver.configure().directMessagesEnabled() && !ignoreService.isIgnored(
+                    receiver.uuid,
+                    messageData.sender.uuid
+                )
+            ) {
                 receiver.sendText {
                     append(formatter.formatIncomingPm(messageData))
                 }

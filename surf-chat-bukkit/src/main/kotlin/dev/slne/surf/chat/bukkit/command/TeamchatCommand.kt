@@ -19,7 +19,7 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
-fun teamchatCommand() = commandAPICommand("teamchat") {
+fun teamchatCommand() = commandAPICommand("teamchat", plugin) {
     withAliases("tc")
     greedyStringArgument("message")
     withPermission(SurfChatPermissionRegistry.COMMAND_TEAMCHAT)

@@ -7,7 +7,7 @@ import dev.slne.surf.chat.bukkit.dialog.settingsDialog
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 
-fun settingsCommand() = commandAPICommand("settings") {
+fun settingsCommand() = commandAPICommand("settings", plugin) {
     withPermission(SurfChatPermissionRegistry.COMMAND_SETTINGS)
     settingsPingCommand()
     settingsDirectMessagesCommand()

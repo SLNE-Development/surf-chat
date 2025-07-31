@@ -45,7 +45,7 @@ fun CommandAPICommand.ignoreListCommand() = subcommand("list") {
                         buildText {
                             append(CommonComponents.EM_DASH)
                             appendSpace()
-                            variableKey(entry.name)
+                            variableKey(entry.targetName)
                             appendSpace()
                             spacer("(${entry.createdAt.unixTime()})")
                         }

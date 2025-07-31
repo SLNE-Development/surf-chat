@@ -24,7 +24,7 @@ class FallbackIgnoreService : IgnoreService, Services.Fallback {
             varchar("target_uuid", 36).transform({ UUID.fromString(it) }, { it.toString() })
         val createdAt = long("created_at")
 
-        override val primaryKey = PrimaryKey(userUuid)
+        override val primaryKey = PrimaryKey(userUuid, targetUuid)
     }
 
     override fun createTable() {

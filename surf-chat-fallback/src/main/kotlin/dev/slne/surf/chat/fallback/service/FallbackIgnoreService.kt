@@ -4,7 +4,6 @@ import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.entry.IgnoreListEntry
 import dev.slne.surf.chat.core.service.IgnoreService
 import dev.slne.surf.chat.fallback.model.FallbackIgnoreListEntry
-import dev.slne.surf.surfapi.core.api.service.PlayerLookupService
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import kotlinx.coroutines.Dispatchers
@@ -20,8 +19,10 @@ class FallbackIgnoreService : IgnoreService, Services.Fallback {
     object IgnoreListEntries : Table("chat_ignore_list") {
         val userUuid =
             varchar("user_uuid", 36).transform({ UUID.fromString(it) }, { it.toString() })
+        val userName = varchar("user_name", 16).default("Error")
         val targetUuid =
             varchar("target_uuid", 36).transform({ UUID.fromString(it) }, { it.toString() })
+        val targetName = varchar("target_name", 16).default("Error")
         val createdAt = long("created_at")
 
         override val primaryKey = PrimaryKey(userUuid, targetUuid)
@@ -33,11 +34,18 @@ class FallbackIgnoreService : IgnoreService, Services.Fallback {
         }
     }
 
-    override suspend fun ignore(player: UUID, target: UUID) =
+    override suspend fun ignore(
+        player: UUID,
+        playerName: String,
+        target: UUID,
+        targetPlayerName: String
+    ) =
         newSuspendedTransaction(Dispatchers.IO) {
             IgnoreListEntries.insert {
                 it[userUuid] = player
+                it[userName] = playerName
                 it[targetUuid] = target
+                it[targetName] = targetPlayerName
                 it[createdAt] = System.currentTimeMillis()
             }
             return@newSuspendedTransaction
@@ -65,11 +73,9 @@ class FallbackIgnoreService : IgnoreService, Services.Fallback {
             ).map {
                 FallbackIgnoreListEntry(
                     user = it[IgnoreListEntries.userUuid],
-                    name = PlayerLookupService.getUsername(it[IgnoreListEntries.userUuid])
-                        ?: "Error",
+                    name = it[IgnoreListEntries.userName],
                     target = it[IgnoreListEntries.targetUuid],
-                    targetName = PlayerLookupService.getUsername(it[IgnoreListEntries.targetUuid])
-                        ?: "Error",
+                    targetName = it[IgnoreListEntries.targetName],
                     createdAt = it[IgnoreListEntries.createdAt]
                 )
             }.toObjectSet()

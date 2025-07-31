@@ -6,7 +6,7 @@ import it.unimi.dsi.fastutil.objects.ObjectSet
 import java.util.*
 
 interface IgnoreService : ServiceUsingDatabase {
-    suspend fun ignore(player: UUID, target: UUID)
+    suspend fun ignore(player: UUID, playerName: String, target: UUID, targetPlayerName: String)
     suspend fun unIgnore(player: UUID, target: UUID)
     suspend fun isIgnored(player: UUID, target: UUID): Boolean
     suspend fun getIgnoreList(player: UUID): ObjectSet<IgnoreListEntry>

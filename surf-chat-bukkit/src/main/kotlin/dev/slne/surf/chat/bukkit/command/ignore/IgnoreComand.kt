@@ -39,7 +39,7 @@ fun ignoreCommand() = commandAPICommand("ignore", plugin) {
                 return@launch
             }
 
-            ignoreService.ignore(player.uniqueId, target.uuid)
+            ignoreService.ignore(player.uniqueId, player.name, target.uuid, target.name)
 
             player.sendText {
                 appendPrefix()

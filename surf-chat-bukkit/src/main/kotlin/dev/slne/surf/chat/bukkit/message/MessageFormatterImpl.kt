@@ -108,6 +108,60 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
         clickSuggestsCommand("/msg ${player.name} ")
     }
 
+    override fun formatPmSpy(messageData: MessageData) = buildText {
+        val player = messageData.sender.player() ?: return Component.empty()
+        val receiver = messageData.receiver ?: return Component.empty()
+        val receiverPlayer = receiver.player() ?: return Component.empty()
+
+        append(components.spyIcon())
+        appendSpace()
+        append(
+            components.delete(
+                messageData,
+                messageData.receiver ?: return Component.empty()
+            )
+        )
+        append(
+            components.teleport(
+                messageData.sender.name,
+                messageData.receiver ?: return Component.empty()
+            )
+        )
+        append(components.name(player))
+        appendSpace()
+        darkSpacer("-->")
+        appendSpace()
+        append(components.name(receiverPlayer))
+        append(updateLinks(formatItemTag(messageData.message, player)))
+        hoverEvent(components.messageHover(messageData))
+        clickSuggestsCommand("/msg ${player.name} ")
+    }
+
+    override fun formatChannelSpy(messageData: MessageData) = buildText {
+        val player = messageData.sender.player() ?: return Component.empty()
+
+        append(components.spyIcon())
+        appendSpace()
+        append(
+            components.delete(
+                messageData,
+                messageData.receiver ?: return Component.empty()
+            )
+        )
+        append(
+            components.teleport(
+                messageData.sender.name,
+                messageData.receiver ?: return Component.empty()
+            )
+        )
+        append(components.channel(messageData.channel?.channelName ?: "Unbekannter Kanal"))
+        append(components.name(player))
+        darkSpacer(" >> ")
+        append(updateLinks(formatItemTag(messageData.message, player)))
+        hoverEvent(components.messageHover(messageData))
+        clickSuggestsCommand("/msg ${player.name} ")
+    }
+
     private val channelExceptPattern =
         Regex("^@(all|a|here|everyone)\\b\\s*", RegexOption.IGNORE_CASE)
     private val linkRegex = Regex("(?i)\\b((https?://)?[\\w-]+(\\.[\\w-]+)+(/\\S*)?)\\b")

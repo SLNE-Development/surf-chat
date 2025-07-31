@@ -9,4 +9,6 @@ interface MessageFormatter {
     fun formatOutgoingPm(messageData: MessageData): Component
     fun formatTeamchat(messageData: MessageData): Component
     fun formatChannel(messageData: MessageData): Component
+    fun formatPmSpy(messageData: MessageData): Component
+    fun formatChannelSpy(messageData: MessageData): Component
 }

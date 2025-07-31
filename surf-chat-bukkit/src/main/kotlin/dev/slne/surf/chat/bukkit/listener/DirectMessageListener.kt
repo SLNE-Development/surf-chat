@@ -12,10 +12,12 @@ import dev.slne.surf.chat.core.DirectMessageUpdateType
 import dev.slne.surf.chat.core.message.MessageData
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.chat.core.service.ignoreService
+import dev.slne.surf.chat.core.service.spyService
 import dev.slne.surf.chat.core.service.userService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import kotlinx.coroutines.Dispatchers
 import net.kyori.adventure.text.Component
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.plugin.messaging.PluginMessageListener
 import java.io.DataInputStream
@@ -76,6 +78,13 @@ class DirectMessageListener : PluginMessageListener {
     ) {
         val formatter = MessageFormatterImpl(messageData.message)
         val sender = messageData.sender.player() ?: return
+
+        spyService.getPrivateMessageSpies(sender.uniqueId).mapNotNull { Bukkit.getPlayer(it) }
+            .forEach {
+                it.sendText {
+                    formatter.formatPmSpy(messageData)
+                }
+            }
 
         sender.sendText {
             append(formatter.formatOutgoingPm(messageData))

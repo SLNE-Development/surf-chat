@@ -65,18 +65,27 @@ class AsyncChatListener : Listener {
             event.viewers()
                 .addAll(spyService.getChannelSpies(channel).mapNotNull { Bukkit.getPlayer(it) })
             event.renderer { _, _, _, viewerAudience ->
-                messageFormatter.formatChannel(
-                    MessageDataImpl(
-                        message,
-                        user,
-                        viewerAudience.user(),
-                        time,
-                        messageId,
-                        server,
-                        channel,
-                        event.signedMessage(),
-                        MessageType.CHANNEL
+                val data = MessageDataImpl(
+                    message,
+                    user,
+                    viewerAudience.user(),
+                    time,
+                    messageId,
+                    server,
+                    channel,
+                    event.signedMessage(),
+                    MessageType.CHANNEL
+                )
+
+                if (spyService.getChannelSpies(channel).mapNotNull { Bukkit.getPlayer(it) }
+                        .contains(viewerAudience)) {
+                    return@renderer messageFormatter.formatChannelSpy(
+                        data
                     )
+                }
+
+                messageFormatter.formatChannel(
+                    data
                 )
             }
         } else {

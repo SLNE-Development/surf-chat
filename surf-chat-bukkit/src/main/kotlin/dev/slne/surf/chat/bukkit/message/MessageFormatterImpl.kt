@@ -114,12 +114,6 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
         append(components.spyIcon())
         appendSpace()
         append(
-            components.delete(
-                messageData,
-                messageData.receiver ?: return Component.empty()
-            )
-        )
-        append(
             components.teleport(
                 messageData.sender.name,
                 messageData.receiver ?: return Component.empty()

@@ -26,6 +26,15 @@ fun CommandAPICommand.ignoreListCommand() = subcommand("list") {
 
         plugin.launch {
             val ignoreList = ignoreService.getIgnoreList(player.uniqueId)
+
+            if (ignoreList.isEmpty()) {
+                player.sendText {
+                    appendPrefix()
+                    error("Du ignorierst aktuell niemanden.")
+                }
+                return@launch
+            }
+
             val pagination = Pagination<IgnoreListEntry> {
                 title {
                     primary("Ignorierte Spieler".toSmallCaps(), TextDecoration.BOLD)

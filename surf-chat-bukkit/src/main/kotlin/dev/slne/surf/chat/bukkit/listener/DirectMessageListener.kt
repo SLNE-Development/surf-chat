@@ -82,7 +82,7 @@ class DirectMessageListener : PluginMessageListener {
         spyService.getPrivateMessageSpies(sender.uniqueId).mapNotNull { Bukkit.getPlayer(it) }
             .forEach {
                 it.sendText {
-                    formatter.formatPmSpy(messageData)
+                    append(formatter.formatPmSpy(messageData))
                 }
             }
 

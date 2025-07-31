@@ -109,9 +109,7 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
     }
 
     override fun formatPmSpy(messageData: MessageData) = buildText {
-        val player = messageData.sender.player() ?: return Component.empty()
         val receiver = messageData.receiver ?: return Component.empty()
-        val receiverPlayer = receiver.player() ?: return Component.empty()
 
         append(components.spyIcon())
         appendSpace()
@@ -127,14 +125,16 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
                 messageData.receiver ?: return Component.empty()
             )
         )
-        append(components.name(player))
+        variableValue(messageData.sender.name)
         appendSpace()
         darkSpacer("-->")
         appendSpace()
-        append(components.name(receiverPlayer))
-        append(updateLinks(formatItemTag(messageData.message, player)))
+        variableValue(receiver.name)
+        spacer(":")
+        appendSpace()
+        append(updateLinks(messageData.message))
         hoverEvent(components.messageHover(messageData))
-        clickSuggestsCommand("/msg ${player.name} ")
+        clickSuggestsCommand("/msg ${messageData.sender.name} ")
     }
 
     override fun formatChannelSpy(messageData: MessageData) = buildText {

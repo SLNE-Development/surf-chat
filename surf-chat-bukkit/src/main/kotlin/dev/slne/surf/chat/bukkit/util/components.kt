@@ -8,7 +8,6 @@ import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.message.MessageData
 import dev.slne.surf.chat.core.service.historyService
-import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import net.kyori.adventure.text.Component
@@ -142,7 +141,7 @@ class CompletedComponents {
 
     fun spyIcon() = buildText {
         spacer("[")
-        text("👁️", Colors.WHITE)
+        info("SPY")
         spacer("]")
     }
 

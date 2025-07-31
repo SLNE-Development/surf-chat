@@ -20,6 +20,7 @@ class FallbackDatabaseService : DatabaseService, Services.Fallback {
         directMessageService.createTable()
         historyService.createTable()
         denylistService.createTable()
+        ignoreService.createTable()
     }
 
     override fun closeConnection() {

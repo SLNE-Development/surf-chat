@@ -13,8 +13,8 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 fun CommandAPICommand.channelSpyCommand() = subcommand("spy") {
     withPermission(SurfChatPermissionRegistry.COMMAND_CHANNEL_ADMIN_SPY)
-    channelArgument("channel")
     channelSpyClearCommand()
+    channelArgument("channel")
     playerExecutor { player, args ->
         val channel: Channel by args
         val user = player.user() ?: return@playerExecutor

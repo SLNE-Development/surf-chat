@@ -12,8 +12,8 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 fun directMessageSpyCommand() = commandAPICommand("spy") {
     withPermission(SurfChatPermissionRegistry.COMMAND_DIRECT_SPY)
-    userArgument("target")
     directMessageSpyClearCommand()
+    userArgument("target")
     playerExecutor { player, args ->
         val user = player.user() ?: return@playerExecutor
         val target: User by args

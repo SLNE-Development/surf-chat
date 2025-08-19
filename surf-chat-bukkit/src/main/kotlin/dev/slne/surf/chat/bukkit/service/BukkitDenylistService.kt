@@ -17,7 +17,7 @@ class BukkitDenylistService() : DenylistService, Fallback {
     private var denylist: ObjectSet<String> = mutableObjectSetOf()
 
     override fun isDenylisted(word: String): Boolean {
-        return denylist.contains(word)
+        return denylist.any { it.equals(word, ignoreCase = true) })
     }
 
     override fun hasDenyListed(message: Component): Boolean {

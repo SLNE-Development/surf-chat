@@ -12,4 +12,12 @@ interface ChatGroup {
    */
   val name: String
   val members: ObjectSet<ChatServer>
-}
+  /**
+   * The set of members in this chat group.
+   *
+   * This set is read-only (immutable) from the perspective of the interface consumer.
+   * Implementations may return a mutable or immutable set, but consumers should not modify it.
+   *
+   * There are no explicit minimum or maximum size constraints; the set may be empty.
+   */
+  val members: ObjectSet<ChatServer>

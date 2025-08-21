@@ -11,7 +11,6 @@ interface ChatGroup {
    * chat groups are managed.
    */
   val name: String
-  val members: ObjectSet<ChatServer>
   /**
    * The set of members in this chat group.
    *

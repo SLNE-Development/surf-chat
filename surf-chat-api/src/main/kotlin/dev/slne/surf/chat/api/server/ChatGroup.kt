@@ -21,3 +21,4 @@ interface ChatGroup {
    * There are no explicit minimum or maximum size constraints; the set may be empty.
    */
   val members: ObjectSet<ChatServer>
+}

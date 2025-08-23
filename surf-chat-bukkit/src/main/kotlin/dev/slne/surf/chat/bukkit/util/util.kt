@@ -1,5 +1,7 @@
 package dev.slne.surf.chat.bukkit.util
 
+import com.github.retrooper.packetevents.PacketEvents
+import com.github.retrooper.packetevents.wrapper.PacketWrapper
 import dev.slne.surf.chat.api.model.Channel
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
@@ -9,6 +11,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.ComponentBuilder
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
+import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import java.time.Instant
 import java.time.ZoneId
@@ -64,3 +67,6 @@ fun TextColor.miniMessage() =
 fun <C : BuildableComponent<C, B>, B : ComponentBuilder<C, B>> ComponentBuilder<C, B>.appendSpace(
     amount: Int,
 ) = repeat(amount) { appendSpace() }
+
+fun PacketWrapper<*>.send(player: Player) =
+    PacketEvents.getAPI().playerManager.sendPacket(player, this)

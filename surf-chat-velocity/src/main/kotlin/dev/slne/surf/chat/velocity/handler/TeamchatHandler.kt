@@ -10,11 +10,14 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import java.io.DataInputStream
 
 class TeamchatHandler {
+    val channelTeam: MinecraftChannelIdentifier =
+        MinecraftChannelIdentifier.from(Constants.CHANNEL_TEAM)
+
     @Subscribe
     fun onPluginMessage(event: PluginMessageEvent) {
         event.result = PluginMessageEvent.ForwardResult.handled()
 
-        if (event.identifier != MinecraftChannelIdentifier.from(Constants.CHANNEL_TEAM)) {
+        if (event.identifier != channelTeam) {
             return
         }
 

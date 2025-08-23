@@ -10,7 +10,7 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import java.io.DataInputStream
 
 class TeamchatHandler {
-    val channelTeam: MinecraftChannelIdentifier =
+    private val channelTeam: MinecraftChannelIdentifier =
         MinecraftChannelIdentifier.from(Constants.CHANNEL_TEAM)
 
     @Subscribe

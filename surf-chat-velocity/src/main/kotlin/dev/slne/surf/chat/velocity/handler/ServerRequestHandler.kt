@@ -11,11 +11,16 @@ import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 
 class ServerRequestHandler {
+    private val channelServerRequest: MinecraftChannelIdentifier =
+        MinecraftChannelIdentifier.from(Constants.CHANNEL_SERVER_REQUEST)
+    private val channelServerResponse: MinecraftChannelIdentifier =
+        MinecraftChannelIdentifier.from(Constants.CHANNEL_SERVER_RESPONSE)
+
     @Subscribe
     fun onPluginMessage(event: PluginMessageEvent) {
         event.result = PluginMessageEvent.ForwardResult.handled()
 
-        if (event.identifier != MinecraftChannelIdentifier.from(Constants.CHANNEL_SERVER_REQUEST)) {
+        if (event.identifier != channelServerRequest) {
             return
         }
 
@@ -24,7 +29,7 @@ class ServerRequestHandler {
         }
         val connection = event.source as ServerConnection
         connection.sendPluginMessage(
-            MinecraftChannelIdentifier.from(Constants.CHANNEL_SERVER_RESPONSE),
+            channelServerResponse,
             ByteArrayOutputStream().use { byteStream ->
                 DataOutputStream(byteStream).use { out ->
                     out.writeUTF(connection.server.serverInfo.name)

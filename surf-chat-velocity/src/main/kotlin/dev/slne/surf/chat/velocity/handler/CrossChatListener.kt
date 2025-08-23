@@ -9,44 +9,47 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerCh
 import com.velocitypowered.api.proxy.Player
 import dev.slne.surf.chat.velocity.plugin
 import dev.slne.surf.chat.velocity.util.sendPacketSilent
-import dev.slne.surf.surfapi.core.api.util.mutableObject2ObjectMapOf
-import java.util.*
+import kotlin.jvm.optionals.getOrNull
 
 class CrossChatListener : PacketListenerAbstract() {
-    val globalIndexCache = mutableObject2ObjectMapOf<UUID, Int>()
-    val indexCache = mutableObject2ObjectMapOf<UUID, Int>()
 
     override fun onPacketSend(event: PacketSendEvent) {
-        if (event.packetType != PacketType.Play.Server.CHAT_MESSAGE) {
-            return
-        }
+        if (event.packetType != PacketType.Play.Server.CHAT_MESSAGE) return
 
         if (event.serverVersion.isOlderThan(ServerVersion.V_1_21_5)) {
             error("Unsupported server version for cross-chat feature: ${event.serverVersion}. Minimum supported version is 1.21.5.")
         }
 
-
-        val packet = WrapperPlayServerChatMessage(event)
+        val wrapper = WrapperPlayServerChatMessage(event)
         val player = event.getPlayer<Player>()
 
-        event.isCancelled = true
+        val original = wrapper.message as? ChatMessage_v1_21_5
+            ?: return
+
+        val clone = ChatMessage_v1_21_5(
+            original.globalIndex,
+            original.senderUUID,
+            original.index,
+            original.signature,
+            original.plainContent,
+            original.timestamp,
+            original.salt,
+            original.lastSeenMessagesPacked,
+            original.unsignedChatContent.getOrNull(),
+            original.filterMask,
+            original.chatFormatting
+        )
+
+        println("Sending cloned chat message to original user}")
+        println("index: ${clone.index}, globalIndex: ${clone.globalIndex}, signature: ${clone.signature}, content: ${clone.plainContent}, timestamp: ${clone.timestamp}, salt: ${clone.salt}")
 
         plugin.proxy.allPlayers
+            .filter { it.uniqueId != player.uniqueId }
             .forEach {
-                val chatMessage = packet.message as? ChatMessage_v1_21_5
-                    ?: error("Expected ChatMessage_v1_21_5, got ${packet.message.javaClass.name}")
+                println("Sending cloned chat message to ${it.username}")
+                println("index: ${clone.index}, globalIndex: ${clone.globalIndex}, signature: ${clone.signature}, content: ${clone.plainContent}, timestamp: ${clone.timestamp}, salt: ${clone.salt}")
 
-                val newGlobalIndex = (globalIndexCache[it.uniqueId] ?: -1) + 1
-                globalIndexCache[it.uniqueId] = newGlobalIndex
-                chatMessage.globalIndex = newGlobalIndex
-
-                val newIndex = (indexCache[it.uniqueId] ?: -1) + 1
-                indexCache[it.uniqueId] = newIndex
-                chatMessage.index = newIndex
-
-                println("Relaying message from ${player.username} to other servers. index: ${chatMessage.index}, globalIndex: ${chatMessage.globalIndex}")
-
-                it.sendPacketSilent(WrapperPlayServerChatMessage(chatMessage))
+                it.sendPacketSilent(WrapperPlayServerChatMessage(clone))
             }
     }
 }

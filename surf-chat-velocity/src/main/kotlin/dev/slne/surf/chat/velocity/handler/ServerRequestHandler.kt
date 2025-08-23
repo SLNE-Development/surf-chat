@@ -11,9 +11,9 @@ import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 
 class ServerRequestHandler {
-    val channelServerRequest: MinecraftChannelIdentifier =
+    private val channelServerRequest: MinecraftChannelIdentifier =
         MinecraftChannelIdentifier.from(Constants.CHANNEL_SERVER_REQUEST)
-    val channelServerResponse: MinecraftChannelIdentifier =
+    private val channelServerResponse: MinecraftChannelIdentifier =
         MinecraftChannelIdentifier.from(Constants.CHANNEL_SERVER_RESPONSE)
 
     @Subscribe

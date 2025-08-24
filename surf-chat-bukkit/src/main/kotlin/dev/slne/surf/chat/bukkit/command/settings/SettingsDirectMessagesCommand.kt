@@ -32,13 +32,13 @@ fun CommandAPICommand.settingsDirectMessagesCommand() = subcommand("directMessag
 
                 player.sendText {
                     appendPrefix()
-                    success("Deine Benachrichtigungen wurden ${if (!currentValue) "aktiviert" else "deaktiviert"}.")
+                    success("Deine Direktnachrichten wurden ${if (!currentValue) "aktiviert" else "deaktiviert"}.")
                 }
             } else {
                 if (newValue == currentValue) {
                     player.sendText {
                         appendPrefix()
-                        error("Deine Benachrichtigungen sind bereits ${if (newValue == true) "aktiviert" else "deaktiviert"}.")
+                        error("Deine Direktnachrichten sind bereits ${if (newValue == true) "aktiviert" else "deaktiviert"}.")
                     }
                     return@launch
                 }
@@ -51,10 +51,9 @@ fun CommandAPICommand.settingsDirectMessagesCommand() = subcommand("directMessag
 
                 player.sendText {
                     appendPrefix()
-                    success("Deine Benachrichtigungen wurden ${if (newValue == true) "aktiviert" else "deaktiviert"}.")
+                    success("Deine Direktnachrichten wurden ${if (newValue == true) "aktiviert" else "deaktiviert"}.")
                 }
             }
-
         }
     }
 }

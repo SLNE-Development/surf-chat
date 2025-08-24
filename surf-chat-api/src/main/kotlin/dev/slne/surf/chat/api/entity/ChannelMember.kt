@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.api.entity
 
-import dev.slne.surf.chat.api.model.ChannelRole
+import dev.slne.surf.chat.api.channel.ChannelRole
 import java.util.*
 
 /**

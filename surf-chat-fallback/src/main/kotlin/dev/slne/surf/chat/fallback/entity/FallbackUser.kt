@@ -1,9 +1,9 @@
 package dev.slne.surf.chat.fallback.entity
 
+import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.entity.ChannelMember
 import dev.slne.surf.chat.api.entity.ConfigurableUser
 import dev.slne.surf.chat.api.entity.User
-import dev.slne.surf.chat.api.model.Channel
 import org.bukkit.Bukkit
 import java.util.*
 

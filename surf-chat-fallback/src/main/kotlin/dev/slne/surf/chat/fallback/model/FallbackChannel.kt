@@ -1,10 +1,10 @@
 package dev.slne.surf.chat.fallback.model
 
+import dev.slne.surf.chat.api.channel.Channel
+import dev.slne.surf.chat.api.channel.ChannelRole
+import dev.slne.surf.chat.api.channel.ChannelVisibility
 import dev.slne.surf.chat.api.entity.ChannelMember
 import dev.slne.surf.chat.api.entity.User
-import dev.slne.surf.chat.api.model.Channel
-import dev.slne.surf.chat.api.model.ChannelRole
-import dev.slne.surf.chat.api.model.ChannelVisibility
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.fallback.entity.FallbackChannelMember
 import it.unimi.dsi.fastutil.objects.ObjectSet

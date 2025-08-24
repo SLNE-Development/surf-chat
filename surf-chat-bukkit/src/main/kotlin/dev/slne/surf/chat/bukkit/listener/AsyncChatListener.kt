@@ -2,7 +2,7 @@ package dev.slne.surf.chat.bukkit.listener
 
 import com.github.shynixn.mccoroutine.folia.launch
 
-import dev.slne.surf.chat.api.model.MessageType
+import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.bukkit.message.MessageDataImpl
 import dev.slne.surf.chat.bukkit.message.MessageFormatterImpl
 import dev.slne.surf.chat.bukkit.message.MessageValidatorImpl

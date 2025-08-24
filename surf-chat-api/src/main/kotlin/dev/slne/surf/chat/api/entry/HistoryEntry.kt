@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.api.entry
 
-import dev.slne.surf.chat.api.model.MessageType
+import dev.slne.surf.chat.api.message.MessageType
 import java.util.*
 
 /**

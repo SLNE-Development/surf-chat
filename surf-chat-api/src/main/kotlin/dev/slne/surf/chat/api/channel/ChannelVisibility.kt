@@ -1,4 +1,4 @@
-package dev.slne.surf.chat.api.model
+package dev.slne.surf.chat.api.channel
 
 /**
  * Represents the visibility status of a chat channel.

@@ -1,7 +1,7 @@
 package dev.slne.surf.chat.fallback.service
 
 import com.google.auto.service.AutoService
-import dev.slne.surf.chat.api.model.Channel
+import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.core.service.SpyService
 import dev.slne.surf.surfapi.core.api.util.mutableObject2ObjectMapOf
 import dev.slne.surf.surfapi.core.api.util.mutableObjectListOf

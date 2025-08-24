@@ -1,4 +1,4 @@
-package dev.slne.surf.chat.api.model
+package dev.slne.surf.chat.api.message
 
 /**
  * Represents the type of a message in the chat system.

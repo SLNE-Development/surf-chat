@@ -2,7 +2,7 @@ package dev.slne.surf.chat.core.entry
 
 import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
-import dev.slne.surf.chat.api.model.MessageType
+import dev.slne.surf.chat.api.message.MessageType
 import java.util.*
 
 data class HistoryEntryImpl(

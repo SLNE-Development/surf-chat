@@ -3,7 +3,7 @@ package dev.slne.surf.chat.fallback.service
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
-import dev.slne.surf.chat.api.model.MessageType
+import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.core.entry.HistoryEntryImpl
 import dev.slne.surf.chat.core.message.MessageData
 import dev.slne.surf.chat.core.service.HistoryService

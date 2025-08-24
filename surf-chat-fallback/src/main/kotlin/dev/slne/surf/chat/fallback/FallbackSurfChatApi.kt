@@ -2,10 +2,10 @@ package dev.slne.surf.chat.fallback
 
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.SurfChatApi
+import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.entry.HistoryFilter
-import dev.slne.surf.chat.api.model.Channel
-import dev.slne.surf.chat.api.model.MessageType
+import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.core.message.MessageData
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.historyService

@@ -1,8 +1,8 @@
 package dev.slne.surf.chat.bukkit.util
 
 import com.github.shynixn.mccoroutine.folia.launch
+import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.entity.User
-import dev.slne.surf.chat.api.model.Channel
 import dev.slne.surf.chat.bukkit.hook.PlaceholderAPIHook
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin

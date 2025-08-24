@@ -1,4 +1,4 @@
-package dev.slne.surf.chat.api.model
+package dev.slne.surf.chat.api.channel
 
 import dev.slne.surf.chat.api.entity.ChannelMember
 import dev.slne.surf.chat.api.entity.User

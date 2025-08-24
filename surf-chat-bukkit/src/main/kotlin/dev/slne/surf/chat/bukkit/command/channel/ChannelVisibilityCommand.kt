@@ -4,8 +4,8 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
-import dev.slne.surf.chat.api.model.Channel
-import dev.slne.surf.chat.api.model.ChannelVisibility
+import dev.slne.surf.chat.api.channel.Channel
+import dev.slne.surf.chat.api.channel.ChannelVisibility
 import dev.slne.surf.chat.bukkit.command.argument.channelVisibilityArgument
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.util.sendText

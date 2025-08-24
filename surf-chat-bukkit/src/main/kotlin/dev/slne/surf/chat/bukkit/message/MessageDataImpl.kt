@@ -1,8 +1,8 @@
 package dev.slne.surf.chat.bukkit.message
 
+import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.entity.User
-import dev.slne.surf.chat.api.model.Channel
-import dev.slne.surf.chat.api.model.MessageType
+import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.core.message.MessageData
 import net.kyori.adventure.chat.SignedMessage
 import net.kyori.adventure.text.Component

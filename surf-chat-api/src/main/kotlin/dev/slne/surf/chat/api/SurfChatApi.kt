@@ -1,10 +1,10 @@
 package dev.slne.surf.chat.api
 
+import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
-import dev.slne.surf.chat.api.model.Channel
-import dev.slne.surf.chat.api.model.MessageType
+import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.chat.SignedMessage

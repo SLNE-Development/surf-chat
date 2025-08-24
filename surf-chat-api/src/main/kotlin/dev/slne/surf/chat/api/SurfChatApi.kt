@@ -25,7 +25,7 @@ interface SurfChatApi {
      * @param receiver The user who received the message, or `null` if not applicable.
      * @param sentAt The timestamp (in milliseconds since epoch) when the message was sent. Defaults to the current time.
      * @param server The server where the message was sent. Defaults to "unspecified".
-     * @param channel The channel where the message was sent, or `null` if not applicable.
+     * @param channel The channel name where the message was sent, or `null` if not applicable.
      * @param signedMessage The signed message object, or `null` if not applicable.
      */
     suspend fun logMessage(

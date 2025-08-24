@@ -14,6 +14,7 @@ import dev.slne.surf.chat.core.service.spyService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 import io.papermc.paper.event.player.AsyncChatEvent
+import net.kyori.adventure.text.TextReplacementConfig
 
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
@@ -23,7 +24,7 @@ import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
 class AsyncChatListener : Listener {
-    private val bypassChannelPattern =
+    private val channelExceptPattern =
         Regex("^@(all|a|here|everyone)\\b\\s*", RegexOption.IGNORE_CASE)
 
     @EventHandler
@@ -35,12 +36,15 @@ class AsyncChatListener : Listener {
         val messageId = UUID.randomUUID()
         val messageValidator = MessageValidatorImpl.componentValidator(message)
         val server = plugin.serverName.getOrNull() ?: "Error"
+        val plainMessage = message.plainText()
 
-        val cleanedMessage = if (bypassChannelPattern.containsMatchIn(message.plainText())) {
-            message.replaceText {
-                it.match(bypassChannelPattern.pattern)
+        val cleanedMessage = if (channelExceptPattern.containsMatchIn(plainMessage)) {
+            message.replaceText(
+                TextReplacementConfig.builder()
+                    .match(channelExceptPattern.pattern)
                     .replacement("")
-            }
+                    .build()
+            )
         } else {
             message
         }
@@ -59,7 +63,7 @@ class AsyncChatListener : Listener {
         val channel = channelService.getChannel(user)
         val time = System.currentTimeMillis()
 
-        if (channel != null && !bypassChannelPattern.containsMatchIn(message.plainText())) {
+        if (channel != null && !channelExceptPattern.containsMatchIn(plainMessage)) {
             event.viewers().clear()
             event.viewers().addAll(channel.members.mapNotNull { it.player() })
             event.viewers()

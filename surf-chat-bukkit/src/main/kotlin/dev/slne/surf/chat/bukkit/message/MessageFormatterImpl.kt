@@ -4,10 +4,9 @@ import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.shynixn.mccoroutine.folia.launch
 import com.sksamuel.aedile.core.expireAfterWrite
 import dev.slne.surf.chat.api.entity.User
+import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.bukkit.util.components
-import dev.slne.surf.chat.bukkit.util.plainText
-import dev.slne.surf.chat.bukkit.util.player
+import dev.slne.surf.chat.bukkit.util.*
 import dev.slne.surf.chat.core.message.MessageData
 import dev.slne.surf.chat.core.message.MessageFormatter
 import dev.slne.surf.surfapi.core.api.messages.Colors
@@ -26,9 +25,15 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
         val viewer = messageData.receiver ?: return Component.empty()
         val player = messageData.sender.player() ?: return Component.empty()
 
-        append(components.delete(messageData, viewer))
-        append(components.teleport(messageData.sender.name, viewer))
-        append(components.name(player))
+        if (viewer.hasPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_DELETE)) {
+            appendDelete(messageData)
+        }
+
+        if (viewer.hasPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_TELEPORT)) {
+            appendTeleport(messageData.sender.name, viewer)
+        }
+
+        appendName(player)
         darkSpacer(" >> ")
         append(
             formatItemTag(
@@ -36,7 +41,7 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
                 player
             )
         )
-        hoverEvent(components.messageHover(messageData))
+        hoverEvent(buildText { appendMessageData(messageData) })
         clickSuggestsCommand("/msg ${player.name} ")
     }
 
@@ -51,7 +56,7 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
         variableValue("Dir")
         darkSpacer(" >> ")
         append(updateLinks(messageData.message))
-        hoverEvent(components.messageHover(messageData))
+        hoverEvent(buildText { appendMessageData(messageData) })
         clickSuggestsCommand("/msg $senderName ")
     }
 
@@ -67,7 +72,7 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
         darkSpacer(" >> ")
         append(updateLinks(messageData.message))
 
-        hoverEvent(components.messageHover(messageData))
+        hoverEvent(buildText { appendMessageData(messageData) })
         clickSuggestsCommand("/msg $receiverName ")
     }
 
@@ -77,48 +82,44 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
         darkSpacer(">> ")
         append(Component.text("TEAM", Colors.RED).decorate(TextDecoration.BOLD))
         darkSpacer(" | ")
-        append(components.name(player))
+        appendName(player)
         darkSpacer(" >> ")
         append(updateLinks(formatItemTag(messageData.message, player)))
 
-        hoverEvent(components.messageHover(messageData))
+        hoverEvent(buildText { appendMessageData(messageData) })
         clickSuggestsCommand("/teamchat ")
     }
 
     override fun formatChannel(messageData: MessageData) = buildText {
         val player = messageData.sender.player() ?: return Component.empty()
+        val receiver = messageData.receiver ?: return Component.empty()
 
-        append(
-            components.delete(
-                messageData,
-                messageData.receiver ?: return Component.empty()
-            )
-        )
-        append(
-            components.teleport(
-                messageData.sender.name,
-                messageData.receiver ?: return Component.empty()
-            )
-        )
-        append(components.channel(messageData.channel?.channelName ?: "Unbekannter Kanal"))
-        append(components.name(player))
+        if (receiver.hasPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_DELETE)) {
+            appendDelete(messageData)
+        }
+
+        if (receiver.hasPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_TELEPORT)) {
+            appendTeleport(messageData.sender.name, receiver)
+        }
+
+        appendChannelPrefix(messageData.channel?.channelName ?: "Unbekannter Kanal")
+        appendName(player)
         darkSpacer(" >> ")
         append(updateLinks(formatItemTag(messageData.message, player)))
-        hoverEvent(components.messageHover(messageData))
+        hoverEvent(buildText { appendMessageData(messageData) })
         clickSuggestsCommand("/msg ${player.name} ")
     }
 
     override fun formatPmSpy(messageData: MessageData) = buildText {
         val receiver = messageData.receiver ?: return Component.empty()
 
-        append(components.spyIcon())
+        appendSpyIcon()
         appendSpace()
-        append(
-            components.teleport(
-                messageData.sender.name,
-                messageData.receiver ?: return Component.empty()
-            )
-        )
+
+        if (receiver.hasPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_TELEPORT)) {
+            appendTeleport(messageData.sender.name, receiver)
+        }
+
         variableValue(messageData.sender.name)
         appendSpace()
         darkSpacer("-->")
@@ -127,37 +128,33 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
         spacer(":")
         appendSpace()
         append(updateLinks(messageData.message))
-        hoverEvent(components.messageHover(messageData))
+        hoverEvent(buildText { appendMessageData(messageData) })
         clickSuggestsCommand("/msg ${messageData.sender.name} ")
     }
 
     override fun formatChannelSpy(messageData: MessageData) = buildText {
         val player = messageData.sender.player() ?: return Component.empty()
+        val receiver = messageData.receiver ?: return Component.empty()
 
-        append(components.spyIcon())
+        appendSpyIcon()
         appendSpace()
-        append(
-            components.delete(
-                messageData,
-                messageData.receiver ?: return Component.empty()
-            )
-        )
-        append(
-            components.teleport(
-                messageData.sender.name,
-                messageData.receiver ?: return Component.empty()
-            )
-        )
-        append(components.channel(messageData.channel?.channelName ?: "Unbekannter Kanal"))
-        append(components.name(player))
+
+        if (receiver.hasPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_DELETE)) {
+            appendDelete(messageData)
+        }
+
+        if (receiver.hasPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_TELEPORT)) {
+            appendTeleport(messageData.sender.name, receiver)
+        }
+
+        appendChannelPrefix(messageData.channel?.channelName ?: "Unbekannter Kanal")
+        appendName(player)
         darkSpacer(" >> ")
         append(updateLinks(formatItemTag(messageData.message, player)))
-        hoverEvent(components.messageHover(messageData))
+        hoverEvent(buildText { appendMessageData(messageData) })
         clickSuggestsCommand("/msg ${player.name} ")
     }
 
-    private val channelExceptPattern =
-        Regex("^@(all|a|here|everyone)\\b\\s*", RegexOption.IGNORE_CASE)
     private val linkRegex = Regex("(?i)\\b((https?://)?[\\w-]+(\\.[\\w-]+)+(/\\S*)?)\\b")
     private val itemRegex = Regex("\\[(?i)item]")
     private val nameRegexCache = Caffeine.newBuilder()

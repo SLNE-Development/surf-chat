@@ -13,6 +13,7 @@ class DisconnectListener : Listener {
     @EventHandler
     fun onDisconnect(event: PlayerQuitEvent) {
         val user = event.player.user() ?: return
+
         channelService.getChannel(user)?.let {
             it.leaveAndTransfer(user.channelMember(it) ?: return@let)
         }

@@ -66,7 +66,7 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
             if (historyService.isLookupRunning()) {
                 player.sendText {
                     appendPrefix()
-                    error("Es wird bereits nach Ergebnissen gesucht. Deine Anfrage wird danach fortgesetzt.")
+                    warning("Es wird bereits nach Ergebnissen gesucht. Deine Anfrage wird danach fortgesetzt.")
                 }
             }
             val history =

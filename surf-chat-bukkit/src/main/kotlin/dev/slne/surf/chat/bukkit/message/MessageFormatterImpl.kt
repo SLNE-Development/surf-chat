@@ -21,6 +21,14 @@ import org.bukkit.entity.Player
 import kotlin.time.Duration.Companion.minutes
 
 class MessageFormatterImpl(override val message: Component) : MessageFormatter {
+    private val linkRegex = Regex("(?i)\\b((https?://)?[\\w-]+(\\.[\\w-]+)+(/\\S*)?)\\b")
+    private val itemRegex = Regex("\\[(?i)item]")
+    private val nameRegexCache = Caffeine.newBuilder()
+        .expireAfterWrite(15.minutes)
+        .build<String, Regex> { name ->
+            Regex("(?<!\\w)@?${Regex.escape(name)}(?!\\w)")
+        }
+
     override fun formatGlobal(messageData: MessageData) = buildText {
         val viewer = messageData.receiver ?: return Component.empty()
         val player = messageData.sender.player() ?: return Component.empty()
@@ -154,14 +162,6 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
         hoverEvent(buildText { appendMessageData(messageData) })
         clickSuggestsCommand("/msg ${player.name} ")
     }
-
-    private val linkRegex = Regex("(?i)\\b((https?://)?[\\w-]+(\\.[\\w-]+)+(/\\S*)?)\\b")
-    private val itemRegex = Regex("\\[(?i)item]")
-    private val nameRegexCache = Caffeine.newBuilder()
-        .expireAfterWrite(15.minutes)
-        .build<String, Regex> { name ->
-            Regex("(?<!\\w)@?${Regex.escape(name)}(?!\\w)")
-        }
 
 
     private fun formatItemTag(rawMessage: Component, player: Player): Component {

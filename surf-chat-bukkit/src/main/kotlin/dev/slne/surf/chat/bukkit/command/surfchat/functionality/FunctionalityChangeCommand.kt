@@ -12,6 +12,7 @@ import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.service.functionalityService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
+import org.bukkit.Bukkit
 import kotlin.jvm.optionals.getOrNull
 
 fun CommandAPICommand.functionalityChangeCommand() = subcommand("change") {
@@ -36,11 +37,33 @@ fun CommandAPICommand.functionalityChangeCommand() = subcommand("change") {
                     appendPrefix()
                     success("Der Chat wurde aktiviert.")
                 }
+
+                Bukkit.getOnlinePlayers()
+                    .filter { it.hasPermission(SurfChatPermissionRegistry.TEAM_ACCESS) }.forEach {
+                    it.sendText {
+                        appendPrefix()
+                        variableValue(player.name)
+                        info(" hat den Chat für den Server ")
+                        variableValue(server.name)
+                        info(" aktiviert.")
+                    }
+                }
             } else {
                 functionalityService.disableLocalChat(server)
                 player.sendText {
                     appendPrefix()
                     success("Der Chat wurde deaktiviert.")
+                }
+
+                Bukkit.getOnlinePlayers()
+                    .filter { it.hasPermission(SurfChatPermissionRegistry.TEAM_ACCESS) }.forEach {
+                    it.sendText {
+                        appendPrefix()
+                        variableValue(player.name)
+                        info(" hat den Chat für den Server ")
+                        variableValue(server.name)
+                        info(" deaktiviert.")
+                    }
                 }
             }
         }

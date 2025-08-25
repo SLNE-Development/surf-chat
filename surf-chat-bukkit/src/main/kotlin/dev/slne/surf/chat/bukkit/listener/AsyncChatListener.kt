@@ -47,7 +47,7 @@ class AsyncChatListener : Listener {
         ) {
             player.sendText {
                 appendWarningPrefix()
-                warning("Der Chat ist vorübergehend deaktiviert.")
+                error("Der Chat ist vorübergehend deaktiviert.")
             }
             event.cancel()
             return

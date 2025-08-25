@@ -13,6 +13,7 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.surfapi.core.api.messages.builder.SurfComponentBuilder
 import net.kyori.adventure.text.event.ClickEvent
+import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -134,7 +135,7 @@ fun SurfComponentBuilder.appendSpyIcon() = append {
 
 fun SurfComponentBuilder.appendWarningPrefix() = append {
     darkSpacer("[")
-    error("!")
+    error("!", TextDecoration.BOLD)
     darkSpacer("]")
     appendSpace()
 }

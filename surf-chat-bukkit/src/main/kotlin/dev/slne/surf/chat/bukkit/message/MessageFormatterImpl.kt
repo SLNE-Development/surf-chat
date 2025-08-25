@@ -57,7 +57,7 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
         val senderName = messageData.sender.name
 
         darkSpacer(">> ")
-        append(Component.text("PM", Colors.RED))
+        text("PM", Colors.RED)
         darkSpacer(" | ")
         variableValue(senderName)
         darkSpacer(" -> ")
@@ -72,7 +72,7 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
         val receiverName = messageData.receiver?.name ?: "Error"
 
         darkSpacer(">> ")
-        append(Component.text("PM", Colors.RED))
+        text("PM", Colors.RED)
         darkSpacer(" | ")
         variableValue("Du")
         darkSpacer(" -> ")
@@ -88,7 +88,7 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
         val player = messageData.sender.player() ?: return Component.empty()
 
         darkSpacer(">> ")
-        append(Component.text("TEAM", Colors.RED).decorate(TextDecoration.BOLD))
+        text("TEAM", Colors.RED, TextDecoration.BOLD)
         darkSpacer(" | ")
         appendName(player)
         darkSpacer(" >> ")

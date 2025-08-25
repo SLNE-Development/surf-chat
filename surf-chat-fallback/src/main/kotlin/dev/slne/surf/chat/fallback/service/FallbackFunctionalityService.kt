@@ -57,6 +57,13 @@ class FallbackFunctionalityService : FunctionalityService, Services.Fallback {
         }.toObjectSet()
     }
 
+    override suspend fun fetch(localServer: ChatServer) = newSuspendedTransaction(Dispatchers.IO) {
+        val result = FunctionalityTable.selectAll()
+            .where(FunctionalityTable.server eq localServer.internalName)
+            .firstOrNull()
+        localChatEnabled = result?.get(FunctionalityTable.chatEnabled) ?: true
+    }
+
     override suspend fun enableLocalChat(localServer: ChatServer) {
         localChatEnabled = true
 

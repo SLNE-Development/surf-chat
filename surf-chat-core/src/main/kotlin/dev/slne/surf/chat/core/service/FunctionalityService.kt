@@ -11,6 +11,8 @@ interface FunctionalityService : ServiceUsingDatabase {
     suspend fun getAllEnabledServers(): ObjectSet<ChatServer>
     suspend fun getAllDisabledServers(): ObjectSet<ChatServer>
 
+    suspend fun fetch(localServer: ChatServer)
+
     suspend fun enableLocalChat(localServer: ChatServer)
     suspend fun toggleLocalChat(localServer: ChatServer): Boolean
     suspend fun disableLocalChat(localServer: ChatServer)

@@ -8,6 +8,7 @@ import dev.slne.surf.chat.bukkit.config.ChatServerProviderConfig
 import dev.slne.surf.chat.bukkit.config.ConnectionMessageConfigProvider
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.chat.core.service.denylistService
+import dev.slne.surf.chat.core.service.functionalityService
 import org.bukkit.plugin.java.JavaPlugin
 
 val plugin get() = JavaPlugin.getPlugin(BukkitMain::class.java)
@@ -25,6 +26,7 @@ class BukkitMain : SuspendingJavaPlugin() {
 
         launch {
             denylistService.fetch()
+            functionalityService.fetch(server)
         }
     }
 

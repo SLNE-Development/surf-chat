@@ -10,4 +10,4 @@ data class ChatServerConfig(
     var displayName: String = CONFIG_DISPLAY_DEFAULT
 )
 
-val CONFIG_DISPLAY_DEFAULT = "Unspecified Server"
+const val CONFIG_DISPLAY_DEFAULT = "Unspecified Server"

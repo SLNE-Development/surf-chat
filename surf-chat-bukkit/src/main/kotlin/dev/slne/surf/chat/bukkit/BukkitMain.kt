@@ -3,6 +3,7 @@ package dev.slne.surf.chat.bukkit
 import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.api.server.ChatServer
+import dev.slne.surf.chat.bukkit.config.AutoDisablingConfigProvider
 import dev.slne.surf.chat.bukkit.config.ChatMotdConfigProvider
 import dev.slne.surf.chat.bukkit.config.ChatServerProviderConfig
 import dev.slne.surf.chat.bukkit.config.ConnectionMessageConfigProvider
@@ -35,9 +36,10 @@ class BukkitMain : SuspendingJavaPlugin() {
     }
 
     val connectionMessageConfig = ConnectionMessageConfigProvider()
-
     val chatMotdConfig = ChatMotdConfigProvider()
     val chatServerConfig = ChatServerProviderConfig()
+    val autoDisablingConfig = AutoDisablingConfigProvider()
+
     var server = ChatServer.of(
         plugin.chatServerConfig.config().internalName,
         plugin.chatServerConfig.config().displayName

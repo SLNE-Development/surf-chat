@@ -9,6 +9,7 @@ object SurfChatPermissionRegistry : PermissionRegistry() {
 
     val FILTER_BYPASS = create("$PREFIX.filter.bypass")
     val TEAM_ACCESS = create(Constants.TEAM_PERMISSION)
+    val AUTO_CHAT_DISABLING_BYPASS = create("$PREFIX.disabling.bypass")
 
     val COMMAND_SURFCHAT = create("$PREFIX_COMMAND.surfchat")
     val COMMAND_SURFCHAT_RELOAD = create("$PREFIX_COMMAND.surfchat.reload")

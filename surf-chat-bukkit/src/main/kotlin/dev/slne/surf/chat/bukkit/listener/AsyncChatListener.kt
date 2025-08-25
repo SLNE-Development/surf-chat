@@ -16,6 +16,7 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import io.papermc.paper.event.player.AsyncChatEvent
 import net.kyori.adventure.text.TextReplacementConfig
 import org.bukkit.Bukkit
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import java.util.*
@@ -42,6 +43,15 @@ class AsyncChatListener : Listener {
             player.sendText {
                 appendWarningPrefix()
                 error("Der Chat ist vorübergehend deaktiviert.")
+            }
+            event.cancel()
+            return
+        }
+
+        if (this.checkAutoDisabling(player)) {
+            player.sendText {
+                appendWarningPrefix()
+                error("Du kannst zurzeit nicht schreiben.")
             }
             event.cancel()
             return
@@ -136,4 +146,9 @@ class AsyncChatListener : Listener {
             )
         }
     }
+
+    fun checkAutoDisabling(player: Player): Boolean =
+        !player.hasPermission(SurfChatPermissionRegistry.AUTO_CHAT_DISABLING_BYPASS)
+                && Bukkit.getOnlinePlayers().size > plugin.autoDisablingConfig.config().maximumPlayersBeforeDisable
+                && plugin.autoDisablingConfig.config().enabled
 }

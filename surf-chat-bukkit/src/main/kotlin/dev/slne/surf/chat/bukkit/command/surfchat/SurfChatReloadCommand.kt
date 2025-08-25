@@ -17,6 +17,7 @@ fun CommandAPICommand.surfChatReloadCommand() = subcommand("reload") {
             plugin.connectionMessageConfig.reload()
             plugin.chatMotdConfig.reload()
             plugin.chatServerConfig.reload()
+            plugin.autoDisablingConfig.reload()
 
             ConnectListener.ALREADY_REQUESTED = false
         }

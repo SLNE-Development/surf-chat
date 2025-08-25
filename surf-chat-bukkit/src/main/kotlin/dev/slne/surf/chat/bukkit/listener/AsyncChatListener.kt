@@ -1,9 +1,7 @@
 package dev.slne.surf.chat.bukkit.listener
 
 import com.github.shynixn.mccoroutine.folia.launch
-
 import dev.slne.surf.chat.api.message.MessageType
-import dev.slne.surf.chat.api.server.ChatServer
 import dev.slne.surf.chat.bukkit.message.MessageDataImpl
 import dev.slne.surf.chat.bukkit.message.MessageFormatterImpl
 import dev.slne.surf.chat.bukkit.message.MessageValidatorImpl
@@ -15,16 +13,12 @@ import dev.slne.surf.chat.core.service.functionalityService
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.chat.core.service.spyService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
-
 import io.papermc.paper.event.player.AsyncChatEvent
 import net.kyori.adventure.text.TextReplacementConfig
-
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-
 import java.util.*
-import kotlin.jvm.optionals.getOrNull
 
 class AsyncChatListener : Listener {
     private val channelExceptPattern =
@@ -38,7 +32,7 @@ class AsyncChatListener : Listener {
         val message = event.message()
         val messageId = UUID.randomUUID()
         val messageValidator = MessageValidatorImpl.componentValidator(message)
-        val server = plugin.server.getOrNull() ?: ChatServer.default()
+        val server = plugin.server
         val plainMessage = message.plainText()
 
         if (!functionalityService.isLocalChatEnabled() && !player.hasPermission(

@@ -30,5 +30,12 @@ interface ChatServer {
             override val internalName: String
                 get() = internalName
         }
+
+        fun of(name: String, internalName: String) = object : ChatServer {
+            override val name: String
+                get() = name
+            override val internalName: String
+                get() = internalName
+        }
     }
 }

@@ -6,7 +6,6 @@ import dev.slne.surf.chat.core.Constants
 import org.bukkit.entity.Player
 import org.bukkit.plugin.messaging.PluginMessageListener
 import java.io.DataInputStream
-import java.util.*
 
 class ServerResponseListener : PluginMessageListener {
     override fun onPluginMessageReceived(
@@ -20,7 +19,13 @@ class ServerResponseListener : PluginMessageListener {
 
         message.inputStream().use { byteSteam ->
             DataInputStream(byteSteam).use { input ->
-                plugin.server = Optional.of(ChatServer.of(input.readUTF()))
+                plugin.chatServerConfig.edit {
+                    internalName = input.readUTF()
+                }
+                plugin.server = ChatServer.of(
+                    plugin.chatServerConfig.config().displayName,
+                    plugin.chatServerConfig.config().internalName
+                )
             }
         }
     }

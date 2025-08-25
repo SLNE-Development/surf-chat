@@ -52,6 +52,6 @@ class ConnectListener : Listener {
     }
 
     companion object {
-        var ALREADY_REQUESTED = false
+        val ALREADY_REQUESTED = AtomicBoolean(false)
     }
 }

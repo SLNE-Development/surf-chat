@@ -19,7 +19,7 @@ import kotlin.jvm.optionals.getOrNull
 
 class VelocityMain @Inject constructor(
     val proxy: ProxyServer,
-    @DataDirectory val dataPath: Path,
+    @param:DataDirectory val dataPath: Path,
     suspendingPluginContainer: SuspendingPluginContainer
 ) {
     init {

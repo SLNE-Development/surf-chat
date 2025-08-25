@@ -19,7 +19,3 @@ surfPaperPluginApi {
 
     authors.add("red")
 }
-
-tasks.shadowJar {
-    archiveFileName = "surf-chat-bukkit-${project.version}.jar"
-}

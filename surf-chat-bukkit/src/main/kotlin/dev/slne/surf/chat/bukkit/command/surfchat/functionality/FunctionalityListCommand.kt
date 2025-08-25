@@ -3,7 +3,6 @@ package dev.slne.surf.chat.bukkit.command.surfchat.functionality
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.anyExecutor
-import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.integerArgument
 import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
@@ -20,7 +19,7 @@ fun CommandAPICommand.functionalityListCommand() = subcommand("list") {
     withPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_FUNCTIONALITY_LIST)
     integerArgument("page", 1, Int.MAX_VALUE, true)
     anyExecutor { player, args ->
-        val page: Int by args
+        val page = args.getOrDefaultUnchecked("page", 1)
         val pagination = Pagination<FunctionalityStatusEntry> {
             title { primary("Chat Funktionalität", TextDecoration.BOLD) }
             rowRenderer { row, _ ->

@@ -6,4 +6,6 @@ object FunctionalityTable : Table("chat_functionality") {
     val index = integer("id").autoIncrement()
     val server = varchar("server", 256)
     val chatEnabled = bool("chat_enabled").default(true)
+
+    override val primaryKey = PrimaryKey(index)
 }

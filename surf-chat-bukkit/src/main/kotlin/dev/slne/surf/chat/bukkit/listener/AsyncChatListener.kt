@@ -1,27 +1,25 @@
 package dev.slne.surf.chat.bukkit.listener
 
 import com.github.shynixn.mccoroutine.folia.launch
-
 import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.bukkit.message.MessageDataImpl
 import dev.slne.surf.chat.bukkit.message.MessageFormatterImpl
 import dev.slne.surf.chat.bukkit.message.MessageValidatorImpl
+import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.*
 import dev.slne.surf.chat.core.service.channelService
+import dev.slne.surf.chat.core.service.functionalityService
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.chat.core.service.spyService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
-
 import io.papermc.paper.event.player.AsyncChatEvent
 import net.kyori.adventure.text.TextReplacementConfig
-
 import org.bukkit.Bukkit
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-
 import java.util.*
-import kotlin.jvm.optionals.getOrNull
 
 class AsyncChatListener : Listener {
     private val channelExceptPattern =
@@ -35,8 +33,29 @@ class AsyncChatListener : Listener {
         val message = event.message()
         val messageId = UUID.randomUUID()
         val messageValidator = MessageValidatorImpl.componentValidator(message)
-        val server = plugin.serverName.getOrNull() ?: "Error"
+        val server = plugin.server
         val plainMessage = message.plainText()
+
+        if (!functionalityService.isLocalChatEnabled() && !player.hasPermission(
+                SurfChatPermissionRegistry.TEAM_ACCESS
+            )
+        ) {
+            player.sendText {
+                appendWarningPrefix()
+                error("Der Chat ist vorübergehend deaktiviert.")
+            }
+            event.cancel()
+            return
+        }
+
+        if (this.checkAutoDisabling(player)) {
+            player.sendText {
+                appendWarningPrefix()
+                error("Du kannst zurzeit nicht schreiben.")
+            }
+            event.cancel()
+            return
+        }
 
         val cleanedMessage = if (channelExceptPattern.containsMatchIn(plainMessage)) {
             message.replaceText(
@@ -127,4 +146,9 @@ class AsyncChatListener : Listener {
             )
         }
     }
+
+    fun checkAutoDisabling(player: Player): Boolean =
+        !player.hasPermission(SurfChatPermissionRegistry.AUTO_CHAT_DISABLING_BYPASS)
+                && Bukkit.getOnlinePlayers().size > plugin.autoDisablingConfig.config().maximumPlayersBeforeDisable
+                && plugin.autoDisablingConfig.config().enabled
 }

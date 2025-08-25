@@ -8,10 +8,12 @@ import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.message.MessageData
 import dev.slne.surf.chat.core.service.historyService
+import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.surfapi.core.api.messages.builder.SurfComponentBuilder
 import net.kyori.adventure.text.event.ClickEvent
+import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -60,7 +62,7 @@ fun SurfComponentBuilder.appendMessageData(messageData: MessageData) = append(bu
     variableValue(messageData.sentAt.unixTime())
     appendNewline()
     info("Gesendet auf Server ")
-    variableValue(messageData.server)
+    variableValue(messageData.server.name)
 })
 
 fun SurfComponentBuilder.appendName(player: Player) = append {
@@ -129,4 +131,22 @@ fun SurfComponentBuilder.appendSpyIcon() = append {
     spacer("[")
     info("SPY")
     spacer("]")
+}
+
+fun SurfComponentBuilder.appendWarningPrefix() = append {
+    darkSpacer("[")
+    error("!", TextDecoration.BOLD)
+    darkSpacer("]")
+    appendSpace()
+}
+
+fun SurfComponentBuilder.appendStatusIcon(status: Boolean) = append {
+    darkSpacer("[")
+    if (status) {
+        text("✔", Colors.GREEN)
+    } else {
+        text("✘", Colors.RED)
+    }
+    darkSpacer("]")
+    appendSpace()
 }

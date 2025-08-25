@@ -1,6 +1,7 @@
 package dev.slne.surf.chat.api.entry
 
 import dev.slne.surf.chat.api.message.MessageType
+import dev.slne.surf.chat.api.server.ChatServer
 import java.util.*
 
 /**
@@ -23,7 +24,7 @@ interface HistoryEntry {
     val messageType: MessageType
     val sentAt: Long
     val message: String
-    val server: String
+    val server: ChatServer
     val channel: String?
     val deletedBy: String?
 }
@@ -50,7 +51,7 @@ interface HistoryFilter {
     val messageType: MessageType?
     val range: Long?
     val messageLike: String?
-    val server: String?
+    val server: ChatServer?
     val channel: String?
     val deletedBy: String?
     val type: MessageType?

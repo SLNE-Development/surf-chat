@@ -9,26 +9,34 @@ object SurfChatPermissionRegistry : PermissionRegistry() {
 
     val FILTER_BYPASS = create("$PREFIX.filter.bypass")
     val TEAM_ACCESS = create(Constants.TEAM_PERMISSION)
+    val AUTO_CHAT_DISABLING_BYPASS = create("$PREFIX.disabling.bypass")
 
     val COMMAND_SURFCHAT = create("$PREFIX_COMMAND.surfchat")
     val COMMAND_SURFCHAT_RELOAD = create("$PREFIX_COMMAND.surfchat.reload")
     val COMMAND_SURFCHAT_DELETE = create("$PREFIX_COMMAND.surfchat.delete")
     val COMMAND_SURFCHAT_TELEPORT = create("$PREFIX_COMMAND.surfchat.teleport")
     val COMMAND_SURFCHAT_LOOKUP = create("$PREFIX_COMMAND.surfchat.lookup")
+
+    val COMMAND_SURFCHAT_FUNCTIONALITY = create("$PREFIX_COMMAND.surfchat.functionality")
+    val COMMAND_SURFCHAT_FUNCTIONALITY_TOGGLE =
+        create("$PREFIX_COMMAND.surfchat.functionality.toggle")
+    val COMMAND_SURFCHAT_FUNCTIONALITY_STATUS =
+        create("$PREFIX_COMMAND.surfchat.functionality.status")
+    val COMMAND_SURFCHAT_FUNCTIONALITY_LIST = create("$PREFIX_COMMAND.surfchat.functionality.list")
+
     val COMMAND_SURFCHAT_LOOKUP_HELP = create("$PREFIX_COMMAND.surfchat.lookup.help")
-
     val COMMAND_IGNORE = create("$PREFIX_COMMAND.ignore")
-    val COMMAND_IGNORE_LIST = create("$PREFIX_COMMAND.ignore.list")
 
+    val COMMAND_IGNORE_LIST = create("$PREFIX_COMMAND.ignore.list")
     val COMMAND_DENYLIST = create("$PREFIX_COMMAND.denylist")
     val COMMAND_DENYLIST_ADD = create("$PREFIX_COMMAND.denylist.add")
     val COMMAND_DENYLIST_REMOVE = create("$PREFIX_COMMAND.denylist.remove")
     val COMMAND_DENYLIST_LIST = create("$PREFIX_COMMAND.denylist.list")
+
     val COMMAND_DENYLIST_FETCH = create("$PREFIX_COMMAND.denylist.fetch")
-
     val COMMAND_DIRECT_SPY = create("$PREFIX_COMMAND.direct-spy")
-    val COMMAND_DIRECT_SPY_CLEAR = create("$PREFIX_COMMAND.direct-spy.clear")
 
+    val COMMAND_DIRECT_SPY_CLEAR = create("$PREFIX_COMMAND.direct-spy.clear")
     val COMMAND_CHANNEL = create("$PREFIX_COMMAND.channel")
     val COMMAND_CHANNEL_ACCEPT = create("$PREFIX_COMMAND.channel.accept")
     val COMMAND_CHANNEL_CREATE = create("$PREFIX_COMMAND.channel.create")
@@ -47,18 +55,19 @@ object SurfChatPermissionRegistry : PermissionRegistry() {
     val COMMAND_CHANNEL_REVOKE = create("$PREFIX_COMMAND.channel.uninvite")
     val COMMAND_CHANNEL_DECLINE = create("$PREFIX_COMMAND.channel.deny")
     val COMMAND_CHANNEL_MEMBERS = create("$PREFIX_COMMAND.channel.members")
-    val COMMAND_CHANNEL_VISIBILITY = create("$PREFIX_COMMAND.channel.mode")
 
+    val COMMAND_CHANNEL_VISIBILITY = create("$PREFIX_COMMAND.channel.mode")
     val COMMAND_CHANNEL_ADMIN = create("$PREFIX_COMMAND.channel.admin")
     val COMMAND_CHANNEL_ADMIN_MOVE = create("$PREFIX_COMMAND.channel.admin.move")
     val COMMAND_CHANNEL_ADMIN_JOIN = create("$PREFIX_COMMAND.channel.admin.join")
     val COMMAND_CHANNEL_ADMIN_DELETE = create("$PREFIX_COMMAND.channel.admin.delete")
     val COMMAND_CHANNEL_ADMIN_SPY = create("$PREFIX_COMMAND.channel.admin.spy")
-    val COMMAND_CHANNEL_ADMIN_SPY_CLEAR = create("$PREFIX_COMMAND.channel.admin.spy.clear")
 
+    val COMMAND_CHANNEL_ADMIN_SPY_CLEAR = create("$PREFIX_COMMAND.channel.admin.spy.clear")
     val COMMAND_SETTINGS = create("$PREFIX_COMMAND.settings")
     val COMMAND_SETTINGS_PING = create("$PREFIX_COMMAND.settings.ping")
     val COMMAND_SETTINGS_INVITES = create("$PREFIX_COMMAND.settings.invites")
+
     val COMMAND_SETTINGS_DIRECT_MESSAGES = create("$PREFIX_COMMAND.settings.direct-messages")
 
     val COMMAND_TEAMCHAT = create("$PREFIX_COMMAND.teamchat")

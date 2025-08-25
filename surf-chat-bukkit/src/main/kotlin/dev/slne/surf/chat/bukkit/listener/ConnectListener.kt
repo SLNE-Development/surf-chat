@@ -18,11 +18,12 @@ class ConnectListener : Listener {
     fun onJoin(event: PlayerJoinEvent) {
         plugin.launch(Dispatchers.IO) {
 
-            if (plugin.serverName.isEmpty) {
+            if (!ALREADY_REQUESTED) {
                 delay(1000)
                 pluginMessageSender(Constants.CHANNEL_SERVER_REQUEST, event.player) {
                     writeUTF("Requesting data...")
                 }
+                ALREADY_REQUESTED = true
             }
         }
 
@@ -48,5 +49,9 @@ class ConnectListener : Listener {
                 )
             }
         }
+    }
+
+    companion object {
+        val ALREADY_REQUESTED = AtomicBoolean(false)
     }
 }

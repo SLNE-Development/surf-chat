@@ -10,7 +10,8 @@ import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.bukkit.command.argument.userArgument
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.bukkit.util.components
+import dev.slne.surf.chat.bukkit.util.appendInviteAccept
+import dev.slne.surf.chat.bukkit.util.appendInviteDecline
 import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.bukkit.util.user
 import dev.slne.surf.chat.core.service.channelService
@@ -87,8 +88,8 @@ fun CommandAPICommand.channelInviteCommand() = subcommand("invite") {
                     variableValue(channel.channelName)
                     info(" eingeladen. ")
 
-                    append(components.inviteAccept(channel))
-                    append(components.inviteDecline(channel))
+                    appendInviteAccept(channel)
+                    appendInviteDecline(channel)
                 }
             }
         }

@@ -6,6 +6,7 @@ import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.greedyStringArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.message.MessageType
+import dev.slne.surf.chat.api.server.ChatServer
 import dev.slne.surf.chat.bukkit.message.MessageDataImpl
 import dev.slne.surf.chat.bukkit.message.MessageFormatterImpl
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
@@ -17,7 +18,6 @@ import dev.slne.surf.chat.core.service.historyService
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import java.util.*
-import kotlin.jvm.optionals.getOrNull
 
 fun teamchatCommand() = commandAPICommand("teamchat", plugin) {
     withAliases("tc")
@@ -34,7 +34,10 @@ fun teamchatCommand() = commandAPICommand("teamchat", plugin) {
             null,
             System.currentTimeMillis(),
             messageId,
-            plugin.serverName.getOrNull() ?: "Error",
+            ChatServer.of(
+                plugin.chatServerConfig.config().internalName,
+                plugin.chatServerConfig.config().displayName
+            ),
             null,
             null,
             MessageType.TEAM

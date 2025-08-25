@@ -7,7 +7,6 @@ velocityPluginFile {
     main = "dev.slne.surf.chat.velocity.VelocityMain"
     name = "SurfChatVelocity"
     authors = listOf("red")
-    description = "SurfChat Velocity Plugin"
     version = "${project.version}"
 }
 

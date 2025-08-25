@@ -5,6 +5,7 @@ import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.api.message.MessageType
+import dev.slne.surf.chat.api.server.ChatServer
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.chat.SignedMessage
@@ -34,7 +35,7 @@ interface SurfChatApi {
         sender: User,
         receiver: User? = null,
         sentAt: Long = System.currentTimeMillis(),
-        server: String = "unspecified",
+        server: ChatServer = ChatServer.default(),
         channel: Channel? = null,
         signedMessage: SignedMessage? = null
     )

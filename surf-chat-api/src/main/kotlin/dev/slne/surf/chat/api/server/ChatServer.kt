@@ -1,17 +1,41 @@
 package dev.slne.surf.chat.api.server
 
 interface ChatServer {
-  /**
-   * The user-facing display name of the chat server.
-   * This is intended to be shown to end users.
-   */
-  val name: String
-  /**
-   * The internal name of the chat server, used for identification within the system.
-   *
-   * Unlike [name], which is intended for display to end users and may be localized or formatted for presentation,
-   * [internalName] is a stable, unique identifier used internally (e.g., for configuration, logging, or referencing servers in code).
-   * Use [internalName] when you need a value that does not change and is not user-facing.
-   */
-  val internalName: String
+    /**
+     * The user-facing display name of the chat server.
+     * This is intended to be shown to end users.
+     */
+    val name: String
+
+    /**
+     * The internal name of the chat server, used for identification within the system.
+     *
+     * Unlike [name], which is intended for display to end users and may be localized or formatted for presentation,
+     * [internalName] is a stable, unique identifier used internally (e.g., for configuration, logging, or referencing servers in code).
+     * Use [internalName] when you need a value that does not change and is not user-facing.
+     */
+    val internalName: String
+
+    companion object {
+        fun default() = object : ChatServer {
+            override val name: String
+                get() = "Unspecified"
+            override val internalName: String
+                get() = "null"
+        }
+
+        fun of(internalName: String) = object : ChatServer {
+            override val name: String
+                get() = internalName.lowercase().replaceFirstChar { it.uppercase() }
+            override val internalName: String
+                get() = internalName
+        }
+
+        fun of(name: String, internalName: String) = object : ChatServer {
+            override val name: String
+                get() = name
+            override val internalName: String
+                get() = internalName
+        }
+    }
 }

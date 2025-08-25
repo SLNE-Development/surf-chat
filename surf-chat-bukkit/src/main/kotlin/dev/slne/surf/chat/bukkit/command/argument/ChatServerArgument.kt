@@ -2,6 +2,7 @@ package dev.slne.surf.chat.bukkit.command.argument
 
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.arguments.Argument
+import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.CustomArgument
 import dev.jorel.commandapi.arguments.StringArgument
 import dev.slne.surf.chat.api.server.ChatServer
@@ -12,7 +13,9 @@ class ChatServerArgument(nodeName: String) :
         ChatServer.of(info.input)
     }) {
     init {
-        arrayOf(plugin.server.internalName)
+        replaceSuggestions(ArgumentSuggestions.stringCollection {
+            listOf(plugin.server.internalName)
+        })
     }
 }
 

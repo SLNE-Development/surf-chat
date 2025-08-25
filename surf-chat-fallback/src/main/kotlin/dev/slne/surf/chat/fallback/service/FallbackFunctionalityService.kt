@@ -27,7 +27,7 @@ class FallbackFunctionalityService : FunctionalityService, Services.Fallback {
     override suspend fun isEnabledForServer(server: ChatServer): Boolean = newSuspendedTransaction(
         Dispatchers.IO
     ) {
-        FunctionalityTable.select(FunctionalityTable.server eq server.internalName)
+        FunctionalityTable.selectAll().where(FunctionalityTable.server eq server.internalName)
             .firstOrNull()?.let {
                 it[FunctionalityTable.chatEnabled]
             } ?: true

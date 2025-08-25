@@ -6,6 +6,7 @@ import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.api.message.MessageType
+import dev.slne.surf.chat.api.server.ChatServer
 import dev.slne.surf.chat.core.message.MessageData
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.historyService
@@ -23,7 +24,7 @@ class FallbackSurfChatApi : SurfChatApi, Services.Fallback {
         sender: User,
         receiver: User?,
         sentAt: Long,
-        server: String,
+        server: ChatServer,
         channel: Channel?,
         signedMessage: SignedMessage?
     ) {
@@ -38,7 +39,7 @@ class FallbackSurfChatApi : SurfChatApi, Services.Fallback {
                 get() = receiver
             override val sentAt: Long
                 get() = sentAt
-            override val server: String
+            override val server: ChatServer
                 get() = server
             override val channel: Channel?
                 get() = channel

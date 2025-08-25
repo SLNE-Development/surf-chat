@@ -4,33 +4,27 @@ import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.entry.DenylistEntry
 import dev.slne.surf.chat.core.service.DenylistService
 import dev.slne.surf.chat.fallback.model.FallbackDenylistEntry
+import dev.slne.surf.chat.fallback.table.DenylistTable
 import dev.slne.surf.surfapi.core.api.util.mutableObjectListOf
 import dev.slne.surf.surfapi.core.api.util.toObjectList
 import it.unimi.dsi.fastutil.objects.ObjectList
 import kotlinx.coroutines.Dispatchers
 import net.kyori.adventure.util.Services
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 
 @AutoService(DenylistService::class)
 class FallbackDenylistService : DenylistService, Services.Fallback {
-    object DenylistEntries : Table("chat_denylist_entries") {
-        val index = integer("index").autoIncrement().uniqueIndex()
-        val word = varchar("word", 255).uniqueIndex()
-        val reason = text("reason")
-        val addedBy = varchar("added_by", 16)
-        val addedAt = long("added_at")
-
-        override val primaryKey = PrimaryKey(index)
-    }
-
     val entries = mutableObjectListOf<DenylistEntry>()
 
     override fun createTable() {
         transaction {
-            SchemaUtils.create(DenylistEntries)
+            SchemaUtils.create(DenylistTable)
         }
     }
 
@@ -40,11 +34,11 @@ class FallbackDenylistService : DenylistService, Services.Fallback {
         addedBy: String,
         addedAt: Long
     ) = newSuspendedTransaction(Dispatchers.IO) {
-        DenylistEntries.insert {
-            it[DenylistEntries.word] = word
-            it[DenylistEntries.reason] = reason
-            it[DenylistEntries.addedBy] = addedBy
-            it[DenylistEntries.addedAt] = addedAt
+        DenylistTable.insert {
+            it[DenylistTable.word] = word
+            it[DenylistTable.reason] = reason
+            it[DenylistTable.addedBy] = addedBy
+            it[DenylistTable.addedAt] = addedAt
         }
 
         return@newSuspendedTransaction
@@ -84,34 +78,34 @@ class FallbackDenylistService : DenylistService, Services.Fallback {
     }
 
     override suspend fun removeEntry(word: String) = newSuspendedTransaction(Dispatchers.IO) {
-        DenylistEntries.deleteWhere { DenylistEntries.word eq word }
+        DenylistTable.deleteWhere { DenylistTable.word eq word }
         return@newSuspendedTransaction
     }
 
     override suspend fun hasEntry(word: String) = newSuspendedTransaction(Dispatchers.IO) {
-        val exists = DenylistEntries.selectAll().where(DenylistEntries.word eq word).count() > 0
+        val exists = DenylistTable.selectAll().where(DenylistTable.word eq word).count() > 0
         return@newSuspendedTransaction exists
     }
 
     override suspend fun getEntry(word: String) = newSuspendedTransaction(Dispatchers.IO) {
-        DenylistEntries.selectAll().where(DenylistEntries.word eq word).map {
+        DenylistTable.selectAll().where(DenylistTable.word eq word).map {
             FallbackDenylistEntry(
-                it[DenylistEntries.word],
-                it[DenylistEntries.reason],
-                it[DenylistEntries.addedBy],
-                it[DenylistEntries.addedAt]
+                it[DenylistTable.word],
+                it[DenylistTable.reason],
+                it[DenylistTable.addedBy],
+                it[DenylistTable.addedAt]
             )
         }.firstOrNull()
     }
 
     override suspend fun getEntries(): ObjectList<DenylistEntry> =
         newSuspendedTransaction(Dispatchers.IO) {
-            DenylistEntries.selectAll().map {
+            DenylistTable.selectAll().map {
                 FallbackDenylistEntry(
-                    it[DenylistEntries.word],
-                    it[DenylistEntries.reason],
-                    it[DenylistEntries.addedBy],
-                    it[DenylistEntries.addedAt]
+                    it[DenylistTable.word],
+                    it[DenylistTable.reason],
+                    it[DenylistTable.addedBy],
+                    it[DenylistTable.addedAt]
                 )
             }.toObjectList()
         }
@@ -119,12 +113,12 @@ class FallbackDenylistService : DenylistService, Services.Fallback {
     override suspend fun fetch() = newSuspendedTransaction(Dispatchers.IO) {
         entries.clear()
         entries.addAll(
-            DenylistEntries.selectAll().map {
+            DenylistTable.selectAll().map {
                 FallbackDenylistEntry(
-                    it[DenylistEntries.word],
-                    it[DenylistEntries.reason],
-                    it[DenylistEntries.addedBy],
-                    it[DenylistEntries.addedAt]
+                    it[DenylistTable.word],
+                    it[DenylistTable.reason],
+                    it[DenylistTable.addedBy],
+                    it[DenylistTable.addedAt]
                 )
             }
         )

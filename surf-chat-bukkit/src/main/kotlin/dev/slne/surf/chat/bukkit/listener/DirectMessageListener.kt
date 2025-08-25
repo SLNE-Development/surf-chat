@@ -2,6 +2,7 @@ package dev.slne.surf.chat.bukkit.listener
 
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.api.message.MessageType
+import dev.slne.surf.chat.api.server.ChatServer
 import dev.slne.surf.chat.bukkit.message.MessageDataImpl
 import dev.slne.surf.chat.bukkit.message.MessageFormatterImpl
 import dev.slne.surf.chat.bukkit.plugin
@@ -51,7 +52,7 @@ class DirectMessageListener : PluginMessageListener {
                     userService.getOfflineUser(targetUuid, targetName),
                     sentAt,
                     messageUuid,
-                    serverName,
+                    ChatServer.of(serverName),
                     null,
                     null,
                     MessageType.DIRECT

@@ -10,6 +10,7 @@ import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.api.message.MessageType
+import dev.slne.surf.chat.api.server.ChatServer
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.unixTime
@@ -129,7 +130,7 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
                                 append(CommonComponents.EM_DASH)
                                 appendSpace()
                                 variableKey("Server: ")
-                                variableValue(entry.server)
+                                variableValue(entry.server.name)
                                 appendNewline()
                                 append(CommonComponents.EM_DASH)
                                 appendSpace()
@@ -189,8 +190,9 @@ private suspend fun Map<String, String>.parseFilters(): HistoryFilter {
             this@parseFilters["--range"]?.let { parseRangeToMillis(it) }
         override val messageLike: String? =
             this@parseFilters["--message"]
-        override val server: String? =
-            this@parseFilters["--server"]
+        override val server: ChatServer? = this@parseFilters["--server"]?.let {
+            ChatServer.of(it)
+        }
         override val channel: String? =
             this@parseFilters["--channel"]
         override val deletedBy: String? =

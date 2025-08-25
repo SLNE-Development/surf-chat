@@ -1,5 +1,6 @@
 package dev.slne.surf.chat.bukkit.listener
 
+import dev.slne.surf.chat.api.server.ChatServer
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.Constants
 import org.bukkit.entity.Player
@@ -19,7 +20,7 @@ class ServerResponseListener : PluginMessageListener {
 
         message.inputStream().use { byteSteam ->
             DataInputStream(byteSteam).use { input ->
-                plugin.serverName = Optional.of(input.readUTF())
+                plugin.server = Optional.of(ChatServer.of(input.readUTF()))
             }
         }
     }

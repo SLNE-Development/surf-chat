@@ -6,6 +6,7 @@ import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.greedyStringArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.message.MessageType
+import dev.slne.surf.chat.api.server.ChatServer
 import dev.slne.surf.chat.bukkit.message.MessageDataImpl
 import dev.slne.surf.chat.bukkit.message.MessageFormatterImpl
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
@@ -34,7 +35,7 @@ fun teamchatCommand() = commandAPICommand("teamchat", plugin) {
             null,
             System.currentTimeMillis(),
             messageId,
-            plugin.serverName.getOrNull() ?: "Error",
+            plugin.server.getOrNull() ?: ChatServer.default(),
             null,
             null,
             MessageType.TEAM

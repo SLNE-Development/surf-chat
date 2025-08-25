@@ -3,6 +3,7 @@ package dev.slne.surf.chat.core.entry
 import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.api.message.MessageType
+import dev.slne.surf.chat.api.server.ChatServer
 import java.util.*
 
 data class HistoryEntryImpl(
@@ -11,7 +12,7 @@ data class HistoryEntryImpl(
     override val messageType: MessageType,
     override val sentAt: Long,
     override val message: String,
-    override val server: String,
+    override val server: ChatServer,
     override val deletedBy: String?,
     override val receiverUuid: UUID?,
     override val channel: String?
@@ -23,7 +24,7 @@ data class HistoryFilterImpl(
     override val messageType: MessageType?,
     override val range: Long?,
     override val messageLike: String?,
-    override val server: String?,
+    override val server: ChatServer?,
     override val deletedBy: String?,
     override val receiverUuid: UUID?,
     override val channel: String?,

@@ -60,7 +60,7 @@ fun SurfComponentBuilder.appendMessageData(messageData: MessageData) = append(bu
     variableValue(messageData.sentAt.unixTime())
     appendNewline()
     info("Gesendet auf Server ")
-    variableValue(messageData.server)
+    variableValue(messageData.server.name)
 })
 
 fun SurfComponentBuilder.appendName(player: Player) = append {
@@ -129,4 +129,11 @@ fun SurfComponentBuilder.appendSpyIcon() = append {
     spacer("[")
     info("SPY")
     spacer("]")
+}
+
+fun SurfComponentBuilder.appendWarningPrefix() = append {
+    darkSpacer("[")
+    error("!")
+    darkSpacer("]")
+    appendSpace()
 }

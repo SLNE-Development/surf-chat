@@ -18,7 +18,7 @@ class ConnectListener : Listener {
     fun onJoin(event: PlayerJoinEvent) {
         plugin.launch(Dispatchers.IO) {
 
-            if (plugin.serverName.isEmpty) {
+            if (plugin.server.isEmpty) {
                 delay(1000)
                 pluginMessageSender(Constants.CHANNEL_SERVER_REQUEST, event.player) {
                     writeUTF("Requesting data...")

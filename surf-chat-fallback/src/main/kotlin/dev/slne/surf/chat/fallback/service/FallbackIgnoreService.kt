@@ -4,6 +4,7 @@ import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.entry.IgnoreListEntry
 import dev.slne.surf.chat.core.service.IgnoreService
 import dev.slne.surf.chat.fallback.model.FallbackIgnoreListEntry
+import dev.slne.surf.chat.fallback.table.IgnoreListTable
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import kotlinx.coroutines.Dispatchers
@@ -16,21 +17,9 @@ import java.util.*
 
 @AutoService(IgnoreService::class)
 class FallbackIgnoreService : IgnoreService, Services.Fallback {
-    object IgnoreListEntries : Table("chat_ignore_list") {
-        val userUuid =
-            varchar("user_uuid", 36).transform({ UUID.fromString(it) }, { it.toString() })
-        val userName = varchar("user_name", 16).default("Error")
-        val targetUuid =
-            varchar("target_uuid", 36).transform({ UUID.fromString(it) }, { it.toString() })
-        val targetName = varchar("target_name", 16).default("Error")
-        val createdAt = long("created_at")
-
-        override val primaryKey = PrimaryKey(userUuid, targetUuid)
-    }
-
     override fun createTable() {
         transaction {
-            SchemaUtils.create(IgnoreListEntries)
+            SchemaUtils.create(IgnoreListTable)
         }
     }
 
@@ -41,7 +30,7 @@ class FallbackIgnoreService : IgnoreService, Services.Fallback {
         targetPlayerName: String
     ) =
         newSuspendedTransaction(Dispatchers.IO) {
-            IgnoreListEntries.insert {
+            IgnoreListTable.insert {
                 it[userUuid] = player
                 it[userName] = playerName
                 it[targetUuid] = target
@@ -53,7 +42,7 @@ class FallbackIgnoreService : IgnoreService, Services.Fallback {
 
     override suspend fun unIgnore(player: UUID, target: UUID) =
         newSuspendedTransaction(Dispatchers.IO) {
-            IgnoreListEntries.deleteWhere {
+            IgnoreListTable.deleteWhere {
                 (userUuid eq player) and (targetUuid eq target)
             }
             return@newSuspendedTransaction
@@ -61,22 +50,22 @@ class FallbackIgnoreService : IgnoreService, Services.Fallback {
 
     override suspend fun isIgnored(player: UUID, target: UUID) =
         newSuspendedTransaction(Dispatchers.IO) {
-            IgnoreListEntries.selectAll()
-                .where((IgnoreListEntries.userUuid eq player) and (IgnoreListEntries.targetUuid eq target))
+            IgnoreListTable.selectAll()
+                .where((IgnoreListTable.userUuid eq player) and (IgnoreListTable.targetUuid eq target))
                 .any()
         }
 
     override suspend fun getIgnoreList(player: UUID): ObjectSet<IgnoreListEntry> =
         newSuspendedTransaction(Dispatchers.IO) {
-            IgnoreListEntries.selectAll().where(
-                IgnoreListEntries.userUuid eq player
+            IgnoreListTable.selectAll().where(
+                IgnoreListTable.userUuid eq player
             ).map {
                 FallbackIgnoreListEntry(
-                    user = it[IgnoreListEntries.userUuid],
-                    name = it[IgnoreListEntries.userName],
-                    target = it[IgnoreListEntries.targetUuid],
-                    targetName = it[IgnoreListEntries.targetName],
-                    createdAt = it[IgnoreListEntries.createdAt]
+                    user = it[IgnoreListTable.userUuid],
+                    name = it[IgnoreListTable.userName],
+                    target = it[IgnoreListTable.targetUuid],
+                    targetName = it[IgnoreListTable.targetName],
+                    createdAt = it[IgnoreListTable.createdAt]
                 )
             }.toObjectSet()
 

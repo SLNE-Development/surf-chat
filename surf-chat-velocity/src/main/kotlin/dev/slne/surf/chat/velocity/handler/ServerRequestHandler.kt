@@ -27,6 +27,7 @@ class ServerRequestHandler {
         if (event.source !is ServerConnection) {
             return
         }
+
         val connection = event.source as ServerConnection
         connection.sendPluginMessage(
             channelServerResponse,

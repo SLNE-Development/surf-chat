@@ -23,7 +23,7 @@ class ConnectListener : Listener {
                 pluginMessageSender(Constants.CHANNEL_SERVER_REQUEST, event.player) {
                     writeUTF("Requesting data...")
                 }
-                ALREADY_REQUESTED = true
+                ALREADY_REQUESTED = false
             }
         }
 
@@ -52,6 +52,6 @@ class ConnectListener : Listener {
     }
 
     companion object {
-        val ALREADY_REQUESTED = AtomicBoolean(false)
+        var ALREADY_REQUESTED = false
     }
 }

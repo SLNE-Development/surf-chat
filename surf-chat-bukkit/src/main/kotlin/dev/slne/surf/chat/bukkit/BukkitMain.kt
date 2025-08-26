@@ -10,9 +10,12 @@ import dev.slne.surf.chat.bukkit.config.ConnectionMessageConfigProvider
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.chat.core.service.denylistService
 import dev.slne.surf.chat.core.service.functionalityService
+import dev.slne.surf.surfapi.bukkit.api.metrics.Metrics
 import org.bukkit.plugin.java.JavaPlugin
 
 val plugin get() = JavaPlugin.getPlugin(BukkitMain::class.java)
+
+lateinit var metrics: Metrics
 
 class BukkitMain : SuspendingJavaPlugin() {
     override fun onLoad() {
@@ -29,10 +32,16 @@ class BukkitMain : SuspendingJavaPlugin() {
             denylistService.fetch()
             functionalityService.fetch(server)
         }
+
+        metrics = Metrics(this, 27048)
     }
 
     override fun onDisable() {
         databaseService.closeConnection()
+
+        if (::metrics.isInitialized) {
+            metrics.shutdown()
+        }
     }
 
     val connectionMessageConfig = ConnectionMessageConfigProvider()

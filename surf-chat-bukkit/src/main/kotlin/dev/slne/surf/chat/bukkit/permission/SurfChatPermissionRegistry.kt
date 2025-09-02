@@ -52,7 +52,7 @@ object SurfChatPermissionRegistry : PermissionRegistry() {
     val COMMAND_CHANNEL_DEMOTE = create("$PREFIX_COMMAND.channel.demote")
     val COMMAND_CHANNEL_TRANSFER = create("$PREFIX_COMMAND.channel.transfer")
     val COMMAND_CHANNEL_INVITE = create("$PREFIX_COMMAND.channel.invite")
-    val COMMAND_CHANNEL_REVOKE = create("$PREFIX_COMMAND.channel.uninvite")
+    val COMMAND_CHANNEL_REVOKE = create("$PREFIX_COMMAND.channel.revoke")
     val COMMAND_CHANNEL_DECLINE = create("$PREFIX_COMMAND.channel.deny")
     val COMMAND_CHANNEL_MEMBERS = create("$PREFIX_COMMAND.channel.members")
 

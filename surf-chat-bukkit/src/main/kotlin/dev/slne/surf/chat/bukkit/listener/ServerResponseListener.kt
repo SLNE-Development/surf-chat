@@ -29,8 +29,8 @@ class ServerResponseListener : PluginMessageListener {
                     }
                 }
                 plugin.server = ChatServer.of(
-                    plugin.chatServerConfig.config().displayName,
-                    plugin.chatServerConfig.config().internalName
+                    plugin.chatServerConfig.config.displayName,
+                    plugin.chatServerConfig.config.internalName
                 )
             }
         }

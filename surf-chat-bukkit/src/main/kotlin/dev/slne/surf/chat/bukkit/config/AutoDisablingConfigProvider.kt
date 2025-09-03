@@ -23,5 +23,5 @@ class AutoDisablingConfigProvider {
         configManager.reloadFromFile()
     }
 
-    fun config() = configManager.config
+    val config get() = configManager.config
 }

@@ -50,7 +50,7 @@ class BukkitMain : SuspendingJavaPlugin() {
     val autoDisablingConfig = AutoDisablingConfigProvider()
 
     var server = ChatServer.of(
-        plugin.chatServerConfig.config().internalName,
-        plugin.chatServerConfig.config().displayName
+        plugin.chatServerConfig.config.internalName,
+        plugin.chatServerConfig.config.displayName
     )
 }

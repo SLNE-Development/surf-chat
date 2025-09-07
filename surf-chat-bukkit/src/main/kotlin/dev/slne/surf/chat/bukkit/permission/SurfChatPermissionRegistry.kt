@@ -68,12 +68,11 @@ object SurfChatPermissionRegistry : PermissionRegistry() {
     val COMMAND_CHANNEL_ADMIN_JOIN = create("$PREFIX_COMMAND.channel.admin.join")
     val COMMAND_CHANNEL_ADMIN_DELETE = create("$PREFIX_COMMAND.channel.admin.delete")
     val COMMAND_CHANNEL_ADMIN_SPY = create("$PREFIX_COMMAND.channel.admin.spy")
-
     val COMMAND_CHANNEL_ADMIN_SPY_CLEAR = create("$PREFIX_COMMAND.channel.admin.spy.clear")
+
     val COMMAND_SETTINGS = create("$PREFIX_COMMAND.settings")
     val COMMAND_SETTINGS_PING = create("$PREFIX_COMMAND.settings.ping")
     val COMMAND_SETTINGS_INVITES = create("$PREFIX_COMMAND.settings.invites")
-
     val COMMAND_SETTINGS_DIRECT_MESSAGES = create("$PREFIX_COMMAND.settings.direct-messages")
 
     val COMMAND_TEAMCHAT = create("$PREFIX_COMMAND.teamchat")

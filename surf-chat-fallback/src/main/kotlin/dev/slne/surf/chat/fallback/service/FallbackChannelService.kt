@@ -7,8 +7,8 @@ import dev.slne.surf.chat.api.channel.ChannelVisibility
 import dev.slne.surf.chat.api.entity.ChannelMember
 import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.core.service.ChannelService
-import dev.slne.surf.chat.fallback.entity.FallbackChannelMember
 import dev.slne.surf.chat.fallback.model.FallbackChannel
+import dev.slne.surf.chat.fallback.user.FallbackChannelMember
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.util.Services

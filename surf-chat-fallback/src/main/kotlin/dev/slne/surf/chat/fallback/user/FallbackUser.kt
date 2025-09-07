@@ -1,4 +1,4 @@
-package dev.slne.surf.chat.fallback.entity
+package dev.slne.surf.chat.fallback.user
 
 import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.entity.ChannelMember

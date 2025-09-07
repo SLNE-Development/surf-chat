@@ -17,7 +17,6 @@ import net.kyori.adventure.util.Services
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -47,13 +46,6 @@ class FallbackDenylistService : DenylistService, Services.Fallback {
             this.action =
                 DenylistActionEntity.find { DenylistActionsTable.name eq action.name }.firstOrNull()
                     ?: error("Denylist action not found: ${action.name}")
-        }
-
-        DenylistTable.insert {
-            it[DenylistTable.word] = word
-            it[DenylistTable.reason] = reason
-            it[DenylistTable.addedBy] = addedBy
-            it[DenylistTable.addedAt] = addedAt
         }
 
         return@newSuspendedTransaction

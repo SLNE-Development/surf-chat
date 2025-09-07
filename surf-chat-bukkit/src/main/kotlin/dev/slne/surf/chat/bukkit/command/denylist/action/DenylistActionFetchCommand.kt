@@ -12,7 +12,7 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import kotlin.system.measureTimeMillis
 
 fun CommandAPICommand.denylistActionFetchCommand() = subcommand("fetch") {
-    withPermission(SurfChatPermissionRegistry.COMMAND_DENYLIST_FETCH)
+    withPermission(SurfChatPermissionRegistry.COMMAND_DENYLIST_ACTION_FETCH)
     anyExecutor { executor, _ ->
         executor.sendText {
             appendPrefix()

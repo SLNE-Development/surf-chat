@@ -23,5 +23,6 @@ class ChatMotdConfigProvider {
         configManager.reloadFromFile()
     }
 
-    fun config() = configManager.config
+
+    val config get() = configManager.config
 }

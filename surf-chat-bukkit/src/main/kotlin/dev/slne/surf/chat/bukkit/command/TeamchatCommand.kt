@@ -35,8 +35,8 @@ fun teamchatCommand() = commandAPICommand("teamchat", plugin) {
             System.currentTimeMillis(),
             messageId,
             ChatServer.of(
-                plugin.chatServerConfig.config().internalName,
-                plugin.chatServerConfig.config().displayName
+                plugin.chatServerConfig.config.internalName,
+                plugin.chatServerConfig.config.displayName
             ),
             null,
             null,

@@ -22,6 +22,6 @@ class ConnectionMessageConfigProvider {
     fun reload() {
         configManager.reloadFromFile()
     }
-
-    fun config() = configManager.config
+    
+    val config get() = configManager.config
 }

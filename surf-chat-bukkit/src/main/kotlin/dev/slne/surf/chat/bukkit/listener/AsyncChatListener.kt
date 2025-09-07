@@ -149,6 +149,6 @@ class AsyncChatListener : Listener {
 
     fun checkAutoDisabling(player: Player): Boolean =
         !player.hasPermission(SurfChatPermissionRegistry.AUTO_CHAT_DISABLING_BYPASS)
-                && Bukkit.getOnlinePlayers().size > plugin.autoDisablingConfig.config().maximumPlayersBeforeDisable
-                && plugin.autoDisablingConfig.config().enabled
+                && Bukkit.getOnlinePlayers().size > plugin.autoDisablingConfig.config.maximumPlayersBeforeDisable
+                && plugin.autoDisablingConfig.config.enabled
 }

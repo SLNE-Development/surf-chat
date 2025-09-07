@@ -1,6 +1,7 @@
 package dev.slne.surf.chat.fallback.entity
 
 import dev.slne.surf.chat.fallback.model.FallbackDenylistEntry
+import dev.slne.surf.chat.fallback.table.DenylistActionsTable
 import dev.slne.surf.chat.fallback.table.DenylistTable
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
@@ -13,11 +14,13 @@ class DenylistEntryEntity(id: EntityID<Int>) : IntEntity(id) {
     var reason by DenylistTable.reason
     var addedBy by DenylistTable.addedBy
     var addedAt by DenylistTable.addedAt
+    val action by DenylistActionEntity referencedOn DenylistActionsTable.id
 
     fun toDto() = FallbackDenylistEntry(
         word,
         reason,
         addedBy,
-        addedAt
+        addedAt,
+        action.toDto()
     )
 }

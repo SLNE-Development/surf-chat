@@ -1,9 +1,13 @@
 package dev.slne.surf.chat.fallback.service
 
 import com.google.auto.service.AutoService
+import dev.slne.surf.chat.api.DenylistAction
 import dev.slne.surf.chat.api.entry.DenylistEntry
 import dev.slne.surf.chat.core.service.DenylistService
+import dev.slne.surf.chat.fallback.entity.DenylistActionEntity
+import dev.slne.surf.chat.fallback.entity.DenylistEntryEntity
 import dev.slne.surf.chat.fallback.model.FallbackDenylistEntry
+import dev.slne.surf.chat.fallback.table.DenylistActionsTable
 import dev.slne.surf.chat.fallback.table.DenylistTable
 import dev.slne.surf.surfapi.core.api.util.mutableObjectListOf
 import dev.slne.surf.surfapi.core.api.util.toObjectList
@@ -24,7 +28,7 @@ class FallbackDenylistService : DenylistService, Services.Fallback {
 
     override fun createTable() {
         transaction {
-            SchemaUtils.create(DenylistTable)
+            SchemaUtils.create(DenylistTable, DenylistActionsTable)
         }
     }
 
@@ -32,8 +36,18 @@ class FallbackDenylistService : DenylistService, Services.Fallback {
         word: String,
         reason: String,
         addedBy: String,
-        addedAt: Long
+        addedAt: Long,
+        action: DenylistAction
     ) = newSuspendedTransaction(Dispatchers.IO) {
+        DenylistEntryEntity.new {
+            this.word = word
+            this.reason = reason
+            this.addedBy = addedBy
+            this.addedAt = addedAt
+            this.action =
+                DenylistActionEntity.find { DenylistActionsTable.name eq action.name }.first()
+        }
+
         DenylistTable.insert {
             it[DenylistTable.word] = word
             it[DenylistTable.reason] = reason
@@ -48,11 +62,12 @@ class FallbackDenylistService : DenylistService, Services.Fallback {
         word: String,
         reason: String,
         addedBy: String,
-        addedAt: Long
+        addedAt: Long,
+        action: DenylistAction
     ) {
         entries.add(
             FallbackDenylistEntry(
-                word, reason, addedBy, addedAt
+                word, reason, addedBy, addedAt, action
             )
         )
     }

@@ -1,5 +1,7 @@
 package dev.slne.surf.chat.api.entry
 
+import dev.slne.surf.chat.api.DenylistAction
+
 /**
  * Represents an entry in the denylist.
  *
@@ -13,4 +15,5 @@ interface DenylistEntry {
     val reason: String
     val addedBy: String
     val addedAt: Long
+    val action: DenylistAction
 }

@@ -1,5 +1,6 @@
 package dev.slne.surf.chat.core.service
 
+import dev.slne.surf.chat.api.DenylistAction
 import dev.slne.surf.chat.api.entry.DenylistEntry
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectList
@@ -9,14 +10,16 @@ interface DenylistService : ServiceUsingDatabase {
         word: String,
         reason: String,
         addedBy: String,
-        addedAt: Long
+        addedAt: Long,
+        action: DenylistAction
     )
 
     fun addLocalEntry(
         word: String,
         reason: String,
         addedBy: String,
-        addedAt: Long
+        addedAt: Long,
+        action: DenylistAction
     )
 
     fun removeLocalEntry(word: String)

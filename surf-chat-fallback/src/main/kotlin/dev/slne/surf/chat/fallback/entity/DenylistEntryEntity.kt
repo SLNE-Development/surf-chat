@@ -14,7 +14,7 @@ class DenylistEntryEntity(id: EntityID<Int>) : IntEntity(id) {
     var reason by DenylistTable.reason
     var addedBy by DenylistTable.addedBy
     var addedAt by DenylistTable.addedAt
-    val action by DenylistActionEntity referencedOn DenylistActionsTable.id
+    var action by DenylistActionEntity referencedOn DenylistActionsTable.id
 
     fun toDto() = FallbackDenylistEntry(
         word,

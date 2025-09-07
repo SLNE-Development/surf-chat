@@ -45,7 +45,8 @@ class FallbackDenylistService : DenylistService, Services.Fallback {
             this.addedBy = addedBy
             this.addedAt = addedAt
             this.action =
-                DenylistActionEntity.find { DenylistActionsTable.name eq action.name }.first()
+                DenylistActionEntity.find { DenylistActionsTable.name eq action.name }.firstOrNull()
+                    ?: error("Denylist action not found: ${action.name}")
         }
 
         DenylistTable.insert {
@@ -103,38 +104,23 @@ class FallbackDenylistService : DenylistService, Services.Fallback {
     }
 
     override suspend fun getEntry(word: String) = newSuspendedTransaction(Dispatchers.IO) {
-        DenylistTable.selectAll().where(DenylistTable.word eq word).map {
-            FallbackDenylistEntry(
-                it[DenylistTable.word],
-                it[DenylistTable.reason],
-                it[DenylistTable.addedBy],
-                it[DenylistTable.addedAt]
-            )
+        DenylistEntryEntity.find(DenylistTable.word eq word).map {
+            it.toDto()
         }.firstOrNull()
     }
 
     override suspend fun getEntries(): ObjectList<DenylistEntry> =
         newSuspendedTransaction(Dispatchers.IO) {
-            DenylistTable.selectAll().map {
-                FallbackDenylistEntry(
-                    it[DenylistTable.word],
-                    it[DenylistTable.reason],
-                    it[DenylistTable.addedBy],
-                    it[DenylistTable.addedAt]
-                )
+            DenylistEntryEntity.all().map {
+                it.toDto()
             }.toObjectList()
         }
 
     override suspend fun fetch() = newSuspendedTransaction(Dispatchers.IO) {
         entries.clear()
         entries.addAll(
-            DenylistTable.selectAll().map {
-                FallbackDenylistEntry(
-                    it[DenylistTable.word],
-                    it[DenylistTable.reason],
-                    it[DenylistTable.addedBy],
-                    it[DenylistTable.addedAt]
-                )
+            DenylistEntryEntity.all().map {
+                it.toDto()
             }
         )
         return@newSuspendedTransaction

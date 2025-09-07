@@ -11,12 +11,12 @@ import dev.slne.surf.chat.core.service.denylistService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import kotlin.system.measureTimeMillis
 
-fun CommandAPICommand.denylistFetchCommand() = subcommand("fetch") {
+fun CommandAPICommand.denylistActionFetchCommand() = subcommand("fetch") {
     withPermission(SurfChatPermissionRegistry.COMMAND_DENYLIST_FETCH)
-    anyExecutor { executor, args ->
+    anyExecutor { executor, _ ->
         executor.sendText {
             appendPrefix()
-            info("Die Denylist wird aktualisiert...")
+            info("Die Denylist Aktionen werden aktualisiert...")
         }
 
         plugin.launch {
@@ -26,7 +26,7 @@ fun CommandAPICommand.denylistFetchCommand() = subcommand("fetch") {
 
             executor.sendText {
                 appendPrefix()
-                success("Die Denylist wurde erfolgreich aktualisiert")
+                success("Die Denylist Aktionen wurde erfolgreich aktualisiert")
                 appendSpace()
                 spacer("(")
                 append(ms.coloredComponent(250))

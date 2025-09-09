@@ -69,15 +69,7 @@ class AsyncChatListener : Listener {
         }
         val messageFormatter = MessageFormatterImpl(cleanedMessage)
 
-        if (!messageValidator.isSuccess(user)) {
-            event.cancel()
-
-            player.sendText {
-                appendPrefix()
-                append(messageValidator.failureMessage)
-            }
-            return
-        }
+        val validationResult = messageValidator.validate(user)
 
         val channel = channelService.getChannel(user)
         val time = System.currentTimeMillis()

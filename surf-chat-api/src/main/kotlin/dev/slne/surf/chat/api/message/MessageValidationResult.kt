@@ -11,6 +11,9 @@ sealed class MessageValidationResult {
     fun isSuccess(): Boolean = this is Success
     fun isFailure(): Boolean = this is Failure
 
+    fun getErrorOrNull(): MessageValidationError? = (this as? Failure)?.error
+    fun getErrorOrThrow(): MessageValidationError =
+        (this as? Failure)?.error ?: error("No error found.")
 
     sealed class MessageValidationError(val errorMessage: Component) {
         class EmptyContent :

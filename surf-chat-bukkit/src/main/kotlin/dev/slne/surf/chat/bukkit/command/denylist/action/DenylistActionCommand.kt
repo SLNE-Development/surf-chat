@@ -5,4 +5,9 @@ import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 
 fun denylistActionCommand() = commandAPICommand("denylist") {
     withPermission(SurfChatPermissionRegistry.COMMAND_DENYLIST_ACTION)
+
+    denylistActionAddCommand()
+    denylistActionRemoveCommand()
+    denylistActionFetchCommand()
+    denylistActionListCommand()
 }

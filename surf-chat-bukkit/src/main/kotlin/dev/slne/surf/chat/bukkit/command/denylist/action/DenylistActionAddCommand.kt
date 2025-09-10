@@ -7,8 +7,8 @@ import dev.slne.surf.chat.api.entry.DenylistActionType
 import dev.slne.surf.chat.bukkit.command.argument.denylistActionArgument
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.core.entry.DenylistActionImpl
 import dev.slne.surf.chat.core.service.denylistActionService
-import dev.slne.surf.chat.core.service.denylistService
 import dev.slne.surf.surfapi.bukkit.api.command.args.miniMessageArgument
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import net.kyori.adventure.text.Component
@@ -25,8 +25,6 @@ fun CommandAPICommand.denylistActionAddCommand() = subcommand("add") {
         val reason: Component by args
         val durationInMinutes: Int by args
 
-        val addedAt = System.currentTimeMillis()
-
         if (denylistActionService.hasLocalAction(name)) {
             executor.sendText {
                 appendPrefix()
@@ -36,36 +34,48 @@ fun CommandAPICommand.denylistActionAddCommand() = subcommand("add") {
             }
             return@anyExecutor
         } else {
-            denylistActionService.addLocalAction(word, reason ?: "Verbotenes Wort", name, addedAt)
+            denylistActionService.addLocalAction(
+                DenylistActionImpl(
+                    name,
+                    type,
+                    reason,
+                    durationInMinutes * 60 * 1000L
+                )
+            )
         }
-
-
 
         executor.sendText {
             appendPrefix()
-            success("Der Eintrag ")
-            variableValue(word)
-            success(" wurde erfolgreich zur internen Denylist hinzugefügt.")
+            success("Die Aktion ")
+            variableValue(name)
+            success(" wurde erfolgreich zur internen Aktionsliste hinzugefügt.")
         }
 
         plugin.launch {
             if (denylistActionService.hasAction(name)) {
                 executor.sendText {
                     appendPrefix()
-                    error("Der Eintrag ")
+                    error("Die Aktion ")
                     variableValue(name)
-                    error(" ist bereits in der externen Denylist vorhanden.")
+                    error(" ist bereits in der externen Aktionsliste vorhanden.")
                 }
                 return@launch
             }
 
-            denylistService.addEntry(word, reason ?: "Verbotenes Wort", name, addedAt)
+            denylistActionService.addAction(
+                DenylistActionImpl(
+                    name,
+                    type,
+                    reason,
+                    durationInMinutes * 60 * 1000L
+                )
+            )
 
             executor.sendText {
                 appendPrefix()
-                success("Der Eintrag ")
-                variableValue(word)
-                success(" wurde erfolgreich zur externen Denylist hinzugefügt.")
+                success("Die Aktion ")
+                variableValue(name)
+                success(" wurde erfolgreich zur externen Aktionsliste hinzugefügt.")
             }
         }
     }

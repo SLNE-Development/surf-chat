@@ -5,55 +5,56 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.anyExecutor
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.subcommand
-import dev.slne.surf.chat.bukkit.command.argument.denylistWordArgument
+import dev.slne.surf.chat.api.DenylistAction
+import dev.slne.surf.chat.bukkit.command.argument.denylistActionArgument
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.core.service.denylistService
+import dev.slne.surf.chat.core.service.denylistActionService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
-fun CommandAPICommand.denylistRemoveCommand() = subcommand("remove") {
-    withPermission(SurfChatPermissionRegistry.COMMAND_DENYLIST_REMOVE)
-    denylistWordArgument("word")
+fun CommandAPICommand.denylistActionRemoveCommand() = subcommand("remove") {
+    withPermission(SurfChatPermissionRegistry.COMMAND_DENYLIST_ACTION_REMOVE)
+    denylistActionArgument("action")
     anyExecutor { executor, args ->
-        val word: String by args
+        val action: DenylistAction by args
 
-        if (!denylistService.hasLocalEntry(word)) {
+        if (!denylistActionService.hasLocalAction(action.name)) {
             executor.sendText {
                 appendPrefix()
-                error("Der Eintrag ")
-                variableValue(word)
-                error(" ist nicht in der internen Denylist vorhanden.")
+                error("Die Aktion ")
+                variableValue(action.name)
+                error(" ist nicht in der internen Aktionsliste vorhanden.")
             }
             return@anyExecutor
+        } else {
+            denylistActionService.removeLocalAction(action)
         }
-
-        denylistService.removeLocalEntry(word)
 
         executor.sendText {
             appendPrefix()
-            success("Der Eintrag ")
-            variableValue(word)
-            success(" wurde erfolgreich aus der internen Denylist gelöscht.")
+            success("Die Aktion ")
+            variableValue(action.name)
+            success(" wurde erfolgreich aus der internen Aktionsliste gelöscht.")
         }
 
         plugin.launch {
-            if (!denylistService.hasEntry(word)) {
+            if (!denylistActionService.hasAction(action.name)) {
                 executor.sendText {
                     appendPrefix()
-                    error("Der Eintrag ")
-                    variableValue(word)
-                    error(" ist nicht in der externen Denylist vorhanden.")
+                    error("Die Aktion ")
+                    variableValue(action.name)
+                    error(" ist nicht in der externen Aktionsliste vorhanden.")
                 }
                 return@launch
             }
 
-            denylistService.removeEntry(word)
+            denylistActionService.removeAction(action)
 
             executor.sendText {
                 appendPrefix()
-                success("Der Eintrag ")
-                variableValue(word)
-                success(" wurde erfolgreich aus der externen Denylist gelöscht.")
+                success("Die Aktion ")
+                variableValue(action.name)
+                success(" wurde erfolgreich aus der externen Aktionsliste gelöscht.")
             }
         }
     }

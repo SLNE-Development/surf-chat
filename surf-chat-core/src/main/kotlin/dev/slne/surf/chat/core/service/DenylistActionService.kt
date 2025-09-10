@@ -27,6 +27,8 @@ interface DenylistActionService {
      */
     suspend fun removeAction(action: DenylistAction)
 
+    suspend fun hasAction(name: String): Boolean
+
     /**
      * Retrieves the list of actions related to the Denylist from the desired source.
      * This method is implemented as a suspending function, meaning it can perform
@@ -73,6 +75,8 @@ interface DenylistActionService {
      * the available local denylist actions.
      */
     fun listLocalActions(): ObjectSet<DenylistAction>
+
+    fun hasLocalAction(name: String): Boolean
 
 
     suspend fun makeAction(entry: DenylistEntry, message: SignedMessage, sender: User)

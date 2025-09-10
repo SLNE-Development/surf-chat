@@ -38,6 +38,11 @@ class FallbackDenylistActionService : DenylistActionService, Services.Fallback {
             return@newSuspendedTransaction
         }
 
+    override suspend fun hasAction(name: String) = newSuspendedTransaction(Dispatchers.IO) {
+        val exists = DenylistActionEntity.find { DenylistActionsTable.name eq name }.firstOrNull()
+        return@newSuspendedTransaction exists != null
+    }
+
     override suspend fun fetchActions() = newSuspendedTransaction(Dispatchers.IO) {
         localActions.clear()
         localActions.addAll(DenylistActionEntity.all().map {
@@ -51,6 +56,8 @@ class FallbackDenylistActionService : DenylistActionService, Services.Fallback {
     override fun getLocalAction(name: String) = localActions.firstOrNull { it.name == name }
 
     override fun listLocalActions() = localActions
+    override fun hasLocalAction(name: String) = localActions.any { it.name == name }
+
     override suspend fun makeAction(
         entry: DenylistEntry,
         message: SignedMessage,

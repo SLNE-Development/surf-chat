@@ -54,6 +54,8 @@ class AsyncChatListener : Listener {
                         user
                     )
                 }
+            } else {
+                event.cancel()
             }
 
             if (

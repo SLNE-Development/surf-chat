@@ -80,8 +80,9 @@ class FallbackDenylistActionService : DenylistActionService, Services.Fallback {
 
             }
         }
-
+        println("Deleting message in 3s...")
         delay(3.seconds)
         Bukkit.getServer().deleteMessage(message)
+        println("Requested Message deletion")
     }
 }

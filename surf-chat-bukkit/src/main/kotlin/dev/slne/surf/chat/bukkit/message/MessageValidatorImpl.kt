@@ -88,9 +88,9 @@ class MessageValidatorImpl {
                 )
             }
 
-            val pair = this.isValidInput(message)
+            val pair = this.validateInput(message)
 
-            if (pair.first) {
+            if (!pair.first) {
                 return MessageValidationResult.Failure(
                     MessageValidationResult.MessageValidationError.BadCharacters(
                         pair.second
@@ -134,7 +134,11 @@ class MessageValidatorImpl {
             return Pair(false, null)
         }
 
-        private fun isValidInput(input: String) = validCharactersRegex.matches(input) to input
+        private fun validateInput(input: String): Pair<Boolean, String> {
+            val invalidChars = input.filter { !validCharactersRegex.matches(it.toString()) }
+            return invalidChars.isEmpty() to invalidChars
+        }
+
         private fun isSpamming(uuid: UUID): Pair<Boolean, Long?> {
             val currentTime = System.currentTimeMillis()
             val windowStart = currentTime - 3_000

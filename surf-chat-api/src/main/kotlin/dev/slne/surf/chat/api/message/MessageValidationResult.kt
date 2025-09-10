@@ -37,7 +37,7 @@ sealed class MessageValidationResult {
         data class BadCharacters(val chars: String) :
             MessageValidationError(
                 buildText { error("Deine Nachricht enthält unerlaubte Zeichen.") },
-                "Unerlaubte Zeichen"
+                "Unerlaubte Zeichen: $chars"
             )
 
         data class TooOften(val next: Long) :

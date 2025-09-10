@@ -7,4 +7,5 @@ object DenylistTable : IntIdTable("chat_denylist_entries") {
     val reason = text("reason")
     val addedBy = varchar("added_by", 16)
     val addedAt = long("added_at")
+    val action = reference("action_id", DenylistActionsTable)
 }

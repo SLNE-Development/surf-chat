@@ -15,8 +15,6 @@ class DenylistActionTypeArgument(nodeName: String) :
             "ban" -> DenylistActionType.BAN
             "mute" -> DenylistActionType.MUTE
             "warn" -> DenylistActionType.WARN
-            "delete", "del" -> DenylistActionType.DELETE
-            "notify", "info" -> DenylistActionType.NOTIFY
             else -> throw CustomArgumentException.fromAdventureComponent {
                 buildText {
                     appendPrefix()

@@ -15,26 +15,47 @@ sealed class MessageValidationResult {
     fun getErrorOrThrow(): MessageValidationError =
         (this as? Failure)?.error ?: error("No error found.")
 
-    sealed class MessageValidationError(val errorMessage: Component) {
+    sealed class MessageValidationError(val errorMessage: Component, val name: String) {
         class EmptyContent :
-            MessageValidationError(buildText { error("Deine Nachricht darf nicht leer sein.") })
+            MessageValidationError(
+                buildText { error("Deine Nachricht darf nicht leer sein.") },
+                "Kein Inhalt"
+            )
 
         data class DenylistedWord(val denylistEntry: DenylistEntry) :
-            MessageValidationError(buildText { error("Bitte achte auf deine Wortwahl.") })
+            MessageValidationError(
+                buildText { error("Bitte achte auf deine Wortwahl.") },
+                "Unerlaubtes Wort: ${denylistEntry.word}"
+            )
 
         data class BadLink(val url: String) :
-            MessageValidationError(buildText { error("Deine Nachricht enthält einen unerlaubten Link.") })
+            MessageValidationError(
+                buildText { error("Deine Nachricht enthält einen unerlaubten Link.") },
+                "Unerlaubter Link: $url"
+            )
 
         data class BadCharacters(val chars: String) :
-            MessageValidationError(buildText { error("Deine Nachricht enthält unerlaubte Zeichen.") })
+            MessageValidationError(
+                buildText { error("Deine Nachricht enthält unerlaubte Zeichen.") },
+                "Unerlaubte Zeichen"
+            )
 
         data class TooOften(val next: Long) :
-            MessageValidationError(buildText { error("Bitte warte einen Moment, bevor du eine weitere Nachricht sendest.") })
+            MessageValidationError(
+                buildText { error("Bitte warte einen Moment, bevor du eine weitere Nachricht sendest.") },
+                "Spam"
+            )
 
         class AutoDisabled :
-            MessageValidationError(buildText { error("Du kannst zurzeit nicht schreiben.") })
+            MessageValidationError(
+                buildText { error("Du kannst zurzeit nicht schreiben.") },
+                "Zu viele Spieler"
+            )
 
         class ChatDisabled :
-            MessageValidationError(buildText { error("Der Chat ist vorübergehend deaktiviert.") })
+            MessageValidationError(
+                buildText { error("Der Chat ist vorübergehend deaktiviert.") },
+                "Chat deaktiviert"
+            )
     }
 }

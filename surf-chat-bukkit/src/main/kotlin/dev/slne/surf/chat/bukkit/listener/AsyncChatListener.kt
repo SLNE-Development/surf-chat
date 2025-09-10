@@ -12,6 +12,7 @@ import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.denylistActionService
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.chat.core.service.spyService
+import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import io.papermc.paper.event.player.AsyncChatEvent
 import org.bukkit.Bukkit
@@ -45,23 +46,35 @@ class AsyncChatListener : Listener {
                 append(error.errorMessage)
             }
 
-            when (error) {
-                is MessageValidationResult.MessageValidationError.BadCharacters -> TODO()
-                is MessageValidationResult.MessageValidationError.BadLink -> TODO()
-                is MessageValidationResult.MessageValidationError.DenylistedWord -> {
-                    plugin.launch {
-                        denylistActionService.makeAction(
-                            error.denylistEntry,
-                            event.signedMessage(),
-                            user
-                        )
-                    }
+            if (error is MessageValidationResult.MessageValidationError.DenylistedWord) {
+                plugin.launch {
+                    denylistActionService.makeAction(
+                        error.denylistEntry,
+                        event.signedMessage(),
+                        user
+                    )
                 }
+            }
 
-                is MessageValidationResult.MessageValidationError.EmptyContent -> TODO()
-                is MessageValidationResult.MessageValidationError.TooOften -> TODO()
-                is MessageValidationResult.MessageValidationError.AutoDisabled -> TODO()
-                is MessageValidationResult.MessageValidationError.ChatDisabled -> TODO()
+            if (
+                error is MessageValidationResult.MessageValidationError.BadLink ||
+                error is MessageValidationResult.MessageValidationError.BadCharacters ||
+                error is MessageValidationResult.MessageValidationError.EmptyContent ||
+                error is MessageValidationResult.MessageValidationError.DenylistedWord
+            ) {
+                sendTeamMessage {
+                    appendBotIcon()
+                    info("Eine Nachricht von ")
+                    variableValue(user.name)
+                    info(" wurde blockiert.")
+                    appendSpace()
+                    info("Grund: ")
+                    variableValue(error.name)
+
+                    hoverEvent(buildText {
+                        info(plainMessage)
+                    })
+                }
             }
         }
 

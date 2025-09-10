@@ -8,9 +8,6 @@ import dev.slne.surf.chat.api.entry.DenylistEntry
 import dev.slne.surf.chat.core.service.DenylistActionService
 import dev.slne.surf.chat.fallback.entity.DenylistActionEntity
 import dev.slne.surf.chat.fallback.table.DenylistActionsTable
-import dev.slne.surf.chat.fallback.util.appendBotIcon
-import dev.slne.surf.chat.fallback.util.sendTeamMessage
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -60,23 +57,21 @@ class FallbackDenylistActionService : DenylistActionService, Services.Fallback {
         sender: User
     ) {
         when (entry.action.actionType) {
-            DenylistActionType.NOTIFY -> {
-                sendTeamMessage {
-                    appendBotIcon()
-                    info("Eine Nachricht von ")
-                    variableValue(sender.name)
-                    info(" wurde blockiert.")
+            DenylistActionType.BAN -> {
 
-                    hoverEvent(buildText {
-                        info(message.message())
-                    })
-                }
             }
 
-            DenylistActionType.BAN -> TODO()
-            DenylistActionType.KICK -> TODO()
-            DenylistActionType.MUTE -> TODO()
-            DenylistActionType.WARN -> TODO()
+            DenylistActionType.KICK -> {
+
+            }
+
+            DenylistActionType.MUTE -> {
+
+            }
+
+            DenylistActionType.WARN -> {
+
+            }
         }
 
         delay(3.seconds)

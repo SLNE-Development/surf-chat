@@ -30,5 +30,11 @@ sealed class MessageValidationResult {
 
         data class TooOften(val next: Long) :
             MessageValidationError(buildText { error("Bitte warte einen Moment, bevor du eine weitere Nachricht sendest.") })
+
+        class AutoDisabled :
+            MessageValidationError(buildText { error("Du kannst zurzeit nicht schreiben.") })
+
+        class ChatDisabled :
+            MessageValidationError(buildText { error("Der Chat ist vorübergehend deaktiviert.") })
     }
 }

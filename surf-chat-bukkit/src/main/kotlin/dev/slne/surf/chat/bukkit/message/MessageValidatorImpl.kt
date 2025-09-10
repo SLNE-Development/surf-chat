@@ -3,9 +3,11 @@ package dev.slne.surf.chat.bukkit.message
 import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.message.MessageValidationResult
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.plainText
 import dev.slne.surf.chat.core.message.MessageValidator
 import dev.slne.surf.chat.core.service.denylistService
+import dev.slne.surf.chat.core.service.functionalityService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.surfapi.core.api.util.mutableObject2ObjectMapOf
 import dev.slne.surf.surfapi.core.api.util.mutableObjectListOf
@@ -40,6 +42,17 @@ class MessageValidatorImpl {
         override fun validate(user: User): MessageValidationResult {
             if (user.hasPermission(SurfChatPermissionRegistry.FILTER_BYPASS)) {
                 return MessageValidationResult.Success()
+            }
+
+            if (this.checkAutoDisabling(user)) {
+                return MessageValidationResult.Failure(MessageValidationResult.MessageValidationError.AutoDisabled())
+            }
+
+            if (!functionalityService.isLocalChatEnabled() && !user.hasPermission(
+                    SurfChatPermissionRegistry.TEAM_ACCESS
+                )
+            ) {
+                return MessageValidationResult.Failure(MessageValidationResult.MessageValidationError.ChatDisabled())
             }
 
             if (message.isBlank()) {
@@ -95,6 +108,12 @@ class MessageValidatorImpl {
 
             return MessageValidationResult.Success()
         }
+
+
+        fun checkAutoDisabling(player: User): Boolean =
+            !player.hasPermission(SurfChatPermissionRegistry.AUTO_CHAT_DISABLING_BYPASS)
+                    && Bukkit.getOnlinePlayers().size > plugin.autoDisablingConfig.config.maximumPlayersBeforeDisable
+                    && plugin.autoDisablingConfig.config.enabled
 
         private fun containsLink(message: String): Pair<Boolean, String?> {
             urlRegex.findAll(message).forEach { match ->

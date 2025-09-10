@@ -19,4 +19,11 @@ data class MessageDataImpl(
     override val channel: Channel? = null,
     override val signedMessage: SignedMessage? = null,
     override val type: MessageType
-) : MessageData
+) : MessageData {
+    fun withReceiver(receiver: User?) = copy(receiver = receiver)
+    fun withChannel(channel: Channel?) = if (channel != null) {
+        copy(channel = channel, type = MessageType.CHANNEL)
+    } else {
+        this
+    }
+}

@@ -2,21 +2,18 @@ package dev.slne.surf.chat.bukkit.listener
 
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.api.message.MessageType
+import dev.slne.surf.chat.api.message.MessageValidationResult
 import dev.slne.surf.chat.bukkit.message.MessageDataImpl
 import dev.slne.surf.chat.bukkit.message.MessageFormatterImpl
 import dev.slne.surf.chat.bukkit.message.MessageValidatorImpl
-import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.*
 import dev.slne.surf.chat.core.service.channelService
-import dev.slne.surf.chat.core.service.functionalityService
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.chat.core.service.spyService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import io.papermc.paper.event.player.AsyncChatEvent
-import net.kyori.adventure.text.TextReplacementConfig
 import org.bukkit.Bukkit
-import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import java.util.*
@@ -27,52 +24,53 @@ class AsyncChatListener : Listener {
 
     @EventHandler
     fun onAsyncChat(event: AsyncChatEvent) {
+        val time = System.currentTimeMillis()
         val player = event.player
         val user = player.user() ?: return
 
+        val server = plugin.server
         val message = event.message()
         val messageId = UUID.randomUUID()
-        val messageValidator = MessageValidatorImpl.componentValidator(message)
-        val server = plugin.server
         val plainMessage = message.plainText()
 
-        if (!functionalityService.isLocalChatEnabled() && !player.hasPermission(
-                SurfChatPermissionRegistry.TEAM_ACCESS
-            )
-        ) {
+        val messageFormatter = MessageFormatterImpl(message.remove(channelExceptPattern))
+        val validationResult = MessageValidatorImpl.componentValidator(message).validate(user)
+
+        if (validationResult.isFailure()) {
+            val error = validationResult.getErrorOrNull() ?: return
+
             player.sendText {
                 appendWarningPrefix()
-                error("Der Chat ist vorübergehend deaktiviert.")
+                append(error.errorMessage)
             }
-            event.cancel()
-            return
-        }
 
-        if (this.checkAutoDisabling(player)) {
-            player.sendText {
-                appendWarningPrefix()
-                error("Du kannst zurzeit nicht schreiben.")
+            when (error) {
+                is MessageValidationResult.MessageValidationError.BadCharacters -> TODO()
+                is MessageValidationResult.MessageValidationError.BadLink -> TODO()
+                is MessageValidationResult.MessageValidationError.DenylistedWord -> {
+                    
+                }
+
+                is MessageValidationResult.MessageValidationError.EmptyContent -> TODO()
+                is MessageValidationResult.MessageValidationError.TooOften -> TODO()
+                is MessageValidationResult.MessageValidationError.AutoDisabled -> TODO()
+                is MessageValidationResult.MessageValidationError.ChatDisabled -> TODO()
             }
-            event.cancel()
-            return
         }
 
-        val cleanedMessage = if (channelExceptPattern.containsMatchIn(plainMessage)) {
-            message.replaceText(
-                TextReplacementConfig.builder()
-                    .match(channelExceptPattern.pattern)
-                    .replacement("")
-                    .build()
-            )
-        } else {
-            message
-        }
-        val messageFormatter = MessageFormatterImpl(cleanedMessage)
-
-        val validationResult = messageValidator.validate(user)
+        val data = MessageDataImpl(
+            message,
+            user,
+            null,
+            time,
+            messageId,
+            server,
+            null,
+            event.signedMessage(),
+            MessageType.GLOBAL
+        )
 
         val channel = channelService.getChannel(user)
-        val time = System.currentTimeMillis()
 
         if (channel != null && !channelExceptPattern.containsMatchIn(plainMessage)) {
             event.viewers().clear()
@@ -80,67 +78,32 @@ class AsyncChatListener : Listener {
             event.viewers()
                 .addAll(spyService.getChannelSpies(channel).mapNotNull { Bukkit.getPlayer(it) })
             event.renderer { _, _, _, viewerAudience ->
-                val data = MessageDataImpl(
-                    message,
-                    user,
-                    viewerAudience.user(),
-                    time,
-                    messageId,
-                    server,
-                    channel,
-                    event.signedMessage(),
-                    MessageType.CHANNEL
-                )
+                val channelData = data.withChannel(channel).withReceiver(viewerAudience.user())
 
                 if (spyService.getChannelSpies(channel).mapNotNull { Bukkit.getPlayer(it) }
                         .contains(viewerAudience)) {
                     return@renderer messageFormatter.formatChannelSpy(
-                        data
+                        channelData
                     )
                 }
 
                 messageFormatter.formatChannel(
-                    data
+                    channelData
                 )
             }
         } else {
-            event.viewers().removeIf { it.isConsole() } //TODO: Add config option
+            event.viewers().removeIf { it.isConsole() }
             event.renderer { _, _, _, viewerAudience ->
                 messageFormatter.formatGlobal(
-                    MessageDataImpl(
-                        message,
-                        user,
-                        viewerAudience.user(),
-                        time,
-                        messageId,
-                        server,
-                        null,
-                        event.signedMessage(),
-                        MessageType.GLOBAL
-                    )
+                    data.withReceiver(viewerAudience.user())
                 )
             }
         }
 
         plugin.launch {
             historyService.logMessage(
-                MessageDataImpl(
-                    message,
-                    user,
-                    null,
-                    time,
-                    messageId,
-                    server,
-                    channel,
-                    event.signedMessage(),
-                    if (channel != null) MessageType.CHANNEL else MessageType.GLOBAL
-                )
+                data.withChannel(channel)
             )
         }
     }
-
-    fun checkAutoDisabling(player: Player): Boolean =
-        !player.hasPermission(SurfChatPermissionRegistry.AUTO_CHAT_DISABLING_BYPASS)
-                && Bukkit.getOnlinePlayers().size > plugin.autoDisablingConfig.config.maximumPlayersBeforeDisable
-                && plugin.autoDisablingConfig.config.enabled
 }

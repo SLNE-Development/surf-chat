@@ -70,3 +70,9 @@ fun <C : BuildableComponent<C, B>, B : ComponentBuilder<C, B>> ComponentBuilder<
 
 fun PacketWrapper<*>.send(player: Player) =
     PacketEvents.getAPI().playerManager.sendPacket(player, this)
+
+fun Component.remove(regex: Regex): Component {
+    return this.replaceText { config ->
+        config.match(regex.pattern).replacement("")
+    }
+}

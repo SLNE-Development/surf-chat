@@ -4,7 +4,7 @@ import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.*
 import dev.slne.surf.chat.api.entry.DenylistActionType
-import dev.slne.surf.chat.bukkit.command.argument.denylistActionArgument
+import dev.slne.surf.chat.bukkit.command.argument.denylistActionTypeArgument
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.entry.DenylistActionImpl
@@ -16,7 +16,7 @@ import net.kyori.adventure.text.Component
 fun CommandAPICommand.denylistActionAddCommand() = subcommand("add") {
     withPermission(SurfChatPermissionRegistry.COMMAND_DENYLIST_ACTION_ADD)
     stringArgument("name")
-    denylistActionArgument("type")
+    denylistActionTypeArgument("type")
     miniMessageArgument("reason")
     integerArgument("durationInMinutes", 0)
     anyExecutor { executor, args ->

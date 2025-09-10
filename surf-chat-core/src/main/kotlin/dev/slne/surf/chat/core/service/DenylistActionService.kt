@@ -2,6 +2,7 @@ package dev.slne.surf.chat.core.service
 
 import dev.slne.surf.chat.api.DenylistAction
 import dev.slne.surf.chat.api.entity.User
+import dev.slne.surf.chat.api.entry.DenylistEntry
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.chat.SignedMessage
@@ -73,17 +74,8 @@ interface DenylistActionService {
      */
     fun listLocalActions(): ObjectSet<DenylistAction>
 
-    /**
-     * Executes a specified denylist action on a provided message and sender.
-     *
-     * @param action The denylist action to be performed. This contains details such as action type
-     *               and reason for the action.
-     * @param message The message associated with the action. This is typically a signed message
-     *                requiring moderation or review.
-     * @param sender The user initiating the action. This represents the entity requesting the
-     *               denylist process.
-     */
-    suspend fun makeAction(action: DenylistAction, message: SignedMessage, sender: User)
+
+    suspend fun makeAction(entry: DenylistEntry, message: SignedMessage, sender: User)
 
     /**
      * Companion object for the DenylistActionService interface.

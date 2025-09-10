@@ -9,6 +9,7 @@ import dev.slne.surf.chat.bukkit.message.MessageValidatorImpl
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.*
 import dev.slne.surf.chat.core.service.channelService
+import dev.slne.surf.chat.core.service.denylistActionService
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.chat.core.service.spyService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
@@ -48,7 +49,13 @@ class AsyncChatListener : Listener {
                 is MessageValidationResult.MessageValidationError.BadCharacters -> TODO()
                 is MessageValidationResult.MessageValidationError.BadLink -> TODO()
                 is MessageValidationResult.MessageValidationError.DenylistedWord -> {
-                    
+                    plugin.launch {
+                        denylistActionService.makeAction(
+                            error.denylistEntry,
+                            event.signedMessage(),
+                            user
+                        )
+                    }
                 }
 
                 is MessageValidationResult.MessageValidationError.EmptyContent -> TODO()

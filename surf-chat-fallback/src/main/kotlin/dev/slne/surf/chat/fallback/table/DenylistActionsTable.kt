@@ -11,4 +11,5 @@ object DenylistActionsTable : IntIdTable("chat_denylist_actions") {
     var reason = largeText("reason").transform(
         { GsonComponentSerializer.gson().deserialize(it) },
         { GsonComponentSerializer.gson().serialize(it) })
+    var duration = long("duration")
 }

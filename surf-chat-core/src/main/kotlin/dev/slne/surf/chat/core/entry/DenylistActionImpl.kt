@@ -8,5 +8,5 @@ data class DenylistActionImpl(
     override val name: String,
     override val actionType: DenylistActionType,
     override val reason: Component,
-    override val duration: Long?
+    override val duration: Long
 ) : DenylistAction

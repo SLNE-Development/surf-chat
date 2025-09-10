@@ -7,5 +7,5 @@ interface DenylistAction {
     val name: String
     val actionType: DenylistActionType
     val reason: Component
-    val duration: Long?
+    val duration: Long
 }

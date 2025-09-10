@@ -8,7 +8,6 @@ import dev.slne.surf.chat.bukkit.util.plainText
 import dev.slne.surf.chat.core.message.MessageValidator
 import dev.slne.surf.chat.core.service.denylistService
 import dev.slne.surf.chat.core.service.functionalityService
-import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.surfapi.core.api.util.mutableObject2ObjectMapOf
 import dev.slne.surf.surfapi.core.api.util.mutableObjectListOf
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
@@ -61,18 +60,6 @@ class MessageValidatorImpl {
 
             denylistService.getLocalEntries().find { message.contains(it.word, true) }
                 ?.let { entry ->
-                    Bukkit.getOnlinePlayers()
-                        .filter { it.hasPermission(SurfChatPermissionRegistry.TEAM_ACCESS) }
-                        .forEach {
-                            it.sendText {
-                                appendPrefix()
-                                info("Eine Nachricht von ")
-                                variableValue(user.name)
-                                info(" wurde blockiert: ")
-                                variableValue(message)
-                            }
-                        }
-
                     return MessageValidationResult.Failure(
                         MessageValidationResult.MessageValidationError.DenylistedWord(
                             entry

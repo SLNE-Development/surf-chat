@@ -16,8 +16,6 @@ import kotlinx.coroutines.Dispatchers
 import net.kyori.adventure.util.Services
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -86,13 +84,15 @@ class FallbackDenylistService : DenylistService, Services.Fallback {
     }
 
     override suspend fun removeEntry(word: String) = newSuspendedTransaction(Dispatchers.IO) {
-        DenylistTable.deleteWhere { DenylistTable.word eq word }
+
+        DenylistEntryEntity.find { DenylistTable.word eq word }.forEach {
+            it.delete()
+        }
         return@newSuspendedTransaction
     }
 
     override suspend fun hasEntry(word: String) = newSuspendedTransaction(Dispatchers.IO) {
-        val exists = DenylistTable.selectAll().where(DenylistTable.word eq word).count() > 0
-        return@newSuspendedTransaction exists
+        DenylistEntryEntity.find(DenylistTable.word eq word).any()
     }
 
     override suspend fun getEntry(word: String) = newSuspendedTransaction(Dispatchers.IO) {

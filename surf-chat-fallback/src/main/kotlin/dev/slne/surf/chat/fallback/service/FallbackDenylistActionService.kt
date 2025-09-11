@@ -11,11 +11,13 @@ import dev.slne.surf.chat.fallback.entity.DenylistActionEntity
 import dev.slne.surf.chat.fallback.table.DenylistActionsTable
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import net.kyori.adventure.chat.SignedMessage
 import net.kyori.adventure.util.Services
 import org.bukkit.Bukkit
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.util.*
+import kotlin.time.Duration.Companion.seconds
 
 @AutoService(DenylistActionService::class)
 class FallbackDenylistActionService : DenylistActionService, Services.Fallback {
@@ -83,8 +85,8 @@ class FallbackDenylistActionService : DenylistActionService, Services.Fallback {
             }
         }
 
+        delay(3.seconds)
         Bukkit.getServer().deleteMessage(message)
-
         historyService.markDeleted(messageUuid, "Arty Support")
     }
 }

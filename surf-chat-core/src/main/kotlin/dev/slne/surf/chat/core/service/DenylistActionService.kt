@@ -6,6 +6,7 @@ import dev.slne.surf.chat.api.entry.DenylistEntry
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.chat.SignedMessage
+import java.util.*
 
 /**
  * Service interface for managing actions related to a denylist.
@@ -79,7 +80,12 @@ interface DenylistActionService {
     fun hasLocalAction(name: String): Boolean
 
 
-    suspend fun makeAction(entry: DenylistEntry, message: SignedMessage, sender: User)
+    suspend fun makeAction(
+        messageUuid: UUID,
+        entry: DenylistEntry,
+        message: SignedMessage,
+        sender: User
+    )
 
     /**
      * Companion object for the DenylistActionService interface.

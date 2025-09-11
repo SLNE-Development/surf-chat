@@ -66,19 +66,19 @@ class FallbackDenylistActionService : DenylistActionService, Services.Fallback {
     ) {
         when (entry.action.actionType) {
             DenylistActionType.BAN -> {
-
+                println("Banning ${sender.name}")
             }
 
             DenylistActionType.KICK -> {
-
+                println("Kicking ${sender.name}")
             }
 
             DenylistActionType.MUTE -> {
-
+                println("Muting ${sender.name}")
             }
 
             DenylistActionType.WARN -> {
-
+                println("Warning ${sender.name}")
             }
         }
 

@@ -3,7 +3,7 @@ package dev.slne.surf.chat.core.service
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import java.util.*
 
-interface NotificationService : ServiceUsingDatabase {
+interface NotificationService : DatabaseTableHolder {
     suspend fun pingsEnabled(uuid: UUID): Boolean
     suspend fun enablePings(uuid: UUID)
     suspend fun disablePings(uuid: UUID)

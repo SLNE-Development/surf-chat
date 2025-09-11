@@ -1,5 +1,5 @@
 package dev.slne.surf.chat.core.service
 
-interface ServiceUsingDatabase {
+interface DatabaseTableHolder {
     fun createTable()
 }

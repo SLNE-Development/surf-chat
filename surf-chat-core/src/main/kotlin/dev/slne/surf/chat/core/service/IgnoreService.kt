@@ -5,7 +5,7 @@ import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import java.util.*
 
-interface IgnoreService : ServiceUsingDatabase {
+interface IgnoreService : DatabaseTableHolder {
     suspend fun ignore(player: UUID, playerName: String, target: UUID, targetPlayerName: String)
     suspend fun unIgnore(player: UUID, target: UUID)
     suspend fun isIgnored(player: UUID, target: UUID): Boolean

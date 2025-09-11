@@ -7,7 +7,7 @@ import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import java.util.*
 
-interface HistoryService : ServiceUsingDatabase {
+interface HistoryService : DatabaseTableHolder {
     suspend fun logMessage(messageData: MessageData)
     suspend fun findHistoryEntry(filter: HistoryFilter): ObjectSet<HistoryEntry>
     suspend fun isLookupRunning(): Boolean

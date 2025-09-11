@@ -4,7 +4,7 @@ import dev.slne.surf.chat.api.server.ChatServer
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectSet
 
-interface FunctionalityService : ServiceUsingDatabase {
+interface FunctionalityService : DatabaseTableHolder {
     suspend fun isEnabledForServer(server: ChatServer): Boolean
 
     suspend fun getAllServers(): ObjectSet<ChatServer>

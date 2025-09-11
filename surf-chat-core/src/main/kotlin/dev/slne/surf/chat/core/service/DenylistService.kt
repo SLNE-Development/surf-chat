@@ -5,7 +5,7 @@ import dev.slne.surf.chat.api.entry.DenylistEntry
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectList
 
-interface DenylistService : ServiceUsingDatabase {
+interface DenylistService : DatabaseTableHolder {
     suspend fun addEntry(
         word: String,
         reason: String,

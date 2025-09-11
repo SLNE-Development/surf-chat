@@ -2,22 +2,23 @@ package dev.slne.surf.chat.api.server
 
 import it.unimi.dsi.fastutil.objects.ObjectSet
 
+/**
+ * Represents a group chat consisting of multiple chat servers.
+ */
 interface ChatGroup {
-  /**
-   * The name of the chat group.
-   *
-   * This property represents the display name of the chat group, which is used to identify the group
-   * within the chat system. It may be shown to users and should be unique within the context where
-   * chat groups are managed.
-   */
-  val name: String
-  /**
-   * The set of members in this chat group.
-   *
-   * This set is read-only (immutable) from the perspective of the interface consumer.
-   * Implementations may return a mutable or immutable set, but consumers should not modify it.
-   *
-   * There are no explicit minimum or maximum size constraints; the set may be empty.
-   */
-  val members: ObjectSet<ChatServer>
+    /**
+     * The name of the chat group.
+     *
+     * Represents the display name of the group, typically used for identifying the chat group within interfaces
+     * or user-facing components.
+     */
+    val name: String
+
+    /**
+     * A set of chat servers that are members of the chat group.
+     *
+     * This collection contains all the servers associated with the group, each represented as a [ChatServer] instance.
+     * It may be used for operations such as querying, managing, or broadcasting messages to all member servers within the group.
+     */
+    val members: ObjectSet<ChatServer>
 }

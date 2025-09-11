@@ -9,77 +9,115 @@ import net.kyori.adventure.chat.SignedMessage
 import java.util.*
 
 /**
- * Service interface for managing actions related to a denylist.
- * Provides both local and persistent management of denylist actions.
+ * Represents a service interface for managing denylist-related actions.
+ *
+ * This interface provides functionality for adding, removing, and interacting with
+ * actions that are part of the denylist system. It supports both local and remote
+ * operations and enables interaction with denylist entries to enforce system-wide rules.
  */
 interface DenylistActionService {
     /**
-     * Adds a specified `DenylistAction` to the system.
+     * Adds a specified denylist action to the system.
      *
-     * @param action The `DenylistAction` object that needs to be added. This action typically includes
-     *               the action name, type, and reason, which define its behavior in the denylist process.
+     * This coroutine function is used to register a new action in the denylist.
+     * It processes actions represented by the `DenylistAction` interface and integrates
+     * them into the broader denylist system. Implementation details may vary depending
+     * on the underlying data storage or processing logic.
+     *
+     * @param action The denylist action to be added. This parameter must implement
+     *               the `DenylistAction` interface and provide details such as
+     *               the unique name, action type, reason, and duration.
      */
     suspend fun addAction(action: DenylistAction)
 
     /**
-     * Removes a specified `DenylistAction` from the system.
+     * Removes a specified denylist action from the system.
      *
-     * @param action The `DenylistAction` object that needs to be removed.
+     * @param action The denylist action to be removed. This action includes details such as the name,
+     *               type of action, reason, and duration.
      */
     suspend fun removeAction(action: DenylistAction)
 
+    /**
+     * Checks if an action with the specified name exists within the denylist.
+     *
+     * @param name The unique name of the action to check for existence.
+     * @return True if the action exists in the denylist, false otherwise.
+     */
     suspend fun hasAction(name: String): Boolean
 
     /**
-     * Retrieves the list of actions related to the Denylist from the desired source.
-     * This method is implemented as a suspending function, meaning it can perform
-     * asynchronous operations without blocking the thread.
+     * Fetches a collection of actions related to the denylist.
      *
-     * Use this function to fetch the relevant Denylist actions currently available
-     * for processing or review.
+     * This method is a coroutine function and is expected to be executed within a coroutine scope.
+     * It retrieves the current list of denylist actions, potentially from a remote source or a database,
+     * depending on the implementation of the `DenylistActionService` interface.
      *
-     * This function interacts with the broader Denylist management system and may involve
-     * accessing remote or local resources to retrieve the data.
+     * This method is primarily used to synchronize or update the locally available denylist actions
+     * with the current state of the system.
      *
-     * Note: Ensure appropriate handling of the context and coroutine scope when invoking this method.
+     * It does not take any parameters and does not return a value directly. Additional behaviors
+     * or processing depend on the implementation of the method.
+     *
+     * Throws exceptions if there are issues fetching the actions (e.g., connectivity issues or other errors).
      */
     suspend fun fetchActions()
 
     /**
-     * Adds a denylist action to the local storage.
+     * Adds a denylist action to the local list of actions.
+     * This method does not persist the action to a database or external storage.
      *
-     * @param action The denylist action to be added.
-     * @return `true` if the action was successfully added, `false` otherwise.
+     * @param action The denylist action to be added. It includes details such as the name,
+     *               type of action, reason, and duration.
+     * @return True if the action was successfully added to the local list, false otherwise.
      */
     fun addLocalAction(action: DenylistAction): Boolean
 
     /**
-     * Removes a specified denylist action from the local storage.
+     * Removes a denylist action from the local list of actions.
      *
-     * @param action The denylist action to be removed.
-     * @return `true` if the action was successfully removed, `false` otherwise.
+     * @param action The denylist action to be removed. This action includes details like
+     *               name, type, reason, and duration, identifying the specific action.
+     * @return True if the action was successfully removed from the local list, false otherwise.
      */
     fun removeLocalAction(action: DenylistAction): Boolean
 
     /**
-     * Retrieves a local DenylistAction by its name.
+     * Retrieves a locally stored denylist action by its unique name.
      *
-     * @param name the name of the DenylistAction to retrieve
-     * @return the DenylistAction associated with the given name, or null if no match is found
+     * @param name The unique name of the denylist action to be retrieved.
+     * @return The denylist action corresponding to the provided name, or null if no such action exists.
      */
     fun getLocalAction(name: String): DenylistAction?
 
     /**
-     * Retrieves a set of all local denylist actions currently stored in the system.
+     * Lists all local denylist actions currently registered.
      *
-     * @return An ObjectSet containing `DenylistAction` instances that represent
-     * the available local denylist actions.
+     * @return a set of denylist actions available in the local context, represented as an ObjectSet of DenylistAction.
      */
     fun listLocalActions(): ObjectSet<DenylistAction>
 
+    /**
+     * Checks if a local denylist action exists for the specified name.
+     *
+     * @param name The unique name of the denylist action to check.
+     * @return True if a local action with the specified name exists, false otherwise.
+     */
     fun hasLocalAction(name: String): Boolean
 
 
+    /**
+     * Processes an action based on the provided denylist entry and message details.
+     *
+     * This coroutine function performs the necessary operations related to a denylist entry,
+     * such as applying moderation actions or logging the event, based on the context of
+     * the message and its sender.
+     *
+     * @param messageUuid The unique identifier of the message being processed.
+     * @param entry The denylist entry that is triggered and associated with the action.
+     * @param message The signed message containing details of the content, sender, and any cryptographic signature.
+     * @param sender The user who sent the message that triggered the denylist action.
+     */
     suspend fun makeAction(
         messageUuid: UUID,
         entry: DenylistEntry,
@@ -88,27 +126,27 @@ interface DenylistActionService {
     )
 
     /**
-     * Companion object for the DenylistActionService interface.
-     * Provides a globally accessible instance of the DenylistActionService.
+     * Companion object for the `DenylistActionService` class.
+     *
+     * Provides a single instance of the `DenylistActionService`, accessible globally.
+     * The instance is obtained using the `requiredService` utility, which ensures
+     * proper initialization and retrieval of the service.
      */
     companion object {
         /**
-         * Singleton instance of the DenylistActionService. This service provides mechanisms
-         * to manage actions related to denylist entries, including adding, removing,
-         * fetching entries, and performing specific denylist-related actions.
+         * Singleton instance of the `DenylistActionService`, providing access to functionality
+         * for managing denylist actions within the system.
+         *
+         * This instance is used to perform operations such as adding, removing, fetching,
+         * and checking the existence of denylist actions. It acts as the centralized point
+         * for interacting with denylist-related features and services, ensuring consistent
+         * handling and integration across the application.
          */
         val INSTANCE = requiredService<DenylistActionService>()
     }
 }
 
 /**
- * A reference to the singleton instance of the `DenylistService` interface.
- * This service provides functionality for managing denylist entries, including
- * adding, removing, and retrieving entries both locally and externally. The service
- * supports enforcement of denial actions based on specific words or patterns.
  *
- * The `DenylistService` is primarily responsible for maintaining a repository of prohibited
- * words or terms, each associated with a reason, timestamp, user who added it, and an action
- * defining how it should be handled.
  */
 val denylistActionService get() = DenylistActionService.INSTANCE

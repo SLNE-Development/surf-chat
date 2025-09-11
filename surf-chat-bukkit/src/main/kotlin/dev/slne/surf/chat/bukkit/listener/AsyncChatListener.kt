@@ -49,6 +49,7 @@ class AsyncChatListener : Listener {
             if (error is MessageValidationResult.MessageValidationError.DenylistedWord) {
                 plugin.launch {
                     denylistActionService.makeAction(
+                        messageId,
                         error.denylistEntry,
                         event.signedMessage(),
                         user

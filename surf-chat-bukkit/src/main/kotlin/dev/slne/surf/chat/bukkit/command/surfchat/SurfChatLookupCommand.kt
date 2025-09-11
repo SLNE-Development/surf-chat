@@ -55,14 +55,13 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
         val query: Map<String, String> by args
 
         plugin.launch {
-            val filter = query.parseFilters()
-
-            val page = query["--page"]?.toIntOrNull() ?: 1
-
             player.sendText {
                 appendPrefix()
                 info("Es wird nach Ergebnissen gesucht...")
             }
+
+            val filter = query.parseFilters()
+            val page = query["--page"]?.toIntOrNull() ?: 1
 
             if (historyService.isLookupRunning()) {
                 player.sendText {

@@ -3,10 +3,10 @@ package dev.slne.surf.chat.fallback.service
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.DenylistAction
 import dev.slne.surf.chat.api.entry.DenylistEntry
+import dev.slne.surf.chat.core.entry.DenylistEntryImpl
 import dev.slne.surf.chat.core.service.DenylistService
 import dev.slne.surf.chat.fallback.entity.DenylistActionEntity
 import dev.slne.surf.chat.fallback.entity.DenylistEntryEntity
-import dev.slne.surf.chat.fallback.model.FallbackDenylistEntry
 import dev.slne.surf.chat.fallback.table.DenylistActionsTable
 import dev.slne.surf.chat.fallback.table.DenylistTable
 import dev.slne.surf.surfapi.core.api.util.mutableObjectListOf
@@ -59,7 +59,7 @@ class FallbackDenylistService : DenylistService, Services.Fallback {
         action: DenylistAction
     ) {
         entries.add(
-            FallbackDenylistEntry(
+            DenylistEntryImpl(
                 word, reason, addedBy, addedAt, action
             )
         )

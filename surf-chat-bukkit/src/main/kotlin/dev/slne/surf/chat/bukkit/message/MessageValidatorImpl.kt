@@ -1,12 +1,13 @@
 package dev.slne.surf.chat.bukkit.message
 
 import dev.slne.surf.chat.api.entity.User
+import dev.slne.surf.chat.api.message.MessageValidationResult
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.plainText
 import dev.slne.surf.chat.core.message.MessageValidator
 import dev.slne.surf.chat.core.service.denylistService
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
-import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
+import dev.slne.surf.chat.core.service.functionalityService
 import dev.slne.surf.surfapi.core.api.util.mutableObject2ObjectMapOf
 import dev.slne.surf.surfapi.core.api.util.mutableObjectListOf
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
@@ -19,17 +20,16 @@ import java.util.*
 class MessageValidatorImpl {
     companion object {
         fun stringValidator(message: String): MessageValidator<String> {
-            return StringMessageValidator(message, Component.empty())
+            return StringMessageValidator(message)
         }
 
         fun componentValidator(message: Component): MessageValidator<Component> {
-            return ComponentMessageValidator(message, Component.text("???"))
+            return ComponentMessageValidator(message)
         }
     }
 
     private class StringMessageValidator(
-        override val message: String,
-        override var failureMessage: Component
+        override val message: String
     ) : MessageValidator<String> {
         private val allowedDomains = mutableObjectSetOf<String>()
         private val validCharactersRegex =
@@ -38,103 +38,123 @@ class MessageValidatorImpl {
             "((http|https|ftp)://)?([\\w-]+\\.)+[\\w-]+(/[\\w- ./?%&=]*)?".toRegex(RegexOption.IGNORE_CASE)
         private val messageTimestamps = mutableObject2ObjectMapOf<UUID, ObjectList<Long>>()
 
-        override fun isSuccess(user: User): Boolean {
+        override fun validate(user: User): MessageValidationResult {
             if (user.hasPermission(SurfChatPermissionRegistry.FILTER_BYPASS)) {
-                return true
+                return MessageValidationResult.Success()
+            }
+
+            if (this.checkAutoDisabling(user)) {
+                return MessageValidationResult.Failure(MessageValidationResult.MessageValidationError.AutoDisabled())
+            }
+
+            if (!functionalityService.isLocalChatEnabled() && !user.hasPermission(
+                    SurfChatPermissionRegistry.TEAM_ACCESS
+                )
+            ) {
+                return MessageValidationResult.Failure(MessageValidationResult.MessageValidationError.ChatDisabled())
             }
 
             if (message.isBlank()) {
-                failureMessage = buildText {
-                    error("Deine Nachricht darf nicht leer sein.")
-                }
-                return false
+                return MessageValidationResult.Failure(MessageValidationResult.MessageValidationError.EmptyContent())
             }
 
-            if (denylistService.getLocalEntries().any { message.contains(it.word, true) }) {
-                failureMessage = buildText {
-                    error("Bitte achte auf deine Wortwahl.")
+            denylistService.getLocalEntries().find { message.contains(it.word, true) }
+                ?.let { entry ->
+                    return MessageValidationResult.Failure(
+                        MessageValidationResult.MessageValidationError.DenylistedWord(
+                            entry
+                        )
+                    )
                 }
 
-                Bukkit.getOnlinePlayers()
-                    .filter { it.hasPermission(SurfChatPermissionRegistry.TEAM_ACCESS) }.forEach {
-                        it.sendText {
-                            appendPrefix()
-                            info("Eine Nachricht von ")
-                            variableValue(user.name)
-                            info(" wurde blockiert: ")
-                            variableValue(message)
-                        }
-                    }
-
-                return false
+            this.containsLink(message).second?.let {
+                return MessageValidationResult.Failure(
+                    MessageValidationResult.MessageValidationError.BadLink(
+                        it
+                    )
+                )
             }
 
-            if (this.containsLink(message)) {
-                failureMessage = buildText {
-                    error("Deine Nachricht enthält einen unerlaubten Link.")
-                }
-                return false
+            val pair = this.validateInput(message)
+
+            if (!pair.first) {
+                return MessageValidationResult.Failure(
+                    MessageValidationResult.MessageValidationError.BadCharacters(
+                        pair.second
+                    )
+                )
             }
 
-            if (!this.isValidInput(message)) {
-                failureMessage = buildText {
-                    error("Deine Nachricht enthält unerlaubte Zeichen.")
-                }
-                return false
+            this.isSpamming(user.uuid).second?.let {
+                return MessageValidationResult.Failure(
+                    MessageValidationResult.MessageValidationError.TooOften(
+                        it
+                    )
+                )
             }
 
-            if (this.isSpamming(user.uuid)) {
-                failureMessage = buildText {
-                    error("Bitte warte einen Moment, bevor du eine weitere Nachricht sendest.")
-                }
-                return false
-            }
-
-            return true
+            return MessageValidationResult.Success()
         }
 
-        private fun containsLink(message: String) = urlRegex.findAll(message).any { match ->
-            val rawUrl = match.value
-            val formattedUrl =
-                if (rawUrl.startsWith("http", ignoreCase = true)) rawUrl else "http://$rawUrl"
 
-            val domain = try {
-                URI(formattedUrl).host?.lowercase()?.removePrefix("www.")
-            } catch (_: Exception) {
-                return@any true
+        fun checkAutoDisabling(player: User): Boolean =
+            !player.hasPermission(SurfChatPermissionRegistry.AUTO_CHAT_DISABLING_BYPASS)
+                    && Bukkit.getOnlinePlayers().size > plugin.autoDisablingConfig.config.maximumPlayersBeforeDisable
+                    && plugin.autoDisablingConfig.config.enabled
+
+        private fun containsLink(message: String): Pair<Boolean, String?> {
+            urlRegex.findAll(message).forEach { match ->
+                val rawUrl = match.value
+                val formattedUrl =
+                    if (rawUrl.startsWith("http", ignoreCase = true)) rawUrl else "http://$rawUrl"
+
+                val domain = try {
+                    URI(formattedUrl).host?.lowercase()?.removePrefix("www.")
+                } catch (_: Exception) {
+                    return Pair(true, rawUrl)
+                }
+
+                if (domain == null || allowedDomains.none { domain.endsWith(it.lowercase()) }) {
+                    return Pair(true, rawUrl)
+                }
             }
-
-            domain == null || allowedDomains.none { domain.endsWith(it.lowercase()) }
+            return Pair(false, null)
         }
 
-        private fun isValidInput(input: String) = validCharactersRegex.matches(input)
-        private fun isSpamming(uuid: UUID): Boolean {
+        private fun validateInput(input: String): Pair<Boolean, String> {
+            val invalidChars = input.filter { !validCharactersRegex.matches(it.toString()) }
+            return invalidChars.isEmpty() to invalidChars
+        }
+
+        private fun isSpamming(uuid: UUID): Pair<Boolean, Long?> {
             val currentTime = System.currentTimeMillis()
-            val windowStart = currentTime - 3 * 1000 // 3 seconds window
+            val windowStart = currentTime - 3_000
             val timestamps = messageTimestamps.getOrPut(uuid) { mutableObjectListOf<Long>() }
 
             timestamps.removeIf { it < windowStart }
 
-            if (timestamps.size >= 2) { // the maximum number of messages allowed in the time window
-                return true
+            return if (timestamps.size >= 2) {
+                val earliest = timestamps.minOrNull() ?: currentTime
+                val waitTimeMs = (earliest + 3_000 - currentTime).coerceAtLeast(0)
+                val waitSeconds = (waitTimeMs / 1000) + 1
+                false to waitSeconds
+            } else {
+                timestamps.add(currentTime)
+                true to null
             }
-
-            timestamps.add(currentTime)
-            return false
         }
+
     }
 
     private class ComponentMessageValidator(
-        override val message: Component,
-        override var failureMessage: Component
+        override val message: Component
     ) :
         MessageValidator<Component> {
-        override fun isSuccess(user: User): Boolean {
+        override fun validate(user: User): MessageValidationResult {
             val validator = stringValidator(message.plainText())
-            val success = validator.isSuccess(user)
+            val result = validator.validate(user)
 
-            failureMessage = validator.failureMessage
-            return success
+            return result
         }
     }
 }

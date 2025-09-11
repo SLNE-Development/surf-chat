@@ -3,6 +3,8 @@ package dev.slne.surf.chat.bukkit.command.denylist
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.*
+import dev.slne.surf.chat.api.DenylistAction
+import dev.slne.surf.chat.bukkit.command.argument.denylistActionArgument
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.realName
@@ -12,10 +14,12 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 fun CommandAPICommand.denylistAddCommand() = subcommand("add") {
     withPermission(SurfChatPermissionRegistry.COMMAND_DENYLIST_ADD)
     stringArgument("word")
+    denylistActionArgument("action")
     greedyStringArgument("reason", optional = true)
     anyExecutor { executor, args ->
         val word: String by args
         val reason: String? by args
+        val action: DenylistAction by args
         val addedAt = System.currentTimeMillis()
         val name = executor.realName()
 
@@ -30,7 +34,7 @@ fun CommandAPICommand.denylistAddCommand() = subcommand("add") {
             return@anyExecutor
         }
 
-        denylistService.addLocalEntry(word, reason ?: "Verbotenes Wort", name, addedAt)
+        denylistService.addLocalEntry(word, reason ?: "Verbotenes Wort", name, addedAt, action)
 
         executor.sendText {
             appendPrefix()
@@ -50,7 +54,7 @@ fun CommandAPICommand.denylistAddCommand() = subcommand("add") {
                 return@launch
             }
 
-            denylistService.addEntry(word, reason ?: "Verbotenes Wort", name, addedAt)
+            denylistService.addEntry(word, reason ?: "Verbotenes Wort", name, addedAt, action)
 
             executor.sendText {
                 appendPrefix()

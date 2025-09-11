@@ -8,6 +8,7 @@ import dev.slne.surf.chat.bukkit.config.ChatMotdConfigProvider
 import dev.slne.surf.chat.bukkit.config.ChatServerProviderConfig
 import dev.slne.surf.chat.bukkit.config.ConnectionMessageConfigProvider
 import dev.slne.surf.chat.core.service.databaseService
+import dev.slne.surf.chat.core.service.denylistActionService
 import dev.slne.surf.chat.core.service.denylistService
 import dev.slne.surf.chat.core.service.functionalityService
 import dev.slne.surf.surfapi.bukkit.api.metrics.Metrics
@@ -30,6 +31,7 @@ class BukkitMain : SuspendingJavaPlugin() {
 
         launch {
             denylistService.fetch()
+            denylistActionService.fetchActions()
             functionalityService.fetch(server)
         }
 

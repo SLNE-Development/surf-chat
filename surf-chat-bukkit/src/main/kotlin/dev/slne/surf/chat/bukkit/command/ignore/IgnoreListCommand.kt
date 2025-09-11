@@ -18,7 +18,7 @@ import net.kyori.adventure.text.format.TextDecoration
 
 fun CommandAPICommand.ignoreListCommand() = subcommand("list") {
     withPermission(SurfChatPermissionRegistry.COMMAND_IGNORE_LIST)
-    playerExecutor { player, args ->
+    playerExecutor { player, _ ->
         player.sendText {
             appendPrefix()
             info("Deine Daten werden geladen, bitte habe einen Moment Geduld...")

@@ -136,7 +136,6 @@ class FallbackHistoryService : HistoryService, Services.Fallback {
             HistoryTable.update({ HistoryTable.messageUuid eq messageUuid }) {
                 it[deletedBy] = deleter
             }
-            println("[$deleter] deleted message with uuid: $messageUuid")
             return@newSuspendedTransaction
         }
 }

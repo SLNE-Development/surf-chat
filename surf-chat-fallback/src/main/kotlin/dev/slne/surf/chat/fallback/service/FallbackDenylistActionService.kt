@@ -87,6 +87,6 @@ class FallbackDenylistActionService : DenylistActionService, Services.Fallback {
 
         delay(3.seconds)
         Bukkit.getServer().deleteMessage(message)
-        historyService.markDeleted(messageUuid, "Arty Support (${entry.word}")
+        historyService.markDeleted(messageUuid, "Arty Support (BLOCKED: ${entry.word})")
     }
 }

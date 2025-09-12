@@ -2,7 +2,6 @@ package dev.slne.surf.chat.core.entry
 
 import dev.slne.surf.chat.api.DenylistAction
 import dev.slne.surf.chat.api.entry.DenylistActionType
-import net.kyori.adventure.text.Component
 
 /**
  * Implementation of the `DenylistAction` interface.
@@ -14,12 +13,12 @@ import net.kyori.adventure.text.Component
  *
  * @property name The unique name identifying the denylist action.
  * @property actionType Specifies the type of action, such as banning, muting, kicking, or warning.
- * @property reason The reason associated with this action, represented as a component for contextual information.
+ * @property reason The reason associated with this action, represented as a string for contextual information.
  * @property duration The duration of the denylist action in milliseconds.
  */
 data class DenylistActionImpl(
     override val name: String,
     override val actionType: DenylistActionType,
-    override val reason: Component,
+    override val reason: String,
     override val duration: Long
 ) : DenylistAction

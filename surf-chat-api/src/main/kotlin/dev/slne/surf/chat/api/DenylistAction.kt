@@ -1,7 +1,6 @@
 package dev.slne.surf.chat.api
 
 import dev.slne.surf.chat.api.entry.DenylistActionType
-import net.kyori.adventure.text.Component
 
 /**
  * Represents an action to be applied to a user in the denylist system.
@@ -28,7 +27,7 @@ interface DenylistAction {
      * This reason is displayed as a component and provides contextual
      * information about the action being performed.
      */
-    val reason: Component
+    val reason: String
 
     /**
      * The duration of the denylist action, represented in milliseconds.

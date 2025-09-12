@@ -1,7 +1,9 @@
 [versions]
 playerholder-api = "2.11.6"
 surf-database = "2.0.4-SNAPSHOT"
+surf-cloud-api-common = "1.21.8-1.0.0-SNAPSHOT"
 
 [libraries]
 playerholder-api = { module = "me.clip:placeholderapi", version.ref = "playerholder-api" }
 surf-database = { module = "dev.slne.surf:surf-database", version.ref = "surf-database" }
+surf-cloud-api-common = { module = "dev.slne.surf.cloud:surf-cloud-api-common", version.ref = "surf-cloud-api-common" }

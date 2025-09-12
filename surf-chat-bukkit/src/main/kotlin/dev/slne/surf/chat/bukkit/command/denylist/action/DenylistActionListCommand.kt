@@ -48,7 +48,7 @@ fun CommandAPICommand.denylistActionListCommand() = subcommand("list") {
                             variableKey("Grund")
                             spacer(":")
                             appendSpace()
-                            append(entry.reason)
+                            variableValue(entry.reason)
                         })
                     }
                 )

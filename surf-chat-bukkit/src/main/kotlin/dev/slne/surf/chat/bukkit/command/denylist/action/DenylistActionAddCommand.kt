@@ -9,20 +9,18 @@ import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.entry.DenylistActionImpl
 import dev.slne.surf.chat.core.service.denylistActionService
-import dev.slne.surf.surfapi.bukkit.api.command.args.miniMessageArgument
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
-import net.kyori.adventure.text.Component
 
 fun CommandAPICommand.denylistActionAddCommand() = subcommand("add") {
     withPermission(SurfChatPermissionRegistry.COMMAND_DENYLIST_ACTION_ADD)
     stringArgument("name")
     denylistActionTypeArgument("type")
-    miniMessageArgument("reason")
     integerArgument("durationInMinutes", 0)
+    greedyStringArgument("reason")
     anyExecutor { executor, args ->
         val name: String by args
         val type: DenylistActionType by args
-        val reason: Component by args
+        val reason: String by args
         val durationInMinutes: Int by args
 
         if (denylistActionService.hasLocalAction(name)) {

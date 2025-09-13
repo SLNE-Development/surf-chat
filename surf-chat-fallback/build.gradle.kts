@@ -6,3 +6,7 @@ dependencies {
     api(project(":surf-chat-core"))
     api(libs.surf.database)
 }
+
+surfRawPaperApi {
+    withCloudCommon()
+}

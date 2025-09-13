@@ -2,12 +2,11 @@ package dev.slne.surf.chat.fallback.service
 
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.core.service.NotificationService
+import dev.slne.surf.chat.fallback.entity.NotifySettingsEntity
 import dev.slne.surf.chat.fallback.table.NotifySettingsTable
 import kotlinx.coroutines.Dispatchers
 import net.kyori.adventure.util.Services
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.upsert
@@ -23,10 +22,8 @@ class FallbackNotificationService : NotificationService, Services.Fallback {
 
     override suspend fun pingsEnabled(uuid: UUID) =
         newSuspendedTransaction(Dispatchers.IO) {
-            NotifySettingsTable.selectAll().where(NotifySettingsTable.userUuid eq uuid)
-                .firstOrNull()?.let {
-                    it[NotifySettingsTable.pingsEnabled]
-                } ?: true
+            NotifySettingsEntity.find { NotifySettingsTable.userUuid eq uuid }
+                .firstOrNull()?.pingsEnabled ?: true
         }
 
     override suspend fun enablePings(uuid: UUID) = newSuspendedTransaction(Dispatchers.IO) {
@@ -47,10 +44,8 @@ class FallbackNotificationService : NotificationService, Services.Fallback {
     }
 
     override suspend fun invitesEnabled(uuid: UUID) = newSuspendedTransaction(Dispatchers.IO) {
-        NotifySettingsTable.selectAll().where(NotifySettingsTable.userUuid eq uuid)
-            .firstOrNull()?.let {
-                it[NotifySettingsTable.invitesEnabled]
-            } ?: true
+        NotifySettingsEntity.find { NotifySettingsTable.userUuid eq uuid }
+            .firstOrNull()?.invitesEnabled ?: true
     }
 
     override suspend fun enableInvites(uuid: UUID) = newSuspendedTransaction(Dispatchers.IO) {

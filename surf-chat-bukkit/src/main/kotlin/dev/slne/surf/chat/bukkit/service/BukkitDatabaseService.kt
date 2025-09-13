@@ -143,7 +143,7 @@ class BukkitDatabaseService() : DatabaseService, Fallback {
     }
 
     override suspend fun markMessageDeleted(deleter: String, messageID: UUID) =
-        withContext(Dispatchers.IO) {
+        newSuspendedTransaction(Dispatchers.IO) {
             ChatHistory.update({ ChatHistory.entryUuid eq messageID }) {
 
                 it[deletedBy] = deleter

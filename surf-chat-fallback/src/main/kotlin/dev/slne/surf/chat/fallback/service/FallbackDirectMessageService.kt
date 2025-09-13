@@ -2,12 +2,11 @@ package dev.slne.surf.chat.fallback.service
 
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.core.service.DirectMessageService
+import dev.slne.surf.chat.fallback.entity.DMSettingsEntity
 import dev.slne.surf.chat.fallback.table.DMSettingsTable
 import kotlinx.coroutines.Dispatchers
 import net.kyori.adventure.util.Services
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.upsert
@@ -23,10 +22,8 @@ class FallbackDirectMessageService : DirectMessageService, Services.Fallback {
 
     override suspend fun directMessagesEnabled(uuid: UUID) =
         newSuspendedTransaction(Dispatchers.IO) {
-            DMSettingsTable.selectAll().where(DMSettingsTable.userUuid eq uuid)
-                .firstOrNull()?.let {
-                    it[DMSettingsTable.directMessagesEnabled]
-                } ?: true
+            DMSettingsEntity.find { DMSettingsTable.userUuid eq uuid }.firstOrNull()
+                ?.toDto()?.directMessagesEnabled ?: true
         }
 
     override suspend fun enableDirectMessages(uuid: UUID) =

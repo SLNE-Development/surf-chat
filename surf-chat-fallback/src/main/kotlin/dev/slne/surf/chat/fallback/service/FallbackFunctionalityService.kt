@@ -3,14 +3,13 @@ package dev.slne.surf.chat.fallback.service
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.server.ChatServer
 import dev.slne.surf.chat.core.service.FunctionalityService
+import dev.slne.surf.chat.fallback.entity.FunctionalityEntity
 import dev.slne.surf.chat.fallback.table.FunctionalityTable
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import kotlinx.coroutines.Dispatchers
 import net.kyori.adventure.util.Services
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.upsert
@@ -27,41 +26,38 @@ class FallbackFunctionalityService : FunctionalityService, Services.Fallback {
     override suspend fun isEnabledForServer(server: ChatServer): Boolean = newSuspendedTransaction(
         Dispatchers.IO
     ) {
-        FunctionalityTable.selectAll().where(FunctionalityTable.server eq server.internalName)
-            .firstOrNull()?.let {
-                it[FunctionalityTable.chatEnabled]
-            } ?: true
+        FunctionalityEntity.find { FunctionalityTable.server eq server.internalName }
+            .firstOrNull()?.chatEnabled ?: true
     }
 
     override suspend fun getAllServers(): ObjectSet<ChatServer> = newSuspendedTransaction(
         Dispatchers.IO
     ) {
-        FunctionalityTable.selectAll().map {
-            ChatServer.of(it[FunctionalityTable.server])
+        FunctionalityEntity.all().map {
+            ChatServer.of(it.server)
         }.toObjectSet()
     }
 
     override suspend fun getAllEnabledServers(): ObjectSet<ChatServer> = newSuspendedTransaction(
         Dispatchers.IO
     ) {
-        FunctionalityTable.selectAll().where(FunctionalityTable.chatEnabled eq true).map {
-            ChatServer.of(it[FunctionalityTable.server])
+        FunctionalityEntity.find { FunctionalityTable.chatEnabled eq true }.map {
+            ChatServer.of(it.server)
         }.toObjectSet()
     }
 
     override suspend fun getAllDisabledServers(): ObjectSet<ChatServer> = newSuspendedTransaction(
         Dispatchers.IO
     ) {
-        FunctionalityTable.selectAll().where(FunctionalityTable.chatEnabled eq false).map {
-            ChatServer.of(it[FunctionalityTable.server])
+        FunctionalityEntity.find { FunctionalityTable.chatEnabled eq false }.map {
+            ChatServer.of(it.server)
         }.toObjectSet()
     }
 
     override suspend fun fetch(localServer: ChatServer) = newSuspendedTransaction(Dispatchers.IO) {
-        val result = FunctionalityTable.selectAll()
-            .where(FunctionalityTable.server eq localServer.internalName)
-            .firstOrNull()
-        localChatEnabled = result?.get(FunctionalityTable.chatEnabled) ?: true
+        localChatEnabled =
+            FunctionalityEntity.find { FunctionalityTable.server eq localServer.internalName }
+                .firstOrNull()?.chatEnabled ?: true
     }
 
     override suspend fun enableLocalChat(localServer: ChatServer) {

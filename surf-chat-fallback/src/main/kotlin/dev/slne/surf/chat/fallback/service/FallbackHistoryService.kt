@@ -6,6 +6,7 @@ import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.core.entry.HistoryEntryImpl
 import dev.slne.surf.chat.core.message.MessageData
 import dev.slne.surf.chat.core.service.HistoryService
+import dev.slne.surf.chat.fallback.entity.HistoryEntity
 import dev.slne.surf.chat.fallback.table.HistoryTable
 import dev.slne.surf.surfapi.core.api.messages.adventure.plain
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
@@ -15,10 +16,13 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeout
 import net.kyori.adventure.util.Services
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.greaterEq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
@@ -35,16 +39,16 @@ class FallbackHistoryService : HistoryService, Services.Fallback {
 
     override suspend fun logMessage(messageData: MessageData) =
         newSuspendedTransaction(Dispatchers.IO) {
-            HistoryTable.insert {
-                it[messageUuid] = messageData.messageUuid
-                it[senderUuid] = messageData.sender.uuid
-                it[receiverUuid] = messageData.receiver?.uuid
-                it[message] = messageData.message.plain()
-                it[sentAt] = messageData.sentAt
-                it[server] = messageData.server
-                it[channel] = messageData.channel?.channelName
-                it[type] = messageData.type
-                it[deletedBy] = null
+            HistoryEntity.new {
+                messageUuid = messageData.messageUuid
+                senderUuid = messageData.sender.uuid
+                receiverUuid = messageData.receiver?.uuid
+                message = messageData.message.plain()
+                sentAt = messageData.sentAt
+                server = messageData.server
+                channel = messageData.channel?.channelName
+                type = messageData.type
+                deletedBy = null
             }
 
             return@newSuspendedTransaction
@@ -133,8 +137,8 @@ class FallbackHistoryService : HistoryService, Services.Fallback {
         newSuspendedTransaction(
             Dispatchers.IO
         ) {
-            HistoryTable.update({ HistoryTable.messageUuid eq messageUuid }) {
-                it[deletedBy] = deleter
+            HistoryEntity.findSingleByAndUpdate(HistoryTable.messageUuid eq messageUuid) {
+                it.deletedBy = deleter
             }
             return@newSuspendedTransaction
         }

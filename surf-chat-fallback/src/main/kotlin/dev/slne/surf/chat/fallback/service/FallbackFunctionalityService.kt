@@ -99,7 +99,5 @@ class FallbackFunctionalityService : FunctionalityService, Services.Fallback {
         }
     }
 
-    override fun isLocalChatEnabled(): Boolean {
-        return localChatEnabled
-    }
+    override fun isLocalChatEnabled() = localChatEnabled
 }

@@ -35,7 +35,7 @@ fun SurfComponentBuilder.appendDelete(messageData: MessageData) = append(buildTe
 
         Bukkit.getServer().deleteMessage(signature)
         Bukkit.getOnlinePlayers()
-            .filter { online -> online.hasPermission(SurfChatPermissionRegistry.TEAM_ACCESS) }
+            .filter { online -> online.hasPermission(SurfChatPermissionRegistry.TEAM_NOTIFY_DELETION) }
             .forEach { online ->
                 online.sendText {
                     appendPrefix()

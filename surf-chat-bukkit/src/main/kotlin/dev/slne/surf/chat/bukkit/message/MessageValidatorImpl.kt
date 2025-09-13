@@ -39,7 +39,7 @@ class MessageValidatorImpl {
         private val messageTimestamps = mutableObject2ObjectMapOf<UUID, ObjectList<Long>>()
 
         override fun validate(user: User): MessageValidationResult {
-            if (user.hasPermission(SurfChatPermissionRegistry.FILTER_BYPASS)) {
+            if (user.hasPermission(SurfChatPermissionRegistry.TEAM_BYPASS_FILTER)) {
                 return MessageValidationResult.Success()
             }
 
@@ -48,7 +48,7 @@ class MessageValidatorImpl {
             }
 
             if (!functionalityService.isLocalChatEnabled() && !user.hasPermission(
-                    SurfChatPermissionRegistry.TEAM_ACCESS
+                    SurfChatPermissionRegistry.TEAM_BYPASS_FUNCTIONALITY
                 )
             ) {
                 return MessageValidationResult.Failure(MessageValidationResult.MessageValidationError.ChatDisabled())

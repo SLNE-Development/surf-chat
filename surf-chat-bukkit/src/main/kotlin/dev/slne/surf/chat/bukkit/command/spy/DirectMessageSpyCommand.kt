@@ -26,7 +26,7 @@ fun directMessageSpyCommand() = commandAPICommand("spy") {
             return@playerExecutor
         }
 
-        if (target.hasPermission(SurfChatPermissionRegistry.TEAM_ACCESS)) {
+        if (target.hasPermission(SurfChatPermissionRegistry.TEAM_BYPASS_SPY)) {
             player.sendText {
                 appendPrefix()
                 error("Du kannst keine Teammitglieder spionieren!")

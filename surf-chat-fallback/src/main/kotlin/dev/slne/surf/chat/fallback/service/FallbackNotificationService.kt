@@ -27,15 +27,14 @@ class FallbackNotificationService : NotificationService, Services.Fallback {
         }
 
     override suspend fun enablePings(uuid: UUID) = newSuspendedTransaction(Dispatchers.IO) {
-        NotifySettingsTable.upsert {
-            it[userUuid] = uuid
+        NotifySettingsTable.upsert(where = { NotifySettingsTable.userUuid eq uuid }) {
             it[pingsEnabled] = true
         }
         return@newSuspendedTransaction
     }
 
     override suspend fun disablePings(uuid: UUID) = newSuspendedTransaction(Dispatchers.IO) {
-        NotifySettingsTable.upsert {
+        NotifySettingsTable.upsert(where = { NotifySettingsTable.userUuid eq uuid }) {
             it[userUuid] = uuid
             it[pingsEnabled] = false
         }
@@ -49,7 +48,7 @@ class FallbackNotificationService : NotificationService, Services.Fallback {
     }
 
     override suspend fun enableInvites(uuid: UUID) = newSuspendedTransaction(Dispatchers.IO) {
-        NotifySettingsTable.upsert {
+        NotifySettingsTable.upsert(where = { NotifySettingsTable.userUuid eq uuid }) {
             it[userUuid] = uuid
             it[invitesEnabled] = true
         }
@@ -58,7 +57,7 @@ class FallbackNotificationService : NotificationService, Services.Fallback {
 
 
     override suspend fun disableInvites(uuid: UUID) = newSuspendedTransaction(Dispatchers.IO) {
-        NotifySettingsTable.upsert {
+        NotifySettingsTable.upsert(where = { NotifySettingsTable.userUuid eq uuid }) {
             it[userUuid] = uuid
             it[invitesEnabled] = false
         }

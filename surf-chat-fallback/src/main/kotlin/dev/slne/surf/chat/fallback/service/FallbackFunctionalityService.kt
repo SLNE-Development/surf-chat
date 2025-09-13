@@ -75,7 +75,7 @@ class FallbackFunctionalityService : FunctionalityService, Services.Fallback {
         localChatEnabled = !localChatEnabled
 
         newSuspendedTransaction(Dispatchers.IO) {
-            FunctionalityTable.upsert {
+            FunctionalityTable.upsert(where = { FunctionalityTable.server eq localServer.internalName }) {
                 it[server] = localServer.internalName
                 it[chatEnabled] = localChatEnabled
             }
@@ -88,7 +88,7 @@ class FallbackFunctionalityService : FunctionalityService, Services.Fallback {
         localChatEnabled = false
 
         newSuspendedTransaction(Dispatchers.IO) {
-            FunctionalityTable.upsert {
+            FunctionalityTable.upsert(where = { FunctionalityTable.server eq localServer.internalName }) {
                 it[server] = localServer.internalName
                 it[chatEnabled] = false
             }

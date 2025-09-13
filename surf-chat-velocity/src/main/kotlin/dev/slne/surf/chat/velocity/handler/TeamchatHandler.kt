@@ -25,7 +25,7 @@ class TeamchatHandler {
             DataInputStream(byteStream).use { input ->
                 val message = GsonComponentSerializer.gson().deserialize(input.readUTF())
                 plugin.proxy.allPlayers
-                    .filter { it.hasPermission(Constants.TEAM_PERMISSION) }
+                    .filter { it.hasPermission(Constants.PERMISSION_TEAMCHAT) }
                     .forEach { it.sendText { append(message) } }
             }
         }

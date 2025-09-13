@@ -40,7 +40,7 @@ fun Cancellable.cancel() {
 }
 
 fun sendTeamMessage(message: SurfComponentBuilder.() -> Unit) =
-    Bukkit.getOnlinePlayers().filter { it.hasPermission(Constants.TEAM_PERMISSION) }
+    Bukkit.getOnlinePlayers().filter { it.hasPermission(Constants.PERMISSION_TEAMCHAT) }
         .forEach { it.sendText(message) }
 
 fun Component.plainText(): String = PlainTextComponentSerializer.plainText().serialize(this)

@@ -27,7 +27,8 @@ fun CommandAPICommand.functionalityChangeCommand() = subcommand("change") {
                 }
 
                 Bukkit.getOnlinePlayers()
-                    .filter { it.hasPermission(SurfChatPermissionRegistry.TEAM_ACCESS) }.forEach {
+                    .filter { it.hasPermission(SurfChatPermissionRegistry.TEAM_NOTIFY_FUNCTIONALITY) }
+                    .forEach {
                         it.sendText {
                             appendPrefix()
                             variableValue(player.name)
@@ -44,7 +45,8 @@ fun CommandAPICommand.functionalityChangeCommand() = subcommand("change") {
                 }
 
                 Bukkit.getOnlinePlayers()
-                    .filter { it.hasPermission(SurfChatPermissionRegistry.TEAM_ACCESS) }.forEach {
+                    .filter { it.hasPermission(SurfChatPermissionRegistry.TEAM_NOTIFY_FUNCTIONALITY) }
+                    .forEach {
                         it.sendText {
                             appendPrefix()
                             variableValue(player.name)

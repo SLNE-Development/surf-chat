@@ -6,10 +6,16 @@ import dev.slne.surf.surfapi.bukkit.api.permission.PermissionRegistry
 object SurfChatPermissionRegistry : PermissionRegistry() {
     private const val PREFIX = "surf.chat"
     private const val PREFIX_COMMAND = "$PREFIX.command"
+    private const val PREFIX_TEAM = "$PREFIX.team"
 
-    val FILTER_BYPASS = create("$PREFIX.filter.bypass")
-    val TEAM_ACCESS = create(Constants.TEAM_PERMISSION)
     val AUTO_CHAT_DISABLING_BYPASS = create("$PREFIX.disabling.bypass")
+
+    val TEAM_CHAT = create(Constants.PERMISSION_TEAMCHAT)
+    val TEAM_BYPASS_FILTER = create("$PREFIX_TEAM.bypass.filter")
+    val TEAM_BYPASS_SPY = create("$PREFIX_TEAM.bypass.spy")
+    val TEAM_BYPASS_FUNCTIONALITY = create("$PREFIX_TEAM.bypass.functionality")
+    val TEAM_NOTIFY_FUNCTIONALITY = create("$PREFIX_TEAM.notify.functionality")
+    val TEAM_NOTIFY_DELETION = create("$PREFIX_TEAM.notify.deletion")
 
     val COMMAND_SURFCHAT = create("$PREFIX_COMMAND.surfchat")
     val COMMAND_SURFCHAT_RELOAD = create("$PREFIX_COMMAND.surfchat.reload")

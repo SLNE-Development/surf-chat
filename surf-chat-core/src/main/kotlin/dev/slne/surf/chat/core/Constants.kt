@@ -14,7 +14,7 @@ object Constants {
      * checked before sending messages to a subset of players to ensure they
      * possess the appropriate access rights.
      */
-    const val TEAM_PERMISSION = "surf.chat.team"
+    const val PERMISSION_TEAMCHAT = "surf.chat.teamchat"
 
     /**
      * Represents the channel identifier for team chat communication within the Surf Chat system.

@@ -1,4 +1,4 @@
-package dev.slne.surf.chat.bukkit.config
+package dev.slne.surf.chat.bukkit.config.configs
 
 import dev.slne.surf.chat.bukkit.util.miniMessage
 import dev.slne.surf.surfapi.core.api.messages.Colors

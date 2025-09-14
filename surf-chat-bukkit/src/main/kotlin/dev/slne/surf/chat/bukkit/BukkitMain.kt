@@ -3,10 +3,7 @@ package dev.slne.surf.chat.bukkit
 import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.api.server.ChatServer
-import dev.slne.surf.chat.bukkit.config.AutoDisablingConfigProvider
-import dev.slne.surf.chat.bukkit.config.ChatMotdConfigProvider
-import dev.slne.surf.chat.bukkit.config.ChatServerProviderConfig
-import dev.slne.surf.chat.bukkit.config.ConnectionMessageConfigProvider
+import dev.slne.surf.chat.bukkit.config.SurfChatConfigProvider
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.chat.core.service.denylistActionService
 import dev.slne.surf.chat.core.service.denylistService
@@ -46,13 +43,15 @@ class BukkitMain : SuspendingJavaPlugin() {
         }
     }
 
-    val connectionMessageConfig = ConnectionMessageConfigProvider()
-    val chatMotdConfig = ChatMotdConfigProvider()
-    val chatServerConfig = ChatServerProviderConfig()
-    val autoDisablingConfig = AutoDisablingConfigProvider()
+    val surfChatConfig = SurfChatConfigProvider()
+    val connectionMessageConfig get() = surfChatConfig.config.connectionMessageConfig
+    val chatMotdConfig get() = surfChatConfig.config.chatMotdConfig
+    val chatServerConfig get() = surfChatConfig.config.chatServerConfig
+    val autoDisablingConfig get() = surfChatConfig.config.autoDisablingConfig
+    val spamConfig get() = surfChatConfig.config.spamConfig
 
     var server = ChatServer.of(
-        plugin.chatServerConfig.config.internalName,
-        plugin.chatServerConfig.config.displayName
+        chatServerConfig.internalName,
+        chatServerConfig.displayName
     )
 }

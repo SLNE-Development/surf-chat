@@ -21,7 +21,7 @@ data class SpamCheckResult(
 
             if (timestamps.size < plugin.spamConfig.amount) {
                 timestamps += now
-                return SpamCheckResult(true)
+                return SpamCheckResult(false)
             }
 
             val min = timestamps.minOrNull() ?: return SpamCheckResult(false)

@@ -20,6 +20,11 @@ class SurfChatConfigProvider {
         reload()
     }
 
+    fun edit(actions: SurfChatConfig.() -> Unit) {
+        configManager.config = configManager.config.apply { actions() }
+        configManager.save()
+    }
+
     fun reload() {
         configManager.reloadFromFile()
     }

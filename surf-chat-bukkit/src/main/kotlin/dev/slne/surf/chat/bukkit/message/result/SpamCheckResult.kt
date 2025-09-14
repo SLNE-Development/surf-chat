@@ -27,7 +27,7 @@ data class SpamCheckResult(
             val min = timestamps.minOrNull() ?: return SpamCheckResult(false)
             val wait = ((min + interval - now).coerceAtLeast(0) / 1000) + 1
 
-            return SpamCheckResult(false, wait)
+            return SpamCheckResult(true, wait)
         }
     }
 }

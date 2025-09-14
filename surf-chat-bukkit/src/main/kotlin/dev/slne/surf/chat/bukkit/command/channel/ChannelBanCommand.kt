@@ -43,6 +43,7 @@ fun CommandAPICommand.channelBanCommand() = subcommand("ban") {
                     appendPrefix()
                     error("Du verfügst nicht über die erforderliche Berechtigung.")
                 }
+                return@launch
             }
 
             if (member.hasModeratorPermissions()) {

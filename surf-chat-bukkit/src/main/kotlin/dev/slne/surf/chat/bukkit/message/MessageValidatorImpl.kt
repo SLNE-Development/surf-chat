@@ -91,7 +91,7 @@ class MessageValidatorImpl {
                     && plugin.autoDisablingConfig.enabled
     }
 
-    class ComponentMessageValidator(
+    private class ComponentMessageValidator(
         override val message: Component
     ) : MessageValidator<Component> {
         override fun validate(user: User): MessageValidationResult {

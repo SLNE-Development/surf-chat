@@ -121,7 +121,7 @@ class FallbackDenylistActionService : DenylistActionService, Services.Fallback {
                 }
             }
         } else {
-            logger().atSevere()
+            logger().atWarning()
                 .log("Unable to establish Cloud connection. Punishment actions for ${sender.name}: ${entry.word} / ${entry.action.actionType} will be ignored.")
         }
 

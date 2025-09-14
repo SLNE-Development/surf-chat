@@ -18,12 +18,12 @@ class DisconnectListener : Listener {
             it.leaveAndTransfer(user.channelMember(it) ?: return@let)
         }
 
-        if (plugin.connectionMessageConfig.config.enabled) {
+        if (plugin.connectionMessageConfig.enabled) {
             event.quitMessage(
                 PlaceholderAPIHook.parse(
                     event.player,
                     MiniMessage.miniMessage()
-                        .deserialize(plugin.connectionMessageConfig.config.leaveMessage)
+                        .deserialize(plugin.connectionMessageConfig.leaveMessage)
                 )
             )
         }

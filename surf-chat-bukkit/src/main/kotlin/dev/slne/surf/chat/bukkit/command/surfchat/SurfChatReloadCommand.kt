@@ -14,10 +14,7 @@ fun CommandAPICommand.surfChatReloadCommand() = subcommand("reload") {
     withPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_RELOAD)
     anyExecutor { executor, _ ->
         val ms = measureTimeMillis {
-            plugin.connectionMessageConfig.reload()
-            plugin.chatMotdConfig.reload()
-            plugin.chatServerConfig.reload()
-            plugin.autoDisablingConfig.reload()
+            plugin.surfChatConfig.reload()
 
             ConnectListener.ALREADY_REQUESTED = false
         }

@@ -27,23 +27,23 @@ class ConnectListener : Listener {
             }
         }
 
-        if (plugin.connectionMessageConfig.config.enabled) {
+        if (plugin.connectionMessageConfig.enabled) {
             event.joinMessage(
                 PlaceholderAPIHook.parse(
                     event.player,
                     MiniMessage.miniMessage()
-                        .deserialize(plugin.connectionMessageConfig.config.joinMessage)
+                        .deserialize(plugin.connectionMessageConfig.joinMessage)
                 )
             )
         }
 
-        if (plugin.chatMotdConfig.config.enabled) {
+        if (plugin.chatMotdConfig.enabled) {
             event.player.sendText {
                 append(
                     MiniMessage.miniMessage().deserialize(
                         PlaceholderAPIHook.parse(
                             event.player,
-                            plugin.chatMotdConfig.config.message
+                            plugin.chatMotdConfig.message
                         )
                     )
                 )

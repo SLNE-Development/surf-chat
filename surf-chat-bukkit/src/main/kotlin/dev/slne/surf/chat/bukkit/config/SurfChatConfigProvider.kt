@@ -1,26 +1,27 @@
 package dev.slne.surf.chat.bukkit.config
 
+import dev.slne.surf.chat.bukkit.config.configs.SurfChatConfig
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.surfapi.core.api.config.manager.SpongeConfigManager
 import dev.slne.surf.surfapi.core.api.config.surfConfigApi
 
-class ChatServerProviderConfig {
-    private val configManager: SpongeConfigManager<ChatServerConfig>
+class SurfChatConfigProvider {
+    private val configManager: SpongeConfigManager<SurfChatConfig>
 
     init {
         surfConfigApi.createSpongeYmlConfig(
-            ChatServerConfig::class.java,
+            SurfChatConfig::class.java,
             plugin.dataPath,
-            "chat-server.yml"
+            "config.yml"
         )
         configManager = surfConfigApi.getSpongeConfigManagerForConfig(
-            ChatServerConfig::class.java
+            SurfChatConfig::class.java
         )
         reload()
     }
 
-    fun edit(action: ChatServerConfig.() -> Unit) {
-        configManager.config = configManager.config.apply { action() }
+    fun edit(actions: SurfChatConfig.() -> Unit) {
+        configManager.config = configManager.config.apply { actions() }
         configManager.save()
     }
 

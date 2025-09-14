@@ -1,7 +1,7 @@
 package dev.slne.surf.chat.bukkit.listener
 
 import dev.slne.surf.chat.api.server.ChatServer
-import dev.slne.surf.chat.bukkit.config.CONFIG_DISPLAY_DEFAULT
+import dev.slne.surf.chat.bukkit.config.configs.CONFIG_DISPLAY_DEFAULT
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.Constants
 import org.bukkit.entity.Player
@@ -21,16 +21,16 @@ class ServerResponseListener : PluginMessageListener {
         message.inputStream().use { byteSteam ->
             DataInputStream(byteSteam).use { input ->
                 val received = input.readUTF()
-                plugin.chatServerConfig.edit {
-                    internalName = received
+                plugin.surfChatConfig.edit {
+                    chatServerConfig.internalName = received
 
-                    if (displayName == CONFIG_DISPLAY_DEFAULT) {
-                        displayName = received.replaceFirstChar { it.uppercase() }
+                    if (chatServerConfig.displayName == CONFIG_DISPLAY_DEFAULT) {
+                        chatServerConfig.displayName = received.replaceFirstChar { it.uppercase() }
                     }
                 }
                 plugin.server = ChatServer.of(
-                    plugin.chatServerConfig.config.displayName,
-                    plugin.chatServerConfig.config.internalName
+                    plugin.chatServerConfig.displayName,
+                    plugin.chatServerConfig.internalName
                 )
             }
         }

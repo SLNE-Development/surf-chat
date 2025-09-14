@@ -1,4 +1,4 @@
-package dev.slne.surf.chat.bukkit.config
+package dev.slne.surf.chat.bukkit.config.configs
 
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 

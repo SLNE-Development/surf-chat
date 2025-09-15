@@ -23,7 +23,7 @@ class ConnectListener : Listener {
                 pluginMessageSender(Constants.CHANNEL_SERVER_REQUEST, event.player) {
                     writeUTF("Requesting data...")
                 }
-                ALREADY_REQUESTED = false
+                ALREADY_REQUESTED = true
             }
         }
 

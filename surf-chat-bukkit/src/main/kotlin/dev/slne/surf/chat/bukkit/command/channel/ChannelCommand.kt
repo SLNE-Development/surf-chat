@@ -22,7 +22,6 @@ fun channelCommand() = commandAPICommand("channel", plugin) {
     channelInviteRevokeCommand()
 
     channelPromoteCommand()
-    channelDeleteCommand()
 
     channelKickCommand()
     channelBanCommand()

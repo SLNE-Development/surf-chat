@@ -26,7 +26,8 @@ class FallbackSurfChatApi : SurfChatApi, Services.Fallback {
         sentAt: Long,
         server: ChatServer,
         channel: Channel?,
-        signedMessage: SignedMessage?
+        signedMessage: SignedMessage?,
+        messageUuid: UUID
     ) {
         historyService.logMessage(object : MessageData {
             override val message: Component

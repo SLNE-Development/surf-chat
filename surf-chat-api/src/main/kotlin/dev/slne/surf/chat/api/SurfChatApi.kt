@@ -37,7 +37,8 @@ interface SurfChatApi {
         sentAt: Long = System.currentTimeMillis(),
         server: ChatServer = ChatServer.default(),
         channel: Channel? = null,
-        signedMessage: SignedMessage? = null
+        signedMessage: SignedMessage? = null,
+        messageUuid: UUID = UUID.randomUUID()
     )
 
     /**

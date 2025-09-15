@@ -6,7 +6,7 @@ data class CharCheckResult(
 ) {
     companion object {
         private val validCharactersRegex =
-            "^[\\u0000-\\u007FäöüÄÖÜß€@£¥|²³µ½¼¾«»¡¿°§´`^~¨]+$".toRegex()
+            "^[\\u0020-\\u007EäöüÄÖÜß€@£¥|²³µ½¼¾«»¡¿°§´`^~¨]+$".toRegex()
 
         fun of(input: String): CharCheckResult {
             val invalidChars = input.filter { !validCharactersRegex.matches(it.toString()) }

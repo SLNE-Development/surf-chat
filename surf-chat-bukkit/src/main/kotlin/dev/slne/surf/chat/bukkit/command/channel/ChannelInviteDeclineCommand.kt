@@ -30,7 +30,7 @@ fun CommandAPICommand.channelInviteDeclineCommand() = subcommand("decline") {
                 return@launch
             }
 
-            channel.invite(user)
+            channel.invitedPlayers.remove(user)
 
             player.sendText {
                 appendPrefix()

@@ -87,7 +87,7 @@ class MessageValidatorImpl {
 
         fun checkAutoDisabling(player: User): Boolean =
             !player.hasPermission(SurfChatPermissionRegistry.AUTO_CHAT_DISABLING_BYPASS)
-                    && Bukkit.getOnlinePlayers().size > plugin.autoDisablingConfig.maximumPlayersBeforeDisable
+                    && Bukkit.getOnlinePlayers().count() > plugin.autoDisablingConfig.maximumPlayersBeforeDisable
                     && plugin.autoDisablingConfig.enabled
     }
 

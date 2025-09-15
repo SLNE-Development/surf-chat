@@ -26,7 +26,7 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
     private val nameRegexCache = Caffeine.newBuilder()
         .expireAfterWrite(15.minutes)
         .build<String, Regex> { name ->
-            Regex("(?<!\\w)@?${Regex.escape(name)}(?!\\w)")
+            Regex("\\b@?${Regex.escape(name)}\\b")
         }
 
     override fun formatGlobal(messageData: MessageData) = buildText {

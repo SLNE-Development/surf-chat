@@ -1,8 +1,11 @@
 package dev.slne.surf.chat.core
 
 /**
- * The Constants object contains several predefined constants used across the application for managing
- * permissions, communication channels, and message handling in the Surf Chat application.
+ * Contains permission strings and plugin messaging channel identifiers used throughout the Surf Chat system.
+ *
+ * Permission constants are used for access control checks (e.g., team chat access), while channel identifiers
+ * are used to register, transmit, and synchronize chat-related messages (team chat, general chat, direct messages,
+ * server requests/responses) between servers and components.
  */
 object Constants {
     /**

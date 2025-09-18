@@ -154,7 +154,7 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
     }
 }
 
-private val regex = Regex("""(\d+)([smhdwMy])""", RegexOption.IGNORE_CASE)
+private val regex = Regex("""(\d+)([smhdw])""", RegexOption.IGNORE_CASE)
 
 private suspend fun Map<String, String>.parseFilters(): HistoryFilter {
     val senderUuid = this["--sender"]?.let { PlayerLookupService.getUuid(it) }

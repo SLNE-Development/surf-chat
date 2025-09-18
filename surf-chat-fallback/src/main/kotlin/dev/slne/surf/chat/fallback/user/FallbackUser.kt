@@ -1,0 +1,21 @@
+package dev.slne.surf.chat.fallback.user
+
+import dev.slne.surf.chat.api.channel.Channel
+import dev.slne.surf.chat.api.entity.ChannelMember
+import dev.slne.surf.chat.api.entity.ConfigurableUser
+import dev.slne.surf.chat.api.entity.User
+import org.bukkit.Bukkit
+import java.util.*
+
+data class FallbackUser(override val name: String, override val uuid: UUID) : User {
+    override fun hasPermission(permission: String) =
+        Bukkit.getPlayer(uuid)?.hasPermission(permission) ?: false
+
+    override fun configure(): ConfigurableUser {
+        return FallbackConfigurableUser(uuid)
+    }
+
+    override fun channelMember(channel: Channel): ChannelMember? {
+        return channel.members.firstOrNull { it.uuid == uuid }
+    }
+}

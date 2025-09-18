@@ -14,7 +14,7 @@ object MiniPlaceholdersHook {
             return MiniMessage.miniMessage().deserialize(input)
         }
 
-        val resolver = MiniPlaceholders.audiencePlaceholders()
+        val resolver = MiniPlaceholders.getAudienceGlobalPlaceholders(player)
         return MiniMessage.miniMessage().deserialize(input, player, resolver)
     }
 
@@ -23,7 +23,7 @@ object MiniPlaceholdersHook {
             return MiniMessage.miniMessage().deserialize(input)
         }
 
-        val resolver = MiniPlaceholders.globalPlaceholders()
+        val resolver = MiniPlaceholders.getGlobalPlaceholders()
         return MiniMessage.miniMessage().deserialize(input, resolver)
     }
 }

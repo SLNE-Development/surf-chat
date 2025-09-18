@@ -8,7 +8,11 @@ repositories {
 
 dependencies {
     api(project(":surf-chat-core"))
+
     compileOnly(libs.playerholder.api)
+    compileOnly(libs.miniplaceholder.api)
+    compileOnly(libs.miniplaceholder.kotlin)
+
     runtimeOnly(project(":surf-chat-fallback"))
 }
 

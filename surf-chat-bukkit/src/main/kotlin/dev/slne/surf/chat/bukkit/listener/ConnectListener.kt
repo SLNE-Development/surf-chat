@@ -1,14 +1,13 @@
 package dev.slne.surf.chat.bukkit.listener
 
 import com.github.shynixn.mccoroutine.folia.launch
-import dev.slne.surf.chat.bukkit.hook.PlaceholderAPIHook
+import dev.slne.surf.chat.bukkit.hook.MiniPlaceholdersHook
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.pluginmessage.pluginMessageSender
 import dev.slne.surf.chat.core.Constants
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -29,10 +28,9 @@ class ConnectListener : Listener {
 
         if (plugin.connectionMessageConfig.enabled) {
             event.joinMessage(
-                PlaceholderAPIHook.parse(
+                MiniPlaceholdersHook.parseAudience(
                     event.player,
-                    MiniMessage.miniMessage()
-                        .deserialize(plugin.connectionMessageConfig.joinMessage)
+                    plugin.connectionMessageConfig.joinMessage
                 )
             )
         }
@@ -40,11 +38,9 @@ class ConnectListener : Listener {
         if (plugin.chatMotdConfig.enabled) {
             event.player.sendText {
                 append(
-                    MiniMessage.miniMessage().deserialize(
-                        PlaceholderAPIHook.parse(
-                            event.player,
-                            plugin.chatMotdConfig.message
-                        )
+                    MiniPlaceholdersHook.parseAudience(
+                        event.player,
+                        plugin.chatMotdConfig.message
                     )
                 )
             }

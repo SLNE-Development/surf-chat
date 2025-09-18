@@ -3,7 +3,7 @@ package dev.slne.surf.chat.bukkit.util
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.entity.User
-import dev.slne.surf.chat.bukkit.hook.PlaceholderAPIHook
+import dev.slne.surf.chat.bukkit.hook.MiniPlaceholdersHook
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.message.MessageData
@@ -15,7 +15,6 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.surfapi.core.api.messages.builder.SurfComponentBuilder
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.format.TextDecoration
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
@@ -68,14 +67,7 @@ fun SurfComponentBuilder.appendMessageData(messageData: MessageData) = append(bu
 
 fun SurfComponentBuilder.appendName(player: Player) = append {
     append(
-        MiniMessage.miniMessage().deserialize(
-            convertLegacy(
-                PlaceholderAPIHook.parse(
-                    player,
-                    "%luckperms_prefix% %player_name%"
-                )
-            )
-        )
+        MiniPlaceholdersHook.parseAudience(player, "<luckperms_prefix> <player_name>")
     )
 }
 

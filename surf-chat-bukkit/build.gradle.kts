@@ -21,5 +21,9 @@ surfPaperPluginApi {
     foliaSupported(true)
     generateLibraryLoader(false)
 
+    serverDependencies {
+        register("MiniPlaceholders")
+    }
+
     authors.add("red")
 }

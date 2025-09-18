@@ -67,7 +67,7 @@ fun SurfComponentBuilder.appendMessageData(messageData: MessageData) = append(bu
 
 fun SurfComponentBuilder.appendName(player: Player) = append {
     append(
-        MiniPlaceholdersHook.parseAudience(player, "%luckperms_prefix% %player_name%")
+        MiniPlaceholdersHook.parseAudience(player, "<luckperms_prefix> <player_name>")
     )
 }
 

@@ -1,5 +1,6 @@
 package dev.slne.surf.chat.velocity
 
+import com.github.retrooper.packetevents.PacketEvents
 import com.github.shynixn.mccoroutine.velocity.SuspendingPluginContainer
 import com.google.inject.Inject
 
@@ -11,6 +12,7 @@ import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier
 import dev.slne.surf.chat.core.Constants
 import dev.slne.surf.chat.velocity.command.directMessageCommand
 import dev.slne.surf.chat.velocity.command.replyCommand
+import dev.slne.surf.chat.velocity.handler.CrossChatListener
 import dev.slne.surf.chat.velocity.handler.ServerRequestHandler
 import dev.slne.surf.chat.velocity.handler.TeamchatHandler
 
@@ -37,6 +39,8 @@ class VelocityMain @Inject constructor(
         plugin.proxy.channelRegistrar.register(MinecraftChannelIdentifier.from(Constants.CHANNEL_CHAT))
         plugin.proxy.channelRegistrar.register(MinecraftChannelIdentifier.from(Constants.CHANNEL_SERVER_RESPONSE))
         plugin.proxy.channelRegistrar.register(MinecraftChannelIdentifier.from(Constants.CHANNEL_SERVER_REQUEST))
+
+        PacketEvents.getAPI().eventManager.registerListener(CrossChatListener())
 
         directMessageCommand()
         replyCommand()

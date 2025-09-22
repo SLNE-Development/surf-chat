@@ -19,7 +19,7 @@ class DisconnectListener : Listener {
 
         if (plugin.connectionMessageConfig.enabled) {
             event.quitMessage(
-                MiniPlaceholdersHook.parseAudience(
+                MiniPlaceholdersHook.parse(
                     event.player,
                     plugin.connectionMessageConfig.leaveMessage
                 )

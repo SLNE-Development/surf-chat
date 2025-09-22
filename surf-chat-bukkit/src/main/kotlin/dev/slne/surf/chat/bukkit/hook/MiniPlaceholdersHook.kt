@@ -9,21 +9,12 @@ import org.bukkit.entity.Player
 object MiniPlaceholdersHook {
     private fun isEnabled() = Bukkit.getPluginManager().isPluginEnabled("MiniPlaceholders")
 
-    fun parseAudience(player: Player, input: String): Component {
+    fun parse(player: Player, input: String): Component {
         if (!this.isEnabled()) {
             return MiniMessage.miniMessage().deserialize(input)
         }
 
-        val resolver = MiniPlaceholders.getAudienceGlobalPlaceholders(player)
+        val resolver = MiniPlaceholders.audienceGlobalPlaceholders()
         return MiniMessage.miniMessage().deserialize(input, player, resolver)
-    }
-
-    fun parseGlobal(input: String): Component {
-        if (!this.isEnabled()) {
-            return MiniMessage.miniMessage().deserialize(input)
-        }
-
-        val resolver = MiniPlaceholders.getGlobalPlaceholders()
-        return MiniMessage.miniMessage().deserialize(input, resolver)
     }
 }

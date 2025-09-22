@@ -28,7 +28,7 @@ class ConnectListener : Listener {
 
         if (plugin.connectionMessageConfig.enabled) {
             event.joinMessage(
-                MiniPlaceholdersHook.parseAudience(
+                MiniPlaceholdersHook.parse(
                     event.player,
                     plugin.connectionMessageConfig.joinMessage
                 )
@@ -38,7 +38,7 @@ class ConnectListener : Listener {
         if (plugin.chatMotdConfig.enabled) {
             event.player.sendText {
                 append(
-                    MiniPlaceholdersHook.parseAudience(
+                    MiniPlaceholdersHook.parse(
                         event.player,
                         plugin.chatMotdConfig.message
                     )

@@ -1,6 +1,6 @@
 [versions]
 playerholder-api = "2.11.6"
-miniplaceholder-api = "2.3.0"
+miniplaceholder-api = "3.0.1"
 surf-database = "2.0.4-SNAPSHOT"
 
 [libraries]

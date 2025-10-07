@@ -6,6 +6,7 @@ import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.entry.DenylistActionType
 import dev.slne.surf.chat.api.entry.DenylistEntry
 import dev.slne.surf.chat.core.service.DenylistActionService
+import dev.slne.surf.chat.core.service.discordService
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.chat.fallback.entity.DenylistActionEntity
 import dev.slne.surf.chat.fallback.table.DenylistActionsTable
@@ -71,7 +72,8 @@ class FallbackDenylistActionService : DenylistActionService, Services.Fallback {
         messageUuid: UUID,
         entry: DenylistEntry,
         message: SignedMessage,
-        sender: User
+        sender: User,
+        discordHookUrl: String?
     ) {
         if (isCloud()) {
             val cloudPlayer = sender.toOfflineCloudPlayer()
@@ -118,6 +120,23 @@ class FallbackDenylistActionService : DenylistActionService, Services.Fallback {
                             .withNote("Punished by Arty Support (surf-chat) for: ${entry.word} (messageUid: $messageUuid)"),
                         entry.action.reason
                     )
+                }
+
+                DenylistActionType.COMMUNITY_BAN -> {
+                    punishManager.punish(
+                        PunishType.BAN.Expirable(
+                            ZonedDateTime.now().plus(
+                                entry.action.duration,
+                                ChronoUnit.MILLIS
+                            )
+                        )
+                            .withNote("Punished by Arty Support (surf-chat) for: ${entry.word} (messageUid: $messageUuid)"),
+                        entry.action.reason
+                    )
+
+                    discordHookUrl?.let {
+                        discordService.sendCommunityBanNotification(it, sender, entry)
+                    }
                 }
             }
         } else {

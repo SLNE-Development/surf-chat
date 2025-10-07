@@ -10,4 +10,6 @@ fun denylistCommand() = commandAPICommand("denylist", plugin) {
     denylistRemoveCommand()
     denylistFetchCommand()
     denylistListCommand()
+    denylistClearCommand()
+    denylistImportDefaultCommand()
 }

@@ -122,7 +122,8 @@ interface DenylistActionService {
         messageUuid: UUID,
         entry: DenylistEntry,
         message: SignedMessage,
-        sender: User
+        sender: User,
+        discordHookUrl: String?
     )
 
     /**

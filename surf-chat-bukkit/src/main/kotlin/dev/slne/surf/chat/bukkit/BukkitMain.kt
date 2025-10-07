@@ -4,6 +4,7 @@ import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.api.server.ChatServer
 import dev.slne.surf.chat.bukkit.config.SurfChatConfigProvider
+import dev.slne.surf.chat.bukkit.config.configs.DiscordConfig
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.chat.core.service.denylistActionService
 import dev.slne.surf.chat.core.service.denylistService
@@ -44,6 +45,7 @@ class BukkitMain : SuspendingJavaPlugin() {
     }
 
     val surfChatConfig = SurfChatConfigProvider()
+    val discordConfig = DiscordConfig()
     val connectionMessageConfig get() = surfChatConfig.config.connectionMessageConfig
     val chatMotdConfig get() = surfChatConfig.config.chatMotdConfig
     val chatServerConfig get() = surfChatConfig.config.chatServerConfig

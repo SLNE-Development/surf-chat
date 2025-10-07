@@ -53,7 +53,7 @@ class AsyncChatListener : Listener {
                         error.denylistEntry,
                         event.signedMessage(),
                         user,
-                        if (plugin.discordConfig.enabled) plugin.discordConfig.webhook else null
+                        if (plugin.discordConfig.config.enabled) plugin.discordConfig.config.webhook else null
                     )
                 }
             } else {

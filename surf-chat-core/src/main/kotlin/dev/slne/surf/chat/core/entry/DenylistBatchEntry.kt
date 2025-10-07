@@ -3,6 +3,7 @@ package dev.slne.surf.chat.core.entry
 import dev.slne.surf.chat.api.DenylistAction
 import dev.slne.surf.chat.api.entry.DenylistActionType
 import dev.slne.surf.chat.api.entry.DenylistEntry
+import dev.slne.surf.chat.core.service.denylistActionService
 import dev.slne.surf.chat.core.service.denylistService
 import kotlin.time.Duration
 
@@ -22,7 +23,16 @@ class DenylistBatchEntry private constructor(
 
     suspend fun execute() {
         entries.forEach {
+            denylistActionService.addAction(it.action)
+            denylistActionService.addLocalAction(it.action)
             denylistService.addEntry(
+                it.word,
+                it.reason,
+                it.addedBy,
+                it.addedAt,
+                it.action
+            )
+            denylistService.addLocalEntry(
                 it.word,
                 it.reason,
                 it.addedBy,

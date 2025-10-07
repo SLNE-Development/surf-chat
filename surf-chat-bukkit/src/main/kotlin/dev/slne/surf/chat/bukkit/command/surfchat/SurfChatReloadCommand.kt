@@ -15,6 +15,7 @@ fun CommandAPICommand.surfChatReloadCommand() = subcommand("reload") {
     anyExecutor { executor, _ ->
         val ms = measureTimeMillis {
             plugin.surfChatConfig.reload()
+            plugin.discordConfig.reload()
 
             ConnectListener.ALREADY_REQUESTED = false
         }

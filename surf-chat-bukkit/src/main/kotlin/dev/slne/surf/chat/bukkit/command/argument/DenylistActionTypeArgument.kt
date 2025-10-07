@@ -15,10 +15,11 @@ class DenylistActionTypeArgument(nodeName: String) :
             "ban" -> DenylistActionType.BAN
             "mute" -> DenylistActionType.MUTE
             "warn" -> DenylistActionType.WARN
+            "communityban" -> DenylistActionType.COMMUNITY_BAN
             else -> throw CustomArgumentException.fromAdventureComponent {
                 buildText {
                     appendPrefix()
-                    error("Der Aktionstyp '${info.input()}' ist ungültig. Gültige Typen sind: kick, ban, mute, warn")
+                    error("Der Aktionstyp '${info.input()}' ist ungültig. Gültige Typen sind: kick, ban, mute, warn, communityban")
                 }
             }
         }
@@ -29,7 +30,8 @@ class DenylistActionTypeArgument(nodeName: String) :
                 "kick",
                 "ban",
                 "mute",
-                "warn"
+                "warn",
+                "communityban"
             )
         )
     }

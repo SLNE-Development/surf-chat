@@ -16,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import net.kyori.adventure.util.Services
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -77,6 +78,10 @@ class FallbackDenylistService : DenylistService, Services.Fallback {
 
     override fun clearLocalEntries() {
         entries.clear()
+    }
+
+    override suspend fun clearEntries() = newSuspendedTransaction(Dispatchers.IO) {
+        DenylistTable.deleteAll()
     }
 
     override fun getLocalEntries(): ObjectList<DenylistEntry> {

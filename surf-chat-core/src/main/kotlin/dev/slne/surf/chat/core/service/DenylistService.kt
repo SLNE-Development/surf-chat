@@ -84,6 +84,16 @@ interface DenylistService : DatabaseTableHolder {
     fun clearLocalEntries()
 
     /**
+     * Clears all denylist entries from the system.
+     *
+     * This method removes all entries from persistent storage,
+     * effectively resetting the denylist to an empty state.
+     *
+     * @return The number of entries that were removed.
+     */
+    suspend fun clearEntries(): Int
+
+    /**
      * Retrieves a list of locally-stored denylist entries.
      *
      * This function returns all denylist entries that have been added locally

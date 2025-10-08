@@ -14,7 +14,16 @@ enum class DenylistActionType {
      * based on the denylist conditions. It is part of the `DenylistActionType` enumeration
      * and is typically utilized in systems for moderating and managing user behavior.
      */
-    BAN,
+    EXPIREABLE_BAN,
+
+    /**
+     * Represents a permanent ban action type within the denylist system.
+     *
+     * This action type is used to permanently prevent a user from accessing certain features
+     * or areas of the system based on the denylist conditions. Unlike temporary bans, this
+     * action has no expiration and is intended for severe or repeated violations of the system's policies.
+     */
+    PERMANENT_BAN,
 
     /**
      * Represents the action of kicking a user from a chat or server.
@@ -39,5 +48,16 @@ enum class DenylistActionType {
      * without enforcing stricter actions such as banning or muting. Warnings are generally
      * used as a preliminary measure in moderation workflows.
      */
-    WARN
+    WARN,
+
+    /**
+     * Represents a community ban action type.
+     *
+     * This action type is used to enforce a ban across an entire community or platform,
+     * rather than just a single server or chat instance. It is typically applied for severe
+     * violations of community guidelines or rules.
+     *
+     * Note: Triggering a community ban can broadcast a message to discord
+     */
+    COMMUNITY_BAN
 }

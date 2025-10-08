@@ -6,6 +6,7 @@ import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.entry.DenylistActionType
 import dev.slne.surf.chat.api.entry.DenylistEntry
 import dev.slne.surf.chat.core.service.DenylistActionService
+import dev.slne.surf.chat.core.service.discordService
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.chat.fallback.entity.DenylistActionEntity
 import dev.slne.surf.chat.fallback.table.DenylistActionsTable
@@ -15,9 +16,11 @@ import dev.slne.surf.surfapi.core.api.util.logger
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import net.kyori.adventure.chat.SignedMessage
 import net.kyori.adventure.util.Services
 import org.bukkit.Bukkit
+import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
@@ -27,7 +30,7 @@ import kotlin.time.Duration.Companion.seconds
 @Suppress("MISSING_DEPENDENCY_SUPERCLASS_IN_TYPE_ARGUMENT")
 @AutoService(DenylistActionService::class)
 class FallbackDenylistActionService : DenylistActionService, Services.Fallback {
-    val localActions = mutableObjectSetOf<DenylistAction>()
+    private val _actions = mutableObjectSetOf<DenylistAction>()
 
     override suspend fun addAction(action: DenylistAction) =
         newSuspendedTransaction(Dispatchers.IO) {
@@ -53,32 +56,39 @@ class FallbackDenylistActionService : DenylistActionService, Services.Fallback {
     }
 
     override suspend fun fetchActions() = newSuspendedTransaction(Dispatchers.IO) {
-        localActions.clear()
-        localActions.addAll(DenylistActionEntity.all().map {
+        _actions.clear()
+        _actions.addAll(DenylistActionEntity.all().map {
             it.toDto()
         })
         return@newSuspendedTransaction
     }
 
-    override fun addLocalAction(action: DenylistAction) = localActions.add(action)
-    override fun removeLocalAction(action: DenylistAction) = localActions.remove(action)
-    override fun getLocalAction(name: String) = localActions.firstOrNull { it.name == name }
+    override fun addLocalAction(action: DenylistAction) = _actions.add(action)
+    override fun removeLocalAction(action: DenylistAction) = _actions.remove(action)
+    override fun getLocalAction(name: String) = _actions.firstOrNull { it.name == name }
 
-    override fun listLocalActions() = localActions
-    override fun hasLocalAction(name: String) = localActions.any { it.name == name }
+    override fun listLocalActions() = _actions
+    override fun hasLocalAction(name: String) = _actions.any { it.name == name }
+    override suspend fun clearActions() = newSuspendedTransaction(Dispatchers.IO) {
+        DenylistActionsTable.deleteAll()
+    }
+
+    override fun clearLocalActions() = _actions.clear()
 
     override suspend fun makeAction(
         messageUuid: UUID,
         entry: DenylistEntry,
         message: SignedMessage,
-        sender: User
-    ) {
+        sender: User,
+        discordHookUrl: String?
+    ) = withContext(Dispatchers.IO) {
         if (isCloud()) {
+
             val cloudPlayer = sender.toOfflineCloudPlayer()
             val punishManager = cloudPlayer.punishmentManager
 
             when (entry.action.actionType) {
-                DenylistActionType.BAN -> {
+                DenylistActionType.EXPIREABLE_BAN -> {
                     punishManager.punish(
                         PunishType.BAN.Expirable(
                             ZonedDateTime.now().plus(
@@ -94,6 +104,14 @@ class FallbackDenylistActionService : DenylistActionService, Services.Fallback {
                 DenylistActionType.KICK -> {
                     punishManager.punish(
                         PunishType.KICK
+                            .withNote("Punished by Arty Support (surf-chat) for: ${entry.word} (messageUid: $messageUuid)"),
+                        entry.action.reason
+                    )
+                }
+
+                DenylistActionType.PERMANENT_BAN -> {
+                    punishManager.punish(
+                        PunishType.BAN.Permanent
                             .withNote("Punished by Arty Support (surf-chat) for: ${entry.word} (messageUid: $messageUuid)"),
                         entry.action.reason
                     )
@@ -118,6 +136,18 @@ class FallbackDenylistActionService : DenylistActionService, Services.Fallback {
                             .withNote("Punished by Arty Support (surf-chat) for: ${entry.word} (messageUid: $messageUuid)"),
                         entry.action.reason
                     )
+                }
+
+                DenylistActionType.COMMUNITY_BAN -> {
+                    punishManager.punish(
+                        PunishType.BAN.Permanent
+                            .withNote("Punished by Arty Support (surf-chat) for: ${entry.word} (messageUid: $messageUuid)"),
+                        entry.action.reason
+                    )
+
+                    discordHookUrl?.let {
+                        discordService.sendCommunityBanNotification(it, sender, entry)
+                    }
                 }
             }
         } else {

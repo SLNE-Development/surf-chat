@@ -78,7 +78,7 @@ class DenylistBatchEntry private constructor(
         fun build(): DenylistBatchEntry {
             val now = System.currentTimeMillis()
             val action: DenylistAction = DenylistActionImpl(
-                name = "default-${actionType.name.lowercase()}-$duration",
+                name = "${actionType.name.lowercase()}-$reason",
                 actionType = actionType,
                 reason = punishReason,
                 duration = duration

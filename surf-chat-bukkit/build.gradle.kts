@@ -1,3 +1,5 @@
+import dev.slne.surf.surfapi.gradle.util.registerSoft
+
 plugins {
     id("dev.slne.surf.surfapi.gradle.paper-plugin")
 }
@@ -21,7 +23,7 @@ surfPaperPluginApi {
     generateLibraryLoader(false)
 
     serverDependencies {
-        register("MiniPlaceholders")
+        registerSoft("MiniPlaceholders")
     }
 
     authors.add("red")

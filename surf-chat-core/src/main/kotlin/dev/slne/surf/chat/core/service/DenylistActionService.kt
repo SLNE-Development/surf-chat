@@ -105,6 +105,25 @@ interface DenylistActionService {
      */
     fun hasLocalAction(name: String): Boolean
 
+    /**
+     * Clears all denylist entries from the system.
+     *
+     * This method removes all entries from persistent storage,
+     * effectively resetting the denylist to an empty state.
+     *
+     * @return The number of entries that were removed.
+     */
+    suspend fun clearActions(): Int
+
+    /**
+     * Removes all locally stored denylist actions from memory.
+     *
+     * This method clears the in-memory list of denylist actions managed by the
+     * local context. It does not affect actions stored persistently or remotely.
+     * Use this method to reset or refresh the locally tracked denylist state.
+     */
+    fun clearLocalActions()
+
 
     /**
      * Processes an action based on the provided denylist entry and message details.

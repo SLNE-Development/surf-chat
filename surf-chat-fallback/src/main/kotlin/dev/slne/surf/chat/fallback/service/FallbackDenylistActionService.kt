@@ -19,6 +19,7 @@ import kotlinx.coroutines.delay
 import net.kyori.adventure.chat.SignedMessage
 import net.kyori.adventure.util.Services
 import org.bukkit.Bukkit
+import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
@@ -28,7 +29,7 @@ import kotlin.time.Duration.Companion.seconds
 @Suppress("MISSING_DEPENDENCY_SUPERCLASS_IN_TYPE_ARGUMENT")
 @AutoService(DenylistActionService::class)
 class FallbackDenylistActionService : DenylistActionService, Services.Fallback {
-    val localActions = mutableObjectSetOf<DenylistAction>()
+    private val _actions = mutableObjectSetOf<DenylistAction>()
 
     override suspend fun addAction(action: DenylistAction) =
         newSuspendedTransaction(Dispatchers.IO) {
@@ -54,19 +55,24 @@ class FallbackDenylistActionService : DenylistActionService, Services.Fallback {
     }
 
     override suspend fun fetchActions() = newSuspendedTransaction(Dispatchers.IO) {
-        localActions.clear()
-        localActions.addAll(DenylistActionEntity.all().map {
+        _actions.clear()
+        _actions.addAll(DenylistActionEntity.all().map {
             it.toDto()
         })
         return@newSuspendedTransaction
     }
 
-    override fun addLocalAction(action: DenylistAction) = localActions.add(action)
-    override fun removeLocalAction(action: DenylistAction) = localActions.remove(action)
-    override fun getLocalAction(name: String) = localActions.firstOrNull { it.name == name }
+    override fun addLocalAction(action: DenylistAction) = _actions.add(action)
+    override fun removeLocalAction(action: DenylistAction) = _actions.remove(action)
+    override fun getLocalAction(name: String) = _actions.firstOrNull { it.name == name }
 
-    override fun listLocalActions() = localActions
-    override fun hasLocalAction(name: String) = localActions.any { it.name == name }
+    override fun listLocalActions() = _actions
+    override fun hasLocalAction(name: String) = _actions.any { it.name == name }
+    override suspend fun clearActions() = newSuspendedTransaction(Dispatchers.IO) {
+        DenylistActionsTable.deleteAll()
+    }
+
+    override fun clearLocalActions() = _actions.clear()
 
     override suspend fun makeAction(
         messageUuid: UUID,

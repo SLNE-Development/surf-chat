@@ -10,4 +10,5 @@ fun denylistActionCommand() = commandAPICommand("denylistaction") {
     denylistActionRemoveCommand()
     denylistActionFetchCommand()
     denylistActionListCommand()
+    denylistActionClearCommand()
 }

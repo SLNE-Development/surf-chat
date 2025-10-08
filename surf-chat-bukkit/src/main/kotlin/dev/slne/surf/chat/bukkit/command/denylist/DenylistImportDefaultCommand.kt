@@ -10,7 +10,6 @@ import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.entry.DenylistBatchEntry
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import kotlinx.coroutines.Dispatchers
-import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 
 /**
@@ -55,7 +54,6 @@ fun CommandAPICommand.denylistImportDefaultCommand() = subcommand("importdefault
                     .withStaff("Arty Support")
                     .withActionType(DenylistActionType.COMMUNITY_BAN)
                     .withPunishReason("Rassistische oder extremistische Inhalte")
-                    .withDuration(Duration.INFINITE)
                     .withWords(
                         "nigger",
                         "ngga",
@@ -70,7 +68,7 @@ fun CommandAPICommand.denylistImportDefaultCommand() = subcommand("importdefault
                 DenylistBatchEntry.builder()
                     .withReason("Starke Beleidigungen")
                     .withStaff("Arty Support")
-                    .withActionType(DenylistActionType.BAN)
+                    .withActionType(DenylistActionType.EXPIREABLE_BAN)
                     .withPunishReason("Inhalte mit abwertender, beleidigender oder diskriminierender Sprache")
                     .withDuration(14.days)
                     .withWords(
@@ -85,7 +83,7 @@ fun CommandAPICommand.denylistImportDefaultCommand() = subcommand("importdefault
                 DenylistBatchEntry.builder()
                     .withReason("Mittelstarke Beleidigungen")
                     .withStaff("Arty Support")
-                    .withActionType(DenylistActionType.BAN)
+                    .withActionType(DenylistActionType.EXPIREABLE_BAN)
                     .withPunishReason("Inhalte mit persönlichen Beleidigungen mittlerer Stufe")
                     .withDuration(7.days)
                     .withWords(

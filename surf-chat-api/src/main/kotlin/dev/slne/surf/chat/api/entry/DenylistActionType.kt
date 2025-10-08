@@ -14,7 +14,16 @@ enum class DenylistActionType {
      * based on the denylist conditions. It is part of the `DenylistActionType` enumeration
      * and is typically utilized in systems for moderating and managing user behavior.
      */
-    BAN,
+    EXPIREABLE_BAN,
+
+    /**
+     * Represents a permanent ban action type within the denylist system.
+     *
+     * This action type is used to permanently prevent a user from accessing certain features
+     * or areas of the system based on the denylist conditions. Unlike temporary bans, this
+     * action has no expiration and is intended for severe or repeated violations of the system's policies.
+     */
+    PERMANENT_BAN,
 
     /**
      * Represents the action of kicking a user from a chat or server.

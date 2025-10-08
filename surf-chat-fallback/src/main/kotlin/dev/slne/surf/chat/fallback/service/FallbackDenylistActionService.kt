@@ -16,6 +16,7 @@ import dev.slne.surf.surfapi.core.api.util.logger
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import net.kyori.adventure.chat.SignedMessage
 import net.kyori.adventure.util.Services
 import org.bukkit.Bukkit
@@ -80,13 +81,14 @@ class FallbackDenylistActionService : DenylistActionService, Services.Fallback {
         message: SignedMessage,
         sender: User,
         discordHookUrl: String?
-    ) {
+    ) = withContext(Dispatchers.IO) {
         if (isCloud()) {
+
             val cloudPlayer = sender.toOfflineCloudPlayer()
             val punishManager = cloudPlayer.punishmentManager
 
             when (entry.action.actionType) {
-                DenylistActionType.BAN -> {
+                DenylistActionType.EXPIREABLE_BAN -> {
                     punishManager.punish(
                         PunishType.BAN.Expirable(
                             ZonedDateTime.now().plus(
@@ -102,6 +104,14 @@ class FallbackDenylistActionService : DenylistActionService, Services.Fallback {
                 DenylistActionType.KICK -> {
                     punishManager.punish(
                         PunishType.KICK
+                            .withNote("Punished by Arty Support (surf-chat) for: ${entry.word} (messageUid: $messageUuid)"),
+                        entry.action.reason
+                    )
+                }
+
+                DenylistActionType.PERMANENT_BAN -> {
+                    punishManager.punish(
+                        PunishType.BAN.Permanent
                             .withNote("Punished by Arty Support (surf-chat) for: ${entry.word} (messageUid: $messageUuid)"),
                         entry.action.reason
                     )
@@ -130,12 +140,7 @@ class FallbackDenylistActionService : DenylistActionService, Services.Fallback {
 
                 DenylistActionType.COMMUNITY_BAN -> {
                     punishManager.punish(
-                        PunishType.BAN.Expirable(
-                            ZonedDateTime.now().plus(
-                                entry.action.duration,
-                                ChronoUnit.MILLIS
-                            )
-                        )
+                        PunishType.BAN.Permanent
                             .withNote("Punished by Arty Support (surf-chat) for: ${entry.word} (messageUid: $messageUuid)"),
                         entry.action.reason
                     )

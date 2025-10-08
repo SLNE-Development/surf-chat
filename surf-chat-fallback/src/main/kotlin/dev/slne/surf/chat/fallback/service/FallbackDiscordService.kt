@@ -71,7 +71,7 @@ class FallbackDiscordService : DiscordService, Services.Fallback {
         try {
             client.newCall(request).execute().use { response ->
                 if (!response.isSuccessful) {
-                    error("Failed to send discord embed to $response")
+                    error("Failed to send discord embed: status=${response.code}, message=${response.message}")
                 }
             }
         } catch (e: Exception) {

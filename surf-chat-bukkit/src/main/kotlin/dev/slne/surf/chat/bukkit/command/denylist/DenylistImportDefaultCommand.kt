@@ -58,11 +58,18 @@ fun CommandAPICommand.denylistImportDefaultCommand() = subcommand("importdefault
                         "nigger",
                         "ngga",
                         "nigga",
-                        "kys",
-                        "killyourself",
-                        "kill yourself",
                         "hh",
                         "heil hitler"
+                    )
+                    .build(),
+                DenylistBatchEntry.builder()
+                    .withReason("Gewaltverherrlichende Inhalte")
+                    .withStaff("Arty Support")
+                    .withActionType(DenylistActionType.PERMANENT_BAN)
+                    .withPunishReason("Gewaltverherrlichende Inhalte")
+                    .withWords(
+                        "killyourself",
+                        "kys",
                     )
                     .build(),
                 DenylistBatchEntry.builder()

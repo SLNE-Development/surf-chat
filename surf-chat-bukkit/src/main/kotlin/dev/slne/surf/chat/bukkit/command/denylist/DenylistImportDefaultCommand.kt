@@ -112,6 +112,11 @@ fun CommandAPICommand.denylistImportDefaultCommand() = subcommand("importdefault
             ).forEach { entry ->
                 entry.execute()
             }
+
+            executor.sendText {
+                appendPrefix()
+                success("Import der Standard-Wortfilter abgeschlossen.")
+            }
         }
     }
 }

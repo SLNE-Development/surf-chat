@@ -14,6 +14,7 @@ import kotlin.time.Duration
  * the same metadata (reason, staff, action type, etc.).
  */
 class DenylistBatchEntry private constructor(
+    val action: DenylistAction,
     val entries: List<DenylistEntry>
 ) {
     companion object {
@@ -22,9 +23,9 @@ class DenylistBatchEntry private constructor(
     }
 
     suspend fun execute() {
+        denylistActionService.addAction(action)
+        denylistActionService.addLocalAction(action)
         entries.forEach {
-            denylistActionService.addAction(it.action)
-            denylistActionService.addLocalAction(it.action)
             denylistService.addEntry(
                 it.word,
                 it.reason,
@@ -93,7 +94,7 @@ class DenylistBatchEntry private constructor(
                 )
             }
 
-            return DenylistBatchEntry(entries)
+            return DenylistBatchEntry(action, entries)
         }
     }
 }

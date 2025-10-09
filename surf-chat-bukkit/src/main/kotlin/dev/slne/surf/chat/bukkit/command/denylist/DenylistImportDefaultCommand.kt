@@ -50,6 +50,16 @@ fun CommandAPICommand.denylistImportDefaultCommand() = subcommand("importdefault
         plugin.launch(Dispatchers.IO) {
             listOf(
                 DenylistBatchEntry.builder()
+                    .withReason("Verwenden von Kennzeichen verfassungswidriger und terroristischer Organisationen")
+                    .withStaff("Arty Support")
+                    .withActionType(DenylistActionType.PERMANENT_BAN)
+                    .withPunishReason("Verwenden von Kennzeichen verfassungswidriger und terroristischer Organisationen")
+                    .withWords(
+                        "heil hitler",
+                        "heilhitler"
+                    )
+                    .build(),
+                DenylistBatchEntry.builder()
                     .withReason("Gewaltverherrlichende Inhalte")
                     .withStaff("Arty Support")
                     .withActionType(DenylistActionType.PERMANENT_BAN)
@@ -59,9 +69,7 @@ fun CommandAPICommand.denylistImportDefaultCommand() = subcommand("importdefault
                         "kys",
                         "nigger",
                         "ngga",
-                        "nigga",
-                        "hh",
-                        "heil hitler"
+                        "nigga"
                     )
                     .build(),
                 DenylistBatchEntry.builder()

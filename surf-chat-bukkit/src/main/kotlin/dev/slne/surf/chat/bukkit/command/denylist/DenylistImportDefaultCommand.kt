@@ -52,7 +52,7 @@ fun CommandAPICommand.denylistImportDefaultCommand() = subcommand("importdefault
                 DenylistBatchEntry.builder()
                     .withReason("Verwenden von Kennzeichen verfassungswidriger und terroristischer Organisationen")
                     .withStaff("Arty Support")
-                    .withActionType(DenylistActionType.PERMANENT_BAN)
+                    .withActionType(DenylistActionType.COMMUNITY_BAN)
                     .withPunishReason("Verwenden von Kennzeichen verfassungswidriger und terroristischer Organisationen")
                     .withWords(
                         "heil hitler",

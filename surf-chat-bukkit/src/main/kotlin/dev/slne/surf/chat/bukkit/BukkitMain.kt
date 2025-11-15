@@ -25,7 +25,6 @@ class BukkitMain : SuspendingJavaPlugin() {
     override fun onEnable() {
         BukkitCommandManager.registerCommands()
         BukkitListenerManager.registerBukkitListeners()
-        BukkitListenerManager.registerPacketListeners()
 
         launch {
             denylistService.fetch()

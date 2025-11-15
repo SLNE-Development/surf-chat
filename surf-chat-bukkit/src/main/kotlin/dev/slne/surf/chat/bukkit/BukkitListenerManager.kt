@@ -20,8 +20,4 @@ object BukkitListenerManager {
             ServerResponseListener()
         );
     }
-
-    fun registerPacketListeners() {
-
-    }
 }

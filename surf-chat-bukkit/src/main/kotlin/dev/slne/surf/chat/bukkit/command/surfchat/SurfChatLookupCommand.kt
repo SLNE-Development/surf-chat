@@ -17,7 +17,6 @@ import dev.slne.surf.chat.bukkit.util.unixTime
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.Colors
-import dev.slne.surf.surfapi.core.api.messages.CommonComponents
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.clickCopiesToClipboard
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
@@ -95,7 +94,7 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
                 rowRenderer { entry, _ ->
                     listOf(
                         buildText {
-                            append(CommonComponents.EM_DASH)
+                            darkSpacer(">")
                             appendSpace()
                             variableValue(senderNames[entry.senderUuid] ?: "Unbekannt")
                             spacer(":")
@@ -103,43 +102,39 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
                             text(entry.message, Colors.WHITE)
 
                             if (entry.deletedBy != null) {
-                                appendNewline()
-                                appendSpace()
-                                appendSpace()
-                                appendSpace()
-                                appendSpace()
-                                appendSpace()
-                                append(CommonComponents.EM_DASH)
-                                appendSpace()
-                                spacer("Gelöscht von ")
-                                variableValue(entry.deletedBy ?: "Unbekannt")
-                                decorate(TextDecoration.ITALIC)
+                                decorate(TextDecoration.STRIKETHROUGH)
                             }
+
                             hoverEvent(buildText {
-                                append(CommonComponents.EM_DASH)
+                                darkSpacer(">")
                                 appendSpace()
                                 variableKey("Uuid: ")
                                 variableValue(entry.messageUuid.toString())
                                 appendNewline()
-                                append(CommonComponents.EM_DASH)
+                                darkSpacer(">")
                                 appendSpace()
                                 variableKey("Empfänger: ")
                                 variableValue(receiverNames[entry.receiverUuid] ?: "Unbekannt")
                                 appendNewline()
-                                append(CommonComponents.EM_DASH)
+                                darkSpacer(">")
                                 appendSpace()
                                 variableKey("Server: ")
                                 variableValue(entry.server.name)
                                 appendNewline()
-                                append(CommonComponents.EM_DASH)
+                                darkSpacer(">")
                                 appendSpace()
                                 variableKey("Kanal: ")
                                 variableValue(entry.channel ?: "Global")
                                 appendNewline()
-                                append(CommonComponents.EM_DASH)
+                                darkSpacer(">")
                                 appendSpace()
                                 variableKey("Gesendet: ")
                                 variableValue(entry.sentAt.unixTime())
+
+                                if (entry.deletedBy != null) {
+                                    variableKey("Gelöscht von ")
+                                    variableValue(entry.deletedBy ?: "Unbekannt")
+                                }
                             })
                             clickCopiesToClipboard(entry.messageUuid.toString())
                         }

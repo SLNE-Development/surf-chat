@@ -10,8 +10,6 @@ repositories {
 
 dependencies {
     api(project(":surf-chat-core"))
-
-    compileOnly(libs.playerholder.api)
     compileOnly(libs.miniplaceholder.api)
 
     runtimeOnly(project(":surf-chat-fallback"))

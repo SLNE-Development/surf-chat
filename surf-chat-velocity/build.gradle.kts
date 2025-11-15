@@ -3,11 +3,8 @@ plugins {
 }
 
 velocityPluginFile {
-    id = "surf-chat-velocity"
     main = "dev.slne.surf.chat.velocity.VelocityMain"
-    name = "SurfChatVelocity"
     authors = listOf("red")
-    version = "${project.version}"
 }
 
 dependencies {

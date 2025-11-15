@@ -10,5 +10,5 @@ buildscript {
 
 allprojects {
     group = "dev.slne.surf.chat"
-    version = findProperty("version")!!
+    version = findProperty("version") as String
 }

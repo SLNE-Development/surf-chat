@@ -21,14 +21,55 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+import kotlin.math.abs
+import kotlin.time.Duration.Companion.milliseconds
 
 private val zone = ZoneId.of("Europe/Berlin")
 val timeFormatter: DateTimeFormatter = DateTimeFormatter
     .ofPattern("dd.MM.yyyy, HH:mm:ss", Locale.GERMANY)
     .withZone(zone)
 
-fun Long.unixTime(): String =
+fun Long.formatTime(): String =
     ZonedDateTime.ofInstant(Instant.ofEpochMilli(this), zone).format(timeFormatter)
+
+fun Long.formatAgo(): String {
+    val diff = abs(System.currentTimeMillis() - this).milliseconds
+
+    val minutes = diff.inWholeMinutes
+    val hours = diff.inWholeHours
+    val days = diff.inWholeDays
+    val months = days / 30
+    val years = days / 365
+
+    val value: Double
+    val unit: String
+
+    when {
+        years > 0 -> {
+            value = diff.inWholeDays / 365.0; unit = "y"
+        }
+
+        months > 0 -> {
+            value = diff.inWholeDays / 30.0; unit = "m"
+        }
+
+        days > 0 -> {
+            value = diff.inWholeDays.toDouble(); unit = "d"
+        }
+
+        hours > 0 -> {
+            value = diff.inWholeHours.toDouble(); unit = "h"
+        }
+
+        minutes > 0 -> {
+            value = diff.inWholeMinutes.toDouble(); unit = "m"
+        }
+
+        else -> return "now"
+    }
+
+    return "%.2f%s ago".format(value, unit)
+}
 
 private val hexRegex = Regex("&#[A-Fa-f0-9]{6}")
 fun convertLegacy(input: String) = hexRegex.replace(input) {

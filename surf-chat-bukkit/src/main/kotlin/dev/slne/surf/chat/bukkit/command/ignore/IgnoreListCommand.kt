@@ -7,7 +7,7 @@ import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.entry.IgnoreListEntry
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.bukkit.util.unixTime
+import dev.slne.surf.chat.bukkit.util.formatTime
 import dev.slne.surf.chat.core.service.ignoreService
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.CommonComponents
@@ -47,7 +47,7 @@ fun CommandAPICommand.ignoreListCommand() = subcommand("list") {
                             appendSpace()
                             variableKey(entry.targetName)
                             appendSpace()
-                            spacer("(${entry.createdAt.unixTime()})")
+                            spacer("(${entry.createdAt.formatTime()})")
                         }
                     )
                 }

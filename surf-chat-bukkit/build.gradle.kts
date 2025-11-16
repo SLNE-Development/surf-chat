@@ -20,6 +20,7 @@ surfPaperPluginApi {
     foliaSupported(true)
     generateLibraryLoader(false)
     withCloudCommon()
+    dependOnCloudPlugin(false)
 
     serverDependencies {
         registerSoft("MiniPlaceholders")

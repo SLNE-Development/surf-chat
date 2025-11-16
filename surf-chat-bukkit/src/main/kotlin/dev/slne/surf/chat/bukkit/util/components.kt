@@ -59,7 +59,7 @@ fun SurfComponentBuilder.appendMessageData(messageData: MessageData) = append(bu
     info("Gesendet von ")
     variableValue(messageData.sender.name)
     info(" am ")
-    variableValue(messageData.sentAt.unixTime())
+    variableValue(messageData.sentAt.formatTime())
     appendNewline()
     info("Gesendet auf Server ")
     variableValue(messageData.server.name)

@@ -1,4 +1,4 @@
-package dev.slne.surf.chat.bukkit.command.surfchat
+package dev.slne.surf.chat.bukkit.command.lookup
 
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
@@ -13,12 +13,14 @@ import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.api.server.ChatServer
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.bukkit.util.unixTime
+import dev.slne.surf.chat.bukkit.util.formatAgo
+import dev.slne.surf.chat.bukkit.util.formatTime
 import dev.slne.surf.chat.core.service.historyService
+import dev.slne.surf.chat.core.util.appendLinePrefix
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
-import dev.slne.surf.surfapi.core.api.messages.adventure.clickCopiesToClipboard
+import dev.slne.surf.surfapi.core.api.messages.adventure.clickOpensUrl
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.surfapi.core.api.messages.pagination.Pagination
 import dev.slne.surf.surfapi.core.api.service.PlayerLookupService
@@ -53,11 +55,12 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
     playerExecutor { player, args ->
         val query: Map<String, String> by args
 
+        player.sendText {
+            appendPrefix()
+            info("Es wird nach Ergebnissen gesucht...")
+        }
+
         plugin.launch {
-            player.sendText {
-                appendPrefix()
-                info("Es wird nach Ergebnissen gesucht...")
-            }
 
             val filter = query.parseFilters()
             val page = query["--page"]?.toIntOrNull() ?: 1
@@ -91,52 +94,62 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
                 title {
                     info("Suchergebnisse".toSmallCaps(), TextDecoration.BOLD)
                 }
+                resultsPerPage = 10
+
                 rowRenderer { entry, _ ->
                     listOf(
                         buildText {
-                            darkSpacer(">")
+                            appendLinePrefix()
+                            append {
+                                appendSpace()
+                                spacer(entry.sentAt.formatAgo())
+                                appendSpace()
+
+                                hoverEvent(buildText {
+                                    spacer(entry.sentAt.formatTime())
+                                })
+                            }
+                            spacer("-")
                             appendSpace()
-                            variableValue(senderNames[entry.senderUuid] ?: "Unbekannt")
-                            spacer(":")
+                            append {
+                                val name = senderNames[entry.senderUuid] ?: "Unbekannt"
+                                variableValue(name)
+                                hoverEvent(buildText {
+                                    spacer("Klicke, um das Profil zu öffnen.")
+                                })
+                                clickOpensUrl("https://laby.net/$name")
+                            }
                             appendSpace()
-                            text(entry.message, Colors.WHITE)
+                            append {
+                                info("schrieb")
+                                hoverEvent(buildText {
+                                    info("auf Server ")
+                                    variableValue(entry.server.name)
+
+                                    val channel = entry.channel
+
+                                    if (channel != null) {
+                                        appendSpace()
+                                        info("im Kanal ")
+                                        variableValue(channel)
+                                    }
+                                })
+                            }
+                            appendSpace()
+                            append {
+                                text(entry.message.take(20), Colors.WHITE)
+                                if (entry.message.length > 20) {
+                                    text("...", Colors.GRAY)
+                                }
+
+                                hoverEvent(buildText {
+                                    text(entry.message, Colors.WHITE)
+                                })
+                            }
 
                             if (entry.deletedBy != null) {
                                 decorate(TextDecoration.STRIKETHROUGH)
                             }
-
-                            hoverEvent(buildText {
-                                darkSpacer(">")
-                                appendSpace()
-                                variableKey("Uuid: ")
-                                variableValue(entry.messageUuid.toString())
-                                appendNewline()
-                                darkSpacer(">")
-                                appendSpace()
-                                variableKey("Empfänger: ")
-                                variableValue(receiverNames[entry.receiverUuid] ?: "Unbekannt")
-                                appendNewline()
-                                darkSpacer(">")
-                                appendSpace()
-                                variableKey("Server: ")
-                                variableValue(entry.server.name)
-                                appendNewline()
-                                darkSpacer(">")
-                                appendSpace()
-                                variableKey("Kanal: ")
-                                variableValue(entry.channel ?: "Global")
-                                appendNewline()
-                                darkSpacer(">")
-                                appendSpace()
-                                variableKey("Gesendet: ")
-                                variableValue(entry.sentAt.unixTime())
-
-                                if (entry.deletedBy != null) {
-                                    variableKey("Gelöscht von ")
-                                    variableValue(entry.deletedBy ?: "Unbekannt")
-                                }
-                            })
-                            clickCopiesToClipboard(entry.messageUuid.toString())
                         }
                     )
                 }

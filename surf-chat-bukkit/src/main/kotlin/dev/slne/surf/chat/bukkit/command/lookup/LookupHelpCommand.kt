@@ -1,4 +1,4 @@
-package dev.slne.surf.chat.bukkit.command.surfchat
+package dev.slne.surf.chat.bukkit.command.lookup
 
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor

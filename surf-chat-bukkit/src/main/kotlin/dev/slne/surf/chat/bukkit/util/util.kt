@@ -20,9 +20,8 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.*
-import kotlin.math.abs
-import kotlin.time.Duration.Companion.milliseconds
 
 private val zone = ZoneId.of("Europe/Berlin")
 val timeFormatter: DateTimeFormatter = DateTimeFormatter
@@ -33,42 +32,31 @@ fun Long.formatTime(): String =
     ZonedDateTime.ofInstant(Instant.ofEpochMilli(this), zone).format(timeFormatter)
 
 fun Long.formatAgo(): String {
-    val diff = abs(System.currentTimeMillis() - this).milliseconds
+    val then = Instant.ofEpochMilli(this)
+    val now = Instant.now()
 
-    val minutes = diff.inWholeMinutes
-    val hours = diff.inWholeHours
-    val days = diff.inWholeDays
-    val months = days / 30
-    val years = days / 365
+    val totalSeconds = ChronoUnit.SECONDS.between(then, now)
+    if (totalSeconds < 1) return "now"
 
-    val value: Double
-    val unit: String
+    val seconds = totalSeconds % 60
+    val totalMinutes = totalSeconds / 60
+    val minutes = totalMinutes % 60
+    val totalHours = totalMinutes / 60
+    val hours = totalHours % 24
+    val totalDays = totalHours / 24
+    val days = totalDays % 30
+    val totalMonths = totalDays / 30
+    val months = totalMonths % 12
+    val years = totalMonths / 12
 
-    when {
-        years > 0 -> {
-            value = diff.inWholeDays / 365.0; unit = "y"
-        }
-
-        months > 0 -> {
-            value = diff.inWholeDays / 30.0; unit = "m"
-        }
-
-        days > 0 -> {
-            value = diff.inWholeDays.toDouble(); unit = "d"
-        }
-
-        hours > 0 -> {
-            value = diff.inWholeHours.toDouble(); unit = "h"
-        }
-
-        minutes > 0 -> {
-            value = diff.inWholeMinutes.toDouble(); unit = "m"
-        }
-
-        else -> return "now"
+    return when {
+        years > 0 -> "%d.%02d y ago".format(years, months)
+        totalMonths > 0 -> "%d.%02d mo ago".format(totalMonths, days)
+        totalDays > 0 -> "%d.%02d d ago".format(totalDays, hours)
+        totalHours > 0 -> "%d.%02d h ago".format(totalHours, minutes)
+        totalMinutes > 0 -> "%d.%02d m ago".format(totalMinutes, seconds)
+        else -> "%d.%02d s ago".format(seconds, 0)
     }
-
-    return "%.2f%s ago".format(value, unit)
 }
 
 private val hexRegex = Regex("&#[A-Fa-f0-9]{6}")

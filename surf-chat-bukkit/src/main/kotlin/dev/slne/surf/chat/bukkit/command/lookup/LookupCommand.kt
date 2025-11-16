@@ -86,10 +86,6 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
                 .distinct()
                 .associateWith { PlayerLookupService.getUsername(it) ?: "Unbekannt" }
 
-            val receiverNames = history.mapNotNull { it.receiverUuid }
-                .distinct()
-                .associateWith { PlayerLookupService.getUsername(it) ?: "Unbekannt" }
-
             val pagination = Pagination<HistoryEntry> {
                 title {
                     info("Suchergebnisse".toSmallCaps(), TextDecoration.BOLD)
@@ -103,17 +99,33 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
                             append {
                                 appendSpace()
                                 spacer(entry.sentAt.formatAgo())
-                                appendSpace()
+                                if (entry.deletedBy != null) {
+                                    decorate(TextDecoration.STRIKETHROUGH)
+                                }
 
                                 hoverEvent(buildText {
                                     spacer(entry.sentAt.formatTime())
                                 })
                             }
-                            spacer("-")
+                            appendSpace()
+                            if (entry.deletedBy != null) {
+                                append {
+                                    error("✘")
+                                    hoverEvent(buildText {
+                                        error("Gelöscht von ")
+                                        error(entry.deletedBy ?: "Unbekannt")
+                                    })
+                                }
+                            } else {
+                                spacer("-")
+                            }
                             appendSpace()
                             append {
                                 val name = senderNames[entry.senderUuid] ?: "Unbekannt"
                                 variableValue(name)
+                                if (entry.deletedBy != null) {
+                                    decorate(TextDecoration.STRIKETHROUGH)
+                                }
                                 hoverEvent(buildText {
                                     spacer("Klicke, um das Profil zu öffnen.")
                                 })
@@ -122,6 +134,9 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
                             appendSpace()
                             append {
                                 info("schrieb")
+                                if (entry.deletedBy != null) {
+                                    decorate(TextDecoration.STRIKETHROUGH)
+                                }
                                 hoverEvent(buildText {
                                     info("auf Server ")
                                     variableValue(entry.server.name)
@@ -141,15 +156,18 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
                                 if (entry.message.length > 20) {
                                     text("...", Colors.GRAY)
                                 }
+                                if (entry.deletedBy != null) {
+                                    decorate(TextDecoration.STRIKETHROUGH)
+                                }
 
                                 hoverEvent(buildText {
                                     text(entry.message, Colors.WHITE)
                                 })
                             }
-
-                            if (entry.deletedBy != null) {
-                                decorate(TextDecoration.STRIKETHROUGH)
-                            }
+                            appendSpace()
+                            spacer("(")
+                            variableValue(entry.messageType.name)
+                            spacer(")")
                         }
                     )
                 }

@@ -13,7 +13,7 @@ import java.util.*
  * It is responsible for the underlying database operations necessary to persist
  * and retrieve ignore information.
  */
-interface IgnoreService : DatabaseTableHolder {
+interface IgnoreService {
     /**
      * Adds the specified target player to the ignore list of the given player.
      *

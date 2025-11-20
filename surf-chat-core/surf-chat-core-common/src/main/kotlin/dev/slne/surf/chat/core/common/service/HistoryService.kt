@@ -13,7 +13,7 @@ import java.util.*
  * the chat system, including querying based on various filters, monitoring log status, and
  * marking messages as deleted.
  */
-interface HistoryService : DatabaseTableHolder {
+interface HistoryService {
     /**
      * Logs the provided message data into the system's history.
      *

@@ -1,0 +1,7 @@
+name: surf-chat-server
+main: 'dev.slne.surf.chat.server.ServerMain'
+bootstrapper: 'dev.slne.surf.chat.server.ServerBootstrap'
+version: 1.21.10-4.1.5-SNAPSHOT
+description: 'Chat Plugin'
+authors:
+  - 'red'

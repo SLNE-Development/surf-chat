@@ -14,5 +14,5 @@ enum class MessageType {
     TEAM,
 
     /** A direct message sent to a specific user. */
-    DIRECT
+    PRIVATE
 }

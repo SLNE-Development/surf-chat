@@ -1,0 +1,29 @@
+package dev.slne.surf.chat.paper.listener
+
+import dev.slne.surf.chat.core.service.channelService
+import dev.slne.surf.chat.paper.hook.MiniPlaceholdersHook
+import dev.slne.surf.chat.paper.plugin
+import dev.slne.surf.chat.paper.util.user
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.player.PlayerQuitEvent
+
+class DisconnectListener : Listener {
+    @EventHandler
+    fun onDisconnect(event: PlayerQuitEvent) {
+        val user = event.player.user() ?: return
+
+        channelService.getChannel(user)?.let {
+            it.leaveAndTransfer(user.channelMember(it) ?: return@let)
+        }
+
+        if (plugin.connectionMessageConfig.enabled) {
+            event.quitMessage(
+                MiniPlaceholdersHook.parse(
+                    event.player,
+                    plugin.connectionMessageConfig.leaveMessage
+                )
+            )
+        }
+    }
+}

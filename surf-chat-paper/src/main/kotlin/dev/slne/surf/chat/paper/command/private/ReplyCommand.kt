@@ -1,24 +1,26 @@
 package dev.slne.surf.chat.paper.command.private
 
-import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.greedyStringArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.chat.core.Constants
-import dev.slne.surf.chat.core.DirectMessageUpdateType
-import dev.slne.surf.chat.velocity.plugin
+import dev.slne.surf.chat.api.message.MessageType
+import dev.slne.surf.chat.core.client.ChatPermissions
+import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.ServerboundHistoryLogPacket
+import dev.slne.surf.chat.core.common.netty.packet.serverbound.message.ServerboundPrivateMessagePacket
+import dev.slne.surf.chat.paper.message.MessageDataImpl
+import dev.slne.surf.cloud.api.client.netty.packet.fireAndForget
+import dev.slne.surf.cloud.api.client.server.current
+import dev.slne.surf.cloud.api.common.player.CloudPlayer
+import dev.slne.surf.cloud.api.common.player.toCloudPlayer
+import dev.slne.surf.cloud.api.common.server.CloudServer
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
-import java.io.ByteArrayOutputStream
-import java.io.DataOutputStream
+import net.kyori.adventure.text.Component
 import java.util.*
-import kotlin.jvm.optionals.getOrNull
-
-private val channel = MinecraftChannelIdentifier.from(Constants.CHANNEL_DM)
 
 fun replyCommand() = commandAPICommand("reply") {
     withAliases("r")
-    withPermission("surf.chat.command.reply")
+    withPermission(ChatPermissions.COMMAND_REPLY)
     greedyStringArgument("message")
 
     playerExecutor { player, args ->
@@ -26,14 +28,7 @@ fun replyCommand() = commandAPICommand("reply") {
         val sentAt = System.currentTimeMillis()
         val messageId = UUID.randomUUID()
 
-        val senderServer = player.currentServer.getOrNull() ?: return@playerExecutor run {
-            player.sendText {
-                appendPrefix()
-                error("Ein interner Fehler ist aufgetreten. Bitte versuche es später erneut.")
-            }
-        }
-
-        val targetUuid = latestDirectMessages[player.uniqueId]
+        val targetUuid = latestPrivateMessages.firstOrNull { it.first == player.uniqueId }?.second
             ?: return@playerExecutor run {
                 player.sendText {
                     appendPrefix()
@@ -41,22 +36,14 @@ fun replyCommand() = commandAPICommand("reply") {
                 }
             }
 
-        val target = plugin.proxy.getPlayer(targetUuid).getOrNull()
-            ?: return@playerExecutor run {
-                player.sendText {
-                    appendPrefix()
-                    error("Du hast noch keine Nachrichten erhalten.")
-                }
-            }
-
-        val targetServer = target.currentServer.getOrNull() ?: return@playerExecutor run {
+        val target = CloudPlayer[targetUuid] ?: return@playerExecutor run {
             player.sendText {
                 appendPrefix()
-                error("Der Spieler ist nicht auf einem Server.")
+                error("Du hast noch keine Nachrichten erhalten.")
             }
         }
 
-        if (player == target) {
+        if (player.uniqueId == target) {
             return@playerExecutor run {
                 player.sendText {
                     appendPrefix()
@@ -65,34 +52,19 @@ fun replyCommand() = commandAPICommand("reply") {
             }
         }
 
-        senderServer.sendPluginMessage(channel, ByteArrayOutputStream().use { byteStream ->
-            DataOutputStream(byteStream).use { out ->
-                out.writeUTF(DirectMessageUpdateType.SEND_AND_LOG_MESSAGE.toString())
-                out.writeUTF(player.uniqueId.toString())
-                out.writeUTF(player.username)
-                out.writeUTF(target.uniqueId.toString())
-                out.writeUTF(target.username)
-                out.writeUTF(messageId.toString())
-                out.writeUTF(message)
-                out.writeLong(sentAt)
-                out.writeUTF(senderServer.serverInfo.name)
-            }
-            byteStream.toByteArray()
-        })
+        val data = MessageDataImpl(
+            Component.text(message),
+            player.toCloudPlayer() ?: return@playerExecutor,
+            target,
+            sentAt,
+            messageId,
+            CloudServer.current(),
+            null,
+            null,
+            MessageType.PRIVATE
+        )
 
-        targetServer.sendPluginMessage(channel, ByteArrayOutputStream().use { byteStream ->
-            DataOutputStream(byteStream).use { out ->
-                out.writeUTF(DirectMessageUpdateType.RECEIVE_MESSAGE.toString())
-                out.writeUTF(player.uniqueId.toString())
-                out.writeUTF(player.username)
-                out.writeUTF(target.uniqueId.toString())
-                out.writeUTF(target.username)
-                out.writeUTF(messageId.toString())
-                out.writeUTF(message)
-                out.writeLong(sentAt)
-                out.writeUTF(senderServer.serverInfo.name)
-            }
-            byteStream.toByteArray()
-        })
+        ServerboundPrivateMessagePacket(data).fireAndForget()
+        ServerboundHistoryLogPacket(data).fireAndForget()
     }
 }

@@ -5,6 +5,8 @@ import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.greedyStringArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.message.MessageType
+import dev.slne.surf.chat.core.client.ChatPermissions
+import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.ServerboundHistoryLogPacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.message.ServerboundPrivateMessagePacket
 import dev.slne.surf.chat.paper.message.MessageDataImpl
 import dev.slne.surf.cloud.api.client.netty.packet.fireAndForget
@@ -13,13 +15,16 @@ import dev.slne.surf.cloud.api.client.server.current
 import dev.slne.surf.cloud.api.common.player.CloudPlayer
 import dev.slne.surf.cloud.api.common.player.toCloudPlayer
 import dev.slne.surf.cloud.api.common.server.CloudServer
+import dev.slne.surf.cloud.api.common.sync.SyncSet
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import net.kyori.adventure.text.Component
 import java.util.*
 
+lateinit var latestPrivateMessages: SyncSet<Pair<UUID, UUID>>
+
 fun directMessageCommand() = commandAPICommand("msg") {
     withAliases("dm", "w", "whisper", "tell", "pm")
-    withPermission("surf.chat.command.msg")
+    withPermission(ChatPermissions.COMMAND_PRIVATE)
     onlineCloudPlayerArgument("target")
     greedyStringArgument("message")
 
@@ -49,6 +54,10 @@ fun directMessageCommand() = commandAPICommand("msg") {
             }
         }
 
+        latestPrivateMessages.removeIf { it.first == player.uniqueId }
+        latestPrivateMessages.add(player.uniqueId to target.uuid)
+
         ServerboundPrivateMessagePacket(data).fireAndForget()
+        ServerboundHistoryLogPacket(data).fireAndForget()
     }
 }

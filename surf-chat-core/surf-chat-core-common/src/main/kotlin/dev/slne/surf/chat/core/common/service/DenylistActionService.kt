@@ -2,6 +2,7 @@ package dev.slne.surf.chat.core.common.service
 
 import dev.slne.surf.chat.api.DenylistAction
 import dev.slne.surf.chat.api.entry.DenylistEntry
+import dev.slne.surf.cloud.api.common.player.CloudPlayer
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.chat.SignedMessage
@@ -140,7 +141,7 @@ interface DenylistActionService {
         messageUuid: UUID,
         entry: DenylistEntry,
         message: SignedMessage,
-        sender: User,
+        sender: CloudPlayer,
         discordHookUrl: String?
     )
 

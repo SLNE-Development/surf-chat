@@ -1,12 +1,12 @@
 package dev.slne.surf.chat.paper.util
 
-import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.api.channel.Channel
-import dev.slne.surf.chat.core.message.MessageData
-import dev.slne.surf.chat.core.service.historyService
+import dev.slne.surf.chat.core.common.message.MessageData
+import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.ServerboundHistoryMarkDeletedPacket
 import dev.slne.surf.chat.paper.hook.MiniPlaceholdersHook
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
-import dev.slne.surf.chat.paper.plugin
+import dev.slne.surf.cloud.api.client.netty.packet.fireAndForget
+import dev.slne.surf.cloud.api.common.player.CloudPlayer
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
@@ -45,9 +45,7 @@ fun SurfComponentBuilder.appendDelete(messageData: MessageData) = append(buildTe
                 }
             }
 
-        plugin.launch {
-            historyService.markDeleted(messageData.messageUuid, it.name())
-        }
+        ServerboundHistoryMarkDeletedPacket(messageData).fireAndForget()
     })
     hoverEvent(buildText {
         warning("Klicke, um die Nachricht zu löschen")
@@ -70,7 +68,7 @@ fun SurfComponentBuilder.appendName(player: Player) = append {
     )
 }
 
-fun SurfComponentBuilder.appendTeleport(name: String, viewer: User) = append {
+fun SurfComponentBuilder.appendTeleport(name: String, viewer: CloudPlayer) = append {
     darkSpacer("[")
     info("TP")
     darkSpacer("]")

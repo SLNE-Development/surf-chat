@@ -1,6 +1,7 @@
 package dev.slne.surf.chat.core.common.service
 
 import dev.slne.surf.chat.api.channel.Channel
+import dev.slne.surf.cloud.api.common.player.CloudPlayer
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import java.util.*
@@ -16,7 +17,7 @@ interface ChannelService {
      * @param owner The user who will be the owner of the channel.
      * @return The created `Channel` instance.
      */
-    fun createChannel(name: String, owner: User): Channel
+    fun createChannel(name: String, owner: CloudPlayer): Channel
 
     /**
      * Deletes the specified chat channel from the system.
@@ -47,7 +48,7 @@ interface ChannelService {
      * @param user The user for whom the channel is being retrieved.
      * @return The `Channel` instance associated with the specified user, or `null` if no associated channel exists.
      */
-    fun getChannel(user: User): Channel?
+    fun getChannel(user: CloudPlayer): Channel?
 
     /**
      *
@@ -61,7 +62,7 @@ interface ChannelService {
      * @param user The user being invited to the channel.
      * @return `true` if the invitation was successfully added, `false` otherwise.
      */
-    fun invite(channel: Channel, user: User): Boolean
+    fun invite(channel: Channel, user: CloudPlayer): Boolean
 
     /**
      * Revokes an invitation for a user to join a specified channel.
@@ -70,7 +71,7 @@ interface ChannelService {
      * @param user The user whose invitation is being revoked.
      * @return `true` if the invitation was successfully revoked, otherwise `false`.
      */
-    fun uninvite(channel: Channel, user: User): Boolean
+    fun uninvite(channel: Channel, user: CloudPlayer): Boolean
 
     /**
      * Checks whether the given user has been invited to the specified channel.
@@ -79,7 +80,7 @@ interface ChannelService {
      * @param user The user to verify for the invitation status.
      * @return `true` if the user is invited to the channel, `false` otherwise.
      */
-    fun isInvited(channel: Channel, user: User): Boolean
+    fun isInvited(channel: Channel, user: CloudPlayer): Boolean
 
     /**
      * Accepts an invite for a user to join a specified channel.
@@ -88,7 +89,7 @@ interface ChannelService {
      * @param user The user accepting the invite.
      * @return `true` if the invite was successfully accepted and the user joined the channel, otherwise `false`.
      */
-    fun acceptInvite(channel: Channel, user: User): Boolean
+    fun acceptInvite(channel: Channel, user: CloudPlayer): Boolean
 
     /**
      * Declines an invitation for a user to join a specified channel.
@@ -97,7 +98,7 @@ interface ChannelService {
      * @param user The user declining the invitation.
      * @return `true` if the invitation was successfully declined, otherwise `false`.
      */
-    fun declineInvite(channel: Channel, user: User): Boolean
+    fun declineInvite(channel: Channel, user: CloudPlayer): Boolean
 
     /**
      * Registers a channel in the system, making it available for use.
@@ -127,7 +128,7 @@ interface ChannelService {
      * @param channel The target channel where the user will be moved.
      * @return `true` if the operation was successful, otherwise `false`.
      */
-    fun move(user: User, channel: Channel): Boolean
+    fun move(user: CloudPlayer, channel: Channel): Boolean
 
     /**
      *

@@ -5,7 +5,7 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.entry.IgnoreListEntry
-import dev.slne.surf.chat.core.service.ignoreService
+import dev.slne.surf.chat.core.common.service.ignoreService
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.chat.paper.util.formatTime
@@ -19,11 +19,6 @@ import net.kyori.adventure.text.format.TextDecoration
 fun CommandAPICommand.ignoreListCommand() = subcommand("list") {
     withPermission(SurfChatPermissionRegistry.COMMAND_IGNORE_LIST)
     playerExecutor { player, _ ->
-        player.sendText {
-            appendPrefix()
-            info("Deine Daten werden geladen, bitte habe einen Moment Geduld...")
-        }
-
         plugin.launch {
             val ignoreList = ignoreService.getIgnoreList(player.uniqueId)
 

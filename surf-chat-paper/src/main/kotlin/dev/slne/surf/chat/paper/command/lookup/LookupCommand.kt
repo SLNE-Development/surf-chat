@@ -11,8 +11,8 @@ import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.api.server.ChatServer
-import dev.slne.surf.chat.core.service.historyService
-import dev.slne.surf.chat.core.util.appendLinePrefix
+import dev.slne.surf.chat.core.common.service.historyService
+import dev.slne.surf.chat.core.common.util.appendLinePrefix
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.chat.paper.util.formatAgo

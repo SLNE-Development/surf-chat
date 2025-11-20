@@ -4,7 +4,7 @@ import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.*
 import dev.slne.surf.chat.api.DenylistAction
-import dev.slne.surf.chat.core.service.denylistService
+import dev.slne.surf.chat.core.common.service.denylistService
 import dev.slne.surf.chat.paper.command.argument.denylistActionArgument
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.paper.plugin

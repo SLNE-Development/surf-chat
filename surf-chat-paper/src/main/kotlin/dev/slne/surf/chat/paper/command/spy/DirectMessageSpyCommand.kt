@@ -3,21 +3,22 @@ package dev.slne.surf.chat.paper.command.spy
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.chat.core.service.spyService
-import dev.slne.surf.chat.paper.command.argument.userArgument
+import dev.slne.surf.chat.core.common.service.spyService
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
-import dev.slne.surf.chat.paper.util.user
+import dev.slne.surf.cloud.api.client.paper.command.args.onlineCloudPlayerArgument
+import dev.slne.surf.cloud.api.common.player.CloudPlayer
+import dev.slne.surf.cloud.api.common.player.toCloudPlayer
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 fun directMessageSpyCommand() = commandAPICommand("spy") {
     withPermission(SurfChatPermissionRegistry.COMMAND_DIRECT_SPY)
     directMessageSpyClearCommand()
-    userArgument("target")
+    onlineCloudPlayerArgument("target")
     playerExecutor { player, args ->
-        val user = player.user() ?: return@playerExecutor
-        val target: User by args
+        val cloudPlayer = player.toCloudPlayer() ?: return@playerExecutor
+        val target: CloudPlayer by args
 
-        if (user.uuid == target.uuid) {
+        if (cloudPlayer == target.uuid) {
             player.sendText {
                 appendPrefix()
                 error("Du kannst dich nicht selbst spionieren!")

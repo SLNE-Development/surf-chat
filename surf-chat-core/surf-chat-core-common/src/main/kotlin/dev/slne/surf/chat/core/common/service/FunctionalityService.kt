@@ -9,7 +9,7 @@ import it.unimi.dsi.fastutil.objects.ObjectSet
  * This service allows enabling or disabling features for specific servers,
  * fetching server states, and managing local server configurations.
  */
-interface FunctionalityService : DatabaseTableHolder {
+interface FunctionalityService {
     /**
      * Determines whether the specified chat server has the required functionality enabled.
      *

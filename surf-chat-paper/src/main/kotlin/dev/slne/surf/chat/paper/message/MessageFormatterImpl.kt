@@ -30,7 +30,7 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
 
     override fun formatGlobal(messageData: MessageData) = buildText {
         val viewer = messageData.receiver ?: return Component.empty()
-        val player = messageData.sender.player() ?: return Component.empty()
+        val player = messageData.sender
 
         if (viewer.hasPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_DELETE)) {
             appendDelete(messageData)

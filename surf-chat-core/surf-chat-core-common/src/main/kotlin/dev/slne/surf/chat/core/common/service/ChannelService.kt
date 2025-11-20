@@ -1,7 +1,6 @@
 package dev.slne.surf.chat.core.common.service
 
 import dev.slne.surf.chat.api.channel.Channel
-import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import java.util.*

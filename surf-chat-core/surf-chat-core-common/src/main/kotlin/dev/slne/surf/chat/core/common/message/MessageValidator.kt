@@ -1,6 +1,5 @@
 package dev.slne.surf.chat.core.common.message
 
-import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.message.MessageValidationResult
 
 /**

@@ -1,6 +1,5 @@
 package dev.slne.surf.chat.paper.message
 
-import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.message.MessageValidationResult
 import dev.slne.surf.chat.core.message.MessageValidator
 import dev.slne.surf.chat.core.service.denylistService

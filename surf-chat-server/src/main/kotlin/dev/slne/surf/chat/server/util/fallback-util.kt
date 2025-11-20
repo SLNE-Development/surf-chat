@@ -1,6 +1,5 @@
 package dev.slne.surf.chat.server.util
 
-import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.core.Constants
 import dev.slne.surf.cloud.api.common.player.CloudPlayer
 import dev.slne.surf.cloud.api.common.player.OfflineCloudPlayer

@@ -3,7 +3,6 @@ package dev.slne.surf.chat.paper.command.spy
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.core.service.spyService
 import dev.slne.surf.chat.paper.command.argument.userArgument
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry

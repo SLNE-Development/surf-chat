@@ -2,7 +2,6 @@ package dev.slne.surf.chat.paper.util
 
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.api.channel.Channel
-import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.core.message.MessageData
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.chat.paper.hook.MiniPlaceholdersHook

@@ -1,6 +1,5 @@
 package dev.slne.surf.chat.server.user
 
-import dev.slne.surf.chat.api.entity.ConfigurableUser
 import dev.slne.surf.chat.core.service.directMessageService
 import dev.slne.surf.chat.core.service.notificationService
 import java.util.*

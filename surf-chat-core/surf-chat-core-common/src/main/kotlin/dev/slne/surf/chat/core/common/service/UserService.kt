@@ -1,6 +1,5 @@
 package dev.slne.surf.chat.core.common.service
 
-import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import java.util.*
 

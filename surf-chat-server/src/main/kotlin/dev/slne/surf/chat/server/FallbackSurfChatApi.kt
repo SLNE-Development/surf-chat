@@ -3,7 +3,6 @@ package dev.slne.surf.chat.server
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.SurfChatApi
 import dev.slne.surf.chat.api.channel.Channel
-import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.api.server.ChatServer

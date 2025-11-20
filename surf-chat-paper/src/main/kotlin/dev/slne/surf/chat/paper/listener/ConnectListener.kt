@@ -1,13 +1,8 @@
 package dev.slne.surf.chat.paper.listener
 
-import com.github.shynixn.mccoroutine.folia.launch
-import dev.slne.surf.chat.core.Constants
 import dev.slne.surf.chat.paper.hook.MiniPlaceholdersHook
 import dev.slne.surf.chat.paper.plugin
-import dev.slne.surf.chat.paper.pluginmessage.pluginMessageSender
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -15,17 +10,6 @@ import org.bukkit.event.player.PlayerJoinEvent
 class ConnectListener : Listener {
     @EventHandler
     fun onJoin(event: PlayerJoinEvent) {
-        plugin.launch(Dispatchers.IO) {
-
-            if (!ALREADY_REQUESTED) {
-                delay(1000)
-                pluginMessageSender(Constants.CHANNEL_SERVER_REQUEST, event.player) {
-                    writeUTF("Requesting data...")
-                }
-                ALREADY_REQUESTED = true
-            }
-        }
-
         if (plugin.connectionMessageConfig.enabled) {
             event.joinMessage(
                 MiniPlaceholdersHook.parse(
@@ -45,9 +29,5 @@ class ConnectListener : Listener {
                 )
             }
         }
-    }
-
-    companion object {
-        var ALREADY_REQUESTED = false
     }
 }

@@ -1,7 +1,6 @@
 package dev.slne.surf.chat.api
 
 import dev.slne.surf.chat.api.channel.Channel
-import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.api.message.MessageType

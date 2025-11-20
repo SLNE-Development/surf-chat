@@ -2,8 +2,6 @@ package dev.slne.surf.chat.server.user
 
 import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.entity.ChannelMember
-import dev.slne.surf.chat.api.entity.ConfigurableUser
-import dev.slne.surf.chat.api.entity.User
 import org.bukkit.Bukkit
 import java.util.*
 

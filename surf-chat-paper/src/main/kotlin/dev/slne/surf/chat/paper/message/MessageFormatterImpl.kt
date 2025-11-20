@@ -3,9 +3,8 @@ package dev.slne.surf.chat.paper.message
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.shynixn.mccoroutine.folia.launch
 import com.sksamuel.aedile.core.expireAfterWrite
-import dev.slne.surf.chat.api.entity.User
-import dev.slne.surf.chat.core.message.MessageData
-import dev.slne.surf.chat.core.message.MessageFormatter
+import dev.slne.surf.chat.core.common.message.MessageData
+import dev.slne.surf.chat.core.common.message.MessageFormatter
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.chat.paper.util.*

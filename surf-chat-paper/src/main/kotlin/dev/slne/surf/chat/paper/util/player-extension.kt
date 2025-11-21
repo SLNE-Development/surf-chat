@@ -32,6 +32,8 @@ fun CommandSender.realName() = when (this) {
     else -> "Error"
 }
 
+val CloudPlayer.bukkitPlayer get() = Bukkit.getPlayer(this.uuid)
+
 val Player.cloudPlayer
     get() = CloudPlayer[this.uniqueId] ?: error("CloudPlayer not found for ${this.uniqueId}")
 

@@ -1,4 +1,4 @@
-package dev.slne.surf.chat.paper.message.result
+package dev.slne.surf.chat.core.client.result
 
 data class CharCheckResult(
     val validInput: Boolean,

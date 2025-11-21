@@ -1,6 +1,6 @@
-package dev.slne.surf.chat.paper.message.result
+package dev.slne.surf.chat.core.client.result
 
-import dev.slne.surf.chat.paper.plugin
+import dev.slne.surf.chat.core.client.SyncValues
 import java.net.URI
 
 data class LinkCheckResult(
@@ -24,7 +24,7 @@ data class LinkCheckResult(
                     ?.removePrefix("www.")
                     ?: return LinkCheckResult(true, rawUrl)
 
-                if (plugin.surfChatConfig.config.allowedDomains.none { domain.endsWith(it.lowercase()) }) {
+                if (SyncValues.allowedDomains.none { domain.endsWith(it.lowercase()) }) {
                     return LinkCheckResult(true, rawUrl)
                 }
             }

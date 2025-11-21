@@ -1,21 +1,21 @@
 package dev.slne.surf.chat.paper.message
 
 import com.github.benmanes.caffeine.cache.Caffeine
-import com.github.shynixn.mccoroutine.folia.launch
 import com.sksamuel.aedile.core.expireAfterWrite
 import dev.slne.surf.chat.core.common.message.MessageData
 import dev.slne.surf.chat.core.common.message.MessageFormatter
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
-import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.chat.paper.util.*
+import dev.slne.surf.cloud.api.common.player.CloudPlayer
 import dev.slne.surf.surfapi.core.api.messages.Colors
-import dev.slne.surf.surfapi.core.api.messages.adventure.*
-import kotlinx.coroutines.Dispatchers
+import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import dev.slne.surf.surfapi.core.api.messages.adventure.clickOpensUrl
+import dev.slne.surf.surfapi.core.api.messages.adventure.clickSuggestsCommand
+import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextReplacementConfig
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Material
-import org.bukkit.Sound
 import org.bukkit.entity.Player
 import kotlin.time.Duration.Companion.minutes
 
@@ -31,21 +31,22 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
     override fun formatGlobal(messageData: MessageData) = buildText {
         val viewer = messageData.receiver ?: return Component.empty()
         val player = messageData.sender
+        val bukkitPlayer = player.bukkitPlayer ?: return@buildText
 
-        if (viewer.hasPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_DELETE)) {
+        if (viewer.hasPlatformPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_DELETE)) {
             appendDelete(messageData)
         }
 
-        if (viewer.hasPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_TELEPORT)) {
-            appendTeleport(messageData.sender.name, viewer)
+        if (viewer.hasPlatformPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_TELEPORT)) {
+            appendTeleport(messageData.sender.name, viewer.bukkitPlayer ?: return@buildText)
         }
 
-        appendName(player)
+        appendName(bukkitPlayer)
         darkSpacer(" >> ")
         append(
             formatItemTag(
                 updateLinks(highlightPlayers(messageData.message, viewer)),
-                player
+                bukkitPlayer
             )
         )
         hoverEvent(buildText { appendMessageData(messageData) })
@@ -84,7 +85,7 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
     }
 
     override fun formatTeamchat(messageData: MessageData) = buildText {
-        val player = messageData.sender.player() ?: return Component.empty()
+        val player = messageData.sender.bukkitPlayer ?: return Component.empty()
 
         darkSpacer(">> ")
         text("TEAM", Colors.RED, TextDecoration.BOLD)
@@ -98,8 +99,8 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
     }
 
     override fun formatChannel(messageData: MessageData) = buildText {
-        val player = messageData.sender.player() ?: return Component.empty()
-        val receiver = messageData.receiver ?: return Component.empty()
+        val player = messageData.sender.bukkitPlayer ?: return Component.empty()
+        val receiver = messageData.receiver?.bukkitPlayer ?: return Component.empty()
 
         if (receiver.hasPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_DELETE)) {
             appendDelete(messageData)
@@ -118,7 +119,7 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
     }
 
     override fun formatPmSpy(messageData: MessageData) = buildText {
-        val receiver = messageData.receiver ?: return Component.empty()
+        val receiver = messageData.receiver?.bukkitPlayer ?: return Component.empty()
 
         appendSpyIcon()
         appendSpace()
@@ -140,8 +141,8 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
     }
 
     override fun formatChannelSpy(messageData: MessageData) = buildText {
-        val player = messageData.sender.player() ?: return Component.empty()
-        val receiver = messageData.receiver ?: return Component.empty()
+        val player = messageData.sender.bukkitPlayer ?: return Component.empty()
+        val receiver = messageData.receiver?.bukkitPlayer ?: return Component.empty()
 
         appendSpyIcon()
         appendSpace()
@@ -195,12 +196,11 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
         return message
     }
 
-    private fun highlightPlayers(rawMessage: Component, viewer: User): Component {
+    private fun highlightPlayers(rawMessage: Component, viewer: CloudPlayer): Component {
         var message = rawMessage
 
         val name = viewer.name
         val pattern = nameRegexCache.get(name)
-        val viewerPlayer = viewer.player() ?: return message
 
         if (!pattern.containsMatchIn(message.plainText())) {
             return message
@@ -218,17 +218,17 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
                 }
                 .build()
         )
-
-        plugin.launch(Dispatchers.IO) {
-            if (viewer.configure().pingsEnabled()) {
-                viewerPlayer.playSound(sound {
-                    type(Sound.BLOCK_NOTE_BLOCK_HARP)
-                    source(net.kyori.adventure.sound.Sound.Source.PLAYER)
-                    volume(1f)
-                    pitch(2f)
-                }, net.kyori.adventure.sound.Sound.Emitter.self())
-            }
-        }
+        //TODO: surf-settings
+//        plugin.launch(Dispatchers.IO) {
+//            if (viewer.configure().pingsEnabled()) {
+//                viewerPlayer.playSound(sound {
+//                    type(Sound.BLOCK_NOTE_BLOCK_HARP)
+//                    source(net.kyori.adventure.sound.Sound.Source.PLAYER)
+//                    volume(1f)
+//                    pitch(2f)
+//                }, net.kyori.adventure.sound.Sound.Emitter.self())
+//            }
+//        }
 
         return message
     }

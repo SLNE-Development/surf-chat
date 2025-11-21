@@ -101,4 +101,11 @@ data class MessageData(
      * - `DIRECT`: Sent directly between users.
      */
     val type: MessageType
-)
+) {
+    fun withReceiver(receiver: CloudPlayer?) = copy(receiver = receiver)
+    fun withChannel(channel: Channel?) = if (channel != null) {
+        copy(channel = channel, type = MessageType.CHANNEL)
+    } else {
+        this
+    }
+}

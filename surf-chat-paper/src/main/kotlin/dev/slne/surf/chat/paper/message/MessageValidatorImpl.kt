@@ -1,15 +1,17 @@
 package dev.slne.surf.chat.paper.message
 
 import dev.slne.surf.chat.api.message.MessageValidationResult
-import dev.slne.surf.chat.core.message.MessageValidator
-import dev.slne.surf.chat.core.service.denylistService
-import dev.slne.surf.chat.core.service.functionalityService
-import dev.slne.surf.chat.paper.message.result.CharCheckResult
-import dev.slne.surf.chat.paper.message.result.LinkCheckResult
-import dev.slne.surf.chat.paper.message.result.SpamCheckResult
+import dev.slne.surf.chat.core.client.result.CharCheckResult
+import dev.slne.surf.chat.core.client.result.LinkCheckResult
+import dev.slne.surf.chat.core.client.result.SpamCheckResult
+import dev.slne.surf.chat.core.common.message.MessageValidator
+import dev.slne.surf.chat.core.common.service.denylistService
+import dev.slne.surf.chat.core.common.service.functionalityService
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.paper.plugin
+import dev.slne.surf.chat.paper.util.hasPlatformPermission
 import dev.slne.surf.chat.paper.util.plainText
+import dev.slne.surf.cloud.api.common.player.CloudPlayer
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 
@@ -27,8 +29,8 @@ class MessageValidatorImpl {
     private class StringMessageValidator(
         override val message: String
     ) : MessageValidator<String> {
-        override fun validate(user: User): MessageValidationResult {
-            if (user.hasPermission(SurfChatPermissionRegistry.TEAM_BYPASS_FILTER)) {
+        override fun validate(user: CloudPlayer): MessageValidationResult {
+            if (user.hasPlatformPermission(SurfChatPermissionRegistry.TEAM_BYPASS_FILTER)) {
                 return MessageValidationResult.Success()
             }
 
@@ -36,7 +38,7 @@ class MessageValidatorImpl {
                 return MessageValidationResult.Failure(MessageValidationResult.MessageValidationError.AutoDisabled())
             }
 
-            if (!functionalityService.isLocalChatEnabled() && !user.hasPermission(
+            if (!functionalityService.isLocalChatEnabled() && !user.hasPlatformPermission(
                     SurfChatPermissionRegistry.TEAM_BYPASS_FUNCTIONALITY
                 )
             ) {
@@ -84,8 +86,8 @@ class MessageValidatorImpl {
         }
 
 
-        fun checkAutoDisabling(player: User): Boolean =
-            !player.hasPermission(SurfChatPermissionRegistry.AUTO_CHAT_DISABLING_BYPASS)
+        fun checkAutoDisabling(player: CloudPlayer): Boolean =
+            !player.hasPlatformPermission(SurfChatPermissionRegistry.AUTO_CHAT_DISABLING_BYPASS)
                     && Bukkit.getOnlinePlayers()
                 .count() > plugin.autoDisablingConfig.maximumPlayersBeforeDisable
                     && plugin.autoDisablingConfig.enabled
@@ -94,7 +96,7 @@ class MessageValidatorImpl {
     private class ComponentMessageValidator(
         override val message: Component
     ) : MessageValidator<Component> {
-        override fun validate(user: User): MessageValidationResult {
+        override fun validate(user: CloudPlayer): MessageValidationResult {
             val validator = stringValidator(message.plainText())
             val result = validator.validate(user)
 

@@ -7,7 +7,6 @@ import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.Serverbou
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.denylistActionService
 import dev.slne.surf.chat.core.service.spyService
-import dev.slne.surf.chat.paper.message.MessageDataImpl
 import dev.slne.surf.chat.paper.message.MessageFormatterImpl
 import dev.slne.surf.chat.paper.message.MessageValidatorImpl
 import dev.slne.surf.chat.paper.plugin

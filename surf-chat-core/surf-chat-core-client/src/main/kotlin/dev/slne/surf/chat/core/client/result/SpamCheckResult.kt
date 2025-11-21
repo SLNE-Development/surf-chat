@@ -1,6 +1,6 @@
-package dev.slne.surf.chat.paper.message.result
+package dev.slne.surf.chat.core.client.result
 
-import dev.slne.surf.chat.paper.plugin
+import dev.slne.surf.chat.core.client.SyncValues
 import dev.slne.surf.surfapi.core.api.util.mutableObject2ObjectMapOf
 import dev.slne.surf.surfapi.core.api.util.mutableObjectListOf
 import it.unimi.dsi.fastutil.objects.ObjectList
@@ -15,11 +15,11 @@ data class SpamCheckResult(
 
         fun of(uuid: UUID): SpamCheckResult {
             val now = System.currentTimeMillis()
-            val interval = plugin.spamConfig.interval
+            val interval = SyncValues.spamInterval.get()
             val timestamps = messageTimestamps.getOrPut(uuid) { mutableObjectListOf<Long>() }
                 .apply { removeIf { it < now - interval } }
 
-            if (timestamps.size < plugin.spamConfig.amount) {
+            if (timestamps.size < SyncValues.spamAmount.get()) {
                 timestamps += now
                 return SpamCheckResult(false)
             }

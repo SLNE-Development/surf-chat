@@ -1,4 +1,4 @@
-package dev.slne.surf.chat.server
+package dev.slne.surf.chat.server.database
 
 import dev.slne.surf.chat.server.database.repository.IgnoreListRepository
 import dev.slne.surf.cloud.api.common.event.CloudEventHandler

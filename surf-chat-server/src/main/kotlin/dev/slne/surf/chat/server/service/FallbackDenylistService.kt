@@ -1,8 +1,8 @@
 package dev.slne.surf.chat.server.service
 
 import com.google.auto.service.AutoService
-import dev.slne.surf.chat.api.DenylistAction
-import dev.slne.surf.chat.api.entry.DenylistEntry
+import dev.slne.surf.chat.api.denylist.DenylistAction
+import dev.slne.surf.chat.api.denylist.DenylistEntry
 import dev.slne.surf.chat.core.entry.DenylistEntryImpl
 import dev.slne.surf.chat.core.service.DenylistService
 import dev.slne.surf.chat.server.entity.DenylistActionEntity

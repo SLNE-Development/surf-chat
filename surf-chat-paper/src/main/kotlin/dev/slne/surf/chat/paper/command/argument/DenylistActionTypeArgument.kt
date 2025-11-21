@@ -5,14 +5,14 @@ import dev.jorel.commandapi.arguments.Argument
 import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.CustomArgument
 import dev.jorel.commandapi.arguments.StringArgument
-import dev.slne.surf.chat.api.entry.DenylistActionType
+import dev.slne.surf.chat.api.denylist.DenylistActionType
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 
 class DenylistActionTypeArgument(nodeName: String) :
     CustomArgument<DenylistActionType, String>(StringArgument(nodeName), { info ->
         when (info.input()) {
             "kick" -> DenylistActionType.KICK
-            "ban" -> DenylistActionType.EXPIREABLE_BAN
+            "ban" -> DenylistActionType.EXPIRABLE_BAN
             "mute" -> DenylistActionType.MUTE
             "warn" -> DenylistActionType.WARN
             "communityban" -> DenylistActionType.COMMUNITY_BAN

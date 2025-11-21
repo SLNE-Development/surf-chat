@@ -1,8 +1,8 @@
 package dev.slne.surf.chat.paper.message
 
-import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.core.common.message.MessageData
+import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.cloud.api.common.player.CloudPlayer
 import dev.slne.surf.cloud.api.common.server.CloudServer
 import net.kyori.adventure.chat.SignedMessage

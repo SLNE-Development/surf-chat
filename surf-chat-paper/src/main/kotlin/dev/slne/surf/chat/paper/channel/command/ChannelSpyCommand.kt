@@ -4,8 +4,8 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
-import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.core.common.service.spyService
+import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.paper.channel.argument.channelArgument
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.paper.util.cloudPlayer

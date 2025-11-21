@@ -1,9 +1,9 @@
 package dev.slne.surf.chat.server.service
 
 import com.google.auto.service.AutoService
-import dev.slne.surf.chat.api.DenylistAction
-import dev.slne.surf.chat.api.entry.DenylistActionType
-import dev.slne.surf.chat.api.entry.DenylistEntry
+import dev.slne.surf.chat.api.denylist.DenylistAction
+import dev.slne.surf.chat.api.denylist.DenylistActionType
+import dev.slne.surf.chat.api.denylist.DenylistEntry
 import dev.slne.surf.chat.core.service.DenylistActionService
 import dev.slne.surf.chat.core.service.discordService
 import dev.slne.surf.chat.core.service.historyService
@@ -87,7 +87,7 @@ class FallbackDenylistActionService : DenylistActionService, Services.Fallback {
             val punishManager = cloudPlayer.punishmentManager
 
             when (entry.action.actionType) {
-                DenylistActionType.EXPIREABLE_BAN -> {
+                DenylistActionType.EXPIRABLE_BAN -> {
                     punishManager.punish(
                         PunishType.BAN.Expirable(
                             ZonedDateTime.now().plus(

@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.api.message
 
-import dev.slne.surf.chat.api.entry.DenylistEntry
+import dev.slne.surf.chat.api.denylist.DenylistEntry
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import net.kyori.adventure.text.Component
 

@@ -10,7 +10,7 @@ import java.util.*
  * It provides properties to identify the user who is ignoring someone,
  * the ignored user's details, and the timestamp of when the ignore action was created.
  */
-interface IgnoreListEntry {
+data class IgnoreListEntry(
     /**
      * Represents the unique identifier of a user in the ignore list entry.
      *
@@ -18,7 +18,7 @@ interface IgnoreListEntry {
      * It uniquely identifies the individual who has decided to ignore another user and
      * is essential for tracking and managing ignore list operations.
      */
-    val user: UUID
+    val user: UUID,
 
     /**
      * Represents the name associated with the ignore list entry.
@@ -27,7 +27,7 @@ interface IgnoreListEntry {
      * of the individual who is involved in the ignore list operation, whether
      * as the initiator or target of the action.
      */
-    val name: String
+    val name: String,
 
     /**
      * Represents the unique identifier of the target user in the ignore list entry.
@@ -36,7 +36,7 @@ interface IgnoreListEntry {
      * It uniquely identifies the target for ignore actions and is essential for
      * distinguishing one user's ignore entry from another.
      */
-    val target: UUID
+    val target: UUID,
 
     /**
      * Represents the name of the target associated with an ignore list entry.
@@ -45,7 +45,7 @@ interface IgnoreListEntry {
      * to provide a human-readable representation of the target user in contexts such as
      * listing ignored users or retrieving ignore list details.
      */
-    val targetName: String
+    val targetName: String,
 
     /**
      * Represents the timestamp (in milliseconds since the epoch) when the entry was created.
@@ -56,4 +56,4 @@ interface IgnoreListEntry {
      * or historical context of entries is relevant.
      */
     val createdAt: Long
-}
+)

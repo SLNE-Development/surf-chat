@@ -5,7 +5,7 @@ import dev.jorel.commandapi.kotlindsl.integerArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.channel.Channel
-import dev.slne.surf.chat.api.entity.ChannelMember
+import dev.slne.surf.chat.api.channel.ChannelMember
 import dev.slne.surf.chat.paper.channel.argument.channelArgument
 import dev.slne.surf.chat.paper.channel.channelService
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry

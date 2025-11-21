@@ -2,7 +2,7 @@ package dev.slne.surf.chat.server.service
 
 import com.google.auto.service.AutoService
 import com.google.gson.Gson
-import dev.slne.surf.chat.api.entry.DenylistEntry
+import dev.slne.surf.chat.api.denylist.DenylistEntry
 import dev.slne.surf.chat.core.service.DiscordService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

@@ -1,4 +1,4 @@
-package dev.slne.surf.chat.api.entry
+package dev.slne.surf.chat.api.denylist
 
 /**
  * Represents the type of action to be taken for a denylist entry.
@@ -14,7 +14,7 @@ enum class DenylistActionType {
      * based on the denylist conditions. It is part of the `DenylistActionType` enumeration
      * and is typically utilized in systems for moderating and managing user behavior.
      */
-    EXPIREABLE_BAN,
+    EXPIRABLE_BAN,
 
     /**
      * Represents a permanent ban action type within the denylist system.

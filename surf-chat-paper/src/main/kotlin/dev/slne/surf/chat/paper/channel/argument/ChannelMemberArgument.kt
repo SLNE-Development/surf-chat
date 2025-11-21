@@ -5,7 +5,7 @@ import dev.jorel.commandapi.arguments.Argument
 import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.CustomArgument
 import dev.jorel.commandapi.arguments.StringArgument
-import dev.slne.surf.chat.api.entity.ChannelMember
+import dev.slne.surf.chat.api.channel.ChannelMember
 import dev.slne.surf.chat.paper.channel.channelService
 import dev.slne.surf.chat.paper.util.channelMember
 import dev.slne.surf.cloud.api.common.player.CloudPlayer

@@ -4,7 +4,7 @@ import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.anyExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
-import dev.slne.surf.chat.api.entry.DenylistActionType
+import dev.slne.surf.chat.api.denylist.DenylistActionType
 import dev.slne.surf.chat.core.common.entry.DenylistBatchEntry
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.paper.plugin
@@ -75,7 +75,7 @@ fun CommandAPICommand.denylistImportDefaultCommand() = subcommand("importdefault
                 DenylistBatchEntry.builder()
                     .withReason("Starke Beleidigungen")
                     .withStaff("Arty Support")
-                    .withActionType(DenylistActionType.EXPIREABLE_BAN)
+                    .withActionType(DenylistActionType.EXPIRABLE_BAN)
                     .withPunishReason("Inhalte mit abwertender, beleidigender oder diskriminierender Sprache")
                     .withDuration(14.days)
                     .withWords(
@@ -90,7 +90,7 @@ fun CommandAPICommand.denylistImportDefaultCommand() = subcommand("importdefault
                 DenylistBatchEntry.builder()
                     .withReason("Mittelstarke Beleidigungen")
                     .withStaff("Arty Support")
-                    .withActionType(DenylistActionType.EXPIREABLE_BAN)
+                    .withActionType(DenylistActionType.EXPIRABLE_BAN)
                     .withPunishReason("Inhalte mit persönlichen Beleidigungen mittlerer Stufe")
                     .withDuration(7.days)
                     .withWords(

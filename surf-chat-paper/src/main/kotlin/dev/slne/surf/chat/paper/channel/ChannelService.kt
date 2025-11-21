@@ -1,9 +1,9 @@
 package dev.slne.surf.chat.paper.channel
 
 import dev.slne.surf.chat.api.channel.Channel
+import dev.slne.surf.chat.api.channel.ChannelMember
 import dev.slne.surf.chat.api.channel.ChannelRole
 import dev.slne.surf.chat.api.channel.ChannelVisibility
-import dev.slne.surf.chat.api.entity.ChannelMember
 import dev.slne.surf.chat.core.common.ChatContextHolderImpl
 import dev.slne.surf.chat.paper.util.channelMember
 import dev.slne.surf.cloud.api.common.player.CloudPlayer
@@ -28,7 +28,7 @@ class ChannelService {
             )
         )
 
-        val channel = Channel(
+        val channel = PaperChannel(
             UUID.randomUUID(), name, members, mutableObjectSetOf(), mutableObjectSetOf(),
             ChannelVisibility.PRIVATE, System.currentTimeMillis()
         )

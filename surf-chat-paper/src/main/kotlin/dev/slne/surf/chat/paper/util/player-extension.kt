@@ -1,7 +1,7 @@
 package dev.slne.surf.chat.paper.util
 
 import dev.slne.surf.chat.api.channel.Channel
-import dev.slne.surf.chat.api.entity.ChannelMember
+import dev.slne.surf.chat.api.channel.ChannelMember
 import dev.slne.surf.cloud.api.common.player.CloudPlayer
 import dev.slne.surf.cloud.api.common.player.toCloudPlayer
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText

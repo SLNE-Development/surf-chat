@@ -5,7 +5,7 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.anyExecutor
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.subcommand
-import dev.slne.surf.chat.api.DenylistAction
+import dev.slne.surf.chat.api.denylist.DenylistAction
 import dev.slne.surf.chat.core.service.denylistActionService
 import dev.slne.surf.chat.paper.command.argument.denylistActionArgument
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry

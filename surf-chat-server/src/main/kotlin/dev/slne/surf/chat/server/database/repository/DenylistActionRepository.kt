@@ -3,7 +3,6 @@ package dev.slne.surf.chat.server.database.repository
 import dev.slne.surf.chat.api.denylist.DenylistAction
 import dev.slne.surf.chat.api.denylist.DenylistActionType
 import dev.slne.surf.chat.api.denylist.DenylistEntry
-import dev.slne.surf.chat.core.common.service.historyService
 import dev.slne.surf.chat.core.common.util.SyncValues
 import dev.slne.surf.chat.server.database.entity.DenylistActionEntity
 import dev.slne.surf.chat.server.service.DiscordService
@@ -24,7 +23,8 @@ import kotlin.time.Duration.Companion.seconds
 @Service
 @CoroutineTransactional
 class DenylistActionRepository(
-    private val discordService: DiscordService
+    private val discordService: DiscordService,
+    private val historyRepository: HistoryRepository
 ) {
     suspend fun cacheActions() {
         val actions = mutableObjectSetOf<DenylistAction>()
@@ -132,6 +132,7 @@ class DenylistActionRepository(
 
         delay(3.seconds)
         //Bukkit.getServer().deleteMessage(message) TODO: re add
-        historyService.markDeleted(messageUuid, "Arty Support (BLOCKED: ${entry.word})")
+
+        historyRepository.markDeleted(messageUuid, "Arty Support (BLOCKED: ${entry.word})")
     }
 }

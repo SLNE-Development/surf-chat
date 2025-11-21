@@ -1,4 +1,4 @@
-package dev.slne.surf.chat.core.common.netty.packet.clientbound
+package dev.slne.surf.chat.core.common.netty.packet.clientbound.history
 
 import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.cloud.api.common.meta.SurfNettyPacket
@@ -9,5 +9,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 @SurfNettyPacket("chat:clientbound:history_lookup_result", PacketFlow.CLIENTBOUND)
 data class ClientboundHistoryLookupResultPacket(
-    val entries: List<HistoryEntry>
+    val entries: Set<HistoryEntry>
 ) : ResponseNettyPacket()

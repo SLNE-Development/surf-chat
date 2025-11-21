@@ -44,7 +44,7 @@ fun SurfComponentBuilder.appendDelete(messageData: MessageData) = append(buildTe
                 }
             }
 
-        ServerboundHistoryMarkDeletedPacket(messageData).fireAndForget()
+        ServerboundHistoryMarkDeletedPacket(messageData.messageUuid, it.name()).fireAndForget()
     })
     hoverEvent(buildText {
         warning("Klicke, um die Nachricht zu löschen")

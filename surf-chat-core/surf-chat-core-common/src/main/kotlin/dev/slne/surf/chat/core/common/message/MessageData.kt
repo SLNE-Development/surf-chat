@@ -11,7 +11,7 @@ import java.util.*
 /**
  * Represents a message in the chat system, including its content, metadata, and context.
  */
-interface MessageData {
+data class MessageData(
     /**
      * Represents the textual content of a message.
      *
@@ -19,7 +19,7 @@ interface MessageData {
      * message formatting, validation, and data handling. The content can be processed in multiple ways, such as editing,
      * displaying, or validating based on the message type and other metadata.
      */
-    val message: Component
+    val message: Component,
 
     /**
      * A unique identifier for a specific message.
@@ -28,7 +28,7 @@ interface MessageData {
      * and is critical for operations such as deletion, logging,
      * and ensuring message integrity and traceability across the system.
      */
-    val messageUuid: UUID
+    val messageUuid: UUID,
 
     /**
      * Represents the sender of the message within the chat system.
@@ -40,7 +40,7 @@ interface MessageData {
      * messages in different contexts, determining sender permissions, and providing additional
      * sender-specific interactions.
      */
-    val sender: CloudPlayer
+    val sender: CloudPlayer,
 
     /**
      * Represents the recipient of a message within the chat system.
@@ -53,12 +53,12 @@ interface MessageData {
      * - Identifying the specific user who is the recipient of a private message.
      * - Checking permissions or contextual data related to the recipient during message processing.
      */
-    val receiver: CloudPlayer?
+    val receiver: CloudPlayer?,
 
     /**
      * Represents the timestamp when the message was sent, measured in milliseconds since the epoch (January 1, 1970, 00:00:00 GMT).
      */
-    val sentAt: Long
+    val sentAt: Long,
 
     /**
      * Represents the chat server associated with the message.
@@ -70,7 +70,7 @@ interface MessageData {
      * The `server` property is particularly useful when messages or communication need to be
      * associated with specific servers in a multi-server environment.
      */
-    val server: CloudServer
+    val server: CloudServer,
 
     /**
      * Represents the associated chat channel for a message.
@@ -79,7 +79,7 @@ interface MessageData {
      * It may be `null` if the message is not part of any channel, such as in the case of private messages
      * or global broadcasts.
      */
-    val channel: Channel?
+    val channel: Channel?,
 
     /**
      * Represents the signed metadata of the message.
@@ -87,7 +87,7 @@ interface MessageData {
      * This property contains cryptographic information, such as a signature, to verify the authenticity and integrity
      * of the associated message. If `null`, the message is considered unsigned or its signature data is unavailable.
      */
-    val signedMessage: SignedMessage?
+    val signedMessage: SignedMessage?,
 
     /**
      * Defines the type of the message associated with this object.
@@ -101,4 +101,4 @@ interface MessageData {
      * - `DIRECT`: Sent directly between users.
      */
     val type: MessageType
-}
+)

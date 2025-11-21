@@ -1,6 +1,7 @@
 package dev.slne.surf.chat.core.common.message
 
 import dev.slne.surf.chat.api.message.MessageValidationResult
+import dev.slne.surf.cloud.api.common.player.CloudPlayer
 
 /**
  * An interface for validating messages of type T.
@@ -29,5 +30,5 @@ interface MessageValidator<T> {
      * @return A result of type `MessageValidationResult`, indicating whether the validation was
      *         successful or detailing the specific error if validation failed.
      */
-    fun validate(user: User): MessageValidationResult
+    fun validate(user: CloudPlayer): MessageValidationResult
 }

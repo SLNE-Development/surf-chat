@@ -1,20 +1,20 @@
-package dev.slne.surf.chat.server.service
+package dev.slne.surf.chat.server.database.repository
 
 import dev.slne.surf.chat.api.denylist.DenylistAction
 import dev.slne.surf.chat.api.denylist.DenylistActionType
 import dev.slne.surf.chat.api.denylist.DenylistEntry
 import dev.slne.surf.chat.core.common.service.discordService
 import dev.slne.surf.chat.core.common.service.historyService
+import dev.slne.surf.chat.core.common.util.SyncValues
 import dev.slne.surf.chat.server.database.entity.DenylistActionEntity
-import dev.slne.surf.chat.server.database.table.DenylistActionsTable
 import dev.slne.surf.cloud.api.common.player.OfflineCloudPlayer
 import dev.slne.surf.cloud.api.common.player.punishment.type.PunishType
+import dev.slne.surf.cloud.api.common.util.mutableObjectSetOf
+import dev.slne.surf.cloud.api.server.plugin.CoroutineTransactional
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import net.kyori.adventure.chat.SignedMessage
-import org.jetbrains.exposed.sql.deleteAll
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.springframework.stereotype.Service
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
@@ -22,49 +22,38 @@ import java.util.*
 import kotlin.time.Duration.Companion.seconds
 
 @Service
-class ServerDenylistActionService {
-    suspend fun addAction(action: DenylistAction) =
-        newSuspendedTransaction(Dispatchers.IO) {
+@CoroutineTransactional
+class DenylistActionRepository {
+    suspend fun cacheActions() {
+        val actions = mutableObjectSetOf<DenylistAction>()
+
+        DenylistActionEntity.all().forEach {
+            actions.add(
+                DenylistAction(
+                    it.name,
+                    it.actionType,
+                    it.reason,
+                    it.duration
+                )
+            )
+        }
+
+        SyncValues.denylistActions.clear()
+        SyncValues.denylistActions.addAll(actions)
+    }
+
+    suspend fun storeActions() {
+        DenylistActionEntity.all().forEach { it.delete() }
+
+        SyncValues.denylistActions.forEach {
             DenylistActionEntity.new {
-                name = action.name
-                actionType = action.actionType
-                reason = action.reason
-                duration = action.duration
+                name = it.name
+                actionType = it.actionType
+                reason = it.reason
+                duration = it.duration
             }
-            return@newSuspendedTransaction
         }
-
-    suspend fun removeAction(action: DenylistAction) =
-        newSuspendedTransaction(Dispatchers.IO) {
-            DenylistActionEntity.find { DenylistActionsTable.name eq action.name }.firstOrNull()
-                ?.delete()
-            return@newSuspendedTransaction
-        }
-
-    suspend fun hasAction(name: String) = newSuspendedTransaction(Dispatchers.IO) {
-        val exists = DenylistActionEntity.find { DenylistActionsTable.name eq name }.firstOrNull()
-        return@newSuspendedTransaction exists != null
     }
-
-    suspend fun fetchActions() = newSuspendedTransaction(Dispatchers.IO) {
-        _actions.clear()
-        _actions.addAll(DenylistActionEntity.all().map {
-            it.toDto()
-        })
-        return@newSuspendedTransaction
-    }
-
-    fun addLocalAction(action: DenylistAction) = _actions.add(action)
-    fun removeLocalAction(action: DenylistAction) = _actions.remove(action)
-    fun getLocalAction(name: String) = _actions.firstOrNull { it.name == name }
-
-    fun listLocalActions() = _actions
-    fun hasLocalAction(name: String) = _actions.any { it.name == name }
-    suspend fun clearActions() = newSuspendedTransaction(Dispatchers.IO) {
-        DenylistActionsTable.deleteAll()
-    }
-
-    fun clearLocalActions() = _actions.clear()
 
     suspend fun makeAction(
         messageUuid: UUID,

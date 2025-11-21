@@ -1,23 +1,21 @@
 package dev.slne.surf.chat.server.service
 
-import com.google.auto.service.AutoService
 import com.google.gson.Gson
 import dev.slne.surf.chat.api.denylist.DenylistEntry
-import dev.slne.surf.chat.core.service.DiscordService
 import dev.slne.surf.cloud.api.common.player.CloudPlayer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import net.kyori.adventure.util.Services
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.springframework.stereotype.Service
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-@AutoService(DiscordService::class)
-class FallbackDiscordService : DiscordService, Services.Fallback {
+@Service
+class DiscordService {
     private val client = OkHttpClient()
     private val gson = Gson()
 
@@ -37,7 +35,7 @@ class FallbackDiscordService : DiscordService, Services.Fallback {
         val embeds: List<Embed>
     )
 
-    override suspend fun sendCommunityBanNotification(
+    suspend fun sendCommunityBanNotification(
         url: String,
         user: CloudPlayer,
         denylistEntry: DenylistEntry

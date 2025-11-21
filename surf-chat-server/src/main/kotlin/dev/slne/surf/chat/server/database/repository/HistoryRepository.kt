@@ -92,7 +92,7 @@ class HistoryRepository {
                     HistoryTable.selectAll()
                 }
 
-                val limitedQuery = filter.limit?.let { query.limit(it) } ?: query
+                val limitedQuery = filter?.limit?.let { query.limit(it) } ?: query
 
                 limitedQuery.map {
                     HistoryEntry(

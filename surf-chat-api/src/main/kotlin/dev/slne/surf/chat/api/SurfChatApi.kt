@@ -4,11 +4,12 @@ import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.api.message.MessageType
-import dev.slne.surf.chat.api.server.ChatServer
-import dev.slne.surf.surfapi.core.api.util.requiredService
+import dev.slne.surf.cloud.api.common.player.CloudPlayer
+import dev.slne.surf.cloud.api.common.server.CloudServer
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.chat.SignedMessage
 import net.kyori.adventure.text.Component
+import org.springframework.beans.factory.getBean
 import java.util.*
 
 /**
@@ -31,39 +32,14 @@ interface SurfChatApi {
     suspend fun logMessage(
         message: Component,
         type: MessageType,
-        sender: User,
-        receiver: User? = null,
+        sender: CloudPlayer,
+        receiver: CloudPlayer? = null,
         sentAt: Long = System.currentTimeMillis(),
-        server: ChatServer = ChatServer.default(),
+        server: CloudServer,
         channel: Channel? = null,
         signedMessage: SignedMessage? = null,
         messageUuid: UUID = UUID.randomUUID()
     )
-
-    /**
-     * Retrieves a user by their name.
-     *
-     * @param name The name of the user.
-     * @return The user object, or `null` if not found.
-     */
-    fun getUser(name: String): User?
-
-    /**
-     * Retrieves a user by their UUID.
-     *
-     * @param uuid The UUID of the user.
-     * @return The user object, or `null` if not found.
-     */
-    fun getUser(uuid: UUID): User?
-
-    /**
-     * Creates a new user in the system.
-     *
-     * @param name The name of the user.
-     * @param uuid The UUID of the user.
-     * @return The created user object.
-     */
-    fun createUser(name: String, uuid: UUID): User
 
     /**
      * Looks up chat history based on a filter.
@@ -80,7 +56,7 @@ interface SurfChatApi {
      * @param owner The owner of the channel.
      * @return The created channel object.
      */
-    fun createChannel(name: String, owner: User): Channel
+    fun createChannel(name: String, owner: CloudPlayer): Channel
 
     /**
      * Deletes a chat channel.
@@ -111,7 +87,7 @@ interface SurfChatApi {
      * @param user The user to invite.
      * @return `true` if the invitation was successful, otherwise `false`.
      */
-    fun invite(channel: Channel, user: User): Boolean
+    fun invite(channel: Channel, user: CloudPlayer): Boolean
 
     /**
      * Revokes an invitation for a user to a channel.
@@ -120,7 +96,7 @@ interface SurfChatApi {
      * @param user The user whose invitation is to be revoked.
      * @return `true` if the revocation was successful, otherwise `false`.
      */
-    fun uninvite(channel: Channel, user: User): Boolean
+    fun uninvite(channel: Channel, user: CloudPlayer): Boolean
 
     /**
      * Checks if a user is invited to a channel.
@@ -129,7 +105,7 @@ interface SurfChatApi {
      * @param user The user to check.
      * @return `true` if the user is invited, otherwise `false`.
      */
-    fun isInvited(channel: Channel, user: User): Boolean
+    fun isInvited(channel: Channel, user: CloudPlayer): Boolean
 
     /**
      * Accepts an invitation to a channel.
@@ -138,7 +114,7 @@ interface SurfChatApi {
      * @param user The user accepting the invitation.
      * @return `true` if the invitation was successfully accepted, otherwise `false`.
      */
-    fun acceptInvite(channel: Channel, user: User): Boolean
+    fun acceptInvite(channel: Channel, user: CloudPlayer): Boolean
 
     /**
      * Declines an invitation to a channel.
@@ -147,17 +123,11 @@ interface SurfChatApi {
      * @param user The user declining the invitation.
      * @return `true` if the invitation was successfully declined, otherwise `false`.
      */
-    fun declineInvite(channel: Channel, user: User): Boolean
-
-    companion object {
-        /**
-         * The singleton instance of the `SurfChatApi`.
-         */
-        val INSTANCE = requiredService<SurfChatApi>()
-    }
+    fun declineInvite(channel: Channel, user: CloudPlayer): Boolean
 }
 
-/**
- * Provides access to the singleton instance of the `SurfChatApi`.
- */
-val surfChatApi get() = SurfChatApi.INSTANCE
+@OptIn(InternalChatApi::class)
+        /**
+         * Provides access to the singleton instance of the `SurfChatApi`.
+         */
+val surfChatApi get() = ChatContextHolder.instance.context.getBean<SurfChatApi>()

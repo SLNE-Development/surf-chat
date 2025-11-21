@@ -7,9 +7,8 @@ import dev.slne.surf.chat.core.common.service.discordService
 import dev.slne.surf.chat.core.common.service.historyService
 import dev.slne.surf.chat.server.database.entity.DenylistActionEntity
 import dev.slne.surf.chat.server.database.table.DenylistActionsTable
-import dev.slne.surf.chat.server.util.toOfflineCloudPlayer
+import dev.slne.surf.cloud.api.common.player.OfflineCloudPlayer
 import dev.slne.surf.cloud.api.common.player.punishment.type.PunishType
-import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -23,9 +22,7 @@ import java.util.*
 import kotlin.time.Duration.Companion.seconds
 
 @Service
-class FallbackDenylistActionService {
-    private val _actions = mutableObjectSetOf<DenylistAction>()
-
+class ServerDenylistActionService {
     suspend fun addAction(action: DenylistAction) =
         newSuspendedTransaction(Dispatchers.IO) {
             DenylistActionEntity.new {
@@ -73,11 +70,10 @@ class FallbackDenylistActionService {
         messageUuid: UUID,
         entry: DenylistEntry,
         message: SignedMessage,
-        sender: User,
+        sender: OfflineCloudPlayer,
         discordHookUrl: String?
     ) = withContext(Dispatchers.IO) {
-        val cloudPlayer = sender.toOfflineCloudPlayer()
-        val punishManager = cloudPlayer.punishmentManager
+        val punishManager = sender.punishmentManager
 
         when (entry.action.actionType) {
             DenylistActionType.EXPIRABLE_BAN -> {

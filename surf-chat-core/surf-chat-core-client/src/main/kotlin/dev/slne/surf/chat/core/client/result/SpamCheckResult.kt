@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.core.client.result
 
-import dev.slne.surf.chat.core.client.SyncValues
+import dev.slne.surf.chat.core.common.util.SyncValues
 import dev.slne.surf.surfapi.core.api.util.mutableObject2ObjectMapOf
 import dev.slne.surf.surfapi.core.api.util.mutableObjectListOf
 import it.unimi.dsi.fastutil.objects.ObjectList

@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.core.client.result
 
-import dev.slne.surf.chat.core.client.SyncValues
+import dev.slne.surf.chat.core.common.util.SyncValues
 import java.net.URI
 
 data class LinkCheckResult(

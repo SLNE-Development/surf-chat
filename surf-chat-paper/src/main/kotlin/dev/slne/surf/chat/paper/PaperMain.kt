@@ -2,7 +2,7 @@ package dev.slne.surf.chat.paper
 
 import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
 import dev.slne.surf.chat.api.server.ChatServer
-import dev.slne.surf.chat.core.client.SyncValues
+import dev.slne.surf.chat.core.common.util.SyncValues
 import dev.slne.surf.chat.paper.config.DiscordConfigProvider
 import dev.slne.surf.chat.paper.config.SurfChatConfigProvider
 import dev.slne.surf.surfapi.bukkit.api.metrics.Metrics

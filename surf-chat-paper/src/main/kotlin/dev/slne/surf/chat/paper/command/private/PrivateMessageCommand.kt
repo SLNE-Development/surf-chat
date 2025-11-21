@@ -5,10 +5,10 @@ import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.greedyStringArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.message.MessageType
-import dev.slne.surf.chat.core.client.SyncValues
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.ServerboundHistoryLogPacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.message.ServerboundPrivateMessagePacket
 import dev.slne.surf.chat.core.common.permission.ChatPermissions
+import dev.slne.surf.chat.core.common.util.SyncValues
 import dev.slne.surf.cloud.api.client.netty.packet.fireAndForget
 import dev.slne.surf.cloud.api.client.paper.command.args.onlineCloudPlayerArgument
 import dev.slne.surf.cloud.api.client.server.current

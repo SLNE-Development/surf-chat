@@ -5,10 +5,10 @@ import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.channel.Channel
-import dev.slne.surf.chat.core.service.spyService
+import dev.slne.surf.chat.core.common.service.spyService
 import dev.slne.surf.chat.paper.channel.argument.channelArgument
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
-import dev.slne.surf.chat.paper.util.user
+import dev.slne.surf.chat.paper.util.cloudPlayer
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 fun CommandAPICommand.channelSpyCommand() = subcommand("spy") {
@@ -17,7 +17,7 @@ fun CommandAPICommand.channelSpyCommand() = subcommand("spy") {
     channelArgument("channel")
     playerExecutor { player, args ->
         val channel: Channel by args
-        val user = player.user() ?: return@playerExecutor
+        val user = player.cloudPlayer
 
         if (channel.isMember(user)) {
             player.sendText {

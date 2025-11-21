@@ -9,7 +9,7 @@ import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.paper.channel.argument.channelInviteArgument
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.paper.plugin
-import dev.slne.surf.chat.paper.util.user
+import dev.slne.surf.chat.paper.util.cloudPlayer
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 fun CommandAPICommand.channelInviteDeclineCommand() = subcommand("decline") {
@@ -17,7 +17,7 @@ fun CommandAPICommand.channelInviteDeclineCommand() = subcommand("decline") {
     withPermission(SurfChatPermissionRegistry.COMMAND_CHANNEL_DECLINE)
     playerExecutor { player, args ->
         val channel: Channel by args
-        val user = player.user() ?: return@playerExecutor
+        val user = player.cloudPlayer
 
         plugin.launch {
             if (!channel.isInvited(user)) {
@@ -30,7 +30,7 @@ fun CommandAPICommand.channelInviteDeclineCommand() = subcommand("decline") {
                 return@launch
             }
 
-            channel.invitedPlayers.remove(user)
+            channel.invitedPlayers.remove(user.uuid)
 
             player.sendText {
                 appendPrefix()

@@ -1,4 +1,4 @@
-ackage dev.slne.surf.chat.paper.channel.command
+package dev.slne.surf.chat.paper.channel.command
 
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
@@ -6,10 +6,10 @@ import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.jorel.commandapi.kotlindsl.textArgument
-import dev.slne.surf.chat.core.service.channelService
+import dev.slne.surf.chat.paper.channel.channelService
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.paper.plugin
-import dev.slne.surf.chat.paper.util.user
+import dev.slne.surf.cloud.api.common.player.toCloudPlayer
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 fun CommandAPICommand.channelCreateCommand() = subcommand("create") {
@@ -17,7 +17,7 @@ fun CommandAPICommand.channelCreateCommand() = subcommand("create") {
     textArgument("name")
     playerExecutor { player, args ->
         plugin.launch {
-            val user = player.user() ?: return@launch
+            val user = player.toCloudPlayer() ?: return@launch
             val name: String by args
 
             if (channelService.getChannel(user) != null) {

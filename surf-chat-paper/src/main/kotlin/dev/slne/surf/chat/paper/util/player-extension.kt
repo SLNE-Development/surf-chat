@@ -2,7 +2,6 @@ package dev.slne.surf.chat.paper.util
 
 import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.entity.ChannelMember
-import dev.slne.surf.chat.core.service.userService
 import dev.slne.surf.cloud.api.common.player.CloudPlayer
 import dev.slne.surf.cloud.api.common.player.toCloudPlayer
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
@@ -16,14 +15,7 @@ import org.bukkit.entity.Player
 import org.bukkit.entity.minecart.CommandMinecart
 import org.bukkit.event.player.PlayerEvent
 
-fun User.player() = Bukkit.getPlayer(this.uuid)
-fun Audience.user() = when (this) {
-    is Player -> userService.getUser(this.uniqueId)
-    else -> null
-}
-
 fun ChannelMember.player() = Bukkit.getPlayer(this.uuid)
-fun ChannelMember.user() = userService.getUser(uuid)
 fun Audience.isConsole() = this is ConsoleCommandSender
 
 fun Audience.name() = when (this) {
@@ -40,6 +32,9 @@ fun CommandSender.realName() = when (this) {
     else -> "Error"
 }
 
+val Player.cloudPlayer
+    get() = CloudPlayer[this.uniqueId] ?: error("CloudPlayer not found for ${this.uniqueId}")
+
 fun CloudPlayer.channelMember(channel: Channel) =
     channel.members.firstOrNull { it.uuid == this.uuid }
 
@@ -48,5 +43,4 @@ val PlayerEvent.cloudPlayer
         ?: error("CloudPlayer not found for ${this.player.uniqueId}")
 
 
-fun User.sendText(block: SurfComponentBuilder.() -> Unit) = player()?.sendText { block() }
 fun ChannelMember.sendText(block: SurfComponentBuilder.() -> Unit) = player()?.sendText { block() }

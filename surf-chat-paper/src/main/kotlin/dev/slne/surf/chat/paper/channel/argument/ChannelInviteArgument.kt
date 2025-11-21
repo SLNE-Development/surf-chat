@@ -6,7 +6,7 @@ import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.CustomArgument
 import dev.jorel.commandapi.arguments.StringArgument
 import dev.slne.surf.chat.api.channel.Channel
-import dev.slne.surf.chat.core.service.channelService
+import dev.slne.surf.chat.paper.channel.channelService
 import dev.slne.surf.chat.paper.util.user
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 

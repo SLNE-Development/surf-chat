@@ -7,19 +7,20 @@ import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.channel.ChannelRole
 import dev.slne.surf.chat.api.entity.ChannelMember
-import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.paper.channel.argument.channelMemberArgument
+import dev.slne.surf.chat.paper.channel.channelService
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.paper.util.cloudPlayer
 import dev.slne.surf.chat.paper.util.sendText
-import dev.slne.surf.chat.paper.util.user
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import net.kyori.adventure.text.event.ClickEvent
 
 fun CommandAPICommand.channelTransferCommand() = subcommand("transfer") {
     withPermission(SurfChatPermissionRegistry.COMMAND_CHANNEL_TRANSFER)
     channelMemberArgument("target")
     playerExecutor { player, args ->
-        val user = player.user() ?: return@playerExecutor
+        val user = player.cloudPlayer
         val channel: Channel = channelService.getChannel(user) ?: run {
             user.sendText {
                 appendPrefix()
@@ -37,13 +38,7 @@ fun CommandAPICommand.channelTransferCommand() = subcommand("transfer") {
             return@playerExecutor
         }
 
-        val targetUser = target.user() ?: run {
-            user.sendText {
-                appendPrefix()
-                error("Der Spieler ist nicht online oder existiert nicht.")
-            }
-            return@playerExecutor
-        }
+        val targetUser = target.cloudPlayer
 
         if (!channel.isMember(targetUser)) {
             user.sendText {

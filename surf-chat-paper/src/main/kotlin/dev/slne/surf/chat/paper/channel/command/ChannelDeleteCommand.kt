@@ -5,16 +5,16 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.channel.Channel
-import dev.slne.surf.chat.core.service.channelService
+import dev.slne.surf.chat.paper.channel.channelService
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.paper.plugin
-import dev.slne.surf.chat.paper.util.user
+import dev.slne.surf.cloud.api.common.player.toCloudPlayer
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 fun CommandAPICommand.channelDeleteCommand() = subcommand("delete") {
     withPermission(SurfChatPermissionRegistry.COMMAND_CHANNEL_DELETE)
     playerExecutor { player, _ ->
-        val user = player.user() ?: return@playerExecutor
+        val user = player.toCloudPlayer() ?: return@playerExecutor
         val channel: Channel? = channelService.getChannel(user)
 
         plugin.launch {

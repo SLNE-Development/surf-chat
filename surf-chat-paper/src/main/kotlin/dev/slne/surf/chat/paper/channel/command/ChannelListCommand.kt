@@ -7,7 +7,7 @@ import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.channel.ChannelRole
 import dev.slne.surf.chat.api.channel.ChannelVisibility
-import dev.slne.surf.chat.core.service.channelService
+import dev.slne.surf.chat.paper.channel.channelService
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.CommonComponents

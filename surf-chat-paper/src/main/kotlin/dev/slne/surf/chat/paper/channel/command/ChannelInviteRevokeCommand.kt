@@ -1,24 +1,23 @@
 package dev.slne.surf.chat.paper.channel.command
 
-import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.channel.Channel
-import dev.slne.surf.chat.core.service.channelService
-import dev.slne.surf.chat.paper.command.argument.userArgument
+import dev.slne.surf.chat.paper.channel.channelService
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
-import dev.slne.surf.chat.paper.plugin
-import dev.slne.surf.chat.paper.util.sendText
-import dev.slne.surf.chat.paper.util.user
+import dev.slne.surf.chat.paper.util.channelMember
+import dev.slne.surf.chat.paper.util.cloudPlayer
+import dev.slne.surf.cloud.api.client.paper.command.args.onlineCloudPlayerArgument
+import dev.slne.surf.cloud.api.common.player.CloudPlayer
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 fun CommandAPICommand.channelInviteRevokeCommand() = subcommand("revoke") {
     withPermission(SurfChatPermissionRegistry.COMMAND_CHANNEL_REVOKE)
-    userArgument("target")
+    onlineCloudPlayerArgument("target")
     playerExecutor { player, args ->
-        val user = player.user() ?: return@playerExecutor
+        val user = player.cloudPlayer
         val channel: Channel = channelService.getChannel(user) ?: return@playerExecutor run {
             player.sendText {
                 appendPrefix()
@@ -26,7 +25,7 @@ fun CommandAPICommand.channelInviteRevokeCommand() = subcommand("revoke") {
             }
         }
 
-        val target: User by args
+        val target: CloudPlayer by args
         val userMember = user.channelMember(channel) ?: return@playerExecutor run {
             player.sendText {
                 appendPrefix()
@@ -62,16 +61,16 @@ fun CommandAPICommand.channelInviteRevokeCommand() = subcommand("revoke") {
             variableValue(channel.channelName)
             info(" zurückgezogen.")
         }
-
-        plugin.launch {
-            if (target.configure().invitesEnabled()) {
-                target.sendText {
-                    appendPrefix()
-                    info("Deine Einladung in den Nachrichtenkanal ")
-                    variableValue(channel.channelName)
-                    info(" wurde zurückgezogen.")
-                }
-            }
-        }
+        // TODO: surf-settings
+//        plugin.launch {
+//            if (target.configure().invitesEnabled()) {
+//                target.sendText {
+//                    appendPrefix()
+//                    info("Deine Einladung in den Nachrichtenkanal ")
+//                    variableValue(channel.channelName)
+//                    info(" wurde zurückgezogen.")
+//                }
+//            }
+//        }
     }
 }

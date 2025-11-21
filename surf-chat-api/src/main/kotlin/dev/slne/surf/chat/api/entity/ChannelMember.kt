@@ -1,6 +1,7 @@
 package dev.slne.surf.chat.api.entity
 
 import dev.slne.surf.chat.api.channel.ChannelRole
+import dev.slne.surf.cloud.api.common.player.CloudPlayer
 import java.util.*
 
 /**
@@ -21,4 +22,7 @@ data class ChannelMember(
      * @return `true` if the member has the role of OWNER or MODERATOR, otherwise `false`.
      */
     fun hasModeratorPermissions() = role == ChannelRole.OWNER || role == ChannelRole.MODERATOR
+
+    val cloudPlayer
+        get() = CloudPlayer[uuid] ?: error("CloudPlayer not found for ChannelMember $uuid")
 }

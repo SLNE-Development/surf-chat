@@ -1,7 +1,7 @@
 package dev.slne.surf.chat.paper
 
-import dev.slne.surf.chat.paper.command.channel.channelAdminCommand
-import dev.slne.surf.chat.paper.command.channel.channelCommand
+import dev.slne.surf.chat.paper.channel.command.channelAdminCommand
+import dev.slne.surf.chat.paper.channel.command.channelCommand
 import dev.slne.surf.chat.paper.command.denylist.action.denylistActionCommand
 import dev.slne.surf.chat.paper.command.denylist.denylistCommand
 import dev.slne.surf.chat.paper.command.ignore.ignoreCommand

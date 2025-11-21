@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.paper.listener
 
-import dev.slne.surf.chat.core.common.service.channelService
+import dev.slne.surf.chat.paper.channel.channelService
 import dev.slne.surf.chat.paper.hook.MiniPlaceholdersHook
 import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.chat.paper.util.cloudPlayer

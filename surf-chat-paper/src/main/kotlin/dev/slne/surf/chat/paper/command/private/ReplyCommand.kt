@@ -9,6 +9,7 @@ import dev.slne.surf.chat.core.client.ChatPermissions
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.ServerboundHistoryLogPacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.message.ServerboundPrivateMessagePacket
 import dev.slne.surf.chat.paper.message.MessageDataImpl
+import dev.slne.surf.chat.paper.util.SyncValues
 import dev.slne.surf.cloud.api.client.netty.packet.fireAndForget
 import dev.slne.surf.cloud.api.client.server.current
 import dev.slne.surf.cloud.api.common.player.CloudPlayer
@@ -28,13 +29,14 @@ fun replyCommand() = commandAPICommand("reply") {
         val sentAt = System.currentTimeMillis()
         val messageId = UUID.randomUUID()
 
-        val targetUuid = latestPrivateMessages.firstOrNull { it.first == player.uniqueId }?.second
-            ?: return@playerExecutor run {
-                player.sendText {
-                    appendPrefix()
-                    error("Du hast noch keine Nachrichten erhalten.")
+        val targetUuid =
+            SyncValues.latestPrivateMessages.firstOrNull { it.first == player.uniqueId }?.second
+                ?: return@playerExecutor run {
+                    player.sendText {
+                        appendPrefix()
+                        error("Du hast noch keine Nachrichten erhalten.")
+                    }
                 }
-            }
 
         val target = CloudPlayer[targetUuid] ?: return@playerExecutor run {
             player.sendText {

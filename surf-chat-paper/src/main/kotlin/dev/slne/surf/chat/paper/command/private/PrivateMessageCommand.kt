@@ -9,18 +9,16 @@ import dev.slne.surf.chat.core.client.ChatPermissions
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.ServerboundHistoryLogPacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.message.ServerboundPrivateMessagePacket
 import dev.slne.surf.chat.paper.message.MessageDataImpl
+import dev.slne.surf.chat.paper.util.SyncValues
 import dev.slne.surf.cloud.api.client.netty.packet.fireAndForget
 import dev.slne.surf.cloud.api.client.paper.command.args.onlineCloudPlayerArgument
 import dev.slne.surf.cloud.api.client.server.current
 import dev.slne.surf.cloud.api.common.player.CloudPlayer
 import dev.slne.surf.cloud.api.common.player.toCloudPlayer
 import dev.slne.surf.cloud.api.common.server.CloudServer
-import dev.slne.surf.cloud.api.common.sync.SyncSet
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import net.kyori.adventure.text.Component
 import java.util.*
-
-lateinit var latestPrivateMessages: SyncSet<Pair<UUID, UUID>>
 
 fun directMessageCommand() = commandAPICommand("msg") {
     withAliases("dm", "w", "whisper", "tell", "pm")
@@ -54,8 +52,8 @@ fun directMessageCommand() = commandAPICommand("msg") {
             }
         }
 
-        latestPrivateMessages.removeIf { it.first == player.uniqueId }
-        latestPrivateMessages.add(player.uniqueId to target.uuid)
+        SyncValues.latestPrivateMessages.removeIf { it.first == player.uniqueId }
+        SyncValues.latestPrivateMessages.add(player.uniqueId to target.uuid)
 
         ServerboundPrivateMessagePacket(data).fireAndForget()
         ServerboundHistoryLogPacket(data).fireAndForget()

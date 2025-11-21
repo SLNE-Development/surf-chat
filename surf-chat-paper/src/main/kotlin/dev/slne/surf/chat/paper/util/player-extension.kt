@@ -1,7 +1,9 @@
 package dev.slne.surf.chat.paper.util
 
+import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.entity.ChannelMember
 import dev.slne.surf.chat.core.service.userService
+import dev.slne.surf.cloud.api.common.player.CloudPlayer
 import dev.slne.surf.cloud.api.common.player.toCloudPlayer
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.surfapi.core.api.messages.builder.SurfComponentBuilder
@@ -37,6 +39,9 @@ fun CommandSender.realName() = when (this) {
     is CommandMinecart -> "CommandBlockMinecart"
     else -> "Error"
 }
+
+fun CloudPlayer.channelMember(channel: Channel) =
+    channel.members.firstOrNull { it.uuid == this.uuid }
 
 val PlayerEvent.cloudPlayer
     get() = this.player.toCloudPlayer()

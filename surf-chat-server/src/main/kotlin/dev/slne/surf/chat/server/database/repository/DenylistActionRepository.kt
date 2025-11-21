@@ -3,10 +3,10 @@ package dev.slne.surf.chat.server.database.repository
 import dev.slne.surf.chat.api.denylist.DenylistAction
 import dev.slne.surf.chat.api.denylist.DenylistActionType
 import dev.slne.surf.chat.api.denylist.DenylistEntry
-import dev.slne.surf.chat.core.common.service.discordService
 import dev.slne.surf.chat.core.common.service.historyService
 import dev.slne.surf.chat.core.common.util.SyncValues
 import dev.slne.surf.chat.server.database.entity.DenylistActionEntity
+import dev.slne.surf.chat.server.service.DiscordService
 import dev.slne.surf.cloud.api.common.player.OfflineCloudPlayer
 import dev.slne.surf.cloud.api.common.player.punishment.type.PunishType
 import dev.slne.surf.cloud.api.common.util.mutableObjectSetOf
@@ -23,7 +23,9 @@ import kotlin.time.Duration.Companion.seconds
 
 @Service
 @CoroutineTransactional
-class DenylistActionRepository {
+class DenylistActionRepository(
+    private val discordService: DiscordService
+) {
     suspend fun cacheActions() {
         val actions = mutableObjectSetOf<DenylistAction>()
 

@@ -2,7 +2,7 @@ package dev.slne.surf.chat.server.service
 
 import com.google.gson.Gson
 import dev.slne.surf.chat.api.denylist.DenylistEntry
-import dev.slne.surf.cloud.api.common.player.CloudPlayer
+import dev.slne.surf.cloud.api.common.player.OfflineCloudPlayer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
@@ -37,7 +37,7 @@ class DiscordService {
 
     suspend fun sendCommunityBanNotification(
         url: String,
-        user: CloudPlayer,
+        user: OfflineCloudPlayer,
         denylistEntry: DenylistEntry
     ) = withContext(Dispatchers.IO) {
         val timestamp = Instant.ofEpochMilli(denylistEntry.addedAt)
@@ -48,7 +48,7 @@ class DiscordService {
             title = "Community Ban",
             color = 0xFF0000,
             fields = listOf(
-                EmbedField("User", "${user.name} (${user.uuid})", inline = true),
+                EmbedField("User", "${user.name()} (${user.uuid})", inline = true),
                 EmbedField("Reason", denylistEntry.reason),
                 EmbedField("Word Triggered", denylistEntry.word, inline = true),
                 EmbedField("Added By", denylistEntry.addedBy, inline = true),

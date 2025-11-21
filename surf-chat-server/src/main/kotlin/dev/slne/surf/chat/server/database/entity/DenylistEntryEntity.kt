@@ -1,7 +1,7 @@
-package dev.slne.surf.chat.server.entity
+package dev.slne.surf.chat.server.database.entity
 
-import dev.slne.surf.chat.core.entry.DenylistEntryImpl
-import dev.slne.surf.chat.server.table.DenylistTable
+import dev.slne.surf.chat.api.denylist.DenylistEntry
+import dev.slne.surf.chat.server.database.table.DenylistTable
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -15,7 +15,7 @@ class DenylistEntryEntity(id: EntityID<Int>) : IntEntity(id) {
     var addedAt by DenylistTable.addedAt
     var action by DenylistActionEntity referencedOn DenylistTable.action
 
-    fun toDto() = DenylistEntryImpl(
+    fun toDto() = DenylistEntry(
         word,
         reason,
         addedBy,

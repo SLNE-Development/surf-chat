@@ -1,8 +1,11 @@
 package dev.slne.surf.chat.api.entry
 
 import dev.slne.surf.chat.api.message.MessageType
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import java.util.*
 
+@Serializable
 /**
  * Represents an entry in the chat history.
  *
@@ -17,9 +20,9 @@ import java.util.*
  * @property deletedBy The identifier of the user who deleted the message, or `null` if not deleted.
  */
 data class HistoryEntry(
-    val messageUuid: UUID,
-    val senderUuid: UUID,
-    val receiverUuid: UUID?,
+    val messageUuid: @Contextual UUID,
+    val senderUuid: @Contextual UUID,
+    val receiverUuid: @Contextual UUID?,
     val messageType: MessageType,
     val sentAt: Long,
     val message: String,

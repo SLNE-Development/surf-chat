@@ -3,8 +3,8 @@ package dev.slne.surf.chat.server.service
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.entry.IgnoreListEntry
 import dev.slne.surf.chat.core.service.IgnoreService
-import dev.slne.surf.chat.server.entity.IgnoreListEntity
-import dev.slne.surf.chat.server.table.IgnoreListTable
+import dev.slne.surf.chat.server.database.entity.IgnoreListEntity
+import dev.slne.surf.chat.server.database.table.IgnoreListTable
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import kotlinx.coroutines.Dispatchers

@@ -44,3 +44,6 @@ val PlayerEvent.cloudPlayer
 
 
 fun ChannelMember.sendText(block: SurfComponentBuilder.() -> Unit) = player()?.sendText { block() }
+
+fun CloudPlayer.hasPlatformPermission(permission: String) =
+    Bukkit.getPlayer(this.uuid)?.hasPermission(permission) == true

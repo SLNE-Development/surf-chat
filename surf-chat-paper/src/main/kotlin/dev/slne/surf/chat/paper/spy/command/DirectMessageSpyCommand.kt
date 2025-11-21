@@ -1,10 +1,11 @@
-package dev.slne.surf.chat.paper.command.spy
+package dev.slne.surf.chat.paper.spy.command
 
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.chat.core.common.service.spyService
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.paper.spy.spyService
+import dev.slne.surf.chat.paper.util.hasPlatformPermission
 import dev.slne.surf.cloud.api.client.paper.command.args.onlineCloudPlayerArgument
 import dev.slne.surf.cloud.api.common.player.CloudPlayer
 import dev.slne.surf.cloud.api.common.player.toCloudPlayer
@@ -26,7 +27,7 @@ fun directMessageSpyCommand() = commandAPICommand("spy") {
             return@playerExecutor
         }
 
-        if (target.hasPermission(SurfChatPermissionRegistry.TEAM_BYPASS_SPY)) {
+        if (target.hasPlatformPermission(SurfChatPermissionRegistry.TEAM_BYPASS_SPY)) {
             player.sendText {
                 appendPrefix()
                 error("Du kannst keine Teammitglieder spionieren!")

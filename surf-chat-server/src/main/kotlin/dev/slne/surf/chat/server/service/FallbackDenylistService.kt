@@ -5,10 +5,10 @@ import dev.slne.surf.chat.api.denylist.DenylistAction
 import dev.slne.surf.chat.api.denylist.DenylistEntry
 import dev.slne.surf.chat.core.entry.DenylistEntryImpl
 import dev.slne.surf.chat.core.service.DenylistService
-import dev.slne.surf.chat.server.entity.DenylistActionEntity
-import dev.slne.surf.chat.server.entity.DenylistEntryEntity
-import dev.slne.surf.chat.server.table.DenylistActionsTable
-import dev.slne.surf.chat.server.table.DenylistTable
+import dev.slne.surf.chat.server.database.entity.DenylistActionEntity
+import dev.slne.surf.chat.server.database.entity.DenylistEntryEntity
+import dev.slne.surf.chat.server.database.table.DenylistActionsTable
+import dev.slne.surf.chat.server.database.table.DenylistTable
 import dev.slne.surf.surfapi.core.api.util.mutableObjectListOf
 import dev.slne.surf.surfapi.core.api.util.toObjectList
 import it.unimi.dsi.fastutil.objects.ObjectList

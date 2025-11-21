@@ -1,7 +1,7 @@
-package dev.slne.surf.chat.server.entity
+package dev.slne.surf.chat.server.database.entity
 
-import dev.slne.surf.chat.core.entry.HistoryEntryImpl
-import dev.slne.surf.chat.server.table.HistoryTable
+import dev.slne.surf.chat.api.entry.HistoryEntry
+import dev.slne.surf.chat.server.database.table.HistoryTable
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -19,15 +19,15 @@ class HistoryEntity(id: EntityID<Int>) : IntEntity(id) {
     var channel by HistoryTable.channel
     var deletedBy by HistoryTable.deletedBy
 
-    fun toDto() = HistoryEntryImpl(
+    fun toDto() = HistoryEntry(
         messageUuid,
         senderUuid,
+        receiverUuid,
         type,
         sentAt,
         message,
         server,
-        deletedBy,
-        receiverUuid,
-        channel
+        channel,
+        deletedBy
     )
 }

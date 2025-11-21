@@ -6,8 +6,8 @@ import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.core.entry.HistoryEntryImpl
 import dev.slne.surf.chat.core.message.MessageData
 import dev.slne.surf.chat.core.service.HistoryService
-import dev.slne.surf.chat.server.entity.HistoryEntity
-import dev.slne.surf.chat.server.table.HistoryTable
+import dev.slne.surf.chat.server.database.entity.HistoryEntity
+import dev.slne.surf.chat.server.database.table.HistoryTable
 import dev.slne.surf.surfapi.core.api.messages.adventure.plain
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectSet

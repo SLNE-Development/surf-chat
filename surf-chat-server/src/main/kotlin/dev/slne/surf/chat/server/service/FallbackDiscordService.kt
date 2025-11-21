@@ -4,6 +4,7 @@ import com.google.auto.service.AutoService
 import com.google.gson.Gson
 import dev.slne.surf.chat.api.denylist.DenylistEntry
 import dev.slne.surf.chat.core.service.DiscordService
+import dev.slne.surf.cloud.api.common.player.CloudPlayer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.kyori.adventure.util.Services
@@ -38,7 +39,7 @@ class FallbackDiscordService : DiscordService, Services.Fallback {
 
     override suspend fun sendCommunityBanNotification(
         url: String,
-        user: User,
+        user: CloudPlayer,
         denylistEntry: DenylistEntry
     ) = withContext(Dispatchers.IO) {
         val timestamp = Instant.ofEpochMilli(denylistEntry.addedAt)

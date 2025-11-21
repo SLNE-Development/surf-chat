@@ -1,4 +1,4 @@
-package dev.slne.surf.chat.server.table
+package dev.slne.surf.chat.server.database.table
 
 import dev.slne.surf.chat.api.denylist.DenylistActionType
 import org.jetbrains.exposed.dao.id.IntIdTable

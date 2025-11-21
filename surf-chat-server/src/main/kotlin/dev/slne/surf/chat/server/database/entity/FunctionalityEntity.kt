@@ -1,6 +1,6 @@
-package dev.slne.surf.chat.server.entity
+package dev.slne.surf.chat.server.database.entity
 
-import dev.slne.surf.chat.server.table.FunctionalityTable
+import dev.slne.surf.chat.server.database.table.FunctionalityTable
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID

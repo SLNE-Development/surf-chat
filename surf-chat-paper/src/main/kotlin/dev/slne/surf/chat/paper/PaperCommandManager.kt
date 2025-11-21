@@ -5,9 +5,9 @@ import dev.slne.surf.chat.paper.channel.command.channelCommand
 import dev.slne.surf.chat.paper.command.denylist.action.denylistActionCommand
 import dev.slne.surf.chat.paper.command.denylist.denylistCommand
 import dev.slne.surf.chat.paper.command.ignore.ignoreCommand
-import dev.slne.surf.chat.paper.command.spy.directMessageSpyCommand
 import dev.slne.surf.chat.paper.command.surfchat.surfChatCommand
 import dev.slne.surf.chat.paper.command.teamchatCommand
+import dev.slne.surf.chat.paper.spy.command.directMessageSpyCommand
 
 object PaperCommandManager {
     fun registerCommands() {

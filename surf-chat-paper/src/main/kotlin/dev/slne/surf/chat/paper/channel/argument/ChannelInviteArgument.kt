@@ -7,7 +7,7 @@ import dev.jorel.commandapi.arguments.CustomArgument
 import dev.jorel.commandapi.arguments.StringArgument
 import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.paper.channel.channelService
-import dev.slne.surf.chat.paper.util.user
+import dev.slne.surf.cloud.api.common.player.toCloudPlayer
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 
 class ChannelInviteArgument(nodeName: String) :
@@ -20,12 +20,13 @@ class ChannelInviteArgument(nodeName: String) :
                 }
             }
 
-        val user = info.sender.user() ?: throw CustomArgumentException.fromAdventureComponent {
-            buildText {
-                appendPrefix()
-                error("Ein Fehler ist aufgetreten.")
+        val user =
+            info.sender.toCloudPlayer() ?: throw CustomArgumentException.fromAdventureComponent {
+                buildText {
+                    appendPrefix()
+                    error("Ein Fehler ist aufgetreten.")
+                }
             }
-        }
 
         if (!channel.isInvited(user)) {
             throw CustomArgumentException.fromAdventureComponent {
@@ -40,7 +41,7 @@ class ChannelInviteArgument(nodeName: String) :
 
     init {
         replaceSuggestions(ArgumentSuggestions.stringCollection { info ->
-            val user = info.sender().user() ?: return@stringCollection emptyList()
+            val user = info.sender().toCloudPlayer() ?: return@stringCollection emptyList()
 
             channelService.getChannels()
                 .filter { it.isInvited(user) }

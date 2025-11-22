@@ -5,9 +5,9 @@ import dev.slne.surf.chat.api.denylist.DenylistEntry
 import dev.slne.surf.chat.api.entry.IgnoreListEntry
 import dev.slne.surf.cloud.api.common.sync.SyncSet
 import dev.slne.surf.cloud.api.common.sync.SyncValue
-import java.util.*
+import dev.slne.surf.surfapi.core.api.serializer.java.uuid.SerializableUUID
 
-typealias NameAndUuid = Pair<String, UUID>
+typealias NameAndUuid = Pair<String, SerializableUUID>
 
 object SyncValues {
     val denylistEntries: SyncSet<DenylistEntry> = SyncSet("chat:denylist:entries")
@@ -15,8 +15,9 @@ object SyncValues {
 
     val chatFunctionalities: SyncSet<Pair<String, Boolean>> =
         SyncSet("chat:functionalities")
-    val latestPrivateMessages: SyncSet<Pair<UUID, UUID>> = SyncSet("chat:private:target")
-    val ignoreList = SyncSet<Pair<UUID, MutableSet<IgnoreListEntry>>>("chat:ignorelist")
+    val latestPrivateMessages: SyncSet<Pair<SerializableUUID, SerializableUUID>> =
+        SyncSet("chat:private:target")
+    val ignoreList = SyncSet<Pair<SerializableUUID, MutableSet<IgnoreListEntry>>>("chat:ignorelist")
 
     val allowedDomains = SyncSet<String>("chat:filter:domains")
     val spamInterval = SyncValue<Long>("chat:filter:spam_interval", 10000L)
@@ -27,4 +28,6 @@ object SyncValues {
         SyncValue<String>("chat:connection_messages:join", "Internal Server Error (Join)")
     val connectionMessagesLeave =
         SyncValue<String>("chat:connection_messages:leave", "Internal Server Error (Leave)")
+
+    fun init() {}
 }

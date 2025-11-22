@@ -1,7 +1,9 @@
 package dev.slne.surf.chat.api.entry
 
-import java.util.*
+import dev.slne.surf.surfapi.core.api.serializer.java.uuid.SerializableUUID
+import kotlinx.serialization.Serializable
 
+@Serializable
 /**
  * Represents an entry in the ignore list system.
  *
@@ -18,7 +20,7 @@ data class IgnoreListEntry(
      * It uniquely identifies the individual who has decided to ignore another user and
      * is essential for tracking and managing ignore list operations.
      */
-    val user: UUID,
+    val user: SerializableUUID,
 
     /**
      * Represents the name associated with the ignore list entry.
@@ -36,7 +38,7 @@ data class IgnoreListEntry(
      * It uniquely identifies the target for ignore actions and is essential for
      * distinguishing one user's ignore entry from another.
      */
-    val target: UUID,
+    val target: SerializableUUID,
 
     /**
      * Represents the name of the target associated with an ignore list entry.

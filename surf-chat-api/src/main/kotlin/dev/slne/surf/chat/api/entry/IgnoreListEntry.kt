@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.api.entry
 
-import dev.slne.surf.surfapi.core.api.serializer.java.uuid.SerializableUUID
+import dev.slne.surf.cloud.api.common.netty.network.codec.kotlinx.java.SerializableUUID
 import kotlinx.serialization.Serializable
 
 @Serializable

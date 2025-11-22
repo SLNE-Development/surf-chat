@@ -3,9 +3,9 @@ package dev.slne.surf.chat.core.common.util
 import dev.slne.surf.chat.api.denylist.DenylistAction
 import dev.slne.surf.chat.api.denylist.DenylistEntry
 import dev.slne.surf.chat.api.entry.IgnoreListEntry
+import dev.slne.surf.cloud.api.common.netty.network.codec.kotlinx.java.SerializableUUID
 import dev.slne.surf.cloud.api.common.sync.SyncSet
 import dev.slne.surf.cloud.api.common.sync.SyncValue
-import dev.slne.surf.surfapi.core.api.serializer.java.uuid.SerializableUUID
 
 typealias NameAndUuid = Pair<String, SerializableUUID>
 

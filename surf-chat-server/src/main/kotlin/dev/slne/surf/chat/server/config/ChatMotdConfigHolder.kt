@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.server.config
 
-import dev.slne.surf.chat.paper.plugin
+import dev.slne.surf.chat.server.plugin
 import dev.slne.surf.surfapi.core.api.config.manager.SpongeConfigManager
 import dev.slne.surf.surfapi.core.api.config.surfConfigApi
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
@@ -17,7 +17,7 @@ class ChatMotdConfigHolder {
     init {
         surfConfigApi.createSpongeYmlConfig(
             ChatMotdConfig::class.java,
-            plugin.dataPath,
+            plugin.dataFolder,
             "chat_motd.yml"
         )
         configManager = surfConfigApi.getSpongeConfigManagerForConfig(

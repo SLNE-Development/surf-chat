@@ -1,5 +1,6 @@
 package dev.slne.surf.chat.server.util
 
+import net.kyori.adventure.text.format.TextColor
 import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -13,3 +14,6 @@ val timeFormatter: DateTimeFormatter = DateTimeFormatter
 
 fun Long.formatTime(): String =
     ZonedDateTime.ofInstant(Instant.ofEpochMilli(this), zone).format(timeFormatter)
+
+fun TextColor.miniMessage() =
+    "<${this.asHexString()}>"

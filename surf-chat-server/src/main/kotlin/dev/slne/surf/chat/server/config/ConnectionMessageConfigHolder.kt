@@ -1,7 +1,7 @@
 package dev.slne.surf.chat.server.config
 
-import dev.slne.surf.chat.paper.plugin
-import dev.slne.surf.chat.paper.util.miniMessage
+import dev.slne.surf.chat.server.plugin
+import dev.slne.surf.chat.server.util.miniMessage
 import dev.slne.surf.surfapi.core.api.config.manager.SpongeConfigManager
 import dev.slne.surf.surfapi.core.api.config.surfConfigApi
 import dev.slne.surf.surfapi.core.api.messages.Colors
@@ -20,8 +20,8 @@ class ConnectionMessageConfigHolder {
     init {
         surfConfigApi.createSpongeYmlConfig(
             ConnectionMessageConfig::class.java,
-            plugin.dataPath,
-            "connection_message.yml"
+            plugin.dataFolder,
+            "connections.yml"
         )
         configManager = surfConfigApi.getSpongeConfigManagerForConfig(
             ConnectionMessageConfig::class.java

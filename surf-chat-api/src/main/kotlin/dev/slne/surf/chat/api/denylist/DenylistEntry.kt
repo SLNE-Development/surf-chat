@@ -1,5 +1,8 @@
 package dev.slne.surf.chat.api.denylist
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 /**
  * Represents an entry in the denylist system.
  *

@@ -1,6 +1,7 @@
 package dev.slne.surf.chat.server.netty.listener
 
 import dev.slne.surf.chat.core.common.netty.packet.clientbound.history.ClientboundHistoryLookupResultPacket
+import dev.slne.surf.chat.core.common.netty.packet.serverbound.ServerboundDenylistActionPacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.ServerboundHistoryLogPacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.ServerboundHistoryLookupPacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.ServerboundHistoryMarkDeletedPacket
@@ -8,6 +9,7 @@ import dev.slne.surf.chat.core.common.netty.packet.serverbound.message.Serverbou
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.message.ServerboundTeamChatMessagePacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.message.ServerboundTeamMessagePacket
 import dev.slne.surf.chat.core.common.permission.ChatPermissions
+import dev.slne.surf.chat.server.database.repository.DenylistActionRepository
 import dev.slne.surf.chat.server.database.repository.HistoryRepository
 import dev.slne.surf.chat.server.message.ServerMessageFormatterImpl
 import dev.slne.surf.cloud.api.common.meta.SurfNettyPacketHandler
@@ -17,7 +19,8 @@ import org.springframework.stereotype.Component
 
 @Component
 class ServerChatPacketListener(
-    private val historyRepository: HistoryRepository
+    private val historyRepository: HistoryRepository,
+    private val denylistActionRepository: DenylistActionRepository
 ) {
     @SurfNettyPacketHandler
     suspend fun handleTeamChatMessagePacket(packet: ServerboundTeamChatMessagePacket) {
@@ -65,6 +68,16 @@ class ServerChatPacketListener(
                     packet.filter
                 )
             )
+        )
+    }
+
+    @SurfNettyPacketHandler
+    suspend fun handleDenylistActionPacket(packet: ServerboundDenylistActionPacket) {
+        denylistActionRepository.makeAction(
+            packet.messageId,
+            packet.denylistEntry,
+            packet.signature,
+            packet.player
         )
     }
 }

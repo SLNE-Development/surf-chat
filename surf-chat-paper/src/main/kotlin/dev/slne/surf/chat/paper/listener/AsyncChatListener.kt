@@ -1,15 +1,14 @@
 package dev.slne.surf.chat.paper.listener
 
-import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.api.message.MessageValidationResult
 import dev.slne.surf.chat.core.common.message.MessageData
+import dev.slne.surf.chat.core.common.netty.packet.serverbound.ServerboundDenylistActionPacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.ServerboundHistoryLogPacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.message.ServerboundTeamMessagePacket
 import dev.slne.surf.chat.paper.channel.channelService
 import dev.slne.surf.chat.paper.message.MessageFormatterImpl
 import dev.slne.surf.chat.paper.message.MessageValidatorImpl
-import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.chat.paper.spy.spyService
 import dev.slne.surf.chat.paper.util.*
 import dev.slne.surf.cloud.api.client.netty.packet.fireAndForget
@@ -50,14 +49,12 @@ class AsyncChatListener : Listener {
             }
 
             if (error is MessageValidationResult.MessageValidationError.DenylistedWord) {
-                plugin.launch {
-                    denylistActionService.makeAction(
-                        messageId,
-                        error.denylistEntry,
-                        event.signedMessage(),
-                        player,
-                    )
-                }
+                ServerboundDenylistActionPacket(
+                    messageId,
+                    error.denylistEntry,
+                    event.signedMessage().signature(),
+                    player
+                ).fireAndForget()
             } else {
                 event.cancel()
             }

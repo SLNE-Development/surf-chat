@@ -3,22 +3,23 @@ package dev.slne.surf.chat.server.database.repository
 import dev.slne.surf.chat.api.denylist.DenylistAction
 import dev.slne.surf.chat.api.denylist.DenylistActionType
 import dev.slne.surf.chat.api.denylist.DenylistEntry
+import dev.slne.surf.chat.core.common.netty.packet.clientbound.ClientboundMessageDeletePacket
 import dev.slne.surf.chat.core.common.util.SyncValues
+import dev.slne.surf.chat.server.config.discordConfig
 import dev.slne.surf.chat.server.database.entity.DenylistActionEntity
 import dev.slne.surf.chat.server.service.DiscordService
 import dev.slne.surf.cloud.api.common.player.OfflineCloudPlayer
 import dev.slne.surf.cloud.api.common.player.punishment.type.PunishType
+import dev.slne.surf.cloud.api.server.netty.packet.broadcast
 import dev.slne.surf.cloud.api.server.plugin.CoroutineTransactional
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import net.kyori.adventure.chat.SignedMessage
 import org.springframework.stereotype.Service
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import java.util.*
-import kotlin.time.Duration.Companion.seconds
 
 @Service
 @CoroutineTransactional
@@ -60,15 +61,16 @@ class DenylistActionRepository(
     suspend fun makeAction(
         messageUuid: UUID,
         entry: DenylistEntry,
-        message: SignedMessage,
-        sender: OfflineCloudPlayer,
-        discordHookUrl: String?
+        signature: SignedMessage.Signature?,
+        sender: OfflineCloudPlayer
     ) = withContext(Dispatchers.IO) {
         val punishManager = sender.punishmentManager
 
+        var punishmentId: String
+
         when (entry.action.actionType) {
             DenylistActionType.EXPIRABLE_BAN -> {
-                punishManager.punish(
+                punishmentId = punishManager.punish(
                     PunishType.BAN.Expirable(
                         ZonedDateTime.now().plus(
                             entry.action.duration,
@@ -77,27 +79,27 @@ class DenylistActionRepository(
                     )
                         .withNote("Punished by Arty Support (surf-chat) for: ${entry.word} (messageUid: $messageUuid)"),
                     entry.action.reason
-                )
+                ).punishmentId
             }
 
             DenylistActionType.KICK -> {
-                punishManager.punish(
+                punishmentId = punishManager.punish(
                     PunishType.KICK
                         .withNote("Punished by Arty Support (surf-chat) for: ${entry.word} (messageUid: $messageUuid)"),
                     entry.action.reason
-                )
+                ).punishmentId
             }
 
             DenylistActionType.PERMANENT_BAN -> {
-                punishManager.punish(
+                punishmentId = punishManager.punish(
                     PunishType.BAN.Permanent
                         .withNote("Punished by Arty Support (surf-chat) for: ${entry.word} (messageUid: $messageUuid)"),
                     entry.action.reason
-                )
+                ).punishmentId
             }
 
             DenylistActionType.MUTE -> {
-                punishManager.punish(
+                punishmentId = punishManager.punish(
                     PunishType.MUTE.Expirable(
                         ZonedDateTime.now().plus(
                             entry.action.duration,
@@ -106,32 +108,36 @@ class DenylistActionRepository(
                     )
                         .withNote("Punished by Arty Support (surf-chat) for: ${entry.word} (messageUid: $messageUuid)"),
                     entry.action.reason
-                )
+                ).punishmentId
             }
 
             DenylistActionType.WARN -> {
-                punishManager.punish(
+                punishmentId = punishManager.punish(
                     PunishType.WARN
                         .withNote("Punished by Arty Support (surf-chat) for: ${entry.word} (messageUid: $messageUuid)"),
                     entry.action.reason
-                )
+                ).punishmentId
             }
 
             DenylistActionType.COMMUNITY_BAN -> {
-                punishManager.punish(
+                punishmentId = punishManager.punish(
                     PunishType.BAN.Permanent
                         .withNote("Punished by Arty Support (surf-chat) for: ${entry.word} (messageUid: $messageUuid)"),
                     entry.action.reason
-                )
+                ).punishmentId
 
-                discordHookUrl?.let {
-                    discordService.sendCommunityBanNotification(it, sender, entry)
-                }
+                discordService.sendCommunityBanNotification(
+                    discordConfig.config.webhook,
+                    sender,
+                    entry,
+                    punishmentId
+                )
             }
         }
 
-        delay(3.seconds)
-        //Bukkit.getServer().deleteMessage(message) TODO: re add
+        signature?.let {
+            ClientboundMessageDeletePacket(it).broadcast()
+        }
 
         historyRepository.markDeleted(messageUuid, "Arty Support (BLOCKED: ${entry.word})")
     }

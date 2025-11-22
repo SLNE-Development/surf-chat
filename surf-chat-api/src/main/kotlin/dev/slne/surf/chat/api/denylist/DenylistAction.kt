@@ -1,5 +1,8 @@
 package dev.slne.surf.chat.api.denylist
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 /**
  * Represents an action to be applied to a user in the denylist system.
  * This action is typically used for enforcement of chat rules

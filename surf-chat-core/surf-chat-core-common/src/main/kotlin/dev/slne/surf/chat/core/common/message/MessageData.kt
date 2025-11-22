@@ -87,7 +87,7 @@ data class MessageData(
      * This property contains cryptographic information, such as a signature, to verify the authenticity and integrity
      * of the associated message. If `null`, the message is considered unsigned or its signature data is unavailable.
      */
-    val signedMessage: SignedMessage?,
+    val signedMessage: SignedMessage.Signature?,
 
     /**
      * Defines the type of the message associated with this object.

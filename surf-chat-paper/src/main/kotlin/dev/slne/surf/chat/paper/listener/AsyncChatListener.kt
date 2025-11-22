@@ -3,13 +3,15 @@ package dev.slne.surf.chat.paper.listener
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.api.message.MessageValidationResult
+import dev.slne.surf.chat.core.common.message.MessageData
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.ServerboundHistoryLogPacket
-import dev.slne.surf.chat.core.service.channelService
+import dev.slne.surf.chat.core.common.netty.packet.serverbound.message.ServerboundTeamMessagePacket
 import dev.slne.surf.chat.core.service.denylistActionService
-import dev.slne.surf.chat.core.service.spyService
+import dev.slne.surf.chat.paper.channel.channelService
 import dev.slne.surf.chat.paper.message.MessageFormatterImpl
 import dev.slne.surf.chat.paper.message.MessageValidatorImpl
 import dev.slne.surf.chat.paper.plugin
+import dev.slne.surf.chat.paper.spy.spyService
 import dev.slne.surf.chat.paper.util.*
 import dev.slne.surf.cloud.api.client.netty.packet.fireAndForget
 import dev.slne.surf.cloud.api.client.server.current
@@ -54,7 +56,7 @@ class AsyncChatListener : Listener {
                         messageId,
                         error.denylistEntry,
                         event.signedMessage(),
-                        user,
+                        player,
                         if (plugin.discordConfig.config.enabled) plugin.discordConfig.config.webhook else null
                     )
                 }
@@ -68,35 +70,37 @@ class AsyncChatListener : Listener {
                 error is MessageValidationResult.MessageValidationError.EmptyContent ||
                 error is MessageValidationResult.MessageValidationError.DenylistedWord
             ) {
-                sendTeamMessage {
-                    appendBotIcon()
-                    info("Eine Nachricht von ")
-                    variableValue(player.name)
-                    info(" wurde blockiert.")
-                    appendSpace()
-                    info("Grund: ")
-                    variableValue(error.name)
+                ServerboundTeamMessagePacket(
+                    buildText {
+                        appendBotIcon()
+                        info("Eine Nachricht von ")
+                        variableValue(player.name)
+                        info(" wurde blockiert.")
+                        appendSpace()
+                        info("Grund: ")
+                        variableValue(error.name)
 
-                    hoverEvent(buildText {
-                        info(plainMessage)
-                    })
-                }
+                        hoverEvent(buildText {
+                            info(plainMessage)
+                        })
+                    }
+                ).fireAndForget()
             }
         }
 
-        val data = MessageDataImpl(
+        val data = MessageData(
             message,
+            messageId,
             player,
             null,
             time,
-            messageId,
             server,
             null,
-            event.signedMessage(),
+            event.signedMessage().signature(),
             MessageType.GLOBAL
         )
 
-        val channel = channelService.getChannel(user)
+        val channel = channelService.getChannel(player)
 
         if (channel != null && !channelExceptPattern.containsMatchIn(plainMessage)) {
             event.viewers().clear()

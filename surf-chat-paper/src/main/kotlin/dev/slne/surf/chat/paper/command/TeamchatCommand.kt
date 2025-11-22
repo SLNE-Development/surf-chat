@@ -5,8 +5,9 @@ import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.greedyStringArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.message.MessageType
+import dev.slne.surf.chat.core.common.message.MessageData
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.ServerboundHistoryLogPacket
-import dev.slne.surf.chat.core.common.netty.packet.serverbound.message.ServerboundTeamMessagePacket
+import dev.slne.surf.chat.core.common.netty.packet.serverbound.message.ServerboundTeamChatMessagePacket
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
 import dev.slne.surf.cloud.api.client.netty.packet.fireAndForget
 import dev.slne.surf.cloud.api.client.server.current
@@ -24,19 +25,19 @@ fun teamchatCommand() = commandAPICommand("teamchat") {
         val message: String by args
         val messageComponent = Component.text(message)
         val messageId = UUID.randomUUID()
-        val messageData = MessageDataImpl(
+        val messageData = MessageData(
             messageComponent,
+            messageId,
             player.toCloudPlayer() ?: return@playerExecutor,
             null,
             System.currentTimeMillis(),
-            messageId,
             CloudServer.current(),
             null,
             null,
             MessageType.TEAM
         )
 
-        ServerboundTeamMessagePacket(messageData).fireAndForget()
+        ServerboundTeamChatMessagePacket(messageData).fireAndForget()
         ServerboundHistoryLogPacket(messageData).fireAndForget()
     }
 }

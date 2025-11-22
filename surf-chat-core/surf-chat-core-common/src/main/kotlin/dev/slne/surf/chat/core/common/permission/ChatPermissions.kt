@@ -8,4 +8,6 @@ object ChatPermissions {
     const val COMMAND_REPLY = "$COMMAND.reply"
 
     const val COMMAND_TEAMCHAT = "$COMMAND.teamchat"
+
+    const val TEAM_MESSAGE = "$BASE.teammessage"
 }

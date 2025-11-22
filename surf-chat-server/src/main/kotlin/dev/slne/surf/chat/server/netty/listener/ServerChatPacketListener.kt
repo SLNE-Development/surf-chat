@@ -5,6 +5,7 @@ import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.Serverbou
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.ServerboundHistoryLookupPacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.ServerboundHistoryMarkDeletedPacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.message.ServerboundPrivateMessagePacket
+import dev.slne.surf.chat.core.common.netty.packet.serverbound.message.ServerboundTeamChatMessagePacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.message.ServerboundTeamMessagePacket
 import dev.slne.surf.chat.core.common.permission.ChatPermissions
 import dev.slne.surf.chat.server.database.repository.HistoryRepository
@@ -19,13 +20,18 @@ class ServerChatPacketListener(
     private val historyRepository: HistoryRepository
 ) {
     @SurfNettyPacketHandler
-    suspend fun handleTeamMessagePacket(packet: ServerboundTeamMessagePacket) {
+    suspend fun handleTeamChatMessagePacket(packet: ServerboundTeamChatMessagePacket) {
         val formatter = ServerMessageFormatterImpl(packet.messageData.message)
         CloudServerManager.broadcast(
             formatter.formatTeamchat(packet.messageData),
             ChatPermissions.COMMAND_TEAMCHAT,
             false
         )
+    }
+
+    @SurfNettyPacketHandler
+    suspend fun handleTeamMessagePacket(packet: ServerboundTeamMessagePacket) {
+        CloudServerManager.broadcast(packet.message, ChatPermissions.TEAM_MESSAGE, false)
     }
 
     @SurfNettyPacketHandler

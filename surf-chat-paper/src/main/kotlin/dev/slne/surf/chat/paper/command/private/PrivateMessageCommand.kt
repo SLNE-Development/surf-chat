@@ -5,6 +5,7 @@ import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.greedyStringArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.message.MessageType
+import dev.slne.surf.chat.core.common.message.MessageData
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.ServerboundHistoryLogPacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.message.ServerboundPrivateMessagePacket
 import dev.slne.surf.chat.core.common.permission.ChatPermissions
@@ -30,12 +31,12 @@ fun directMessageCommand() = commandAPICommand("msg") {
         val message: String by args
         val sentAt = System.currentTimeMillis()
         val messageId = UUID.randomUUID()
-        val data = MessageDataImpl(
+        val data = MessageData(
             Component.text(message),
+            messageId,
             player.toCloudPlayer() ?: return@playerExecutor,
             target,
             sentAt,
-            messageId,
             CloudServer.current(),
             null,
             null,

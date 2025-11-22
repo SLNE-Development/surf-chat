@@ -3,8 +3,8 @@ package dev.slne.surf.chat.paper.channel.command
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
-import dev.slne.surf.chat.core.common.service.spyService
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.paper.spy.spyService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 fun CommandAPICommand.channelSpyClearCommand() = subcommand("clear") {

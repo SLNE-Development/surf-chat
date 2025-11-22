@@ -1,8 +1,11 @@
 package dev.slne.surf.chat.api.entry
 
 import dev.slne.surf.chat.api.message.MessageType
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import java.util.*
 
+@Serializable
 /**
  * Represents a filter for querying chat history.
  *
@@ -19,9 +22,9 @@ import java.util.*
  * @property limit The maximum number of results to return, or `null` if not applicable.
  */
 data class HistoryFilter(
-    val messageUuid: UUID?,
-    val senderUuid: UUID?,
-    val receiverUuid: UUID?,
+    val messageUuid: @Contextual UUID?,
+    val senderUuid: @Contextual UUID?,
+    val receiverUuid: @Contextual UUID?,
     val messageType: MessageType?,
     val range: Long?,
     val messageLike: String?,

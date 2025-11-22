@@ -10,13 +10,13 @@ import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.api.message.MessageType
-import dev.slne.surf.chat.api.server.ChatServer
-import dev.slne.surf.chat.core.common.service.historyService
+import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.ServerboundHistoryLookupPacket
 import dev.slne.surf.chat.core.common.util.appendLinePrefix
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.chat.paper.util.formatAgo
 import dev.slne.surf.chat.paper.util.formatTime
+import dev.slne.surf.cloud.api.client.netty.packet.fireAndAwaitOrThrow
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
@@ -65,14 +65,8 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
             val filter = query.parseFilters()
             val page = query["--page"]?.toIntOrNull() ?: 1
 
-            if (historyService.isLookupRunning()) {
-                player.sendText {
-                    appendPrefix()
-                    warning("Es wird bereits nach Ergebnissen gesucht. Deine Anfrage wird danach fortgesetzt.")
-                }
-            }
             val history =
-                historyService.findHistoryEntry(filter).sortedByDescending { it.sentAt }
+                ServerboundHistoryLookupPacket(filter).fireAndAwaitOrThrow().entries.sortedByDescending { it.sentAt }
 
             if (history.isEmpty()) {
                 player.sendText {
@@ -139,7 +133,7 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
                                 }
                                 hoverEvent(buildText {
                                     info("auf Server ")
-                                    variableValue(entry.server.name)
+                                    variableValue(entry.server)
 
                                     val channel = entry.channel
 
@@ -204,28 +198,18 @@ private suspend fun Map<String, String>.parseFilters(): HistoryFilter {
         return millis
     }
 
-    return object : HistoryFilter {
-        override val messageUuid: UUID? =
-            this@parseFilters["--messageUuid"]?.let { runCatching { UUID.fromString(it) }.getOrNull() }
-        override val senderUuid: UUID? = senderUuid
-        override val receiverUuid: UUID? = receiverUuid
-        override val messageType: MessageType? =
-            this@parseFilters["--type"]?.let { runCatching { MessageType.valueOf(it.uppercase()) }.getOrNull() }
-        override val range: Long? =
-            this@parseFilters["--range"]?.let { parseRangeToMillis(it) }
-        override val messageLike: String? =
-            this@parseFilters["--message"]
-        override val server: ChatServer? = this@parseFilters["--server"]?.let {
-            ChatServer.of(it)
-        }
-        override val channel: String? =
-            this@parseFilters["--channel"]
-        override val deletedBy: String? =
-            this@parseFilters["--deletedBy"]
-        override val type: MessageType? =
-            this@parseFilters["--type"]?.let { runCatching { MessageType.valueOf(it.uppercase()) }.getOrNull() }
-        override val limit: Int? =
-            this@parseFilters["--limit"]?.toIntOrNull()
-    }
+    return HistoryFilter(
+        messageUuid = this["--messageUuid"]?.let { runCatching { UUID.fromString(it) }.getOrNull() },
+        senderUuid = senderUuid,
+        receiverUuid = receiverUuid,
+        messageType = this["--type"]?.let { runCatching { MessageType.valueOf(it.uppercase()) }.getOrNull() },
+        range = this["--range"]?.let { parseRangeToMillis(it) },
+        messageLike = this["--message"],
+        server = this["--server"],
+        channel = this["--channel"],
+        deletedBy = this["--deletedBy"],
+        limit = this["--limit"]?.toIntOrNull(),
+        type = this["--type"]?.let { runCatching { MessageType.valueOf(it.uppercase()) }.getOrNull() }
+    )
 }
 

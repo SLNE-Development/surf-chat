@@ -3,8 +3,8 @@ package dev.slne.surf.chat.paper.listener
 import dev.slne.surf.chat.paper.channel.channelService
 import dev.slne.surf.chat.paper.hook.MiniPlaceholdersHook
 import dev.slne.surf.chat.paper.plugin
+import dev.slne.surf.chat.paper.util.channelMember
 import dev.slne.surf.chat.paper.util.cloudPlayer
-import dev.slne.surf.chat.paper.util.user
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerQuitEvent
@@ -15,7 +15,7 @@ class DisconnectListener : Listener {
         val player = event.cloudPlayer
 
         channelService.getChannel(player)?.let {
-            it.leaveAndTransfer(user.channelMember(it) ?: return@let)
+            it.leaveAndTransfer(player.channelMember(it) ?: return@let)
         }
 
         if (plugin.connectionMessageConfig.enabled) {

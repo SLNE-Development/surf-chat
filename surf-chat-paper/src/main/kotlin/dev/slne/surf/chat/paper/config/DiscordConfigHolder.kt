@@ -1,28 +1,23 @@
 package dev.slne.surf.chat.paper.config
 
-import dev.slne.surf.chat.paper.config.configs.SurfChatConfig
 import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.surfapi.core.api.config.manager.SpongeConfigManager
 import dev.slne.surf.surfapi.core.api.config.surfConfigApi
+import org.spongepowered.configurate.objectmapping.ConfigSerializable
 
-class SurfChatConfigProvider {
-    private val configManager: SpongeConfigManager<SurfChatConfig>
+class DiscordConfigHolder {
+    private val configManager: SpongeConfigManager<DiscordConfig>
 
     init {
         surfConfigApi.createSpongeYmlConfig(
-            SurfChatConfig::class.java,
+            DiscordConfig::class.java,
             plugin.dataPath,
-            "config.yml"
+            "discord.yml"
         )
         configManager = surfConfigApi.getSpongeConfigManagerForConfig(
-            SurfChatConfig::class.java
+            DiscordConfig::class.java
         )
         reload()
-    }
-
-    fun edit(actions: SurfChatConfig.() -> Unit) {
-        configManager.config = configManager.config.apply { actions() }
-        configManager.save()
     }
 
     fun reload() {
@@ -30,4 +25,12 @@ class SurfChatConfigProvider {
     }
 
     val config get() = configManager.config
+
+    @ConfigSerializable
+    data class DiscordConfig(
+        val enabled: Boolean = false,
+        val webhook: String = ""
+    )
 }
+
+val discordConfig = DiscordConfigHolder()

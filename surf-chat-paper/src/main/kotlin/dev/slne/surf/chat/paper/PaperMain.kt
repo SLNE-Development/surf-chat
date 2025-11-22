@@ -21,10 +21,4 @@ class PaperMain : SuspendingJavaPlugin() {
             metrics.shutdown()
         }
     }
-
-    val surfChatConfig = SurfChatConfigProvider()
-    val connectionMessageConfig get() = surfChatConfig.config.connectionMessageConfig
-    val chatMotdConfig get() = surfChatConfig.config.chatMotdConfig
-    val autoDisablingConfig get() = surfChatConfig.config.autoDisablingConfig
-    val spamConfig get() = surfChatConfig.config.spamConfig
 }

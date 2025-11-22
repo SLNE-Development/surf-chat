@@ -103,7 +103,8 @@ class AsyncChatListener : Listener {
             event.viewers()
                 .addAll(spyService.getChannelSpies(channel).mapNotNull { Bukkit.getPlayer(it) })
             event.renderer { _, _, _, viewerAudience ->
-                val channelData = data.withChannel(channel).withReceiver(viewerAudience.user())
+                val channelData =
+                    data.withChannel(channel).withReceiver(viewerAudience.toCloudPlayer())
 
                 if (spyService.getChannelSpies(channel).mapNotNull { Bukkit.getPlayer(it) }
                         .contains(viewerAudience)) {
@@ -120,7 +121,7 @@ class AsyncChatListener : Listener {
             event.viewers().removeIf { it.isConsole() }
             event.renderer { _, _, _, viewerAudience ->
                 messageFormatter.formatGlobal(
-                    data.withReceiver(viewerAudience.user())
+                    data.withReceiver(viewerAudience.toCloudPlayer())
                 )
             }
         }

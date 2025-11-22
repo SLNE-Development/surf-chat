@@ -7,6 +7,8 @@ object ChatPermissions {
 
     const val AUTO_CHAT_DISABLING_BYPASS = "$BASE.disabling.bypass"
 
+    const val TEAM_NOTIFY = "$BASE.team.notify"
+
     const val TEAM_BYPASS_FILTER = "$BYPASS.filter"
     const val TEAM_BYPASS_SPY = "$BYPASS.spy"
     const val TEAM_BYPASS_FUNCTIONALITY = "$BYPASS.functionality"

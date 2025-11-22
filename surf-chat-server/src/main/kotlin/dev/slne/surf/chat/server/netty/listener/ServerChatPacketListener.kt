@@ -31,7 +31,7 @@ class ServerChatPacketListener(
 
     @SurfNettyPacketHandler
     suspend fun handleTeamMessagePacket(packet: ServerboundTeamMessagePacket) {
-        CloudServerManager.broadcast(packet.message, ChatPermissions.TEAM_MESSAGE, false)
+        CloudServerManager.broadcast(packet.message, ChatPermissions.TEAM_NOTIFY, false)
     }
 
     @SurfNettyPacketHandler

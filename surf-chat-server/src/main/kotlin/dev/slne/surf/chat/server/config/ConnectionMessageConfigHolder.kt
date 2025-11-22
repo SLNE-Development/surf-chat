@@ -30,7 +30,6 @@ class ConnectionMessageConfigHolder {
     }
 
     fun reload() = configManager.reloadFromFile()
-
     val config get() = configManager.config
 }
 

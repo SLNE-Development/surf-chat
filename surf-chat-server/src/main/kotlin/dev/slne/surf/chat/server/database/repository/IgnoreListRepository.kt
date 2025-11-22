@@ -4,8 +4,8 @@ import dev.slne.surf.chat.api.entry.IgnoreListEntry
 import dev.slne.surf.chat.core.common.util.SyncValues
 import dev.slne.surf.chat.server.database.entity.IgnoreListEntity
 import dev.slne.surf.chat.server.database.table.IgnoreListTable
-import dev.slne.surf.cloud.api.common.util.mutableObjectSetOf
 import dev.slne.surf.cloud.api.server.plugin.CoroutineTransactional
+import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.springframework.stereotype.Repository
 import java.util.*

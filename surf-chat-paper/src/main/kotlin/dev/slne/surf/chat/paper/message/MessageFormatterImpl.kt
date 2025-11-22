@@ -110,7 +110,7 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
             appendTeleport(messageData.sender.name, receiver)
         }
 
-        appendChannelPrefix(messageData.channel?.channelName ?: "Unbekannter Kanal")
+        appendChannelPrefix(messageData.channel ?: "Unbekannter Kanal")
         appendName(player)
         darkSpacer(" >> ")
         append(updateLinks(formatItemTag(messageData.message, player)))
@@ -155,7 +155,7 @@ class MessageFormatterImpl(override val message: Component) : MessageFormatter {
             appendTeleport(messageData.sender.name, receiver)
         }
 
-        appendChannelPrefix(messageData.channel?.channelName ?: "Unbekannter Kanal")
+        appendChannelPrefix(messageData.channel ?: "Unbekannter Kanal")
         appendName(player)
         darkSpacer(" >> ")
         append(updateLinks(formatItemTag(messageData.message, player)))

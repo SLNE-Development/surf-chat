@@ -22,7 +22,7 @@ fun SurfComponentBuilder.appendDelete(messageData: MessageData) = append(buildTe
     darkSpacer("]")
     darkSpacer(" ")
     clickEvent(ClickEvent.callback {
-        val signature = messageData.signedMessage ?: run {
+        val signature = messageData.signature ?: run {
             it.sendText {
                 appendPrefix()
                 error("Die Nachricht besitzt eine ungültige Signatur und konnte nicht gelöscht werden.")
@@ -58,7 +58,7 @@ fun SurfComponentBuilder.appendMessageData(messageData: MessageData) = append(bu
     variableValue(messageData.sentAt.formatTime())
     appendNewline()
     info("Gesendet auf Server ")
-    variableValue(messageData.server.name)
+    variableValue(messageData.server)
 })
 
 fun SurfComponentBuilder.appendName(player: Player) = append {

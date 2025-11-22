@@ -14,7 +14,7 @@ fun SurfComponentBuilder.appendMessageData(messageData: MessageData) = append(bu
     variableValue(messageData.sentAt.formatTime())
     appendNewline()
     info("Gesendet auf Server ")
-    variableValue(messageData.server.name)
+    variableValue(messageData.server)
 })
 
 suspend fun SurfComponentBuilder.appendName(player: CloudPlayer) {

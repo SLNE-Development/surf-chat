@@ -2,12 +2,14 @@ package dev.slne.surf.chat.core.common.message
 
 import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.message.MessageType
+import dev.slne.surf.chat.core.common.netty.packet.serializer.MessageDataSerializer
 import dev.slne.surf.cloud.api.common.player.CloudPlayer
-import dev.slne.surf.cloud.api.common.server.CloudServer
+import kotlinx.serialization.Serializable
 import net.kyori.adventure.chat.SignedMessage
 import net.kyori.adventure.text.Component
 import java.util.*
 
+@Serializable(with = MessageDataSerializer::class)
 /**
  * Represents a message in the chat system, including its content, metadata, and context.
  */
@@ -70,7 +72,7 @@ data class MessageData(
      * The `server` property is particularly useful when messages or communication need to be
      * associated with specific servers in a multi-server environment.
      */
-    val server: CloudServer,
+    val server: String,
 
     /**
      * Represents the associated chat channel for a message.
@@ -79,7 +81,7 @@ data class MessageData(
      * It may be `null` if the message is not part of any channel, such as in the case of private messages
      * or global broadcasts.
      */
-    val channel: Channel?,
+    val channel: String?,
 
     /**
      * Represents the signed metadata of the message.
@@ -87,7 +89,7 @@ data class MessageData(
      * This property contains cryptographic information, such as a signature, to verify the authenticity and integrity
      * of the associated message. If `null`, the message is considered unsigned or its signature data is unavailable.
      */
-    val signedMessage: SignedMessage.Signature?,
+    val signature: SignedMessage.Signature?,
 
     /**
      * Defines the type of the message associated with this object.
@@ -104,7 +106,7 @@ data class MessageData(
 ) {
     fun withReceiver(receiver: CloudPlayer?) = copy(receiver = receiver)
     fun withChannel(channel: Channel?) = if (channel != null) {
-        copy(channel = channel, type = MessageType.CHANNEL)
+        copy(channel = channel.channelName, type = MessageType.CHANNEL)
     } else {
         this
     }

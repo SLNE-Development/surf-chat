@@ -32,8 +32,8 @@ class HistoryRepository {
         receiverUuid = messageData.receiver?.uuid
         message = messageData.message.plain()
         sentAt = messageData.sentAt
-        server = messageData.server.name
-        channel = messageData.channel?.channelName
+        server = messageData.server
+        channel = messageData.channel
         type = messageData.type
         deletedBy = null
     }

@@ -1,14 +1,12 @@
 package dev.slne.surf.chat.paper.command.denylist
 
-import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.anyExecutor
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.subcommand
-import dev.slne.surf.chat.core.common.service.denylistService
+import dev.slne.surf.chat.core.client.denylist.denylistService
 import dev.slne.surf.chat.paper.command.argument.denylistWordArgument
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
-import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 fun CommandAPICommand.denylistRemoveCommand() = subcommand("remove") {
@@ -17,7 +15,7 @@ fun CommandAPICommand.denylistRemoveCommand() = subcommand("remove") {
     anyExecutor { executor, args ->
         val word: String by args
 
-        if (!denylistService.hasLocalEntry(word)) {
+        if (!denylistService.hasEntry(word)) {
             executor.sendText {
                 appendPrefix()
                 error("Der Eintrag ")
@@ -27,34 +25,13 @@ fun CommandAPICommand.denylistRemoveCommand() = subcommand("remove") {
             return@anyExecutor
         }
 
-        denylistService.removeLocalEntry(word)
+        denylistService.removeEntry(word)
 
         executor.sendText {
             appendPrefix()
             success("Der Eintrag ")
             variableValue(word)
             success(" wurde erfolgreich aus der internen Denylist gelöscht.")
-        }
-
-        plugin.launch {
-            if (!denylistService.hasEntry(word)) {
-                executor.sendText {
-                    appendPrefix()
-                    error("Der Eintrag ")
-                    variableValue(word)
-                    error(" ist nicht in der externen Denylist vorhanden.")
-                }
-                return@launch
-            }
-
-            denylistService.removeEntry(word)
-
-            executor.sendText {
-                appendPrefix()
-                success("Der Eintrag ")
-                variableValue(word)
-                success(" wurde erfolgreich aus der externen Denylist gelöscht.")
-            }
         }
     }
 }

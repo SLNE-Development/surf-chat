@@ -16,7 +16,7 @@ object SyncValues {
     val chatFunctionalities: SyncSet<Pair<String, Boolean>> =
         SyncSet("chat:functionalities")
     val latestPrivateMessages: SyncSet<Pair<UUID, UUID>> = SyncSet("chat:private:target")
-    val ignoreList = SyncSet<Pair<UUID, Set<IgnoreListEntry>>>("chat:ignorelist")
+    val ignoreList = SyncSet<Pair<UUID, MutableSet<IgnoreListEntry>>>("chat:ignorelist")
 
     val allowedDomains = SyncSet<String>("chat:filter:domains")
     val spamInterval = SyncValue<Long>("chat:filter:spam_interval", 10000L)

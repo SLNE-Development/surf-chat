@@ -4,7 +4,7 @@ import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.anyExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
-import dev.slne.surf.chat.core.common.service.denylistService
+import dev.slne.surf.chat.core.client.denylist.denylistService
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
@@ -25,7 +25,6 @@ fun CommandAPICommand.denylistClearCommand() = subcommand("clear") {
                     clickEvent(ClickEvent.callback {
                         plugin.launch {
                             denylistService.clearEntries()
-                            denylistService.clearLocalEntries()
                             executor.sendText {
                                 appendPrefix()
                                 success("Die Denylist wurde geleert.")
@@ -35,14 +34,6 @@ fun CommandAPICommand.denylistClearCommand() = subcommand("clear") {
                 }
             }
             return@anyExecutor
-        }
-
-        plugin.launch {
-            denylistService.clearEntries()
-            executor.sendText {
-                appendPrefix()
-                success("Die Denylist wurde geleert.")
-            }
         }
     }
 }

@@ -1,15 +1,12 @@
 package dev.slne.surf.chat.paper.command.denylist
 
-import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.anyExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.denylist.DenylistActionType
 import dev.slne.surf.chat.core.client.denylist.DenylistBatchEntry
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
-import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
-import kotlinx.coroutines.Dispatchers
 import kotlin.time.Duration.Companion.days
 
 /**
@@ -42,86 +39,79 @@ import kotlin.time.Duration.Companion.days
 fun CommandAPICommand.denylistImportDefaultCommand() = subcommand("importdefaults") {
     withPermission(SurfChatPermissionRegistry.COMMAND_DENYLIST_DEFAULTS)
     anyExecutor { executor, _ ->
-        executor.sendText {
-            appendPrefix()
-            info("Importiere Standard-Wortfilter...")
+        listOf(
+            DenylistBatchEntry.builder()
+                .withReason("Verwenden von Kennzeichen verfassungswidriger und terroristischer Organisationen")
+                .withStaff("Arty Support")
+                .withActionType(DenylistActionType.COMMUNITY_BAN)
+                .withPunishReason("Verwenden von Kennzeichen verfassungswidriger und terroristischer Organisationen")
+                .withWords(
+                    "heil hitler",
+                    "heilhitler"
+                )
+                .build(),
+            DenylistBatchEntry.builder()
+                .withReason("Gewaltverherrlichende Inhalte")
+                .withStaff("Arty Support")
+                .withActionType(DenylistActionType.PERMANENT_BAN)
+                .withPunishReason("Gewaltverherrlichende Inhalte")
+                .withWords(
+                    "killyourself",
+                    "kys",
+                    "nigger",
+                    "ngga",
+                    "nigga"
+                )
+                .build(),
+            DenylistBatchEntry.builder()
+                .withReason("Starke Beleidigungen")
+                .withStaff("Arty Support")
+                .withActionType(DenylistActionType.EXPIRABLE_BAN)
+                .withPunishReason("Inhalte mit abwertender, beleidigender oder diskriminierender Sprache")
+                .withDuration(14.days)
+                .withWords(
+                    "hure",
+                    "hurensohn",
+                    "fotze",
+                    "nutte",
+                    "bastard",
+                    "schlampe",
+                    "hs"
+                ).build(),
+            DenylistBatchEntry.builder()
+                .withReason("Mittelstarke Beleidigungen")
+                .withStaff("Arty Support")
+                .withActionType(DenylistActionType.EXPIRABLE_BAN)
+                .withPunishReason("Inhalte mit persönlichen Beleidigungen mittlerer Stufe")
+                .withDuration(7.days)
+                .withWords(
+                    "ass", "arschloch", "arsch", "opfer", "wichser", "pisser", "pussy"
+                ).build(),
+            DenylistBatchEntry.builder()
+                .withReason("Leichte Beleidigungen")
+                .withStaff("Arty Support")
+                .withActionType(DenylistActionType.MUTE)
+                .withPunishReason("Beleidigende Inhalte")
+                .withDuration(3.days)
+                .withWords(
+                    "dummkopf",
+                    "idiot",
+                    "miststück",
+                    "blödmann",
+                    "verpiss dich",
+                    "verpissdich",
+                    "loser",
+                    "noob",
+                    "n00b",
+                    "leck"
+                ).build()
+        ).forEach { entry ->
+            entry.execute()
         }
 
-        plugin.launch(Dispatchers.IO) {
-            listOf(
-                DenylistBatchEntry.builder()
-                    .withReason("Verwenden von Kennzeichen verfassungswidriger und terroristischer Organisationen")
-                    .withStaff("Arty Support")
-                    .withActionType(DenylistActionType.COMMUNITY_BAN)
-                    .withPunishReason("Verwenden von Kennzeichen verfassungswidriger und terroristischer Organisationen")
-                    .withWords(
-                        "heil hitler",
-                        "heilhitler"
-                    )
-                    .build(),
-                DenylistBatchEntry.builder()
-                    .withReason("Gewaltverherrlichende Inhalte")
-                    .withStaff("Arty Support")
-                    .withActionType(DenylistActionType.PERMANENT_BAN)
-                    .withPunishReason("Gewaltverherrlichende Inhalte")
-                    .withWords(
-                        "killyourself",
-                        "kys",
-                        "nigger",
-                        "ngga",
-                        "nigga"
-                    )
-                    .build(),
-                DenylistBatchEntry.builder()
-                    .withReason("Starke Beleidigungen")
-                    .withStaff("Arty Support")
-                    .withActionType(DenylistActionType.EXPIRABLE_BAN)
-                    .withPunishReason("Inhalte mit abwertender, beleidigender oder diskriminierender Sprache")
-                    .withDuration(14.days)
-                    .withWords(
-                        "hure",
-                        "hurensohn",
-                        "fotze",
-                        "nutte",
-                        "bastard",
-                        "schlampe",
-                        "hs"
-                    ).build(),
-                DenylistBatchEntry.builder()
-                    .withReason("Mittelstarke Beleidigungen")
-                    .withStaff("Arty Support")
-                    .withActionType(DenylistActionType.EXPIRABLE_BAN)
-                    .withPunishReason("Inhalte mit persönlichen Beleidigungen mittlerer Stufe")
-                    .withDuration(7.days)
-                    .withWords(
-                        "ass", "arschloch", "arsch", "opfer", "wichser", "pisser", "pussy"
-                    ).build(),
-                DenylistBatchEntry.builder()
-                    .withReason("Leichte Beleidigungen")
-                    .withStaff("Arty Support")
-                    .withActionType(DenylistActionType.MUTE)
-                    .withPunishReason("Beleidigende Inhalte")
-                    .withDuration(3.days)
-                    .withWords(
-                        "dummkopf",
-                        "idiot",
-                        "miststück",
-                        "blödmann",
-                        "verpiss dich",
-                        "verpissdich",
-                        "loser",
-                        "noob",
-                        "n00b",
-                        "leck"
-                    ).build()
-            ).forEach { entry ->
-                entry.execute()
-            }
-
-            executor.sendText {
-                appendPrefix()
-                success("Import der Standard-Wortfilter abgeschlossen.")
-            }
+        executor.sendText {
+            appendPrefix()
+            success("Der Standard-Filter wurde importiert.")
         }
     }
 }

@@ -1,14 +1,12 @@
 package dev.slne.surf.chat.paper.command.denylist.action
 
-import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.*
+import dev.slne.surf.chat.api.denylist.DenylistAction
 import dev.slne.surf.chat.api.denylist.DenylistActionType
-import dev.slne.surf.chat.core.entry.DenylistActionImpl
-import dev.slne.surf.chat.core.service.denylistActionService
+import dev.slne.surf.chat.core.client.denylist.denylistActionService
 import dev.slne.surf.chat.paper.command.argument.denylistActionTypeArgument
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
-import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 fun CommandAPICommand.denylistActionAddCommand() = subcommand("add") {
@@ -23,17 +21,17 @@ fun CommandAPICommand.denylistActionAddCommand() = subcommand("add") {
         val reason: String by args
         val durationInMinutes: Int by args
 
-        if (denylistActionService.hasLocalAction(name)) {
+        if (denylistActionService.hasAction(name)) {
             executor.sendText {
                 appendPrefix()
                 error("Die Aktion ")
                 variableValue(name)
-                error(" ist bereits in der internen Aktionsliste vorhanden.")
+                error(" ist bereits in der Aktionsliste vorhanden.")
             }
             return@anyExecutor
         } else {
-            denylistActionService.addLocalAction(
-                DenylistActionImpl(
+            denylistActionService.addAction(
+                DenylistAction(
                     name,
                     type,
                     reason,
@@ -46,35 +44,7 @@ fun CommandAPICommand.denylistActionAddCommand() = subcommand("add") {
             appendPrefix()
             success("Die Aktion ")
             variableValue(name)
-            success(" wurde erfolgreich zur internen Aktionsliste hinzugefügt.")
-        }
-
-        plugin.launch {
-            if (denylistActionService.hasAction(name)) {
-                executor.sendText {
-                    appendPrefix()
-                    error("Die Aktion ")
-                    variableValue(name)
-                    error(" ist bereits in der externen Aktionsliste vorhanden.")
-                }
-                return@launch
-            }
-
-            denylistActionService.addAction(
-                DenylistActionImpl(
-                    name,
-                    type,
-                    reason,
-                    durationInMinutes * 60 * 1000L
-                )
-            )
-
-            executor.sendText {
-                appendPrefix()
-                success("Die Aktion ")
-                variableValue(name)
-                success(" wurde erfolgreich zur externen Aktionsliste hinzugefügt.")
-            }
+            success(" wurde erfolgreich zur Aktionsliste hinzugefügt.")
         }
     }
 }

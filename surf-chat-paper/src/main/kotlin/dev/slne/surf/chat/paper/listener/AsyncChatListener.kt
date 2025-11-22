@@ -94,7 +94,7 @@ class AsyncChatListener : Listener {
             player,
             null,
             time,
-            server,
+            server.name,
             null,
             event.signedMessage().signature(),
             MessageType.GLOBAL

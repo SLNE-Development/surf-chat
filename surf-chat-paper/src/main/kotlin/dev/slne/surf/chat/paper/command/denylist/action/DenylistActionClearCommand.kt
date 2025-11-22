@@ -4,7 +4,7 @@ import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.anyExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
-import dev.slne.surf.chat.core.service.denylistActionService
+import dev.slne.surf.chat.core.client.denylist.denylistActionService
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
@@ -25,7 +25,6 @@ fun CommandAPICommand.denylistActionClearCommand() = subcommand("clear") {
                     clickEvent(ClickEvent.callback {
                         plugin.launch {
                             denylistActionService.clearActions()
-                            denylistActionService.clearLocalActions()
                             executor.sendText {
                                 appendPrefix()
                                 success("Die Denylist Aktionen wurde geleert.")

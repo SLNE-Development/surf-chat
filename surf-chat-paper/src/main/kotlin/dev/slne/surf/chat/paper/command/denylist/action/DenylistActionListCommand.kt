@@ -5,7 +5,7 @@ import dev.jorel.commandapi.kotlindsl.anyExecutor
 import dev.jorel.commandapi.kotlindsl.integerArgument
 import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.denylist.DenylistAction
-import dev.slne.surf.chat.core.service.denylistActionService
+import dev.slne.surf.chat.core.client.denylist.denylistActionService
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.CommonComponents
@@ -19,19 +19,19 @@ fun CommandAPICommand.denylistActionListCommand() = subcommand("list") {
     integerArgument("page", min = 1, max = Int.MAX_VALUE, optional = true)
     anyExecutor { executor, args ->
         val page = args.getOrDefaultUnchecked("page", 1)
-        val localDenylistActions = denylistActionService.listLocalActions()
+        val localDenylistActions = denylistActionService.getActions()
 
         if (localDenylistActions.isEmpty()) {
             executor.sendText {
                 appendPrefix()
-                error("Es sind keine Aktionen in der internen Aktionsliste vorhanden.")
+                error("Es sind keine Aktionen in der Aktionsliste vorhanden.")
             }
             return@anyExecutor
         }
 
         val pagination = Pagination<DenylistAction> {
             title {
-                primary("Interne Aktionsliste".toSmallCaps(), TextDecoration.BOLD)
+                primary("Aktionsliste".toSmallCaps(), TextDecoration.BOLD)
             }
 
             rowRenderer { entry, _ ->

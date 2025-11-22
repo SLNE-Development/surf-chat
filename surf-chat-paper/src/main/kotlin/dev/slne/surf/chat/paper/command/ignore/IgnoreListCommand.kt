@@ -5,7 +5,7 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.entry.IgnoreListEntry
-import dev.slne.surf.chat.core.common.service.ignoreService
+import dev.slne.surf.chat.core.client.ignorelist.ignorelistService
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.chat.paper.util.formatTime
@@ -20,7 +20,7 @@ fun CommandAPICommand.ignoreListCommand() = subcommand("list") {
     withPermission(SurfChatPermissionRegistry.COMMAND_IGNORE_LIST)
     playerExecutor { player, _ ->
         plugin.launch {
-            val ignoreList = ignoreService.getIgnoreList(player.uniqueId)
+            val ignoreList = ignorelistService.getIgnoreList(player.uniqueId)
 
             if (ignoreList.isEmpty()) {
                 player.sendText {

@@ -8,7 +8,6 @@ fun denylistCommand() = commandAPICommand("denylist", plugin) {
     withPermission(SurfChatPermissionRegistry.COMMAND_DENYLIST)
     denylistAddCommand()
     denylistRemoveCommand()
-    denylistFetchCommand()
     denylistListCommand()
     denylistClearCommand()
     denylistImportDefaultCommand()

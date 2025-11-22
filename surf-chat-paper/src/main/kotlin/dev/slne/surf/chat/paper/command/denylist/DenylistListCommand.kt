@@ -5,7 +5,7 @@ import dev.jorel.commandapi.kotlindsl.anyExecutor
 import dev.jorel.commandapi.kotlindsl.integerArgument
 import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.denylist.DenylistEntry
-import dev.slne.surf.chat.core.common.service.denylistService
+import dev.slne.surf.chat.core.client.denylist.denylistService
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.paper.util.formatTime
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
@@ -20,7 +20,7 @@ fun CommandAPICommand.denylistListCommand() = subcommand("list") {
     integerArgument("page", min = 1, max = Int.MAX_VALUE, optional = true)
     anyExecutor { executor, args ->
         val page = args.getOrDefaultUnchecked("page", 1)
-        val denylistEntries = denylistService.getLocalEntries()
+        val denylistEntries = denylistService.getEntries()
 
         if (denylistEntries.isEmpty()) {
             executor.sendText {

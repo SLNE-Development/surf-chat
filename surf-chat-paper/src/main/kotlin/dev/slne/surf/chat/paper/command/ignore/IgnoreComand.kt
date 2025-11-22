@@ -4,7 +4,8 @@ import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.chat.core.common.service.ignoreService
+import dev.slne.surf.chat.api.entry.IgnoreListEntry
+import dev.slne.surf.chat.core.client.ignorelist.ignorelistService
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.cloud.api.client.paper.command.args.onlineCloudPlayerArgument
@@ -27,8 +28,8 @@ fun ignoreCommand() = commandAPICommand("ignore", plugin) {
         }
 
         plugin.launch {
-            if (ignoreService.isIgnored(player.uniqueId, target.uuid)) {
-                ignoreService.unIgnore(player.uniqueId, target.uuid)
+            if (ignorelistService.isIgnoring(player.uniqueId, target.uuid)) {
+                ignorelistService.removeFromIgnoreList(player.uniqueId, target.uuid)
 
                 player.sendText {
                     appendPrefix()
@@ -39,7 +40,15 @@ fun ignoreCommand() = commandAPICommand("ignore", plugin) {
                 return@launch
             }
 
-            ignoreService.ignore(player.uniqueId, player.name, target.uuid, target.name)
+            ignorelistService.addToIgnoreList(
+                IgnoreListEntry(
+                    player.uniqueId,
+                    player.name,
+                    target.uuid,
+                    target.name,
+                    System.currentTimeMillis()
+                )
+            )
 
             player.sendText {
                 appendPrefix()

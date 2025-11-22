@@ -10,11 +10,12 @@ import org.springframework.stereotype.Service
 @Service
 class DenylistService {
     fun addEntry(entry: DenylistEntry) = SyncValues.denylistEntries.add(entry)
-    fun removeEntry(entry: DenylistEntry) =
-        SyncValues.denylistEntries.removeIf { it.word == entry.word }
+    fun removeEntry(world: String) =
+        SyncValues.denylistEntries.removeIf { it.word == world }
 
     fun hasEntry(word: String) = SyncValues.denylistEntries.any { it.word == word }
     fun getEntries() = SyncValues.denylistEntries
+    fun clearEntries() = SyncValues.denylistEntries.clear()
 }
 
 @OptIn(InternalChatApi::class)

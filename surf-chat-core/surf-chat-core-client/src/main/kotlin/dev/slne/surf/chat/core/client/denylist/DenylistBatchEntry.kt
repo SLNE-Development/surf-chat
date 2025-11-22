@@ -20,7 +20,7 @@ class DenylistBatchEntry private constructor(
         fun builder(): Builder = Builder()
     }
 
-    suspend fun execute() {
+    fun execute() {
         denylistActionService.addAction(action)
         entries.forEach {
             denylistService.addEntry(

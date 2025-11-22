@@ -5,25 +5,31 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.anyExecutor
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.subcommand
-import dev.slne.surf.chat.core.service.functionalityService
+import dev.slne.surf.chat.core.client.functionality.functionalityService
 import dev.slne.surf.chat.paper.command.argument.niceToggleArgument
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.paper.plugin
+import dev.slne.surf.cloud.api.client.paper.command.args.cloudServerArgument
+import dev.slne.surf.cloud.api.common.server.CloudServer
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import org.bukkit.Bukkit
 
 fun CommandAPICommand.functionalityChangeCommand() = subcommand("change") {
     withPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_FUNCTIONALITY_TOGGLE)
+    cloudServerArgument("server")
     niceToggleArgument("toggle")
     anyExecutor { player, args ->
         val toggle: Boolean by args
+        val server: CloudServer by args
 
         plugin.launch {
             if (toggle) {
-                functionalityService.enableLocalChat(plugin.server)
+                functionalityService.enableFunctionality(server.name)
                 player.sendText {
                     appendPrefix()
-                    success("Der Chat wurde aktiviert.")
+                    success("Der Chat wurde für den Server ")
+                    variableValue(server.name)
+                    success(" aktiviert.")
                 }
 
                 Bukkit.getOnlinePlayers()
@@ -33,15 +39,17 @@ fun CommandAPICommand.functionalityChangeCommand() = subcommand("change") {
                             appendPrefix()
                             variableValue(player.name)
                             info(" hat den Chat für den Server ")
-                            variableValue(plugin.server.name)
+                            variableValue(server.name)
                             info(" aktiviert.")
                         }
                     }
             } else {
-                functionalityService.disableLocalChat(plugin.server)
+                functionalityService.disableFunctionality(server.name)
                 player.sendText {
                     appendPrefix()
-                    success("Der Chat wurde deaktiviert.")
+                    success("Der Chat wurde für den Server ")
+                    variableValue(server.name)
+                    success(" deaktiviert.")
                 }
 
                 Bukkit.getOnlinePlayers()
@@ -51,7 +59,7 @@ fun CommandAPICommand.functionalityChangeCommand() = subcommand("change") {
                             appendPrefix()
                             variableValue(player.name)
                             info(" hat den Chat für den Server ")
-                            variableValue(plugin.server.name)
+                            variableValue(server.name)
                             info(" deaktiviert.")
                         }
                     }

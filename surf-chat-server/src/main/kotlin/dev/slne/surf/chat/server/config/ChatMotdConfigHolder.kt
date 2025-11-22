@@ -1,4 +1,4 @@
-package dev.slne.surf.chat.paper.config
+package dev.slne.surf.chat.server.config
 
 import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.surfapi.core.api.config.manager.SpongeConfigManager

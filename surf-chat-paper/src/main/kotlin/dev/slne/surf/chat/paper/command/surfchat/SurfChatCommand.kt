@@ -13,6 +13,5 @@ fun surfChatCommand() = commandAPICommand("surfchat", plugin) {
 
     surfChatLookupCommand()
     surfChatLookupHelpCommand()
-    surfChatReloadCommand()
     functionalityCommand()
 }

@@ -5,7 +5,7 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.anyExecutor
 import dev.jorel.commandapi.kotlindsl.integerArgument
 import dev.jorel.commandapi.kotlindsl.subcommand
-import dev.slne.surf.chat.core.service.functionalityService
+import dev.slne.surf.chat.core.client.functionality.functionalityService
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.chat.paper.util.appendStatusIcon
@@ -42,10 +42,10 @@ fun CommandAPICommand.functionalityListCommand() = subcommand("list") {
         }
 
         plugin.launch {
-            val content = functionalityService.getAllServers().map {
+            val content = functionalityService.getServerFunctionalities().map {
                 FunctionalityStatusEntry(
-                    it.name,
-                    functionalityService.isEnabledForServer(it)
+                    it.first,
+                    it.second
                 )
             }
 

@@ -31,7 +31,7 @@ fun teamchatCommand() = commandAPICommand("teamchat") {
             player.toCloudPlayer() ?: return@playerExecutor,
             null,
             System.currentTimeMillis(),
-            CloudServer.current(),
+            CloudServer.current().name,
             null,
             null,
             MessageType.TEAM

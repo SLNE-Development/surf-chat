@@ -60,7 +60,7 @@ fun replyCommand() = commandAPICommand("reply") {
             player.toCloudPlayer() ?: return@playerExecutor,
             target,
             sentAt,
-            CloudServer.current(),
+            CloudServer.current().name,
             null,
             null,
             MessageType.PRIVATE

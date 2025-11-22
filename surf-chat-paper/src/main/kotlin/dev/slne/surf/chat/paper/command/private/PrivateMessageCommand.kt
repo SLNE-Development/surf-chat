@@ -22,7 +22,7 @@ import java.util.*
 
 fun directMessageCommand() = commandAPICommand("msg") {
     withAliases("dm", "w", "whisper", "tell", "pm")
-    withPermission(ChatPermissions.COMMAND_PRIVATE)
+    withPermission(ChatPermissions.COMMAND_TELL)
     onlineCloudPlayerArgument("target")
     greedyStringArgument("message")
 

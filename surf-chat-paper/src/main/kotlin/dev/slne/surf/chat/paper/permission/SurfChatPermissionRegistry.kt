@@ -78,4 +78,5 @@ object SurfChatPermissionRegistry : PermissionRegistry() {
     val COMMAND_CHANNEL_ADMIN_SPY_CLEAR = create(ChatPermissions.COMMAND_CHANNEL_ADMIN_SPY_CLEAR)
 
     val COMMAND_TEAMCHAT = create(ChatPermissions.COMMAND_TEAMCHAT)
+    val COMMAND_TELL = create(ChatPermissions.COMMAND_TELL)
 }

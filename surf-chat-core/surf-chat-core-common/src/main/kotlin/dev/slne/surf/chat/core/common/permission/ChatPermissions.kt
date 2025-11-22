@@ -78,4 +78,6 @@ object ChatPermissions {
     const val COMMAND_CHANNEL_ADMIN_DELETE = "$COMMAND.channel.admin.delete"
     const val COMMAND_CHANNEL_ADMIN_SPY = "$COMMAND.channel.admin.spy"
     const val COMMAND_CHANNEL_ADMIN_SPY_CLEAR = "$COMMAND.channel.admin.spy.clear"
+    
+    const val COMMAND_TELL = "$COMMAND.tell"
 }

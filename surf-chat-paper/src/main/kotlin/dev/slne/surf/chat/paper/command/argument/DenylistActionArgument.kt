@@ -6,12 +6,12 @@ import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.CustomArgument
 import dev.jorel.commandapi.arguments.StringArgument
 import dev.slne.surf.chat.api.denylist.DenylistAction
-import dev.slne.surf.chat.core.service.denylistActionService
+import dev.slne.surf.chat.core.client.denylist.denylistActionService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 
 class DenylistActionArgument(nodeName: String) :
     CustomArgument<DenylistAction, String>(StringArgument(nodeName), { info ->
-        denylistActionService.getLocalAction(info.input)
+        denylistActionService.getAction(info.input)
             ?: throw CustomArgumentException.fromAdventureComponent {
                 buildText {
                     appendPrefix()
@@ -21,7 +21,7 @@ class DenylistActionArgument(nodeName: String) :
     }) {
     init {
         replaceSuggestions(ArgumentSuggestions.stringCollection {
-            denylistActionService.listLocalActions().map { it.name }
+            denylistActionService.getActions().map { it.name }
         })
     }
 }

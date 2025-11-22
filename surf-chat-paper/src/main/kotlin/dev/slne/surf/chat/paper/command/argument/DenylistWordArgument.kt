@@ -5,12 +5,12 @@ import dev.jorel.commandapi.arguments.Argument
 import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.CustomArgument
 import dev.jorel.commandapi.arguments.StringArgument
-import dev.slne.surf.chat.core.service.denylistService
+import dev.slne.surf.chat.core.client.denylist.denylistService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 
 class DenylistWordArgument(nodeName: String) :
     CustomArgument<String, String>(StringArgument(nodeName), { info ->
-        denylistService.getLocalEntry(info.input)
+        denylistService.getEntry(info.input)
             ?: throw CustomArgumentException.fromAdventureComponent {
                 buildText {
                     appendPrefix()
@@ -22,7 +22,7 @@ class DenylistWordArgument(nodeName: String) :
     }) {
     init {
         replaceSuggestions(ArgumentSuggestions.stringCollection {
-            denylistService.getLocalEntries().map { it.word }
+            denylistService.getEntries().map { it.word }
         })
     }
 }

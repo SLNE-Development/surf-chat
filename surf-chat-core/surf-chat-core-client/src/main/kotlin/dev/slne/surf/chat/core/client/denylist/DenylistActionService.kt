@@ -16,6 +16,8 @@ class DenylistActionService {
     fun hasAction(name: String) = SyncValues.denylistActions.any { it.name == name }
     fun getActions() = SyncValues.denylistActions
     fun clearActions() = SyncValues.denylistActions.clear()
+    fun getAction(name: String) =
+        SyncValues.denylistActions.firstOrNull { it.name == name }
 }
 
 @OptIn(InternalChatApi::class)

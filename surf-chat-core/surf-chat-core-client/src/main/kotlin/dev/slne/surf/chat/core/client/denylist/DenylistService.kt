@@ -16,6 +16,8 @@ class DenylistService {
     fun hasEntry(word: String) = SyncValues.denylistEntries.any { it.word == word }
     fun getEntries() = SyncValues.denylistEntries
     fun clearEntries() = SyncValues.denylistEntries.clear()
+    fun getEntry(word: String) =
+        SyncValues.denylistEntries.firstOrNull { it.word == word }
 }
 
 @OptIn(InternalChatApi::class)

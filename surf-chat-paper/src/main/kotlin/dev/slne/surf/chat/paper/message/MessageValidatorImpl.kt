@@ -8,12 +8,10 @@ import dev.slne.surf.chat.core.client.result.LinkCheckResult
 import dev.slne.surf.chat.core.client.result.SpamCheckResult
 import dev.slne.surf.chat.core.common.message.MessageValidator
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
-import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.chat.paper.util.hasPlatformPermission
 import dev.slne.surf.chat.paper.util.plainText
 import dev.slne.surf.cloud.api.common.player.CloudPlayer
 import net.kyori.adventure.text.Component
-import org.bukkit.Bukkit
 
 class MessageValidatorImpl {
     companion object {
@@ -86,11 +84,11 @@ class MessageValidatorImpl {
         }
 
 
-        fun checkAutoDisabling(player: CloudPlayer): Boolean =
-            !player.hasPlatformPermission(SurfChatPermissionRegistry.AUTO_CHAT_DISABLING_BYPASS)
-                    && Bukkit.getOnlinePlayers()
-                .count() > plugin.autoDisablingConfig.maximumPlayersBeforeDisable
-                    && plugin.autoDisablingConfig.enabled
+        fun checkAutoDisabling(player: CloudPlayer): Boolean = true //TODO: reimplement
+//            !player.hasPlatformPermission(SurfChatPermissionRegistry.AUTO_CHAT_DISABLING_BYPASS)
+//                    && Bukkit.getOnlinePlayers()
+//                .count() > plugin.autoDisablingConfig.maximumPlayersBeforeDisable
+//                    && plugin.autoDisablingConfig.enabled
     }
 
     private class ComponentMessageValidator(

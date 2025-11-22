@@ -10,15 +10,21 @@ import java.util.*
 typealias NameAndUuid = Pair<String, UUID>
 
 object SyncValues {
-    val denylistEntries: SyncSet<DenylistEntry> = SyncSet.Companion("chat:denylist:entries")
-    val denylistActions: SyncSet<DenylistAction> = SyncSet.Companion("chat:denylist:actions")
+    val denylistEntries: SyncSet<DenylistEntry> = SyncSet("chat:denylist:entries")
+    val denylistActions: SyncSet<DenylistAction> = SyncSet("chat:denylist:actions")
 
     val chatFunctionalities: SyncSet<Pair<String, Boolean>> =
-        SyncSet.Companion("chat:functionalities")
-    val latestPrivateMessages: SyncSet<Pair<UUID, UUID>> = SyncSet.Companion("chat:private:target")
+        SyncSet("chat:functionalities")
+    val latestPrivateMessages: SyncSet<Pair<UUID, UUID>> = SyncSet("chat:private:target")
     val ignoreList = SyncSet<Pair<UUID, Set<IgnoreListEntry>>>("chat:ignorelist")
 
-    val allowedDomains = SyncSet.Companion<String>("chat:filter:domains")
-    val spamInterval = SyncValue.Companion<Long>("chat:filter:spam_interval", 10000L)
-    val spamAmount = SyncValue.Companion<Int>("chat:filter:spam_amount", 5)
+    val allowedDomains = SyncSet<String>("chat:filter:domains")
+    val spamInterval = SyncValue<Long>("chat:filter:spam_interval", 10000L)
+    val spamAmount = SyncValue<Int>("chat:filter:spam_amount", 5)
+
+    val connectionMessagesEnabled = SyncValue<Boolean>("chat:connection_messages:enabled", true)
+    val connectionMessagesJoin =
+        SyncValue<String>("chat:connection_messages:join", "Internal Server Error (Join)")
+    val connectionMessagesLeave =
+        SyncValue<String>("chat:connection_messages:leave", "Internal Server Error (Leave)")
 }

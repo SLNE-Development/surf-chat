@@ -1,8 +1,8 @@
 package dev.slne.surf.chat.paper.listener
 
+import dev.slne.surf.chat.core.common.util.SyncValues
 import dev.slne.surf.chat.paper.channel.channelService
 import dev.slne.surf.chat.paper.hook.MiniPlaceholdersHook
-import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.chat.paper.util.channelMember
 import dev.slne.surf.chat.paper.util.cloudPlayer
 import org.bukkit.event.EventHandler
@@ -18,11 +18,11 @@ class DisconnectListener : Listener {
             it.leaveAndTransfer(player.channelMember(it) ?: return@let)
         }
 
-        if (plugin.connectionMessageConfig.enabled) {
+        if (SyncValues.connectionMessagesEnabled.get()) {
             event.quitMessage(
                 MiniPlaceholdersHook.parse(
                     event.player,
-                    plugin.connectionMessageConfig.leaveMessage
+                    SyncValues.connectionMessagesLeave.get()
                 )
             )
         }

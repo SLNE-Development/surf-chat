@@ -6,7 +6,6 @@ import dev.slne.surf.chat.api.message.MessageValidationResult
 import dev.slne.surf.chat.core.common.message.MessageData
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.ServerboundHistoryLogPacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.message.ServerboundTeamMessagePacket
-import dev.slne.surf.chat.core.service.denylistActionService
 import dev.slne.surf.chat.paper.channel.channelService
 import dev.slne.surf.chat.paper.message.MessageFormatterImpl
 import dev.slne.surf.chat.paper.message.MessageValidatorImpl
@@ -40,7 +39,7 @@ class AsyncChatListener : Listener {
         val plainMessage = message.plainText()
 
         val messageFormatter = MessageFormatterImpl(message.remove(channelExceptPattern))
-        val validationResult = MessageValidatorImpl.componentValidator(message).validate(user)
+        val validationResult = MessageValidatorImpl.componentValidator(message).validate(player)
 
         if (validationResult.isFailure()) {
             val error = validationResult.getErrorOrNull() ?: return
@@ -57,7 +56,6 @@ class AsyncChatListener : Listener {
                         error.denylistEntry,
                         event.signedMessage(),
                         player,
-                        if (plugin.discordConfig.config.enabled) plugin.discordConfig.config.webhook else null
                     )
                 }
             } else {

@@ -1,12 +1,12 @@
 package dev.slne.surf.chat.paper.message
 
 import dev.slne.surf.chat.api.message.MessageValidationResult
+import dev.slne.surf.chat.core.client.denylist.denylistService
+import dev.slne.surf.chat.core.client.functionality.functionalityService
 import dev.slne.surf.chat.core.client.result.CharCheckResult
 import dev.slne.surf.chat.core.client.result.LinkCheckResult
 import dev.slne.surf.chat.core.client.result.SpamCheckResult
 import dev.slne.surf.chat.core.common.message.MessageValidator
-import dev.slne.surf.chat.core.common.service.denylistService
-import dev.slne.surf.chat.core.common.service.functionalityService
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.chat.paper.util.hasPlatformPermission
@@ -49,7 +49,7 @@ class MessageValidatorImpl {
                 return MessageValidationResult.Failure(MessageValidationResult.MessageValidationError.EmptyContent())
             }
 
-            denylistService.getLocalEntries().find { message.contains(it.word, true) }
+            denylistService.getEntries().find { message.contains(it.word, true) }
                 ?.let { entry ->
                     return MessageValidationResult.Failure(
                         MessageValidationResult.MessageValidationError.DenylistedWord(

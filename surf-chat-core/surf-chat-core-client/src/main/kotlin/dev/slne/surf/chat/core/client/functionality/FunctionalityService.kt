@@ -2,6 +2,8 @@ package dev.slne.surf.chat.core.client.functionality
 
 import dev.slne.surf.chat.core.common.ChatContextHolderImpl
 import dev.slne.surf.chat.core.common.util.SyncValues
+import dev.slne.surf.cloud.api.client.server.current
+import dev.slne.surf.cloud.api.common.server.CloudServer
 import org.springframework.beans.factory.getBean
 import org.springframework.stereotype.Service
 
@@ -31,6 +33,9 @@ class FunctionalityService {
             SyncValues.chatFunctionalities.add(server to false)
         }
     }
+
+    fun isLocalChatEnabled() =
+        SyncValues.chatFunctionalities.firstOrNull { it.first == CloudServer.current().name }?.second == true
 
     fun getServerFunctionalities() = SyncValues.chatFunctionalities
 }

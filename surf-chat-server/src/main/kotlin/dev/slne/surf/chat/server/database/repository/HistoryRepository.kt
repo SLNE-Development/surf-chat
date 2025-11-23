@@ -3,6 +3,7 @@ package dev.slne.surf.chat.server.database.repository
 import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.core.common.message.MessageData
+import dev.slne.surf.chat.core.common.netty.packet.serializer.ChatUuid
 import dev.slne.surf.chat.server.database.entity.HistoryEntity
 import dev.slne.surf.chat.server.database.table.HistoryTable
 import dev.slne.surf.cloud.api.server.plugin.CoroutineTransactional
@@ -19,7 +20,6 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.selectAll
 import org.springframework.stereotype.Repository
-import java.util.*
 
 @Repository
 @CoroutineTransactional
@@ -113,7 +113,7 @@ class HistoryRepository {
 
     fun isLookupRunning() = loadHistoryMutex.isLocked
 
-    suspend fun markDeleted(messageUuid: UUID, deleter: String) =
+    suspend fun markDeleted(messageUuid: ChatUuid, deleter: String) =
         HistoryEntity.findSingleByAndUpdate(HistoryTable.messageUuid eq messageUuid) {
             it.deletedBy = deleter
         }

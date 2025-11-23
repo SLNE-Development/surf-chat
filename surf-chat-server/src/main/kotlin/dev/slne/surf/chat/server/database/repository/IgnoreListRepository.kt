@@ -1,6 +1,7 @@
 package dev.slne.surf.chat.server.database.repository
 
 import dev.slne.surf.chat.api.entry.IgnoreListEntry
+import dev.slne.surf.chat.core.common.netty.packet.serializer.ChatUuid
 import dev.slne.surf.chat.core.common.util.SyncValues
 import dev.slne.surf.chat.server.database.entity.IgnoreListEntity
 import dev.slne.surf.chat.server.database.table.IgnoreListTable
@@ -8,12 +9,11 @@ import dev.slne.surf.cloud.api.server.plugin.CoroutineTransactional
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.springframework.stereotype.Repository
-import java.util.*
 
 @Repository
 @CoroutineTransactional
 class IgnoreListRepository {
-    suspend fun cacheIgnorelist(uuid: UUID) {
+    suspend fun cacheIgnorelist(uuid: ChatUuid) {
         SyncValues.ignoreList.removeIf { it.first == uuid }
 
         val ignoreList = mutableObjectSetOf<IgnoreListEntry>()
@@ -33,7 +33,7 @@ class IgnoreListRepository {
         SyncValues.ignoreList.add(uuid to ignoreList)
     }
 
-    suspend fun storeIgnorelist(uuid: UUID) {
+    suspend fun storeIgnorelist(uuid: ChatUuid) {
         val ignoreList = SyncValues.ignoreList.firstOrNull { it.first == uuid }?.second ?: return
 
         IgnoreListEntity.find { IgnoreListTable.userUuid eq uuid }.forEach { it.delete() }

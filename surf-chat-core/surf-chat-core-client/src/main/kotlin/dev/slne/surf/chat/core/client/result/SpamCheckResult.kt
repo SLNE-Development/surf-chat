@@ -1,5 +1,6 @@
 package dev.slne.surf.chat.core.client.result
 
+import dev.slne.surf.chat.core.common.netty.packet.serializer.ChatUuid
 import dev.slne.surf.chat.core.common.util.SyncValues
 import dev.slne.surf.surfapi.core.api.util.mutableObject2ObjectMapOf
 import dev.slne.surf.surfapi.core.api.util.mutableObjectListOf
@@ -13,7 +14,7 @@ data class SpamCheckResult(
     companion object {
         private val messageTimestamps = mutableObject2ObjectMapOf<UUID, ObjectList<Long>>()
 
-        fun of(uuid: UUID): SpamCheckResult {
+        fun of(uuid: ChatUuid): SpamCheckResult {
             val now = System.currentTimeMillis()
             val interval = SyncValues.spamInterval.get()
             val timestamps = messageTimestamps.getOrPut(uuid) { mutableObjectListOf<Long>() }

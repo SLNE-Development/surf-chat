@@ -5,14 +5,14 @@ package dev.slne.surf.chat.core.client.ignorelist
 import dev.slne.surf.chat.api.ChatContextHolder
 import dev.slne.surf.chat.api.InternalChatApi
 import dev.slne.surf.chat.api.entry.IgnoreListEntry
+import dev.slne.surf.chat.core.common.netty.packet.serializer.ChatUuid
 import dev.slne.surf.chat.core.common.util.SyncValues
 import org.springframework.beans.factory.getBean
 import org.springframework.stereotype.Service
-import java.util.*
 
 @Service
 class IgnorelistService {
-    fun getIgnoreList(uuid: UUID) =
+    fun getIgnoreList(uuid: ChatUuid) =
         SyncValues.ignoreList.firstOrNull { it.first == uuid }?.second ?: emptySet()
 
     fun addToIgnoreList(ignorelistEntry: IgnoreListEntry) {
@@ -28,7 +28,7 @@ class IgnorelistService {
         }
     }
 
-    fun removeFromIgnoreList(user: UUID, target: UUID) {
+    fun removeFromIgnoreList(user: ChatUuid, target: ChatUuid) {
         val entry = SyncValues.ignoreList.firstOrNull { it.first == user }
 
         entry?.second?.removeIf { it.target == target }
@@ -39,7 +39,7 @@ class IgnorelistService {
         }
     }
 
-    fun isIgnoring(user: UUID, target: UUID): Boolean {
+    fun isIgnoring(user: ChatUuid, target: ChatUuid): Boolean {
         val entry = SyncValues.ignoreList.firstOrNull { it.first == user }
 
         return entry?.second?.any { it.target == target } ?: false

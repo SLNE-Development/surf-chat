@@ -3,11 +3,12 @@ package dev.slne.surf.chat.paper.channel
 import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.channel.ChannelMember
 import dev.slne.surf.chat.api.channel.ChannelVisibility
+import dev.slne.surf.chat.core.common.netty.packet.serializer.ChatUuid
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import java.util.*
 
 data class PaperChannel(
-    override val channelUuid: UUID,
+    override val channelUuid: ChatUuid,
     override val channelName: String,
     override val members: ObjectSet<ChannelMember>,
     override val bannedPlayers: ObjectSet<UUID>,

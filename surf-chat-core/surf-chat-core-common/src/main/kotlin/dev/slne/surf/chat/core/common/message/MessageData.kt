@@ -2,12 +2,12 @@ package dev.slne.surf.chat.core.common.message
 
 import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.message.MessageType
+import dev.slne.surf.chat.core.common.netty.packet.serializer.ChatUuid
 import dev.slne.surf.chat.core.common.netty.packet.serializer.MessageDataSerializer
 import dev.slne.surf.cloud.api.common.player.CloudPlayer
 import kotlinx.serialization.Serializable
 import net.kyori.adventure.chat.SignedMessage
 import net.kyori.adventure.text.Component
-import java.util.*
 
 @Serializable(with = MessageDataSerializer::class)
 /**
@@ -30,7 +30,7 @@ data class MessageData(
      * and is critical for operations such as deletion, logging,
      * and ensuring message integrity and traceability across the system.
      */
-    val messageUuid: UUID,
+    val messageUuid: ChatUuid,
 
     /**
      * Represents the sender of the message within the chat system.

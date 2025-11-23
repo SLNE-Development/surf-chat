@@ -47,7 +47,8 @@ fun CommandAPICommand.denylistImportDefaultCommand() = subcommand("importdefault
                 .withPunishReason("Verwenden von Kennzeichen verfassungswidriger und terroristischer Organisationen")
                 .withWords(
                     "heil hitler",
-                    "heilhitler"
+                    "heilhitler",
+                    "cbtest"//TODO: remove this test word later
                 )
                 .build(),
             DenylistBatchEntry.builder()
@@ -60,7 +61,8 @@ fun CommandAPICommand.denylistImportDefaultCommand() = subcommand("importdefault
                     "kys",
                     "nigger",
                     "ngga",
-                    "nigga"
+                    "nigga",
+                    "permbantest"//TODO: remove this test word later
                 )
                 .build(),
             DenylistBatchEntry.builder()
@@ -76,7 +78,8 @@ fun CommandAPICommand.denylistImportDefaultCommand() = subcommand("importdefault
                     "nutte",
                     "bastard",
                     "schlampe",
-                    "hs"
+                    "hs",
+                    "14dbantest"//TODO: remove this test word later
                 ).build(),
             DenylistBatchEntry.builder()
                 .withReason("Mittelstarke Beleidigungen")
@@ -85,7 +88,14 @@ fun CommandAPICommand.denylistImportDefaultCommand() = subcommand("importdefault
                 .withPunishReason("Inhalte mit persönlichen Beleidigungen mittlerer Stufe")
                 .withDuration(7.days)
                 .withWords(
-                    "ass", "arschloch", "arsch", "opfer", "wichser", "pisser", "pussy"
+                    "ass",
+                    "arschloch",
+                    "arsch",
+                    "opfer",
+                    "wichser",
+                    "pisser",
+                    "pussy",
+                    "7dbantest"//TODO: remove this test word later
                 ).build(),
             DenylistBatchEntry.builder()
                 .withReason("Leichte Beleidigungen")
@@ -103,7 +113,8 @@ fun CommandAPICommand.denylistImportDefaultCommand() = subcommand("importdefault
                     "loser",
                     "noob",
                     "n00b",
-                    "leck"
+                    "leck",
+                    "3dbantest"//TODO: remove this test word later
                 ).build()
         ).forEach { entry ->
             entry.execute()

@@ -60,6 +60,16 @@ fun directMessageCommand() = commandAPICommand("msg") {
             )
         )
 
+        SyncValues.latestPrivateMessages.removeIf { it.target == target.uuid }
+        SyncValues.latestPrivateMessages.add(
+            SyncValues.LastPrivateMessage(
+                target.uuid,
+                player.uniqueId
+            )
+        )
+
+
+
         ServerboundPrivateMessagePacket(data).fireAndForget()
         ServerboundHistoryLogPacket(data).fireAndForget()
     }

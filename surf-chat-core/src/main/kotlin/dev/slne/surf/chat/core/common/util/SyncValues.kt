@@ -24,7 +24,15 @@ object UUIDSerializer : KSerializer<UUID> {
     }
 
     override fun deserialize(decoder: Decoder): UUID {
-        return UUID.fromString(decoder.decodeString())
+        val uuidString = decoder.decodeString()
+        return try {
+            UUID.fromString(uuidString)
+        } catch (e: IllegalArgumentException) {
+            throw kotlinx.serialization.SerializationException(
+                "Invalid UUID format: '$uuidString'. Expected format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+                e
+            )
+        }
     }
 }
 

@@ -4,10 +4,9 @@ import dev.slne.surf.cloud.api.common.meta.SurfNettyPacket
 import dev.slne.surf.cloud.api.common.netty.network.protocol.PacketFlow
 import dev.slne.surf.cloud.api.common.netty.packet.NettyPacket
 import kotlinx.serialization.Serializable
-import net.kyori.adventure.text.Component
 
 @Serializable
 @SurfNettyPacket("chat:serverbound:message_team", PacketFlow.SERVERBOUND)
 class ServerboundTeamMessagePacket(
-    val message: Component
+    val gsonComponent: String
 ) : NettyPacket()

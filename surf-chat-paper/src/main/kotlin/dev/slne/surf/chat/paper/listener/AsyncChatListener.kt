@@ -18,6 +18,7 @@ import dev.slne.surf.cloud.api.common.server.CloudServer
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import io.papermc.paper.event.player.AsyncChatEvent
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -39,6 +40,8 @@ class AsyncChatListener : Listener {
 
         val messageFormatter = MessageFormatterImpl(message.remove(channelExceptPattern))
         val validationResult = MessageValidatorImpl.componentValidator(message).validate(player)
+
+        println(validationResult)
 
         if (validationResult.isFailure()) {
             val error = validationResult.getErrorOrNull() ?: return
@@ -66,7 +69,7 @@ class AsyncChatListener : Listener {
                 error is MessageValidationResult.MessageValidationError.DenylistedWord
             ) {
                 ServerboundTeamMessagePacket(
-                    buildText {
+                    GsonComponentSerializer.gson().serialize(buildText {
                         appendBotIcon()
                         info("Eine Nachricht von ")
                         variableValue(player.name)
@@ -78,7 +81,8 @@ class AsyncChatListener : Listener {
                         hoverEvent(buildText {
                             info(plainMessage)
                         })
-                    }
+                    })
+
                 ).fireAndForget()
             }
         }

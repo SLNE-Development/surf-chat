@@ -15,6 +15,7 @@ import dev.slne.surf.chat.server.message.ServerMessageFormatterImpl
 import dev.slne.surf.cloud.api.common.meta.SurfNettyPacketHandler
 import dev.slne.surf.cloud.api.common.server.CloudServerManager
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import org.springframework.stereotype.Component
 
 @Component
@@ -34,7 +35,11 @@ class ServerChatPacketListener(
 
     @SurfNettyPacketHandler
     suspend fun handleTeamMessagePacket(packet: ServerboundTeamMessagePacket) {
-        CloudServerManager.broadcast(packet.message, ChatPermissions.TEAM_NOTIFY, false)
+        CloudServerManager.broadcast(
+            GsonComponentSerializer.gson().deserialize(packet.gsonComponent),
+            ChatPermissions.TEAM_NOTIFY,
+            false
+        )
     }
 
     @SurfNettyPacketHandler

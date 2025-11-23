@@ -3,9 +3,9 @@ package dev.slne.surf.chat.core.common.permission
 object ChatPermissions {
     private const val BASE = "surf.chat"
     private const val COMMAND = "$BASE.command"
-    private const val BYPASS = "$BASE.team"
+    private const val BYPASS = "$BASE.bypass"
 
-    const val AUTO_CHAT_DISABLING_BYPASS = "$BASE.disabling.bypass"
+    const val AUTO_CHAT_DISABLING_BYPASS = "$BYPASS.disabling"
 
     const val TEAM_NOTIFY = "$BASE.team.notify"
 

@@ -14,7 +14,6 @@ object SurfChatPermissionRegistry : PermissionRegistry() {
     val TEAM_NOTIFY_DELETION = create(ChatPermissions.TEAM_NOTIFY_DELETION)
 
     val COMMAND_SURFCHAT = create(ChatPermissions.COMMAND_SURFCHAT)
-    val COMMAND_SURFCHAT_RELOAD = create(ChatPermissions.COMMAND_SURFCHAT_RELOAD)
     val COMMAND_SURFCHAT_DELETE = create(ChatPermissions.COMMAND_SURFCHAT_DELETE)
     val COMMAND_SURFCHAT_TELEPORT = create(ChatPermissions.COMMAND_SURFCHAT_TELEPORT)
     val COMMAND_SURFCHAT_LOOKUP = create(ChatPermissions.COMMAND_SURFCHAT_LOOKUP)

@@ -46,7 +46,7 @@ object SyncValues {
      * Use this Json instance for serialization/deserialization that involves UUIDs.
      */
     val json = Json {
-        serializersModule = SyncValues.serializersModule
+        serializersModule = this@SyncValues.serializersModule
         ignoreUnknownKeys = true
         encodeDefaults = true
         prettyPrint = false

@@ -11,6 +11,7 @@ repositories {
 dependencies {
     api(project(":surf-chat-core:surf-chat-core-client"))
     compileOnly(libs.miniplaceholder.api)
+    compileOnly("net.luckperms:api:5.4")
 }
 
 surfPaperPluginApi {

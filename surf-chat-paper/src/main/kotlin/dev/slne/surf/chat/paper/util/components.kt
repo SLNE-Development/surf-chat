@@ -2,8 +2,9 @@ package dev.slne.surf.chat.paper.util
 
 import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.core.common.message.MessageData
+import dev.slne.surf.chat.core.common.netty.packet.serverbound.ServerboundMessageDeletePacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.ServerboundHistoryMarkDeletedPacket
-import dev.slne.surf.chat.paper.hook.MiniPlaceholdersHook
+import dev.slne.surf.chat.paper.hook.LuckPermsHook
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
 import dev.slne.surf.cloud.api.client.netty.packet.fireAndForget
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
@@ -13,6 +14,7 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.surfapi.core.api.messages.builder.SurfComponentBuilder
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.format.TextDecoration
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
@@ -30,7 +32,7 @@ fun SurfComponentBuilder.appendDelete(messageData: MessageData) = append(buildTe
             return@callback
         }
 
-        Bukkit.getServer().deleteMessage(signature)
+        ServerboundMessageDeletePacket(signature).fireAndForget()
         Bukkit.getOnlinePlayers()
             .filter { online -> online.hasPermission(SurfChatPermissionRegistry.TEAM_NOTIFY_DELETION) }
             .forEach { online ->
@@ -63,7 +65,8 @@ fun SurfComponentBuilder.appendMessageData(messageData: MessageData) = append(bu
 
 fun SurfComponentBuilder.appendName(player: Player) = append {
     append(
-        MiniPlaceholdersHook.parse(player, "<luckperms_prefix> <player_name>")
+        MiniMessage.miniMessage()
+            .deserialize(convertLegacy("${LuckPermsHook.getPrefix(player.uniqueId)}${player.name}"))
     )
 }
 

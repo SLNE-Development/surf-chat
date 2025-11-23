@@ -4,6 +4,7 @@ import dev.slne.surf.chat.core.common.netty.packet.clientbound.ClientboundMessag
 import dev.slne.surf.chat.core.common.netty.packet.clientbound.history.ClientboundHistoryLookupResultPacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.ServerboundDenylistActionPacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.ServerboundMessageDeletePacket
+import dev.slne.surf.chat.core.common.netty.packet.serverbound.ServerboundReloadPacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.ServerboundHistoryLogPacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.ServerboundHistoryLookupPacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.ServerboundHistoryMarkDeletedPacket
@@ -11,6 +12,7 @@ import dev.slne.surf.chat.core.common.netty.packet.serverbound.message.Serverbou
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.message.ServerboundTeamChatMessagePacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.message.ServerboundTeamMessagePacket
 import dev.slne.surf.chat.core.common.permission.ChatPermissions
+import dev.slne.surf.chat.server.config.*
 import dev.slne.surf.chat.server.database.repository.DenylistActionRepository
 import dev.slne.surf.chat.server.database.repository.HistoryRepository
 import dev.slne.surf.chat.server.message.ServerMessageFormatterImpl
@@ -92,5 +94,14 @@ class ServerChatPacketListener(
     @SurfNettyPacketHandler
     fun handleMessageDeletePacket(packet: ServerboundMessageDeletePacket) {
         ClientboundMessageDeletePacket(packet.signature).broadcast()
+    }
+
+    @SurfNettyPacketHandler
+    fun handleReloadPacket(packet: ServerboundReloadPacket) {
+        autoDisablingConfig.reload()
+        chatMotdConfig.reload()
+        connectionMessageConfig.reload()
+        discordConfig.reload()
+        filterConfig.reload()
     }
 }

@@ -18,7 +18,7 @@ class ChatMotdConfigHolder {
         surfConfigApi.createSpongeYmlConfig(
             ChatMotdConfig::class.java,
             plugin.dataFolder,
-            "chat_motd.yml"
+            "motd.yml"
         )
         configManager = surfConfigApi.getSpongeConfigManagerForConfig(
             ChatMotdConfig::class.java

@@ -18,7 +18,7 @@ class AutoDisablingConfigHolder {
         surfConfigApi.createSpongeYmlConfig(
             AutoDisablingConfig::class.java,
             plugin.dataFolder,
-            "auto_disabling.yml"
+            "disabling.yml"
         )
         configManager = surfConfigApi.getSpongeConfigManagerForConfig(
             AutoDisablingConfig::class.java

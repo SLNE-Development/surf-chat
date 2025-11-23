@@ -2,6 +2,7 @@ package dev.slne.surf.chat.server
 
 import dev.slne.surf.chat.core.common.ChatContextHolderImpl
 import dev.slne.surf.chat.core.common.util.SyncValues
+import dev.slne.surf.chat.server.config.*
 import dev.slne.surf.chat.server.database.repository.DenylistActionRepository
 import dev.slne.surf.chat.server.database.repository.DenylistRepository
 import dev.slne.surf.chat.server.database.table.*
@@ -23,7 +24,14 @@ class ServerMain : StandalonePlugin() {
         ChatContextHolderImpl.instance.context.getBean<DenylistRepository>()
     }
 
-    override suspend fun load() {}
+    override suspend fun load() {
+        autoDisablingConfig
+        chatMotdConfig
+        connectionMessageConfig
+        discordConfig
+        filterConfig
+    }
+
     override suspend fun enable() {
         transaction {
             SchemaUtils.create(

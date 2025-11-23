@@ -35,19 +35,23 @@ object UUIDSerializer : KSerializer<UUID> {
 object SyncValues {
     /**
      * Serializers module that provides UUID serialization support.
+     * This can be used to extend other serializers modules or create custom Json instances.
      */
-    private val serializersModule = SerializersModule {
+    val serializersModule = SerializersModule {
         contextual(UUIDSerializer)
     }
     
     /**
-     * Json configuration with UUID serialization support.
+     * Default Json configuration with UUID serialization support.
      * Use this Json instance for serialization/deserialization that involves UUIDs.
      */
     val json = Json {
         serializersModule = SyncValues.serializersModule
         ignoreUnknownKeys = true
         encodeDefaults = true
+        prettyPrint = false
+        isLenient = false
+        coerceInputValues = false
     }
     
     init {

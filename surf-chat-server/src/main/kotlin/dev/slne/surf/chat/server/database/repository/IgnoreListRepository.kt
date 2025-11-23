@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository
 @CoroutineTransactional
 class IgnoreListRepository {
     suspend fun cacheIgnorelist(uuid: ChatUuid) {
-        SyncValues.ignoreList.removeIf { it.first == uuid }
+        SyncValues.ignoreList.removeIf { it.user == uuid }
 
         val ignoreList = mutableObjectSetOf<IgnoreListEntry>()
 
@@ -30,11 +30,11 @@ class IgnoreListRepository {
             )
         }
 
-        SyncValues.ignoreList.add(uuid to ignoreList)
+        SyncValues.ignoreList.add(SyncValues.Ignorelist(uuid, ignoreList))
     }
 
     suspend fun storeIgnorelist(uuid: ChatUuid) {
-        val ignoreList = SyncValues.ignoreList.firstOrNull { it.first == uuid }?.second ?: return
+        val ignoreList = SyncValues.ignoreList.firstOrNull { it.user == uuid }?.entries ?: return
 
         IgnoreListEntity.find { IgnoreListTable.userUuid eq uuid }.forEach { it.delete() }
 

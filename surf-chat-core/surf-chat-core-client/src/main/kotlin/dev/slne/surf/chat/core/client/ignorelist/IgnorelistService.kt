@@ -13,36 +13,41 @@ import org.springframework.stereotype.Service
 @Service
 class IgnorelistService {
     fun getIgnoreList(uuid: ChatUuid) =
-        SyncValues.ignoreList.firstOrNull { it.first == uuid }?.second ?: emptySet()
+        SyncValues.ignoreList.firstOrNull { it.user == uuid }?.entries ?: emptySet()
 
     fun addToIgnoreList(ignorelistEntry: IgnoreListEntry) {
-        val entry = SyncValues.ignoreList.firstOrNull { it.first == ignorelistEntry.user }
+        val entry = SyncValues.ignoreList.firstOrNull { it.user == ignorelistEntry.user }
 
         if (entry != null) {
-            entry.second.add(ignorelistEntry)
+            entry.entries.add(ignorelistEntry)
 
-            SyncValues.ignoreList.removeIf { it.first == ignorelistEntry.user }
-            SyncValues.ignoreList.add(entry.first to entry.second)
+            SyncValues.ignoreList.removeIf { it.user == ignorelistEntry.user }
+            SyncValues.ignoreList.add(SyncValues.Ignorelist(entry.user, entry.entries))
         } else {
-            SyncValues.ignoreList.add(ignorelistEntry.user to mutableSetOf(ignorelistEntry))
+            SyncValues.ignoreList.add(
+                SyncValues.Ignorelist(
+                    ignorelistEntry.user,
+                    mutableSetOf(ignorelistEntry)
+                )
+            )
         }
     }
 
     fun removeFromIgnoreList(user: ChatUuid, target: ChatUuid) {
-        val entry = SyncValues.ignoreList.firstOrNull { it.first == user }
+        val entry = SyncValues.ignoreList.firstOrNull { it.user == user }
 
-        entry?.second?.removeIf { it.target == target }
+        entry?.entries?.removeIf { it.user == target }
 
         if (entry != null) {
-            SyncValues.ignoreList.removeIf { it.first == user }
-            SyncValues.ignoreList.add(entry.first to entry.second)
+            SyncValues.ignoreList.removeIf { it.user == user }
+            SyncValues.ignoreList.add(SyncValues.Ignorelist(entry.user, entry.entries))
         }
     }
 
     fun isIgnoring(user: ChatUuid, target: ChatUuid): Boolean {
-        val entry = SyncValues.ignoreList.firstOrNull { it.first == user }
+        val entry = SyncValues.ignoreList.firstOrNull { it.user == user }
 
-        return entry?.second?.any { it.target == target } ?: false
+        return entry?.entries?.any { it.target == target } ?: false
     }
 }
 

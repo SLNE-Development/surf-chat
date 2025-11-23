@@ -30,7 +30,7 @@ fun replyCommand() = commandAPICommand("reply") {
         val messageId = UUID.randomUUID()
 
         val targetUuid =
-            SyncValues.latestPrivateMessages.firstOrNull { it.first == player.uniqueId }?.second
+            SyncValues.latestPrivateMessages.firstOrNull { it.user == player.uniqueId }?.target
                 ?: return@playerExecutor run {
                     player.sendText {
                         appendPrefix()

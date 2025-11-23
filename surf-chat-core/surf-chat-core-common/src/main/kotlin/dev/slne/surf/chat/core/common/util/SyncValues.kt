@@ -6,6 +6,7 @@ import dev.slne.surf.chat.api.denylist.DenylistEntry
 import dev.slne.surf.chat.api.entry.IgnoreListEntry
 import dev.slne.surf.cloud.api.common.sync.SyncSet
 import dev.slne.surf.cloud.api.common.sync.SyncValue
+import kotlinx.serialization.Serializable
 
 typealias NameAndUuid = Pair<String, ChatUuid>
 
@@ -15,9 +16,9 @@ object SyncValues {
 
     val chatFunctionalities: SyncSet<Pair<String, Boolean>> =
         SyncSet("chat:functionalities")
-    val latestPrivateMessages: SyncSet<Pair<ChatUuid, ChatUuid>> =
+    val latestPrivateMessages: SyncSet<LastPrivateMessage> =
         SyncSet("chat:private:target")
-    val ignoreList = SyncSet<Pair<ChatUuid, MutableSet<IgnoreListEntry>>>("chat:ignorelist")
+    val ignoreList = SyncSet<Ignorelist>("chat:ignorelist")
 
     val allowedDomains = SyncSet<String>("chat:filter:domains")
     val spamInterval = SyncValue<Long>("chat:filter:spam_interval", 10000L)
@@ -30,4 +31,16 @@ object SyncValues {
         SyncValue<String>("chat:connection_messages:leave", "Internal Server Error (Leave)")
 
     fun init() {}
+
+    @Serializable
+    data class Ignorelist(
+        val user: ChatUuid,
+        val entries: MutableSet<IgnoreListEntry>
+    )
+
+    @Serializable
+    data class LastPrivateMessage(
+        val user: ChatUuid,
+        val target: ChatUuid
+    )
 }

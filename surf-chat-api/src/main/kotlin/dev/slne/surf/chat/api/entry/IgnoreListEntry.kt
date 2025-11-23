@@ -1,5 +1,6 @@
 package dev.slne.surf.chat.api.entry
 
+import dev.slne.surf.chat.api.ChatUuid
 import kotlinx.serialization.Serializable
 
 @Serializable

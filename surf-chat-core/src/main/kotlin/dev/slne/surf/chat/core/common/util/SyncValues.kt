@@ -53,9 +53,4 @@ object SyncValues {
         isLenient = false
         coerceInputValues = false
     }
-    
-    init {
-        // This initialization block ensures the object is loaded early
-        // and UUID serialization support is registered
-    }
 }

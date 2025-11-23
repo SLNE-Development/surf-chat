@@ -19,6 +19,8 @@ fun CommandAPICommand.functionalityStatusCommand() = subcommand("status") {
         player.sendText {
             appendPrefix()
             info("Der Chat ist derzeit für den Server ")
+            variableValue(server.name)
+            appendSpace()
             variableValue(if (functionalityService.isEnabled(server.name)) " aktiviert" else " deaktiviert")
             info(".")
         }

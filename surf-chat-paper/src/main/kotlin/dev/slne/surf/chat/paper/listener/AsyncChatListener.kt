@@ -41,8 +41,6 @@ class AsyncChatListener : Listener {
         val messageFormatter = MessageFormatterImpl(message.remove(channelExceptPattern))
         val validationResult = MessageValidatorImpl.componentValidator(message).validate(player)
 
-        println(validationResult)
-
         if (validationResult.isFailure()) {
             val error = validationResult.getErrorOrNull() ?: return
 

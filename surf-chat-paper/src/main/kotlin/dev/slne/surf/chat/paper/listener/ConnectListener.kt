@@ -2,6 +2,9 @@ package dev.slne.surf.chat.paper.listener
 
 import dev.slne.surf.chat.core.common.util.SyncValues
 import dev.slne.surf.chat.paper.hook.MiniPlaceholdersHook
+import dev.slne.surf.cloud.api.client.server.current
+import dev.slne.surf.cloud.api.common.server.CloudServer
+import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -9,24 +12,26 @@ import org.bukkit.event.player.PlayerJoinEvent
 class ConnectListener : Listener {
     @EventHandler
     fun onJoin(event: PlayerJoinEvent) {
-        if (SyncValues.connectionMessagesEnabled.get()) {
+        val connectionMessage =
+            SyncValues.connectMessages.firstOrNull { it.first == CloudServer.current().name }?.second
+        val motd =
+            SyncValues.chatMotds.firstOrNull { it.first == CloudServer.current().name }?.second
+
+        if (connectionMessage != null) {
             event.joinMessage(
                 MiniPlaceholdersHook.parse(
                     event.player,
-                    SyncValues.connectionMessagesJoin.get()
+                    connectionMessage
                 )
             )
+        } else {
+            event.joinMessage(null)
         }
-//      TODO: per server motd
-//        if (plugin.chatMotdConfig.enabled) {
-//            event.player.sendText {
-//                append(
-//                    MiniPlaceholdersHook.parse(
-//                        event.player,
-//                        plugin.chatMotdConfig.message
-//                    )
-//                )
-//            }
-//        }
+
+        if (motd != null) {
+            event.player.sendText {
+                append(MiniPlaceholdersHook.parse(event.player, motd))
+            }
+        }
     }
 }

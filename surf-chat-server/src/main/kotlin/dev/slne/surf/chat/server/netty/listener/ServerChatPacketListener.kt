@@ -13,10 +13,13 @@ import dev.slne.surf.chat.core.common.netty.packet.serverbound.message.Serverbou
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.message.ServerboundTeamChatMessagePacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.message.ServerboundTeamMessagePacket
 import dev.slne.surf.chat.core.common.permission.ChatPermissions
-import dev.slne.surf.chat.server.config.*
+import dev.slne.surf.chat.server.config.discordConfig
+import dev.slne.surf.chat.server.config.filterConfig
+import dev.slne.surf.chat.server.config.messageConfig
 import dev.slne.surf.chat.server.database.repository.DenylistActionRepository
 import dev.slne.surf.chat.server.database.repository.HistoryRepository
 import dev.slne.surf.chat.server.message.ServerMessageFormatterImpl
+import dev.slne.surf.chat.server.plugin
 import dev.slne.surf.cloud.api.common.meta.SurfNettyPacketHandler
 import dev.slne.surf.cloud.api.common.server.CloudServerManager
 import dev.slne.surf.cloud.api.server.netty.packet.broadcast
@@ -99,11 +102,11 @@ class ServerChatPacketListener(
 
     @SurfNettyPacketHandler
     fun handleReloadPacket(packet: ServerboundReloadPacket) {
-        autoDisablingConfig.reload()
-        chatMotdConfig.reload()
-        connectionMessageConfig.reload()
+        messageConfig.reload()
         discordConfig.reload()
         filterConfig.reload()
+
+        plugin.loadSyncValues()
 
         packet.respond(ClientboundReloadResultPacket(true))
     }

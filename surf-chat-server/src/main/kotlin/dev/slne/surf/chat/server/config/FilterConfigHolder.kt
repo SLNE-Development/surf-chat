@@ -11,12 +11,19 @@ class FilterConfigHolder {
     data class FilterConfig(
         val amount: Int = 5,
         val interval: Long = 3_000,
+        val disablingServers: List<DisablingServerConfig> = listOf(),
         val allowedDomains: List<String> = listOf(
             "castcrafter.de",
             "twitch.tv/castcrafter",
             "youtube.com/castcrafter",
             "discord.gg/castcrafter"
         )
+    )
+
+    @ConfigSerializable
+    data class DisablingServerConfig(
+        val server: String,
+        val maximumPlayersBeforeDisable: Int
     )
 
     private val configManager: SpongeConfigManager<FilterConfig>

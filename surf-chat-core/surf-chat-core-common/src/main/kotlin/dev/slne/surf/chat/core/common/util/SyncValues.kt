@@ -28,6 +28,7 @@ object SyncValues {
 
     val connectMessages = SyncSet<Pair<String, String>>("chat:connections:messages")
     val disconnectMessages = SyncSet<Pair<String, String>>("chat:quit:messages")
+    val chatMotds = SyncSet<Pair<String, String>>("chat:motd:messages")
 
     fun init() {}
 

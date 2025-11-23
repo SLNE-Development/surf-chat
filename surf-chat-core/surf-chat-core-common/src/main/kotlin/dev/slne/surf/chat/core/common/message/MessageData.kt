@@ -1,8 +1,8 @@
 package dev.slne.surf.chat.core.common.message
 
+import dev.slne.surf.chat.api.ChatUuid
 import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.message.MessageType
-import dev.slne.surf.chat.core.common.netty.packet.serializer.ChatUuid
 import dev.slne.surf.chat.core.common.netty.packet.serializer.MessageDataSerializer
 import dev.slne.surf.cloud.api.common.player.CloudPlayer
 import kotlinx.serialization.Serializable

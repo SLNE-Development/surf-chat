@@ -38,7 +38,7 @@ interface SurfChatApi {
         server: CloudServer,
         channel: Channel? = null,
         signedMessage: SignedMessage? = null,
-        messageUuid: UUID = UUID.randomUUID()
+        messageUuid: ChatUuid = UUID.randomUUID()
     )
 
     /**

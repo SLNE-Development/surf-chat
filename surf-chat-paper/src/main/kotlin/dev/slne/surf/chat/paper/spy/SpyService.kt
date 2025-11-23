@@ -1,8 +1,8 @@
 package dev.slne.surf.chat.paper.spy
 
+import dev.slne.surf.chat.api.ChatUuid
 import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.core.common.ChatContextHolderImpl
-import dev.slne.surf.chat.core.common.netty.packet.serializer.ChatUuid
 import dev.slne.surf.surfapi.core.api.util.mutableObject2ObjectMapOf
 import dev.slne.surf.surfapi.core.api.util.mutableObjectListOf
 import it.unimi.dsi.fastutil.objects.ObjectList

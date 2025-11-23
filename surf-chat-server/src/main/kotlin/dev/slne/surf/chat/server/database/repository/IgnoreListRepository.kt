@@ -1,7 +1,7 @@
 package dev.slne.surf.chat.server.database.repository
 
+import dev.slne.surf.chat.api.ChatUuid
 import dev.slne.surf.chat.api.entry.IgnoreListEntry
-import dev.slne.surf.chat.core.common.netty.packet.serializer.ChatUuid
 import dev.slne.surf.chat.core.common.util.SyncValues
 import dev.slne.surf.chat.server.database.entity.IgnoreListEntity
 import dev.slne.surf.chat.server.database.table.IgnoreListTable

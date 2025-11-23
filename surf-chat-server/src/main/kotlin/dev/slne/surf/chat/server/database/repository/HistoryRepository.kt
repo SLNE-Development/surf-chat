@@ -1,9 +1,9 @@
 package dev.slne.surf.chat.server.database.repository
 
+import dev.slne.surf.chat.api.ChatUuid
 import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.core.common.message.MessageData
-import dev.slne.surf.chat.core.common.netty.packet.serializer.ChatUuid
 import dev.slne.surf.chat.server.database.entity.HistoryEntity
 import dev.slne.surf.chat.server.database.table.HistoryTable
 import dev.slne.surf.cloud.api.server.plugin.CoroutineTransactional

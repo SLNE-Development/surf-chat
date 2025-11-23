@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.core.client.result
 
-import dev.slne.surf.chat.core.common.netty.packet.serializer.ChatUuid
+import dev.slne.surf.chat.api.ChatUuid
 import dev.slne.surf.chat.core.common.util.SyncValues
 import dev.slne.surf.surfapi.core.api.util.mutableObject2ObjectMapOf
 import dev.slne.surf.surfapi.core.api.util.mutableObjectListOf

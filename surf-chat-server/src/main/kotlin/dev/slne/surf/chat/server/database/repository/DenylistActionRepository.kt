@@ -1,10 +1,10 @@
 package dev.slne.surf.chat.server.database.repository
 
+import dev.slne.surf.chat.api.ChatUuid
 import dev.slne.surf.chat.api.denylist.DenylistAction
 import dev.slne.surf.chat.api.denylist.DenylistActionType
 import dev.slne.surf.chat.api.denylist.DenylistEntry
 import dev.slne.surf.chat.core.common.netty.packet.clientbound.ClientboundMessageDeletePacket
-import dev.slne.surf.chat.core.common.netty.packet.serializer.ChatUuid
 import dev.slne.surf.chat.core.common.util.SyncValues
 import dev.slne.surf.chat.server.config.discordConfig
 import dev.slne.surf.chat.server.database.entity.DenylistActionEntity

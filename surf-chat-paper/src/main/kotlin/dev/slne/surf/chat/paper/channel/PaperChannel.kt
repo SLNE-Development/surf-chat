@@ -1,9 +1,9 @@
 package dev.slne.surf.chat.paper.channel
 
+import dev.slne.surf.chat.api.ChatUuid
 import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.channel.ChannelMember
 import dev.slne.surf.chat.api.channel.ChannelVisibility
-import dev.slne.surf.chat.core.common.netty.packet.serializer.ChatUuid
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import java.util.*
 

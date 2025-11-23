@@ -3,9 +3,9 @@
 package dev.slne.surf.chat.core.client.ignorelist
 
 import dev.slne.surf.chat.api.ChatContextHolder
+import dev.slne.surf.chat.api.ChatUuid
 import dev.slne.surf.chat.api.InternalChatApi
 import dev.slne.surf.chat.api.entry.IgnoreListEntry
-import dev.slne.surf.chat.core.common.netty.packet.serializer.ChatUuid
 import dev.slne.surf.chat.core.common.util.SyncValues
 import org.springframework.beans.factory.getBean
 import org.springframework.stereotype.Service

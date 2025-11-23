@@ -1,11 +1,11 @@
 package dev.slne.surf.chat.paper.channel
 
+import dev.slne.surf.chat.api.ChatUuid
 import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.channel.ChannelMember
 import dev.slne.surf.chat.api.channel.ChannelRole
 import dev.slne.surf.chat.api.channel.ChannelVisibility
 import dev.slne.surf.chat.core.common.ChatContextHolderImpl
-import dev.slne.surf.chat.core.common.netty.packet.serializer.ChatUuid
 import dev.slne.surf.chat.paper.util.channelMember
 import dev.slne.surf.cloud.api.common.player.CloudPlayer
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf

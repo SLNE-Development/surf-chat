@@ -1,4 +1,4 @@
-package dev.slne.surf.chat.core.common.netty.packet.serializer
+package dev.slne.surf.chat.api
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable

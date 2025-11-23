@@ -1,5 +1,6 @@
 package dev.slne.surf.chat.api.channel
 
+import dev.slne.surf.chat.api.ChatUuid
 import dev.slne.surf.cloud.api.common.player.CloudPlayer
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import java.util.*
@@ -16,7 +17,7 @@ import java.util.*
  * @property createdAt The timestamp (in milliseconds since epoch) when the channel was created.
  */
 abstract class Channel(
-    open val channelUuid: UUID,
+    open val channelUuid: ChatUuid,
     open val channelName: String,
     open val members: ObjectSet<ChannelMember>,
     open val bannedPlayers: ObjectSet<UUID>,

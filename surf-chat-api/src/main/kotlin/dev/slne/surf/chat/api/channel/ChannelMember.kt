@@ -1,7 +1,7 @@
 package dev.slne.surf.chat.api.channel
 
+import dev.slne.surf.chat.api.ChatUuid
 import dev.slne.surf.cloud.api.common.player.CloudPlayer
-import java.util.*
 
 /**
  * Represents a member of a chat channel.
@@ -11,7 +11,7 @@ import java.util.*
  * @property role The role of the channel member in the chat channel.
  */
 data class ChannelMember(
-    val uuid: UUID,
+    val uuid: ChatUuid,
     val name: String,
     var role: ChannelRole
 ) {

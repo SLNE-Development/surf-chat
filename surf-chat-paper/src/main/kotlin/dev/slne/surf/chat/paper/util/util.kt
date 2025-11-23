@@ -47,12 +47,12 @@ fun Long.formatAgo(): String {
     val years = totalMonths / 12
 
     return when {
-        years > 0 -> "%d.%02d y ago".format(years, months)
-        totalMonths > 0 -> "%d.%02d mo ago".format(totalMonths, days)
-        totalDays > 0 -> "%d.%02d d ago".format(totalDays, hours)
-        totalHours > 0 -> "%d.%02d h ago".format(totalHours, minutes)
-        totalMinutes > 0 -> "%d.%02d m ago".format(totalMinutes, seconds)
-        else -> "%d.%02d s ago".format(seconds, 0)
+        years > 0 -> "%d.%02dy ago".format(years, months)
+        totalMonths > 0 -> "%d.%02dmo ago".format(totalMonths, days)
+        totalDays > 0 -> "%d.%02dd ago".format(totalDays, hours)
+        totalHours > 0 -> "%d.%02dh ago".format(totalHours, minutes)
+        totalMinutes > 0 -> "%d.%02dm ago".format(totalMinutes, seconds)
+        else -> "%d.%02ds ago".format(seconds, 0)
     }
 }
 

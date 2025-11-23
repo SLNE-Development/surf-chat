@@ -37,7 +37,7 @@ class FunctionalityService {
     fun isLocalChatEnabled() =
         SyncValues.chatFunctionalities.firstOrNull { it.first == CloudServer.current().name }?.second == true
 
-    fun getServerFunctionalities() = SyncValues.chatFunctionalities
+    fun getServerFunctionalities() = CloudServer.all().map { it.name to isEnabled(it.name) }
 }
 
 val functionalityService get() = ChatContextHolderImpl.instance.context.getBean<FunctionalityService>()

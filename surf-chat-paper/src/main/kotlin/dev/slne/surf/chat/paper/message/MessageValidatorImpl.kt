@@ -7,11 +7,15 @@ import dev.slne.surf.chat.core.client.result.CharCheckResult
 import dev.slne.surf.chat.core.client.result.LinkCheckResult
 import dev.slne.surf.chat.core.client.result.SpamCheckResult
 import dev.slne.surf.chat.core.common.message.MessageValidator
+import dev.slne.surf.chat.core.common.util.SyncValues
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.paper.util.hasPlatformPermission
 import dev.slne.surf.chat.paper.util.plainText
+import dev.slne.surf.cloud.api.client.server.current
 import dev.slne.surf.cloud.api.common.player.CloudPlayer
+import dev.slne.surf.cloud.api.common.server.CloudServer
 import net.kyori.adventure.text.Component
+import org.bukkit.Bukkit
 
 class MessageValidatorImpl {
     companion object {
@@ -84,11 +88,15 @@ class MessageValidatorImpl {
         }
 
 
-        fun checkAutoDisabling(player: CloudPlayer): Boolean = false //TODO: reimplement
-//            !player.hasPlatformPermission(SurfChatPermissionRegistry.AUTO_CHAT_DISABLING_BYPASS)
-//                    && Bukkit.getOnlinePlayers()
-//                .count() > plugin.autoDisablingConfig.maximumPlayersBeforeDisable
-//                    && plugin.autoDisablingConfig.enabled
+        fun checkAutoDisabling(player: CloudPlayer): Boolean =
+            !player.hasPlatformPermission(SurfChatPermissionRegistry.AUTO_CHAT_DISABLING_BYPASS) && Bukkit.getOnlinePlayers()
+                .count() > (getMinAmountForServer() ?: 0) && isDisablingEnabled()
+
+        fun isDisablingEnabled() =
+            SyncValues.autoDisablingMinAmounts.any { it.first == CloudServer.current().name }
+
+        fun getMinAmountForServer(): Int? =
+            SyncValues.autoDisablingMinAmounts.firstOrNull { it.first == CloudServer.current().name }?.second
     }
 
     private class ComponentMessageValidator(

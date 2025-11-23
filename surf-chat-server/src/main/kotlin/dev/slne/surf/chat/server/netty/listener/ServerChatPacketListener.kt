@@ -1,6 +1,7 @@
 package dev.slne.surf.chat.server.netty.listener
 
 import dev.slne.surf.chat.core.common.netty.packet.clientbound.ClientboundMessageDeletePacket
+import dev.slne.surf.chat.core.common.netty.packet.clientbound.ClientboundReloadResultPacket
 import dev.slne.surf.chat.core.common.netty.packet.clientbound.history.ClientboundHistoryLookupResultPacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.ServerboundDenylistActionPacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.ServerboundMessageDeletePacket
@@ -103,5 +104,7 @@ class ServerChatPacketListener(
         connectionMessageConfig.reload()
         discordConfig.reload()
         filterConfig.reload()
+
+        packet.respond(ClientboundReloadResultPacket(true))
     }
 }

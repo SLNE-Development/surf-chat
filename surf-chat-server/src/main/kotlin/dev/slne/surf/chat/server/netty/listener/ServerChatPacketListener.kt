@@ -1,7 +1,9 @@
 package dev.slne.surf.chat.server.netty.listener
 
+import dev.slne.surf.chat.core.common.netty.packet.clientbound.ClientboundMessageDeletePacket
 import dev.slne.surf.chat.core.common.netty.packet.clientbound.history.ClientboundHistoryLookupResultPacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.ServerboundDenylistActionPacket
+import dev.slne.surf.chat.core.common.netty.packet.serverbound.ServerboundMessageDeletePacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.ServerboundHistoryLogPacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.ServerboundHistoryLookupPacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.ServerboundHistoryMarkDeletedPacket
@@ -14,6 +16,7 @@ import dev.slne.surf.chat.server.database.repository.HistoryRepository
 import dev.slne.surf.chat.server.message.ServerMessageFormatterImpl
 import dev.slne.surf.cloud.api.common.meta.SurfNettyPacketHandler
 import dev.slne.surf.cloud.api.common.server.CloudServerManager
+import dev.slne.surf.cloud.api.server.netty.packet.broadcast
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import org.springframework.stereotype.Component
@@ -84,5 +87,10 @@ class ServerChatPacketListener(
             packet.signature,
             packet.player
         )
+    }
+
+    @SurfNettyPacketHandler
+    fun handleMessageDeletePacket(packet: ServerboundMessageDeletePacket) {
+        ClientboundMessageDeletePacket(packet.signature).broadcast()
     }
 }

@@ -26,9 +26,9 @@ object SyncValues {
 
     val connectionMessagesEnabled = SyncValue<Boolean>("chat:connection_messages:enabled", true)
     val connectionMessagesJoin =
-        SyncValue<String>("chat:connection_messages:join", "Internal Server Error (Join)")
+        SyncValue<String>("chat:connection_messages:join", "Internal Server Error (Join Message)")
     val connectionMessagesLeave =
-        SyncValue<String>("chat:connection_messages:leave", "Internal Server Error (Leave)")
+        SyncValue<String>("chat:connection_messages:leave", "Internal Server Error (Leave Message)")
 
     fun init() {}
 

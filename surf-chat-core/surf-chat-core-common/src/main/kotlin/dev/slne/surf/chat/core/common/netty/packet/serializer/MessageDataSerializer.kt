@@ -26,7 +26,7 @@ class MessageDataSerializer : KSerializer<MessageData> {
         encoder.encodeNullableSerializableValue(CloudPlayerSerializer, value.receiver)
         encoder.encodeLong(value.sentAt)
         encoder.encodeString(value.server)
-        encoder.encodeString(value.channel as String)
+        encoder.encodeString(value.channel ?: "null")
         encoder.encodeNullableSerializableValue(SignedMessageSignatureSerializer, value.signature)
         encoder.encodeString(value.type.name)
     }
@@ -38,7 +38,9 @@ class MessageDataSerializer : KSerializer<MessageData> {
         val receiver = decoder.decodeNullableSerializableValue(CloudPlayerSerializer)
         val sentAt = decoder.decodeLong()
         val server = decoder.decodeString()
-        val channel = decoder.decodeString()
+        val channel = decoder.decodeString().let {
+            if (it == "null") null else it
+        }
         val signature = decoder.decodeNullableSerializableValue(SignedMessageSignatureSerializer)
         val type = MessageType.valueOf(decoder.decodeString())
 

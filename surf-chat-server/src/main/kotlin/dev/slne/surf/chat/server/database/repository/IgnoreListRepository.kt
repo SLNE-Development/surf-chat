@@ -6,6 +6,7 @@ import dev.slne.surf.chat.core.common.util.SyncValues
 import dev.slne.surf.chat.server.database.entity.IgnoreListEntity
 import dev.slne.surf.chat.server.database.table.IgnoreListTable
 import dev.slne.surf.cloud.api.server.plugin.CoroutineTransactional
+import dev.slne.surf.surfapi.core.api.util.logger
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.springframework.stereotype.Repository
@@ -31,6 +32,8 @@ class IgnoreListRepository {
         }
 
         SyncValues.ignoreList.add(SyncValues.Ignorelist(uuid, ignoreList))
+
+        logger().atInfo().log("Cached ignorelist for user $uuid with ${ignoreList.size} entries.")
     }
 
     suspend fun storeIgnorelist(uuid: ChatUuid) {
@@ -47,5 +50,7 @@ class IgnoreListRepository {
                 createdAt = it.createdAt
             }
         }
+
+        logger().atInfo().log("Stored ignorelist for user $uuid with ${ignoreList.size} entries.")
     }
 }

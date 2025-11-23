@@ -54,6 +54,7 @@ class ServerMessageFormatterImpl(val message: Component) {
         darkSpacer(" | ")
         appendName(player)
         darkSpacer(" >> ")
+        append(messageData.message)
 
         hoverEvent(buildText { appendMessageData(messageData) })
         clickSuggestsCommand("/teamchat ")

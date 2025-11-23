@@ -19,7 +19,8 @@ fun SurfComponentBuilder.appendMessageData(messageData: MessageData) = append(bu
 
 suspend fun SurfComponentBuilder.appendName(player: CloudPlayer) {
     val prefix = player.getLuckpermsMetaData("prefix")
+    val pString = prefix ?: ""
     append(
-        MiniMessage.miniMessage().deserialize("$prefix${player.name}").colorIfAbsent(Colors.WHITE)
+        MiniMessage.miniMessage().deserialize("$pString${player.name}").colorIfAbsent(Colors.WHITE)
     )
 }

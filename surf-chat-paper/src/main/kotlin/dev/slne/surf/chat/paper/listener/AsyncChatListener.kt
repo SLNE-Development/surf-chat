@@ -6,6 +6,7 @@ import dev.slne.surf.chat.core.common.message.MessageData
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.ServerboundDenylistActionPacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.ServerboundHistoryLogPacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.message.ServerboundTeamMessagePacket
+import dev.slne.surf.chat.core.common.util.SyncValues
 import dev.slne.surf.chat.paper.channel.channelService
 import dev.slne.surf.chat.paper.message.MessageFormatterImpl
 import dev.slne.surf.chat.paper.message.MessageValidatorImpl
@@ -13,6 +14,7 @@ import dev.slne.surf.chat.paper.spy.spyService
 import dev.slne.surf.chat.paper.util.*
 import dev.slne.surf.cloud.api.client.netty.packet.fireAndForget
 import dev.slne.surf.cloud.api.client.server.current
+import dev.slne.surf.cloud.api.common.player.CloudPlayer
 import dev.slne.surf.cloud.api.common.player.toCloudPlayer
 import dev.slne.surf.cloud.api.common.server.CloudServer
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
@@ -121,6 +123,7 @@ class AsyncChatListener : Listener {
             }
         } else {
             event.viewers().removeIf { it.isConsole() }
+            event.viewers().removeIf { isIgnored(it.toCloudPlayer(), player) }
             event.renderer { _, _, _, viewerAudience ->
                 messageFormatter.formatGlobal(
                     data.withReceiver(viewerAudience.toCloudPlayer())
@@ -129,5 +132,16 @@ class AsyncChatListener : Listener {
         }
 
         ServerboundHistoryLogPacket(data.withChannel(channel)).fireAndForget()
+    }
+
+    fun isIgnored(player: CloudPlayer?, sender: CloudPlayer): Boolean {
+        if (player == null) {
+            return false
+        }
+
+        return SyncValues.ignoreList
+            .firstOrNull { it.user == player.uuid }
+            ?.entries
+            ?.any { it.target == sender.uuid } == true
     }
 }

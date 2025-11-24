@@ -13,6 +13,7 @@ import dev.slne.surf.chat.core.common.netty.packet.serverbound.message.Serverbou
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.message.ServerboundTeamChatMessagePacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.message.ServerboundTeamMessagePacket
 import dev.slne.surf.chat.core.common.permission.ChatPermissions
+import dev.slne.surf.chat.core.common.util.SyncValues
 import dev.slne.surf.chat.server.config.discordConfig
 import dev.slne.surf.chat.server.config.filterConfig
 import dev.slne.surf.chat.server.config.messageConfig
@@ -21,6 +22,7 @@ import dev.slne.surf.chat.server.database.repository.HistoryRepository
 import dev.slne.surf.chat.server.message.ServerMessageFormatterImpl
 import dev.slne.surf.chat.server.plugin
 import dev.slne.surf.cloud.api.common.meta.SurfNettyPacketHandler
+import dev.slne.surf.cloud.api.common.player.CloudPlayer
 import dev.slne.surf.cloud.api.common.server.CloudServerManager
 import dev.slne.surf.cloud.api.server.netty.packet.broadcast
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
@@ -54,6 +56,14 @@ class ServerChatPacketListener(
     @SurfNettyPacketHandler
     suspend fun handlePrivateMessagePacket(packet: ServerboundPrivateMessagePacket) {
         val formatter = ServerMessageFormatterImpl(packet.messageData.message)
+
+        if (isIgnored(packet.messageData.receiver, packet.messageData.sender)) {
+            packet.messageData.sender.sendText {
+                appendPrefix()
+                error("Deine Nachricht konnte nicht zugestellt werden.")
+            }
+            return
+        }
 
         packet.messageData.sender.sendText {
             append(formatter.formatOutgoingPm(packet.messageData))
@@ -109,5 +119,16 @@ class ServerChatPacketListener(
         plugin.loadSyncValues()
 
         packet.respond(ClientboundReloadResultPacket(true))
+    }
+
+    private fun isIgnored(player: CloudPlayer?, sender: CloudPlayer): Boolean {
+        if (player == null) {
+            return false
+        }
+
+        return SyncValues.ignoreList
+            .firstOrNull { it.user == player.uuid }
+            ?.entries
+            ?.any { it.target == sender.uuid } == true
     }
 }

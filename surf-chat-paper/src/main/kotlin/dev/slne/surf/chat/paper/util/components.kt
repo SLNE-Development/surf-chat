@@ -53,16 +53,6 @@ fun SurfComponentBuilder.appendDelete(messageData: MessageData) = append(buildTe
     })
 })
 
-fun SurfComponentBuilder.appendMessageData(messageData: MessageData) = append(buildText {
-    info("Gesendet von ")
-    variableValue(messageData.sender.name)
-    info(" am ")
-    variableValue(messageData.sentAt.formatTime())
-    appendNewline()
-    info("Gesendet auf Server ")
-    variableValue(messageData.server)
-})
-
 fun SurfComponentBuilder.appendName(player: Player) = append {
     append(
         MiniMessage.miniMessage()

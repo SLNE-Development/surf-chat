@@ -1,7 +1,7 @@
 package dev.slne.surf.chat.server.config
 
+import dev.slne.surf.chat.core.common.util.miniMessage
 import dev.slne.surf.chat.server.plugin
-import dev.slne.surf.chat.server.util.miniMessage
 import dev.slne.surf.surfapi.core.api.config.manager.SpongeConfigManager
 import dev.slne.surf.surfapi.core.api.config.surfConfigApi
 import dev.slne.surf.surfapi.core.api.messages.Colors

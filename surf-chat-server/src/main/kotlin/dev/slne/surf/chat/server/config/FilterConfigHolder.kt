@@ -11,7 +11,20 @@ class FilterConfigHolder {
     data class FilterConfig(
         val amount: Int = 5,
         val interval: Long = 3_000,
-        val disablingServers: List<DisablingServerConfig> = listOf(),
+        val disablingServers: List<DisablingServerConfig> = listOf(
+            DisablingServerConfig(
+                "lobby01",
+                50
+            ),
+            DisablingServerConfig(
+                "lobby02",
+                50
+            ),
+            DisablingServerConfig(
+                "lobby03",
+                50
+            )
+        ),
         val allowedDomains: List<String> = listOf(
             "castcrafter.de",
             "twitch.tv/castcrafter",

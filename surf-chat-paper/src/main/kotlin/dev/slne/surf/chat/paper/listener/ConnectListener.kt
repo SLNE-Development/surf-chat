@@ -13,9 +13,9 @@ class ConnectListener : Listener {
     @EventHandler
     fun onJoin(event: PlayerJoinEvent) {
         val connectionMessage =
-            SyncValues.connectMessages.firstOrNull { it.first == CloudServer.current().name }?.second
+            SyncValues.connectMessages.firstOrNull { it.first.matches(CloudServer.current().name) }?.second
         val motd =
-            SyncValues.chatMotds.firstOrNull { it.first == CloudServer.current().name }?.second
+            SyncValues.chatMotds.firstOrNull { it.first.matches(CloudServer.current().name) }?.second
 
         if (connectionMessage != null) {
             event.joinMessage(

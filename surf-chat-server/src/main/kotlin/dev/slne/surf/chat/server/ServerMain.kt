@@ -54,10 +54,14 @@ class ServerMain : StandalonePlugin() {
         SyncValues.spamInterval.set(filterConfig.config.interval)
         SyncValues.spamAmount.set(filterConfig.config.amount)
 
-        SyncValues.autoDisablingMinAmounts.addAll(filterConfig.config.disablingServers.map { it.server to it.maximumPlayersBeforeDisable })
-        SyncValues.connectMessages.addAll(messageConfig.config.connectionMessages.map { it.server to it.joinMessage })
-        SyncValues.disconnectMessages.addAll(messageConfig.config.connectionMessages.map { it.server to it.leaveMessage })
-        SyncValues.chatMotds.addAll(messageConfig.config.chatMotds.map { it.server to it.motd })
+        SyncValues.autoDisablingMinAmounts.addAll(filterConfig.config.disablingServers.map {
+            Regex(
+                it.server
+            ) to it.maximumPlayersBeforeDisable
+        })
+        SyncValues.connectMessages.addAll(messageConfig.config.connectionMessages.map { Regex(it.server) to it.joinMessage })
+        SyncValues.disconnectMessages.addAll(messageConfig.config.connectionMessages.map { Regex(it.server) to it.leaveMessage })
+        SyncValues.chatMotds.addAll(messageConfig.config.chatMotds.map { Regex(it.server) to it.motd })
     }
 }
 

@@ -24,11 +24,11 @@ object SyncValues {
     val spamInterval = SyncValue<Long>("chat:filter:spam_interval", 10000L)
     val spamAmount = SyncValue<Int>("chat:filter:spam_amount", 5)
 
-    val autoDisablingMinAmounts = SyncSet<Pair<String, Int>>("chat:disabling:amounts")
+    val autoDisablingMinAmounts = SyncSet<Pair<Regex, Int>>("chat:disabling:amounts")
 
-    val connectMessages = SyncSet<Pair<String, String>>("chat:connections:messages")
-    val disconnectMessages = SyncSet<Pair<String, String>>("chat:quit:messages")
-    val chatMotds = SyncSet<Pair<String, String>>("chat:motd:messages")
+    val connectMessages = SyncSet<Pair<Regex, String>>("chat:connections:messages")
+    val disconnectMessages = SyncSet<Pair<Regex, String>>("chat:quit:messages")
+    val chatMotds = SyncSet<Pair<Regex, String>>("chat:motd:messages")
 
     fun init() {}
 

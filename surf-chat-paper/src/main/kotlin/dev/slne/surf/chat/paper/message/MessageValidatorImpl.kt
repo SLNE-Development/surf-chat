@@ -93,10 +93,10 @@ class MessageValidatorImpl {
                 .count() > (getMinAmountForServer() ?: 0) && isDisablingEnabled()
 
         fun isDisablingEnabled() =
-            SyncValues.autoDisablingMinAmounts.any { it.first.matches(CloudServer.current().name) }
+            SyncValues.autoDisablingMinAmounts.any { it.serverPattern.matches(CloudServer.current().name) }
 
         fun getMinAmountForServer(): Int? =
-            SyncValues.autoDisablingMinAmounts.firstOrNull { it.first.matches(CloudServer.current().name) }?.second
+            SyncValues.autoDisablingMinAmounts.firstOrNull { it.serverPattern.matches(CloudServer.current().name) }?.value
     }
 
     private class ComponentMessageValidator(

@@ -21,7 +21,7 @@ class DisconnectListener : Listener {
         }
 
         val disconnectMessage =
-            SyncValues.disconnectMessages.firstOrNull { it.first.matches(CloudServer.current().name) }?.second
+            SyncValues.disconnectMessages.firstOrNull { it.serverPattern.matches(CloudServer.current().name) }?.message
 
         if (disconnectMessage != null) {
             event.quitMessage(

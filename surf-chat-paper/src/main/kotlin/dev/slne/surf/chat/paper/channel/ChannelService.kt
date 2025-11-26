@@ -8,6 +8,7 @@ import dev.slne.surf.chat.api.channel.ChannelVisibility
 import dev.slne.surf.chat.core.common.ChatContextHolderImpl
 import dev.slne.surf.chat.paper.util.channelMember
 import dev.slne.surf.cloud.api.common.player.CloudPlayer
+import dev.slne.surf.cloud.api.common.player.OfflineCloudPlayer
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import org.springframework.beans.factory.getBean
@@ -48,7 +49,7 @@ class ChannelService {
     fun getChannel(channelUuid: ChatUuid) =
         channels[channelUuid]
 
-    fun getChannel(user: CloudPlayer) =
+    fun getChannel(user: OfflineCloudPlayer) =
         channels.values.firstOrNull { it.isMember(user) }
 
     fun getChannels(): ObjectSet<Channel> =

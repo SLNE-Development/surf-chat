@@ -3,6 +3,7 @@ package dev.slne.surf.chat.paper.util
 import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.channel.ChannelMember
 import dev.slne.surf.cloud.api.common.player.CloudPlayer
+import dev.slne.surf.cloud.api.common.player.OfflineCloudPlayer
 import dev.slne.surf.cloud.api.common.player.toCloudPlayer
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.surfapi.core.api.messages.builder.SurfComponentBuilder
@@ -37,12 +38,14 @@ val CloudPlayer.bukkitPlayer get() = Bukkit.getPlayer(this.uuid)
 val Player.cloudPlayer
     get() = CloudPlayer[this.uniqueId] ?: error("CloudPlayer not found for ${this.uniqueId}")
 
-fun CloudPlayer.channelMember(channel: Channel) =
+fun OfflineCloudPlayer.channelMember(channel: Channel) =
     channel.members.firstOrNull { it.uuid == this.uuid }
 
 val PlayerEvent.cloudPlayer
     get() = this.player.toCloudPlayer()
         ?: error("CloudPlayer not found for ${this.player.uniqueId}")
+
+val PlayerEvent.offlineCloudPlayer get() = OfflineCloudPlayer[this.player.uniqueId]
 
 
 fun ChannelMember.sendText(block: SurfComponentBuilder.() -> Unit) = player()?.sendText { block() }

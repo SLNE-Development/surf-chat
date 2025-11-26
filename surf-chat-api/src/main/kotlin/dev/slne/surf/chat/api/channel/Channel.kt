@@ -2,6 +2,7 @@ package dev.slne.surf.chat.api.channel
 
 import dev.slne.surf.chat.api.ChatUuid
 import dev.slne.surf.cloud.api.common.player.CloudPlayer
+import dev.slne.surf.cloud.api.common.player.OfflineCloudPlayer
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import java.util.*
 
@@ -48,7 +49,7 @@ abstract class Channel(
      * @param user The user to check.
      * @return `true` if the user is a member, otherwise `false`.
      */
-    fun isMember(user: CloudPlayer): Boolean = members.any { it.uuid == user.uuid }
+    fun isMember(user: OfflineCloudPlayer): Boolean = members.any { it.uuid == user.uuid }
 
     /**
      * Checks if a user is the owner of the channel.

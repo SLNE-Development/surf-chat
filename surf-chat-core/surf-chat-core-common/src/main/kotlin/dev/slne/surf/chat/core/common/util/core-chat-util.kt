@@ -20,15 +20,15 @@ fun SurfComponentBuilder.appendMessageData(messageData: MessageData) = append(bu
     variableValue(messageData.sender.name)
 
     appendNewline()
-    appendSpace()
     appendLinePrefix()
+    appendSpace()
     spacer("am")
     appendSpace()
     variableValue(messageData.sentAt.formatTime())
 
     appendNewline()
-    appendSpace()
     appendLinePrefix()
+    appendSpace()
     spacer("auf")
     appendSpace()
     variableValue(messageData.server)

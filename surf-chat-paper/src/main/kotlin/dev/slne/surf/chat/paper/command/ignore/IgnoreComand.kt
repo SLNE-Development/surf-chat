@@ -18,10 +18,10 @@ fun ignoreCommand() = commandAPICommand("ignore", plugin) {
     ignoreListCommand()
     offlineCloudPlayerArgument("target")
     playerExecutor { player, args ->
-        val deferred: Deferred<OfflineCloudPlayer?> by args
+        val deferred: Deferred<OfflineCloudPlayer>? by args
 
         plugin.launch {
-            val target = deferred.await() ?: run {
+            val target = deferred?.await() ?: run {
                 player.sendText {
                     appendPrefix()
                     error("Der angegebene Spieler wurde nicht gefunden.")

@@ -64,6 +64,10 @@ class DenylistActionRepository(
         signature: SignedMessage.Signature?,
         sender: OfflineCloudPlayer
     ) = withContext(Dispatchers.IO) {
+        signature?.let {
+            ClientboundMessageDeletePacket(it).broadcast()
+        }
+
         val punishManager = sender.punishmentManager
 
         var punishmentId: String
@@ -133,10 +137,6 @@ class DenylistActionRepository(
                     punishmentId
                 )
             }
-        }
-
-        signature?.let {
-            ClientboundMessageDeletePacket(it).broadcast()
         }
 
         historyRepository.markDeleted(messageUuid, "Arty Support (BLOCKED: ${entry.word})")

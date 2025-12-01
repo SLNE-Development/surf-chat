@@ -13,7 +13,6 @@ import dev.slne.surf.chat.paper.channel.channelService
 import dev.slne.surf.chat.paper.message.MessageStatisticsService
 import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.chat.paper.util.cancel
-import dev.slne.surf.chat.paper.util.plainText
 import dev.slne.surf.cloud.api.client.server.current
 import dev.slne.surf.cloud.api.common.player.CloudPlayer
 import dev.slne.surf.cloud.api.common.player.toCloudPlayer
@@ -45,7 +44,6 @@ class AsyncChatListener : Listener {
         val server = CloudServer.current()
         val message = event.message()
         val messageId = UUID.randomUUID()
-        val plainMessage = message.plainText()
 
         var data = MessageData(
             message,

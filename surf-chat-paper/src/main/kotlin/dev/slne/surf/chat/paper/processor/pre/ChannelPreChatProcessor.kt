@@ -39,15 +39,15 @@ class ChannelPreChatProcessor : PreChatProcessor {
 
             val channelData = data.withChannel(channel).withReceiver(viewer)
 
-            if (spyService.getChannelSpies(channel).contains(viewer.uuid)) {
-                finalMessage = messageFormatter.formatChannelSpy(
+            finalMessage = if (spyService.getChannelSpies(channel).contains(viewer.uuid)) {
+                messageFormatter.formatChannelSpy(
+                    channelData
+                )
+            } else {
+                messageFormatter.formatChannel(
                     channelData
                 )
             }
-
-            finalMessage = messageFormatter.formatChannel(
-                channelData
-            )
 
             finalMessage
         }

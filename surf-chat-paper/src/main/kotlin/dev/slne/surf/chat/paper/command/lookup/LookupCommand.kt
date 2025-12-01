@@ -61,7 +61,6 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
         }
 
         plugin.launch {
-
             val filter = query?.parseFilters() ?: HistoryFilter.empty()
             val page = query?.get("--page")?.toIntOrNull() ?: 1
 

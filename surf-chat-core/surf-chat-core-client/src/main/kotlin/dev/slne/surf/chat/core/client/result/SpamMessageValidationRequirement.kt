@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.core.client.result
 
-import dev.slne.surf.chat.core.common.message.MessageData
+import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.core.common.message.MessageValidationRequirement
 import dev.slne.surf.chat.core.common.util.SyncValues
 import dev.slne.surf.surfapi.core.api.util.mutableObject2ObjectMapOf

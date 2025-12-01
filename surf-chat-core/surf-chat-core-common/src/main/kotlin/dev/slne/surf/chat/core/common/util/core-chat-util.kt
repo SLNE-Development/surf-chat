@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.core.common.util
 
-import dev.slne.surf.chat.core.common.message.MessageData
+import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.builder.SurfComponentBuilder
 import net.kyori.adventure.text.format.TextColor

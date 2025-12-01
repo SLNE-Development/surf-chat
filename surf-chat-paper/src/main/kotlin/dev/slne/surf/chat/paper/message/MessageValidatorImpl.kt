@@ -3,7 +3,7 @@ package dev.slne.surf.chat.paper.message
 import dev.slne.surf.chat.api.message.MessageValidationResult
 import dev.slne.surf.chat.core.client.denylist.denylistService
 import dev.slne.surf.chat.core.client.functionality.functionalityService
-import dev.slne.surf.chat.core.common.message.MessageData
+import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.core.common.message.MessageValidationRequirement
 import dev.slne.surf.chat.core.common.message.MessageValidator
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.ServerboundDenylistActionPacket
@@ -59,7 +59,7 @@ class MessageValidatorImpl {
                         messageData.signature,
                         messageData.sender
                     ).fireAndForget()
-                    
+
                     return MessageValidationResult.Failure(
                         "Bitte achte auf deine Wortwahl!"
                     )

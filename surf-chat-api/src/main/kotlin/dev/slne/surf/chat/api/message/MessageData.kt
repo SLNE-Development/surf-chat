@@ -1,9 +1,7 @@
-package dev.slne.surf.chat.core.common.message
+package dev.slne.surf.chat.api.message
 
 import dev.slne.surf.chat.api.ChatUuid
 import dev.slne.surf.chat.api.channel.Channel
-import dev.slne.surf.chat.api.message.MessageType
-import dev.slne.surf.chat.core.common.netty.packet.serializer.MessageDataSerializer
 import dev.slne.surf.cloud.api.common.player.CloudPlayer
 import dev.slne.surf.surfapi.core.api.messages.adventure.plain
 import kotlinx.serialization.Serializable
@@ -110,11 +108,11 @@ data class MessageData(
     }
 
     val sender: CloudPlayer by lazy {
-        CloudPlayer[senderUuid] ?: error("Message sender $senderUuid not found")
+        CloudPlayer.Companion[senderUuid] ?: error("Message sender $senderUuid not found")
     }
 
     val receiver: CloudPlayer? by lazy {
-        receiverUuid?.let { CloudPlayer[it] }
+        receiverUuid?.let { CloudPlayer.Companion[it] }
     }
 
     fun withReceiver(receiver: CloudPlayer?) = copy(receiverUuid = receiver?.uuid)

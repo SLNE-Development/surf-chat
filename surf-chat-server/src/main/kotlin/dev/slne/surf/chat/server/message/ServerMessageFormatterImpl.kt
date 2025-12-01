@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.server.message
 
-import dev.slne.surf.chat.core.common.message.MessageData
+import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.core.common.util.appendMessageData
 import dev.slne.surf.chat.server.util.appendName
 import dev.slne.surf.surfapi.core.api.messages.Colors

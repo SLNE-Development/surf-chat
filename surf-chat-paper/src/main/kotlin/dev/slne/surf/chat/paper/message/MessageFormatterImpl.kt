@@ -2,7 +2,7 @@ package dev.slne.surf.chat.paper.message
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.sksamuel.aedile.core.expireAfterWrite
-import dev.slne.surf.chat.core.common.message.MessageData
+import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.core.common.message.MessageFormatter
 import dev.slne.surf.chat.core.common.util.appendMessageData
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry

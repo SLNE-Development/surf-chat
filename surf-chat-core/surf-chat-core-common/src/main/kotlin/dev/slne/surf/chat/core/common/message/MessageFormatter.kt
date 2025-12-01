@@ -1,5 +1,6 @@
 package dev.slne.surf.chat.core.common.message
 
+import dev.slne.surf.chat.api.message.MessageData
 import net.kyori.adventure.text.Component
 
 /**

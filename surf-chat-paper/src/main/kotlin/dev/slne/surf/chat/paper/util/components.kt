@@ -1,7 +1,7 @@
 package dev.slne.surf.chat.paper.util
 
 import dev.slne.surf.chat.api.channel.Channel
-import dev.slne.surf.chat.core.common.message.MessageData
+import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.ServerboundMessageDeletePacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.ServerboundHistoryMarkDeletedPacket
 import dev.slne.surf.chat.paper.hook.LuckPermsHook

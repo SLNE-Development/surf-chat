@@ -1,4 +1,4 @@
-package dev.slne.surf.chat.core.common.netty.packet.serializer
+package dev.slne.surf.chat.api.message
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -15,12 +15,12 @@ object SignedMessageSignatureSerializer : KSerializer<SignedMessage.Signature> {
         PrimitiveSerialDescriptor("SignedMessageSignature", PrimitiveKind.STRING)
 
     override fun serialize(encoder: Encoder, value: SignedMessage.Signature) {
-        val base64 = Base64.encode(value.bytes())
+        val base64 = Base64.Default.encode(value.bytes())
         encoder.encodeString(base64)
     }
 
     override fun deserialize(decoder: Decoder): SignedMessage.Signature {
-        val bytes = Base64.decode(decoder.decodeString())
+        val bytes = Base64.Default.decode(decoder.decodeString())
         return SignedMessage.signature(bytes)
     }
 }

@@ -1,0 +1,26 @@
+package dev.slne.surf.chat.api.message
+
+import dev.slne.surf.cloud.api.common.player.CloudPlayer
+import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import net.kyori.adventure.audience.Audience
+import net.kyori.adventure.text.Component
+
+data class MessageContext(
+    var messageData: MessageData,
+    var isCancelled: Boolean,
+    val viewers: MutableSet<Audience>,
+    var render: (viewer: CloudPlayer) -> Component = defaultRenderer()
+) {
+    fun cancel() = { isCancelled = true }
+
+    companion object {
+        fun defaultRenderer(): (viewer: CloudPlayer) -> Component {
+            return { _ ->
+                buildText {
+                    appendPrefix()
+                    error("Internal chat formatting error: no renderer set for message context")
+                }
+            }
+        }
+    }
+}

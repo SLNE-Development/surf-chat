@@ -1,5 +1,6 @@
 package dev.slne.surf.chat.core.common.message
 
+import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.api.message.MessageValidationResult
 import dev.slne.surf.cloud.api.common.player.CloudPlayer
 

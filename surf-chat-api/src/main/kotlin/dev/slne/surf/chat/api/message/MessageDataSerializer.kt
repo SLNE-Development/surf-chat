@@ -1,7 +1,5 @@
-package dev.slne.surf.chat.core.common.netty.packet.serializer
+package dev.slne.surf.chat.api.message
 
-import dev.slne.surf.chat.api.message.MessageType
-import dev.slne.surf.chat.core.common.message.MessageData
 import dev.slne.surf.cloud.api.common.netty.network.codec.kotlinx.cloud.CloudPlayerSerializer
 import dev.slne.surf.cloud.api.common.netty.network.codec.kotlinx.java.UUIDSerializer
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -22,8 +20,8 @@ class MessageDataSerializer : KSerializer<MessageData> {
     ) {
         encoder.encodeString(GsonComponentSerializer.gson().serialize(value.message))
         encoder.encodeSerializableValue(UUIDSerializer, value.messageUuid)
-        encoder.encodeSerializableValue(CloudPlayerSerializer, value.sender)
-        encoder.encodeNullableSerializableValue(CloudPlayerSerializer, value.receiver)
+        encoder.encodeSerializableValue(UUIDSerializer, value.senderUuid)
+        encoder.encodeNullableSerializableValue(UUIDSerializer, value.receiverUuid)
         encoder.encodeLong(value.sentAt)
         encoder.encodeString(value.server)
         encoder.encodeString(value.channel ?: "null")
@@ -34,8 +32,8 @@ class MessageDataSerializer : KSerializer<MessageData> {
     override fun deserialize(decoder: Decoder): MessageData {
         val message = GsonComponentSerializer.gson().deserialize(decoder.decodeString())
         val messageUuid = decoder.decodeSerializableValue(UUIDSerializer)
-        val sender = decoder.decodeSerializableValue(CloudPlayerSerializer)
-        val receiver = decoder.decodeNullableSerializableValue(CloudPlayerSerializer)
+        val sender = decoder.decodeSerializableValue(UUIDSerializer)
+        val receiver = decoder.decodeNullableSerializableValue(UUIDSerializer)
         val sentAt = decoder.decodeLong()
         val server = decoder.decodeString()
         val channel = decoder.decodeString().let {
@@ -47,8 +45,8 @@ class MessageDataSerializer : KSerializer<MessageData> {
         return MessageData(
             message = message,
             messageUuid = messageUuid,
-            sender = sender,
-            receiver = receiver,
+            senderUuid = sender,
+            receiverUuid = receiver,
             sentAt = sentAt,
             server = server,
             channel = channel,

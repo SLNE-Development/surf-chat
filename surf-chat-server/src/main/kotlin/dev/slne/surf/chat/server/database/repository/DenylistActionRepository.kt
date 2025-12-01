@@ -137,6 +137,8 @@ class DenylistActionRepository(
                     punishmentId
                 )
             }
+
+            else -> {}
         }
 
         historyRepository.markDeleted(messageUuid, "Arty Support (BLOCKED: ${entry.word})")

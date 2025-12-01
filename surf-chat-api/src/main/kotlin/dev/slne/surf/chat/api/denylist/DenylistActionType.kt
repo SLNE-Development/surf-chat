@@ -59,5 +59,15 @@ enum class DenylistActionType {
      *
      * Note: Triggering a community ban can broadcast a message to discord
      */
-    COMMUNITY_BAN
+    COMMUNITY_BAN,
+
+    /**
+     * Represents the "BLOCK" action type for a denylist entry.
+     *
+     * The "BLOCK" action is used to restrict a user's access or interactions entirely
+     * within the system or platform based on the denylist conditions.
+     * This action type is typically applied as a strict measure to protect the system
+     * from unwanted or harmful behavior.
+     */
+    BLOCK
 }

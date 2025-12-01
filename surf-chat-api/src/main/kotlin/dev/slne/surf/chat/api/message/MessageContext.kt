@@ -11,7 +11,14 @@ data class MessageContext(
     val viewers: MutableSet<Audience>,
     var render: (viewer: CloudPlayer) -> Component = defaultRenderer()
 ) {
-    fun cancel() = { isCancelled = true }
+    fun cancel() {
+        isCancelled = true
+    }
+    
+    fun edit(editBlock: MessageContext.() -> Unit): MessageContext {
+        editBlock()
+        return this
+    }
 
     companion object {
         fun defaultRenderer(): (viewer: CloudPlayer) -> Component {

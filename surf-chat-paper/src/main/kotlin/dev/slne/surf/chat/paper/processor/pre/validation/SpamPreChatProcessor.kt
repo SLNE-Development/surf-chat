@@ -32,6 +32,8 @@ class SpamPreChatProcessor : PreChatProcessor {
                 appendWarningPrefix()
                 error("Du sendest Nachrichten zu schnell. Bitte warte einen Moment.")
             }
+            context.cancel()
+            return context
         }
 
         return context

@@ -15,4 +15,5 @@ fun surfChatCommand() = commandAPICommand("surfchat", plugin) {
     surfChatLookupHelpCommand()
     surfChatReloadCommand()
     functionalityCommand()
+    surfChatMetricsCommand()
 }

@@ -33,16 +33,4 @@ class PaperMain : SuspendingJavaPlugin() {
             metrics.shutdown()
         }
     }
-
-//    @Scheduled(fixedRate = 1L, timeUnit = TimeUnit.MINUTES)
-//    fun sendMetrics() {
-//        messageStatisticsService.receiveStats.forEach {
-//            Bukkit.getPlayer(it)?.sendText {
-//                appendPrefix()
-//                info("In der letzten Minute wurden ")
-//                variableValue(messageStatisticsService.getMessagesLastMinute())
-//                info(" Nachrichten empfangen.")
-//            }
-//        }
-//    }
 }

@@ -8,13 +8,11 @@ import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.api.processor.PostChatProcessor
 import dev.slne.surf.chat.api.processor.PreChatProcessor
-import dev.slne.surf.chat.core.common.util.SyncValues
 import dev.slne.surf.chat.paper.channel.channelService
 import dev.slne.surf.chat.paper.message.MessageStatisticsService
 import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.chat.paper.util.cancel
 import dev.slne.surf.cloud.api.client.server.current
-import dev.slne.surf.cloud.api.common.player.CloudPlayer
 import dev.slne.surf.cloud.api.common.player.toCloudPlayer
 import dev.slne.surf.cloud.api.common.server.CloudServer
 import io.papermc.paper.event.player.AsyncChatEvent
@@ -60,7 +58,6 @@ class AsyncChatListener : Listener {
         messageStatisticsService.recordMessage()
 
         val result = runPreProcessors(MessageContext(data, event.isCancelled, event.viewers()))
-
         data = result.messageData
 
         if (result.isCancelled) {
@@ -68,27 +65,22 @@ class AsyncChatListener : Listener {
         }
 
         plugin.launch {
-            runPostProcessors(
-                MessageContext(data, event.isCancelled, event.viewers())
-            )
+            runPostProcessors(MessageContext(data, event.isCancelled, event.viewers()))
         }
     }
 
     private fun runPreProcessors(
         original: MessageContext
     ): MessageContext {
-
         var context = original
 
-        preProcessors
-            .sortedBy { it.order }
-            .forEach { processor ->
-                context = processor.process(context)
+        preProcessors.sortedBy { it.order }.forEach { processor ->
+            context = processor.process(context)
 
-                if (context.isCancelled) {
-                    return context
-                }
+            if (context.isCancelled) {
+                return context
             }
+        }
 
         return context
     }
@@ -97,16 +89,4 @@ class AsyncChatListener : Listener {
         postProcessors.forEach { processor ->
             processor.process(context)
         }
-
-
-    fun isIgnored(player: CloudPlayer?, sender: CloudPlayer): Boolean {
-        if (player == null) {
-            return false
-        }
-
-        return SyncValues.ignoreList
-            .firstOrNull { it.user == player.uuid }
-            ?.entries
-            ?.any { it.target == sender.uuid } == true
-    }
 }

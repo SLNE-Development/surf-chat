@@ -5,6 +5,7 @@ import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.core.common.netty.packet.serializer.MessageDataSerializer
 import dev.slne.surf.cloud.api.common.player.CloudPlayer
+import dev.slne.surf.surfapi.core.api.messages.adventure.plain
 import kotlinx.serialization.Serializable
 import net.kyori.adventure.chat.SignedMessage
 import net.kyori.adventure.text.Component
@@ -42,7 +43,7 @@ data class MessageData(
      * messages in different contexts, determining sender permissions, and providing additional
      * sender-specific interactions.
      */
-    val sender: CloudPlayer,
+    val senderUuid: ChatUuid,
 
     /**
      * Represents the recipient of a message within the chat system.
@@ -55,7 +56,7 @@ data class MessageData(
      * - Identifying the specific user who is the recipient of a private message.
      * - Checking permissions or contextual data related to the recipient during message processing.
      */
-    val receiver: CloudPlayer?,
+    val receiverUuid: ChatUuid?,
 
     /**
      * Represents the timestamp when the message was sent, measured in milliseconds since the epoch (January 1, 1970, 00:00:00 GMT).
@@ -104,7 +105,19 @@ data class MessageData(
      */
     val type: MessageType
 ) {
-    fun withReceiver(receiver: CloudPlayer?) = copy(receiver = receiver)
+    val plainMessage by lazy {
+        message.plain()
+    }
+
+    val sender: CloudPlayer by lazy {
+        CloudPlayer[senderUuid] ?: error("Message sender $senderUuid not found")
+    }
+
+    val receiver: CloudPlayer? by lazy {
+        receiverUuid?.let { CloudPlayer[it] }
+    }
+
+    fun withReceiver(receiver: CloudPlayer?) = copy(receiverUuid = receiver?.uuid)
     fun withChannel(channel: Channel?) = if (channel != null) {
         copy(channel = channel.channelName, type = MessageType.CHANNEL)
     } else {

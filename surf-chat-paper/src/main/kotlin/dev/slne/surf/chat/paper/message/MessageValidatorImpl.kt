@@ -3,88 +3,77 @@ package dev.slne.surf.chat.paper.message
 import dev.slne.surf.chat.api.message.MessageValidationResult
 import dev.slne.surf.chat.core.client.denylist.denylistService
 import dev.slne.surf.chat.core.client.functionality.functionalityService
-import dev.slne.surf.chat.core.client.result.CharCheckResult
-import dev.slne.surf.chat.core.client.result.LinkCheckResult
-import dev.slne.surf.chat.core.client.result.SpamCheckResult
+import dev.slne.surf.chat.core.common.message.MessageData
+import dev.slne.surf.chat.core.common.message.MessageValidationRequirement
 import dev.slne.surf.chat.core.common.message.MessageValidator
+import dev.slne.surf.chat.core.common.netty.packet.serverbound.ServerboundDenylistActionPacket
 import dev.slne.surf.chat.core.common.util.SyncValues
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.paper.util.hasPlatformPermission
-import dev.slne.surf.chat.paper.util.plainText
+import dev.slne.surf.cloud.api.client.netty.packet.fireAndForget
 import dev.slne.surf.cloud.api.client.server.current
 import dev.slne.surf.cloud.api.common.player.CloudPlayer
 import dev.slne.surf.cloud.api.common.server.CloudServer
-import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
+import org.springframework.beans.factory.annotation.Autowired
 
 class MessageValidatorImpl {
     companion object {
-        fun stringValidator(message: String): MessageValidator<String> {
-            return StringMessageValidator(message)
-        }
-
-        fun componentValidator(message: Component): MessageValidator<Component> {
-            return ComponentMessageValidator(message)
+        fun validator(messageData: MessageData): MessageValidator {
+            return StringMessageValidator(messageData)
         }
     }
 
     private class StringMessageValidator(
-        override val message: String
-    ) : MessageValidator<String> {
+        override val messageData: MessageData
+    ) : MessageValidator {
+        @Autowired
+        lateinit var requirements: List<MessageValidationRequirement>
+
         override fun validate(user: CloudPlayer): MessageValidationResult {
+            val message = messageData.plainMessage
             if (user.hasPlatformPermission(SurfChatPermissionRegistry.TEAM_BYPASS_FILTER)) {
-                return MessageValidationResult.Success()
+                return MessageValidationResult.Success
             }
 
             if (this.checkAutoDisabling(user)) {
-                return MessageValidationResult.Failure(MessageValidationResult.MessageValidationError.AutoDisabled())
+                return MessageValidationResult.Failure("Der Chat ist zurzeit deaktiviert, da sich zu viele Spieler auf dem Server befinden.")
             }
 
             if (!functionalityService.isLocalChatEnabled() && !user.hasPlatformPermission(
                     SurfChatPermissionRegistry.TEAM_BYPASS_FUNCTIONALITY
                 )
             ) {
-                return MessageValidationResult.Failure(MessageValidationResult.MessageValidationError.ChatDisabled())
+                return MessageValidationResult.Failure("Du kannst zurzeit nicht schreiben.")
             }
 
             if (message.isBlank()) {
-                return MessageValidationResult.Failure(MessageValidationResult.MessageValidationError.EmptyContent())
+                return MessageValidationResult.Failure("Deine Nachricht darf nicht leer sein!")
             }
 
             denylistService.getEntries().find { message.contains(it.word, true) }
                 ?.let { entry ->
+                    ServerboundDenylistActionPacket(
+                        messageData.messageUuid,
+                        entry,
+                        messageData.signature,
+                        messageData.sender
+                    ).fireAndForget()
+                    
                     return MessageValidationResult.Failure(
-                        MessageValidationResult.MessageValidationError.DenylistedWord(
-                            entry
-                        )
+                        "Bitte achte auf deine Wortwahl!"
                     )
                 }
 
-            CharCheckResult.of(message).invalidChars?.let {
-                return MessageValidationResult.Failure(
-                    MessageValidationResult.MessageValidationError.BadCharacters(
-                        it
-                    )
-                )
+            val failure = requirements.firstNotNullOfOrNull {
+                it.test(messageData)
             }
 
-            LinkCheckResult.of(message).link?.let {
-                return MessageValidationResult.Failure(
-                    MessageValidationResult.MessageValidationError.BadLink(
-                        it
-                    )
-                )
+            failure?.let {
+                return MessageValidationResult.Failure(failure)
             }
 
-            SpamCheckResult.of(user.uuid).waitSeconds?.let {
-                return MessageValidationResult.Failure(
-                    MessageValidationResult.MessageValidationError.TooOften(
-                        it
-                    )
-                )
-            }
-
-            return MessageValidationResult.Success()
+            return MessageValidationResult.Success
         }
 
 
@@ -97,16 +86,5 @@ class MessageValidatorImpl {
 
         fun getMinAmountForServer(): Int? =
             SyncValues.autoDisablingMinAmounts.firstOrNull { it.serverPattern.matches(CloudServer.current().name) }?.value
-    }
-
-    private class ComponentMessageValidator(
-        override val message: Component
-    ) : MessageValidator<Component> {
-        override fun validate(user: CloudPlayer): MessageValidationResult {
-            val validator = stringValidator(message.plainText())
-            val result = validator.validate(user)
-
-            return result
-        }
     }
 }

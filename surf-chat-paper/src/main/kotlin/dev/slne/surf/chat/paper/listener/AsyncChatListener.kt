@@ -1,14 +1,15 @@
 package dev.slne.surf.chat.paper.listener
 
+import dev.slne.surf.chat.api.ChatContextHolder
+import dev.slne.surf.chat.api.InternalChatApi
 import dev.slne.surf.chat.api.message.MessageType
-import dev.slne.surf.chat.api.message.MessageValidationResult
 import dev.slne.surf.chat.core.common.message.MessageData
-import dev.slne.surf.chat.core.common.netty.packet.serverbound.ServerboundDenylistActionPacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.ServerboundHistoryLogPacket
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.message.ServerboundTeamMessagePacket
 import dev.slne.surf.chat.core.common.util.SyncValues
 import dev.slne.surf.chat.paper.channel.channelService
 import dev.slne.surf.chat.paper.message.MessageFormatterImpl
+import dev.slne.surf.chat.paper.message.MessageStatisticsService
 import dev.slne.surf.chat.paper.message.MessageValidatorImpl
 import dev.slne.surf.chat.paper.spy.spyService
 import dev.slne.surf.chat.paper.util.*
@@ -24,11 +25,17 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.springframework.beans.factory.getBean
 import java.util.*
 
 class AsyncChatListener : Listener {
     private val channelExceptPattern =
         Regex("^@(all|a|here|everyone)\\b\\s*", RegexOption.IGNORE_CASE)
+
+    @OptIn(InternalChatApi::class)
+    private val messageStatisticsService by lazy {
+        ChatContextHolder.instance.context.getBean<MessageStatisticsService>()
+    }
 
     @EventHandler
     fun onAsyncChat(event: AsyncChatEvent) {
@@ -40,43 +47,38 @@ class AsyncChatListener : Listener {
         val messageId = UUID.randomUUID()
         val plainMessage = message.plainText()
 
+        val data = MessageData(
+            message,
+            messageId,
+            player.uuid,
+            null,
+            time,
+            server.name,
+            null,
+            event.signedMessage().signature(),
+            MessageType.GLOBAL
+        )
+
+        messageStatisticsService.recordMessage()
+
         val messageFormatter = MessageFormatterImpl(message.remove(channelExceptPattern))
-        val validationResult = MessageValidatorImpl.componentValidator(message).validate(player)
+        val validationResult = MessageValidatorImpl.validator(data).validate(player)
 
         if (validationResult.isFailure()) {
-            val error = validationResult.getErrorOrNull() ?: return
+            val error = validationResult.getErrorOrThrow()
 
             player.sendText {
                 appendWarningPrefix()
-                append(error.errorMessage)
+                error(error)
             }
 
-            if (error is MessageValidationResult.MessageValidationError.DenylistedWord) {
-                ServerboundDenylistActionPacket(
-                    messageId,
-                    error.denylistEntry,
-                    event.signedMessage().signature(),
-                    player
-                ).fireAndForget()
-            } else {
-                event.cancel()
-            }
-
-            if (
-                error is MessageValidationResult.MessageValidationError.BadLink ||
-                error is MessageValidationResult.MessageValidationError.BadCharacters ||
-                error is MessageValidationResult.MessageValidationError.EmptyContent ||
-                error is MessageValidationResult.MessageValidationError.DenylistedWord
-            ) {
+            if (error.second) {
                 ServerboundTeamMessagePacket(
                     GsonComponentSerializer.gson().serialize(buildText {
                         appendBotIcon()
                         info("Eine Nachricht von ")
                         variableValue(player.name)
                         info(" wurde blockiert.")
-                        appendSpace()
-                        info("Grund: ")
-                        variableValue(error.name)
 
                         hoverEvent(buildText {
                             info(plainMessage)
@@ -85,19 +87,9 @@ class AsyncChatListener : Listener {
 
                 ).fireAndForget()
             }
-        }
 
-        val data = MessageData(
-            message,
-            messageId,
-            player,
-            null,
-            time,
-            server.name,
-            null,
-            event.signedMessage().signature(),
-            MessageType.GLOBAL
-        )
+            event.cancel()
+        }
 
         val channel = channelService.getChannel(player)
 
@@ -130,7 +122,6 @@ class AsyncChatListener : Listener {
                 )
             }
         }
-
         ServerboundHistoryLogPacket(data.withChannel(channel)).fireAndForget()
     }
 

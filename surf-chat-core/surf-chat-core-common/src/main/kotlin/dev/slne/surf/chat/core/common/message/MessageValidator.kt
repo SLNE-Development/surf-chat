@@ -11,7 +11,7 @@ import dev.slne.surf.cloud.api.common.player.CloudPlayer
  *
  * @param T The type of the message that will be validated.
  */
-interface MessageValidator<T> {
+interface MessageValidator {
     /**
      * Represents the message being validated or processed.
      *
@@ -21,7 +21,7 @@ interface MessageValidator<T> {
      * generic, making this property adaptable to various implementations
      * and use cases depending on the specific type of message being handled.
      */
-    val message: T
+    val messageData: MessageData
 
     /**
      * Validates the user's message according to specific rules defined by the implementing class.

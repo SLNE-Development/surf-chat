@@ -81,8 +81,6 @@ class AsyncChatListener : Listener {
         var context = original
 
         chatProcessorRegistry.preChatProcessors.sortedBy { it.order }.forEach { processor ->
-            plugin.logger.info("Running pre-processor: ${processor::class.simpleName}")
-
             context = processor.process(context)
 
             if (context.isCancelled) {
@@ -95,7 +93,6 @@ class AsyncChatListener : Listener {
 
     private suspend fun runPostProcessors(context: MessageContext) =
         chatProcessorRegistry.postChatProcessors.forEach { processor ->
-            plugin.logger.info("Running post-processor: ${processor::class.simpleName}")
             processor.process(context)
         }
 }

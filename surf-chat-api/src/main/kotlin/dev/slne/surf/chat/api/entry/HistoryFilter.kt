@@ -33,4 +33,10 @@ data class HistoryFilter(
     val deletedBy: String?,
     val type: MessageType?,
     val limit: Int?
-)
+) {
+    companion object {
+        fun empty() = HistoryFilter(
+            null, null, null, null, null, null, null, null, null, null, null
+        )
+    }
+}

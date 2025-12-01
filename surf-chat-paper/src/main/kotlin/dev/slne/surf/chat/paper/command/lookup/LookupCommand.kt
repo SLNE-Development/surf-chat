@@ -3,8 +3,8 @@ package dev.slne.surf.chat.paper.command.lookup
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.arguments.MapArgumentBuilder
-import dev.jorel.commandapi.kotlindsl.argument
 import dev.jorel.commandapi.kotlindsl.getValue
+import dev.jorel.commandapi.kotlindsl.optionalArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.entry.HistoryEntry
@@ -29,7 +29,7 @@ import java.util.*
 
 fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
     withPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_LOOKUP)
-    argument(
+    optionalArgument(
         MapArgumentBuilder<String, String>("query", ' ')
             .withKeyMapper { it }
             .withValueMapper { it }
@@ -53,7 +53,7 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
     )
 
     playerExecutor { player, args ->
-        val query: Map<String, String> by args
+        val query: Map<String, String>? by args
 
         player.sendText {
             appendPrefix()
@@ -62,8 +62,8 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
 
         plugin.launch {
 
-            val filter = query.parseFilters()
-            val page = query["--page"]?.toIntOrNull() ?: 1
+            val filter = query?.parseFilters() ?: HistoryFilter.empty()
+            val page = query?.get("--page")?.toIntOrNull() ?: 1
 
             val history =
                 ServerboundHistoryLookupPacket(filter).fireAndAwaitOrThrow().entries.sortedByDescending { it.sentAt }

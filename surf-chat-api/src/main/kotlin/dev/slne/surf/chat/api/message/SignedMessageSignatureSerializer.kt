@@ -15,12 +15,12 @@ object SignedMessageSignatureSerializer : KSerializer<SignedMessage.Signature> {
         PrimitiveSerialDescriptor("SignedMessageSignature", PrimitiveKind.STRING)
 
     override fun serialize(encoder: Encoder, value: SignedMessage.Signature) {
-        val base64 = Base64.Default.encode(value.bytes())
+        val base64 = Base64.encode(value.bytes())
         encoder.encodeString(base64)
     }
 
     override fun deserialize(decoder: Decoder): SignedMessage.Signature {
-        val bytes = Base64.Default.decode(decoder.decodeString())
+        val bytes = Base64.decode(decoder.decodeString())
         return SignedMessage.signature(bytes)
     }
 }

@@ -1,6 +1,7 @@
 package dev.slne.surf.chat.paper.processor.pre
 
 import dev.slne.surf.chat.api.message.MessageContext
+import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.api.processor.PreChatProcessor
 import dev.slne.surf.chat.paper.message.MessageFormatterImpl
 import dev.slne.surf.chat.paper.processor.ProcessorOrder
@@ -14,10 +15,12 @@ class FormatPreChatProcessor : PreChatProcessor {
         val data = context.messageData
         val messageFormatter = MessageFormatterImpl(data.message)
 
-        context.render = { viewer ->
-            messageFormatter.formatGlobal(
-                data.withReceiver(viewer)
-            )
+        if (data.type == MessageType.GLOBAL) {
+            context.render = { viewer ->
+                messageFormatter.formatGlobal(
+                    data.withReceiver(viewer)
+                )
+            }
         }
 
         return context

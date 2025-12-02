@@ -6,11 +6,8 @@ import dev.jorel.commandapi.kotlindsl.greedyStringArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.api.message.MessageType
-import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.ServerboundHistoryLogPacket
-import dev.slne.surf.chat.core.common.netty.packet.serverbound.message.ServerboundPrivateMessagePacket
 import dev.slne.surf.chat.core.common.util.SyncValues
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
-import dev.slne.surf.cloud.api.client.netty.packet.fireAndForget
 import dev.slne.surf.cloud.api.client.server.current
 import dev.slne.surf.cloud.api.common.player.CloudPlayer
 import dev.slne.surf.cloud.api.common.server.CloudServer
@@ -65,7 +62,6 @@ fun replyCommand() = commandAPICommand("reply") {
             MessageType.PRIVATE
         )
 
-        ServerboundPrivateMessagePacket(data).fireAndForget()
-        ServerboundHistoryLogPacket(data).fireAndForget()
+        handlePrivateMessage(data)
     }
 }

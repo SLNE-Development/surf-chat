@@ -5,11 +5,13 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.anyExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.ServerboundReloadPacket
+import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.cloud.api.client.netty.packet.fireAndAwait
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 fun CommandAPICommand.surfChatReloadCommand() = subcommand("reload") {
+    withPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_RELOAD)
     anyExecutor { executor, _ ->
         plugin.launch {
             val status = ServerboundReloadPacket().fireAndAwait()?.status == true

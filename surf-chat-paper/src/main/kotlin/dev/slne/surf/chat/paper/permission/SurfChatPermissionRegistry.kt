@@ -16,7 +16,6 @@ object SurfChatPermissionRegistry : PermissionRegistry() {
     val COMMAND_SURFCHAT = create(ChatPermissions.COMMAND_SURFCHAT)
     val COMMAND_SURFCHAT_DELETE = create(ChatPermissions.COMMAND_SURFCHAT_DELETE)
     val COMMAND_SURFCHAT_TELEPORT = create(ChatPermissions.COMMAND_SURFCHAT_TELEPORT)
-    val COMMAND_SURFCHAT_LOOKUP = create(ChatPermissions.COMMAND_SURFCHAT_LOOKUP)
 
     val COMMAND_SURFCHAT_FUNCTIONALITY = create(ChatPermissions.COMMAND_SURFCHAT_FUNCTIONALITY)
     val COMMAND_SURFCHAT_FUNCTIONALITY_TOGGLE =
@@ -26,7 +25,11 @@ object SurfChatPermissionRegistry : PermissionRegistry() {
     val COMMAND_SURFCHAT_FUNCTIONALITY_LIST =
         create(ChatPermissions.COMMAND_SURFCHAT_FUNCTIONALITY_LIST)
 
+    val COMMAND_SURFCHAT_LOOKUP = create(ChatPermissions.COMMAND_SURFCHAT_LOOKUP)
     val COMMAND_SURFCHAT_LOOKUP_HELP = create(ChatPermissions.COMMAND_SURFCHAT_LOOKUP_HELP)
+
+    val COMMAND_SURFCHAT_RELOAD = create(ChatPermissions.COMMAND_SURFCHAT_RELOAD)
+    val COMMAND_SURFCHAT_METRICS = create(ChatPermissions.COMMAND_SURFCHAT_METRICS)
 
     val COMMAND_IGNORE = create(ChatPermissions.COMMAND_IGNORE)
     val COMMAND_IGNORE_LIST = create(ChatPermissions.COMMAND_IGNORE_LIST)

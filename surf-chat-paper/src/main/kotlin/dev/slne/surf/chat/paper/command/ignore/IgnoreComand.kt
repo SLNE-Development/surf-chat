@@ -18,10 +18,10 @@ fun ignoreCommand() = commandAPICommand("ignore", plugin) {
     ignoreListCommand()
     offlineCloudPlayerArgument("target")
     playerExecutor { player, args ->
-        val deferred: Deferred<OfflineCloudPlayer>? by args
+        val target: Deferred<OfflineCloudPlayer?> by args
 
         plugin.launch {
-            val target = deferred?.await() ?: run {
+            val targetPlayer = target.await() ?: run {
                 player.sendText {
                     appendPrefix()
                     error("Der angegebene Spieler wurde nicht gefunden.")
@@ -29,7 +29,7 @@ fun ignoreCommand() = commandAPICommand("ignore", plugin) {
                 return@launch
             }
 
-            if (player.uniqueId == target.uuid) {
+            if (player.uniqueId == targetPlayer.uuid) {
                 player.sendText {
                     appendPrefix()
                     error("Du kannst dich nicht selbst ignorieren.")
@@ -37,13 +37,13 @@ fun ignoreCommand() = commandAPICommand("ignore", plugin) {
                 return@launch
             }
 
-            if (ignorelistService.isIgnoring(player.uniqueId, target.uuid)) {
-                ignorelistService.removeFromIgnoreList(player.uniqueId, target.uuid)
+            if (ignorelistService.isIgnoring(player.uniqueId, targetPlayer.uuid)) {
+                ignorelistService.removeFromIgnoreList(player.uniqueId, targetPlayer.uuid)
 
                 player.sendText {
                     appendPrefix()
                     success("Du ignorierst nun nicht mehr ")
-                    variableValue(target.name() ?: "Unbekannt")
+                    variableValue(targetPlayer.name() ?: "Unbekannt")
                     success(".")
                 }
                 return@launch
@@ -53,8 +53,8 @@ fun ignoreCommand() = commandAPICommand("ignore", plugin) {
                 IgnoreListEntry(
                     player.uniqueId,
                     player.name,
-                    target.uuid,
-                    target.name() ?: "Unbekannt",
+                    targetPlayer.uuid,
+                    targetPlayer.name() ?: "Unbekannt",
                     System.currentTimeMillis()
                 )
             )
@@ -62,7 +62,7 @@ fun ignoreCommand() = commandAPICommand("ignore", plugin) {
             player.sendText {
                 appendPrefix()
                 success("Du ignorierst nun ")
-                variableValue(target.name() ?: "Unbekannt")
+                variableValue(targetPlayer.name() ?: "Unbekannt")
                 success(".")
             }
         }

@@ -16,17 +16,18 @@ object ChatPermissions {
     const val TEAM_NOTIFY_DELETION = "$BYPASS.deletion"
 
     const val COMMAND_SURFCHAT = "$COMMAND.surfchat"
-    const val COMMAND_SURFCHAT_RELOAD = "$COMMAND.surfchat.reload"
     const val COMMAND_SURFCHAT_DELETE = "$COMMAND.surfchat.delete"
     const val COMMAND_SURFCHAT_TELEPORT = "$COMMAND.surfchat.teleport"
-    const val COMMAND_SURFCHAT_LOOKUP = "$COMMAND.surfchat.lookup"
-
     const val COMMAND_SURFCHAT_FUNCTIONALITY = "$COMMAND.surfchat.functionality"
     const val COMMAND_SURFCHAT_FUNCTIONALITY_TOGGLE = "$COMMAND.surfchat.functionality.toggle"
+
     const val COMMAND_SURFCHAT_FUNCTIONALITY_STATUS = "$COMMAND.surfchat.functionality.status"
     const val COMMAND_SURFCHAT_FUNCTIONALITY_LIST = "$COMMAND.surfchat.functionality.list"
-
     const val COMMAND_SURFCHAT_LOOKUP_HELP = "$COMMAND.surfchat.lookup.help"
+
+    const val COMMAND_SURFCHAT_LOOKUP = "$COMMAND.surfchat.lookup"
+    const val COMMAND_SURFCHAT_RELOAD = "$COMMAND.surfchat.reload"
+    const val COMMAND_SURFCHAT_METRICS = "$COMMAND.surfchat.metrics"
 
     const val COMMAND_IGNORE = "$COMMAND.ignore"
     const val COMMAND_IGNORE_LIST = "$COMMAND.ignore.list"

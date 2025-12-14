@@ -16,11 +16,7 @@ allprojects {
 
     tasks {
         withType<ShadowJar>() {
-            // Exclude Kotlin stdlib classes but preserve Kotlin metadata files (.kotlin_module)
-            // that Spring Boot needs for component scanning of Kotlin classes
-            exclude("kotlin/**/*.class")
-            exclude("kotlin/**/*.kotlin_builtins")
-            // Do NOT exclude META-INF/*.kotlin_module - Spring needs these for scanning!
+            exclude("kotlin/**")
         }
     }
 }

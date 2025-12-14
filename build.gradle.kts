@@ -14,6 +14,17 @@ allprojects {
     group = "dev.slne.surf.chat"
     version = findProperty("version") as String
 
+    // Force consistent Jackson versions across all subprojects
+    // This prevents NoSuchMethodError when OpenAI client requires Jackson 2.18+ OptBoolean API
+    configurations.configureEach {
+        resolutionStrategy.eachDependency {
+            if (requested.group.startsWith("com.fasterxml.jackson")) {
+                useVersion("2.18.2")
+                because("OpenAI client requires Jackson 2.18+ for OptBoolean support in JsonProperty.isRequired()")
+            }
+        }
+    }
+
     tasks {
         withType<ShadowJar>() {
             exclude("kotlin/**")

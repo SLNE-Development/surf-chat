@@ -23,7 +23,6 @@ class ValidateChatMessageWithAiProcessor(private val openAiService: OpenAiServic
         if (!aiModerationConfig.enabled) return
         val plain = messageContext.messageData.plainMessage
         val classification = openAiService.classifyChatMessage(plain)
-        println("Classification: $classification")
 
         if (classification.action == ClassificationAction.NONE) return
 

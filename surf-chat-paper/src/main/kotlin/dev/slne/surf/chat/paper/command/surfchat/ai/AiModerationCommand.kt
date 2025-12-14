@@ -8,7 +8,7 @@ import dev.slne.surf.chat.paper.config.aiModerationConfig
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
 import dev.slne.surf.surfapi.bukkit.api.util.forEachPlayer
 
-fun aiModerationCommand() = commandAPICommand("ai-moderation") {
+fun aiModerationCommand() = subcommand("ai-moderation") {
     withPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_AI_MODERATION)
 
     subcommand("reload") {

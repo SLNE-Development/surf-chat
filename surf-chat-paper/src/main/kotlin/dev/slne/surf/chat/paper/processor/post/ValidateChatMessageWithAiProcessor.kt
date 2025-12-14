@@ -23,6 +23,8 @@ class ValidateChatMessageWithAiProcessor(private val openAiService: OpenAiServic
         if (!aiModerationConfig.enabled) return
         val plain = messageContext.messageData.plainMessage
         val classification = openAiService.classifyChatMessage(plain)
+        println("Classification: $classification")
+
         if (classification.action == ClassificationAction.NONE) return
 
         postWebhook(messageContext, classification)
@@ -43,7 +45,7 @@ class ValidateChatMessageWithAiProcessor(private val openAiService: OpenAiServic
                     for (entry in scores) {
                         val category = entry.key
                         val scorePercent = entry.doubleValue * 100
-                        append("${category.name}=${"%.2f".format(scorePercent)}%")
+                        append("${category.name}=${"%.2f".format(scorePercent)} %")
                         if (entry != scores.last()) {
                             append(", ")
                         }
@@ -107,7 +109,7 @@ class ValidateChatMessageWithAiProcessor(private val openAiService: OpenAiServic
                             .forEachIndexed { index, entry ->
                                 val category = entry.key
                                 val scorePercent = entry.doubleValue * 100
-                                append("- ${category.name} (${"%.2f".format(scorePercent)})")
+                                append("- ${category.name} (${"%.2f".format(scorePercent)} %)")
                                 if (index != classification.flaggedScores.size - 1) {
                                     append("\n")
                                 }

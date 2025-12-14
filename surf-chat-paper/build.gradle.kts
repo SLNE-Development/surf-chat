@@ -34,7 +34,5 @@ surfPaperPluginApi {
 }
 
 tasks.shadowJar {
-    configurations = listOf(project.configurations.runtimeClasspath.get())
     relocate("com.fasterxml.jackson", "dev.slne.surf.chat.shadow.jackson")
-    mergeServiceFiles("META-INF")
 }

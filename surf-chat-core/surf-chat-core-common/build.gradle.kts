@@ -8,4 +8,5 @@ surfCoreApi {
 
 dependencies {
     api(project(":surf-chat-api"))
+    implementation("com.openai:openai-java:4.11.0")
 }

@@ -42,20 +42,6 @@ class AsyncChatListener : Listener {
         val message = event.message()
         val messageId = UUID.randomUUID()
 
-        println("Current classloader: " + this.javaClass.classLoader)
-        println("ChannelService classloader: " + ChannelService::class.java.classLoader)
-        val context = ChatContextHolderImpl.instance.context
-        val classLoader = context.classLoader as JoinClassLoader
-        println("Context classloader: $classLoader")
-        println("Find class in this classloader: " + Class.forName(ChannelService::class.qualifiedName, false, this.javaClass.classLoader))
-        println("Find class in context loader: " + Class.forName(ChannelService::class.qualifiedName, false, classLoader))
-        println("Bean names: " + context.beanDefinitionNames.joinToString())
-
-        val bean = context.getBean("channelService")
-        println("Get instance via name: $bean")
-        println("Via name classloader: " + bean::class.java.classLoader)
-        println("Get instance via context loader: " + context.getBean(ChannelService::class.java))
-
         var data = MessageData(
             message,
             messageId,

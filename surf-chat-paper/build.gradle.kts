@@ -32,7 +32,3 @@ surfPaperPluginApi {
 
     authors.add("red")
 }
-
-tasks.shadowJar {
-    relocate("com.fasterxml.jackson", "dev.slne.surf.chat.shadow.jackson")
-}

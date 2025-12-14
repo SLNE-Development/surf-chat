@@ -17,6 +17,13 @@ import java.util.*
 
 @Service
 class ChannelService {
+
+    init {
+        repeat(20) {
+            println("init channel service")
+        }
+    }
+
     val channels = mutableMapOf<UUID, Channel>()
     fun createChannel(
         name: String,

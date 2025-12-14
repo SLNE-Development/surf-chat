@@ -16,7 +16,7 @@ import org.bukkit.Bukkit
 import org.springframework.stereotype.Component
 import java.awt.Color
 import java.time.ZonedDateTime
-import java.util.UUID
+import java.util.*
 
 @Component
 class ValidateChatMessageWithAiProcessor(private val openAiService: OpenAiService) :
@@ -72,6 +72,7 @@ class ValidateChatMessageWithAiProcessor(private val openAiService: OpenAiServic
 
         val webhook = Webhook {
             username = "Arty AI Moderation"
+            avatarUrl = aiModerationConfig.webhookAvatarUrl
             embed {
                 image = Image("https://mc-heads.net/avatar/$senderUuid")
 
@@ -125,7 +126,8 @@ class ValidateChatMessageWithAiProcessor(private val openAiService: OpenAiServic
 
                 field {
                     name = "Sender"
-                    value = "[${nameOrUuid(senderUuid)}](${aiModerationConfig.userPanelPrefix}$senderUuid)"
+                    value =
+                        "[${nameOrUuid(senderUuid)}](${aiModerationConfig.userPanelPrefix}$senderUuid)"
                     inline = true
                 }
 
@@ -133,7 +135,8 @@ class ValidateChatMessageWithAiProcessor(private val openAiService: OpenAiServic
                 if (receiverUuid != null) {
                     field {
                         name = "Receiver"
-                        value = "[${nameOrUuid(receiverUuid)}](${aiModerationConfig.userPanelPrefix}$receiverUuid)"
+                        value =
+                            "[${nameOrUuid(receiverUuid)}](${aiModerationConfig.userPanelPrefix}$receiverUuid)"
                         inline = true
                     }
                 }

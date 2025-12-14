@@ -2,6 +2,7 @@ import dev.slne.surf.surfapi.gradle.util.registerSoft
 
 plugins {
     id("dev.slne.surf.surfapi.gradle.paper-plugin")
+
 }
 
 repositories {
@@ -12,6 +13,10 @@ dependencies {
     api(project(":surf-chat-core:surf-chat-core-client"))
     compileOnly(libs.miniplaceholder.api)
     compileOnly("net.luckperms:api:5.4")
+    implementation("com.github.BinaryWriter:discord-webhooks:1.0") {
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk8")
+        exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-serialization-json")
+    }
 }
 
 surfPaperPluginApi {

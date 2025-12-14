@@ -82,4 +82,6 @@ object ChatPermissions {
 
     const val COMMAND_TELL = "$COMMAND.tell"
     const val COMMAND_REPLY = "$COMMAND.reply"
+
+    const val COMMAND_SURFCHAT_AI_MODERATION = "$COMMAND.surfchat.ai.moderation"
 }

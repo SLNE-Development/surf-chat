@@ -1,0 +1,40 @@
+package dev.slne.surf.chat.paper.config
+
+import dev.slne.surf.chat.paper.plugin
+import dev.slne.surf.surfapi.core.api.config.createSpongeYmlConfig
+import dev.slne.surf.surfapi.core.api.config.manager.SpongeConfigManager
+import dev.slne.surf.surfapi.core.api.config.surfConfigApi
+import org.spongepowered.configurate.objectmapping.ConfigSerializable
+
+@ConfigSerializable
+data class AiModerationConfig(
+    var enabled: Boolean = true,
+    val webhookUrl: String = "",
+    val userPanelPrefix: String = "https://support.castcrafter.de/cloud/cloud-players/",
+) {
+
+    companion object {
+        private val manager: SpongeConfigManager<AiModerationConfig>
+
+        init {
+            surfConfigApi.createSpongeYmlConfig<AiModerationConfig>(
+                plugin.dataPath,
+                "ai-moderation.yml"
+            )
+            manager = surfConfigApi.getSpongeConfigManagerForConfig(AiModerationConfig::class.java)
+        }
+
+        fun save() {
+            manager.save()
+        }
+
+        fun reload() {
+            manager.reloadFromFile()
+        }
+
+        fun getConfig() = manager.config
+        fun init() = Unit
+    }
+}
+
+val aiModerationConfig get() = AiModerationConfig.getConfig()

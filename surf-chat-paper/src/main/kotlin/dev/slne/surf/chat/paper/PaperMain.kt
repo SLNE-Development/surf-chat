@@ -3,6 +3,7 @@ package dev.slne.surf.chat.paper
 import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
 import dev.slne.surf.chat.core.common.ChatContextHolderImpl
 import dev.slne.surf.chat.core.common.util.SyncValues
+import dev.slne.surf.chat.paper.config.AiModerationConfig
 import dev.slne.surf.chat.paper.message.MessageStatisticsService
 import dev.slne.surf.surfapi.bukkit.api.metrics.Metrics
 import org.bukkit.plugin.java.JavaPlugin
@@ -21,7 +22,11 @@ class PaperMain : SuspendingJavaPlugin() {
         SyncValues.init()
     }
 
-    override fun onEnable() {
+    override suspend fun onLoadAsync() {
+        AiModerationConfig.init()
+    }
+
+    override suspend fun onEnableAsync() {
         PaperCommandManager.registerCommands()
         PaperListenerManager.registerBukkitListeners()
 

@@ -58,9 +58,8 @@ implementation("com.openai:openai-java:4.11.0") {
 - But runtime fails with `NoSuchMethodError` due to Jackson version mismatch
 - This revealed the underlying version conflict
 
-### Attempt 4: Force Jackson Version Alignment ✅
-**The correct solution**: Force all Jackson modules to use version 2.18.2
-
+### Attempt 4: Force Jackson Version at Submodule Level ⚠️
+**What we tried**: 
 ```kotlin
 // In surf-chat-core-common/build.gradle.kts
 configurations.all {
@@ -72,11 +71,35 @@ configurations.all {
     }
 }
 ```
+**Why it partially worked but wasn't sufficient**: 
+- Submodule-level resolution strategy only affects dependencies resolved at that level
+- `surf-cloud` provides Jackson through a plugin (`withCloudClientPaper()`)
+- Plugin-provided dependencies aren't subject to submodule-level resolution strategies
+- The error persisted because the shadow JAR still contained the old Jackson version
+
+### Attempt 5: Force Jackson Version at Root Level ✅
+**The correct solution**: Force all Jackson modules to use version 2.18.2 at the **root project level**
+
+```kotlin
+// In root build.gradle.kts
+allprojects {
+    configurations.configureEach {
+        resolutionStrategy.eachDependency {
+            if (requested.group.startsWith("com.fasterxml.jackson")) {
+                useVersion("2.18.2")
+                because("OpenAI client requires Jackson 2.18+ for OptBoolean support")
+            }
+        }
+    }
+}
+```
 
 **Why this works**:
-- All Jackson modules (core, databind, annotations, module-kotlin) use version 2.18.2
+- Root-level `allprojects` block applies to ALL subprojects
+- `configurations.configureEach` ensures it applies to all configurations, including those added by plugins
+- ALL Jackson modules (core, databind, annotations, module-kotlin) use version 2.18.2
+- Plugin-provided dependencies (like surf-cloud's Jackson) are also affected
 - OpenAI client gets the Jackson version it expects
-- surf-cloud's Spring Boot components use the same Jackson version
 - No version conflicts at runtime
 - The `OptBoolean` API is available as expected
 
@@ -138,9 +161,30 @@ tasks.shadowJar {
 }
 ```
 
-### 2. Force Jackson Version Alignment
+### 2. Force Jackson Version at Root Level (Critical!)
 ```kotlin
-// In surf-chat-core-common/build.gradle.kts
+// In root build.gradle.kts
+allprojects {
+    configurations.configureEach {
+        resolutionStrategy.eachDependency {
+            if (requested.group.startsWith("com.fasterxml.jackson")) {
+                useVersion("2.18.2")
+                because("OpenAI client requires Jackson 2.18+ for OptBoolean support")
+            }
+        }
+    }
+}
+```
+
+**Why root-level is critical**:
+- Applies to ALL subprojects, including plugin configurations
+- `surf-cloud` provides Jackson through plugin (`withCloudClientPaper()`)
+- Submodule-level strategies don't affect plugin-provided dependencies
+- Only root-level `allprojects` ensures comprehensive coverage
+
+### 3. Optional: Add at Submodule Level for Redundancy
+```kotlin
+// In surf-chat-core-common/build.gradle.kts (redundant but harmless)
 configurations.all {
     resolutionStrategy.eachDependency {
         if (requested.group.startsWith("com.fasterxml.jackson")) {
@@ -153,6 +197,7 @@ configurations.all {
 
 This ensures:
 - ✅ No Jackson relocation → OpenAI client can find Jackson
+- ✅ Root-level enforcement → Plugin dependencies use correct version
 - ✅ Consistent Jackson version → No `NoSuchMethodError`
 - ✅ OpenAI client works → Can deserialize JSON responses
 - ✅ All beans load → Spring component scanning succeeds
@@ -190,7 +235,27 @@ Excluding a transitive dependency seems like a clean solution, but:
 
 **Lesson**: Don't exclude dependencies unless you're replacing them with compatible versions.
 
-### 4. Spring's Defensive Bean Creation
+### 4. Plugin-Provided Dependencies Need Root-Level Forcing
+
+**Critical discovery**: Gradle plugins can provide dependencies that bypass submodule resolution strategies.
+
+In this case:
+- `surf-cloud` plugin provides Jackson through `withCloudClientPaper()`
+- Submodule-level `resolutionStrategy` in `surf-chat-core-common` didn't affect it
+- Only root-level `allprojects` block with `configurations.configureEach` works
+
+**Lesson**: When dealing with plugin-provided dependencies, always apply version forcing at the root project level:
+```kotlin
+allprojects {
+    configurations.configureEach {
+        resolutionStrategy.eachDependency {
+            // Version forcing logic
+        }
+    }
+}
+```
+
+### 5. Spring's Defensive Bean Creation
 
 Spring's component scanning is resilient to errors, which is good for robustness but bad for debugging:
 - Errors during bean creation are caught and logged at DEBUG

@@ -6,14 +6,11 @@ import dev.slne.surf.cloud.api.common.CloudInstance
 import dev.slne.surf.cloud.api.common.startSpringApplication
 import io.papermc.paper.plugin.bootstrap.BootstrapContext
 import io.papermc.paper.plugin.bootstrap.PluginBootstrap
-import org.springframework.boot.WebApplicationType
 
 @Suppress("UnstableApiUsage")
 class PaperBootstrap : PluginBootstrap {
     override fun bootstrap(p0: BootstrapContext) {
         ChatContextHolderImpl.instance.context =
-            CloudInstance.startSpringApplication(ChatApplication::class) {
-                web(WebApplicationType.NONE)
-            }
+            CloudInstance.startSpringApplication(ChatApplication::class)
     }
 }

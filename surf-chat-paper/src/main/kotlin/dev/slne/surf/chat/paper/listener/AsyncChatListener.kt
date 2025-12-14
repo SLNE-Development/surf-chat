@@ -6,6 +6,7 @@ import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.api.processor.ChatProcessorRegistry
 import dev.slne.surf.chat.core.common.ChatContextHolderImpl
+import dev.slne.surf.chat.paper.channel.ChannelService
 import dev.slne.surf.chat.paper.channel.channelService
 import dev.slne.surf.chat.paper.message.MessageStatisticsService
 import dev.slne.surf.chat.paper.plugin
@@ -14,6 +15,7 @@ import dev.slne.surf.chat.paper.util.cloudPlayer
 import dev.slne.surf.cloud.api.client.server.current
 import dev.slne.surf.cloud.api.common.player.toCloudPlayer
 import dev.slne.surf.cloud.api.common.server.CloudServer
+import dev.slne.surf.cloud.api.common.util.classloader.JoinClassLoader
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import io.papermc.paper.event.player.AsyncChatEvent
 import org.bukkit.event.EventHandler
@@ -40,6 +42,12 @@ class AsyncChatListener : Listener {
         val server = CloudServer.current()
         val message = event.message()
         val messageId = UUID.randomUUID()
+
+        println("Current classloader: " + this.javaClass.classLoader)
+        println("ChannelService classloader: " + ChannelService::class.java.classLoader)
+        val classLoader = ChatContextHolderImpl.instance.context.classLoader as JoinClassLoader
+        println("Context classloader: $classLoader")
+        println("Find class in this classloader: " )
 
         var data = MessageData(
             message,

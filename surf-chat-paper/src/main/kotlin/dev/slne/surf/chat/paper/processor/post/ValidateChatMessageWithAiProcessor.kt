@@ -10,10 +10,13 @@ import dev.slne.surf.chat.paper.config.aiModerationConfig
 import dev.slne.surf.cloud.api.client.netty.packet.fireAndForget
 import dev.slne.surf.cloud.api.common.player.punishment.type.PunishType
 import dev.slne.surf.cloud.api.common.player.toOfflineCloudPlayer
+import me.binarywriter.discordwebhooks.data.Image
 import me.binarywriter.discordwebhooks.data.Webhook
+import org.bukkit.Bukkit
 import org.springframework.stereotype.Component
 import java.awt.Color
 import java.time.ZonedDateTime
+import java.util.UUID
 
 @Component
 class ValidateChatMessageWithAiProcessor(private val openAiService: OpenAiService) :
@@ -65,14 +68,18 @@ class ValidateChatMessageWithAiProcessor(private val openAiService: OpenAiServic
     }
 
     private fun postWebhook(messageContext: MessageContext, classification: ClassificationResult) {
+        val senderUuid = messageContext.messageData.senderUuid
+
         val webhook = Webhook {
             username = "Arty AI Moderation"
             embed {
+                image = Image("https://mc-heads.net/avatar/$senderUuid")
+
                 title = "Chat Nachricht moderiert"
                 when (classification.action) {
                     ClassificationAction.SILENT_FLAG -> {
                         description =
-                            "Nachricht wurde als unangemessen markiert — bitte überprüfen und ggf. Handeln"
+                            "Nachricht wurde als unangemessen markiert — bitte überprüfen und ggf. handeln"
                     }
 
                     ClassificationAction.DELETE -> {
@@ -117,9 +124,8 @@ class ValidateChatMessageWithAiProcessor(private val openAiService: OpenAiServic
                 }
 
                 field {
-                    val senderUuid = messageContext.messageData.senderUuid
                     name = "Sender"
-                    value = "[$senderUuid](${aiModerationConfig.userPanelPrefix}$senderUuid)"
+                    value = "[${nameOrUuid(senderUuid)}](${aiModerationConfig.userPanelPrefix}$senderUuid)"
                     inline = true
                 }
 
@@ -127,7 +133,7 @@ class ValidateChatMessageWithAiProcessor(private val openAiService: OpenAiServic
                 if (receiverUuid != null) {
                     field {
                         name = "Receiver"
-                        value = "[$receiverUuid](${aiModerationConfig.userPanelPrefix}$receiverUuid)"
+                        value = "[${nameOrUuid(receiverUuid)}](${aiModerationConfig.userPanelPrefix}$receiverUuid)"
                         inline = true
                     }
                 }
@@ -156,5 +162,9 @@ class ValidateChatMessageWithAiProcessor(private val openAiService: OpenAiServic
         }
 
         webhook.send(aiModerationConfig.webhookUrl)
+    }
+
+    private fun nameOrUuid(uuid: UUID): String {
+        return Bukkit.getOfflinePlayer(uuid).name ?: uuid.toString()
     }
 }

@@ -7,7 +7,6 @@ import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.Serverbou
 import dev.slne.surf.chat.paper.hook.LuckPermsHook
 import dev.slne.surf.chat.paper.permission.SurfChatPermissionRegistry
 import dev.slne.surf.cloud.api.client.netty.packet.fireAndForget
-import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
@@ -123,9 +122,11 @@ fun SurfComponentBuilder.appendWarningPrefix() = append {
 }
 
 fun SurfComponentBuilder.appendBotIcon() = append {
-    darkSpacer("[")
-    info("ARTY".toSmallCaps())
-    darkSpacer("]")
+    darkSpacer(">>")
+    appendSpace()
+    error("AUTOMOD", TextDecoration.BOLD)
+    appendSpace()
+    spacer("|")
     appendSpace()
 }
 

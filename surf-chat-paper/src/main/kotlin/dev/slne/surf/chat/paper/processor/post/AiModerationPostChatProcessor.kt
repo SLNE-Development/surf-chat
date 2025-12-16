@@ -6,12 +6,18 @@ import dev.slne.surf.chat.core.common.ai.OpenAiService
 import dev.slne.surf.chat.core.common.ai.OpenAiService.ClassificationAction
 import dev.slne.surf.chat.core.common.ai.OpenAiService.ClassificationResult
 import dev.slne.surf.chat.core.common.netty.packet.serverbound.ServerboundMessageDeletePacket
+import dev.slne.surf.chat.core.common.netty.packet.serverbound.history.ServerboundHistoryMarkDeletedPacket
+import dev.slne.surf.chat.core.common.netty.packet.serverbound.message.ServerboundTeamMessagePacket
 import dev.slne.surf.chat.paper.config.aiModerationConfig
+import dev.slne.surf.chat.paper.util.appendBotIcon
 import dev.slne.surf.cloud.api.client.netty.packet.fireAndForget
 import dev.slne.surf.cloud.api.common.player.punishment.type.PunishType
 import dev.slne.surf.cloud.api.common.player.toOfflineCloudPlayer
+import dev.slne.surf.surfapi.core.api.messages.Colors
+import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import me.binarywriter.discordwebhooks.data.Image
 import me.binarywriter.discordwebhooks.data.Webhook
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import org.bukkit.Bukkit
 import org.springframework.stereotype.Component
 import java.awt.Color
@@ -19,22 +25,54 @@ import java.time.ZonedDateTime
 import java.util.*
 
 @Component
-class ValidateChatMessageWithAiProcessor(private val openAiService: OpenAiService) :
-    PostChatProcessor {
+class AiModerationPostChatProcessor(private val openAiService: OpenAiService) : PostChatProcessor {
     override suspend fun process(messageContext: MessageContext) {
-        if (messageContext.isCancelled) return
-        if (!aiModerationConfig.enabled) return
+        if (messageContext.isCancelled) {
+            return
+        }
+
+        if (!aiModerationConfig.enabled) {
+            return
+        }
+
         val plain = messageContext.messageData.plainMessage
         val classification = openAiService.classifyChatMessage(plain)
 
-        if (classification.action == ClassificationAction.NONE) return
+        if (classification.action == ClassificationAction.NONE) {
+            return
+        }
+
+        val name = messageContext.messageData.senderUuid.toOfflineCloudPlayer().name()
 
         postWebhook(messageContext, classification)
+
+        ServerboundTeamMessagePacket(GsonComponentSerializer.gson().serialize(buildText {
+            appendBotIcon()
+            info("Die Nachricht von ")
+            variableValue(name ?: messageContext.messageData.senderUuid.toString())
+            info(" wurde als bedrohlich eingestuft: ")
+
+            append {
+                text(plain.take(20), Colors.WHITE)
+                if (plain.length > 20) {
+                    text("...", Colors.GRAY)
+                }
+
+                hoverEvent(buildText {
+                    text(plain, Colors.WHITE)
+                })
+            }
+        })).fireAndForget()
 
         when (classification.action) {
             ClassificationAction.SILENT_FLAG -> Unit
             ClassificationAction.DELETE -> {
                 messageContext.messageData.signature?.let { ServerboundMessageDeletePacket(it).fireAndForget() }
+
+                ServerboundHistoryMarkDeletedPacket(
+                    messageContext.messageData.messageUuid,
+                    "Automod (surf-chat)"
+                ).fireAndForget()
             }
 
             ClassificationAction.MUTE -> {

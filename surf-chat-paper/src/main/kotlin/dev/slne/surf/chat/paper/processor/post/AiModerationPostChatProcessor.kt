@@ -65,7 +65,6 @@ class AiModerationPostChatProcessor(private val openAiService: OpenAiService) : 
         })).fireAndForget()
 
         when (classification.action) {
-            ClassificationAction.SILENT_FLAG -> Unit
             ClassificationAction.DELETE -> {
                 messageContext.messageData.signature?.let { ServerboundMessageDeletePacket(it).fireAndForget() }
 

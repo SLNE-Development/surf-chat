@@ -3,16 +3,11 @@ package dev.slne.surf.chat.fallback.service
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.DenylistAction
 import dev.slne.surf.chat.api.entity.User
-import dev.slne.surf.chat.api.entry.DenylistActionType
 import dev.slne.surf.chat.api.entry.DenylistEntry
 import dev.slne.surf.chat.core.service.DenylistActionService
-import dev.slne.surf.chat.core.service.discordService
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.chat.fallback.entity.DenylistActionEntity
 import dev.slne.surf.chat.fallback.table.DenylistActionsTable
-import dev.slne.surf.chat.fallback.util.toOfflineCloudPlayer
-import dev.slne.surf.cloud.api.common.player.punishment.type.PunishType
-import dev.slne.surf.surfapi.core.api.util.logger
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -22,8 +17,6 @@ import net.kyori.adventure.util.Services
 import org.bukkit.Bukkit
 import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import java.time.ZonedDateTime
-import java.time.temporal.ChronoUnit
 import java.util.*
 import kotlin.time.Duration.Companion.seconds
 
@@ -82,83 +75,8 @@ class FallbackDenylistActionService : DenylistActionService, Services.Fallback {
         sender: User,
         discordHookUrl: String?
     ) = withContext(Dispatchers.IO) {
-        if (isCloud()) {
-
-            val cloudPlayer = sender.toOfflineCloudPlayer()
-            val punishManager = cloudPlayer.punishmentManager
-
-            when (entry.action.actionType) {
-                DenylistActionType.EXPIREABLE_BAN -> {
-                    punishManager.punish(
-                        PunishType.BAN.Expirable(
-                            ZonedDateTime.now().plus(
-                                entry.action.duration,
-                                ChronoUnit.MILLIS
-                            )
-                        )
-                            .withNote("Punished by Arty Support (surf-chat) for: ${entry.word} (messageUid: $messageUuid)"),
-                        entry.action.reason
-                    )
-                }
-
-                DenylistActionType.KICK -> {
-                    punishManager.punish(
-                        PunishType.KICK
-                            .withNote("Punished by Arty Support (surf-chat) for: ${entry.word} (messageUid: $messageUuid)"),
-                        entry.action.reason
-                    )
-                }
-
-                DenylistActionType.PERMANENT_BAN -> {
-                    punishManager.punish(
-                        PunishType.BAN.Permanent
-                            .withNote("Punished by Arty Support (surf-chat) for: ${entry.word} (messageUid: $messageUuid)"),
-                        entry.action.reason
-                    )
-                }
-
-                DenylistActionType.MUTE -> {
-                    punishManager.punish(
-                        PunishType.MUTE.Expirable(
-                            ZonedDateTime.now().plus(
-                                entry.action.duration,
-                                ChronoUnit.MILLIS
-                            )
-                        )
-                            .withNote("Punished by Arty Support (surf-chat) for: ${entry.word} (messageUid: $messageUuid)"),
-                        entry.action.reason
-                    )
-                }
-
-                DenylistActionType.WARN -> {
-                    punishManager.punish(
-                        PunishType.WARN
-                            .withNote("Punished by Arty Support (surf-chat) for: ${entry.word} (messageUid: $messageUuid)"),
-                        entry.action.reason
-                    )
-                }
-
-                DenylistActionType.COMMUNITY_BAN -> {
-                    punishManager.punish(
-                        PunishType.BAN.Permanent
-                            .withNote("Punished by Arty Support (surf-chat) for: ${entry.word} (messageUid: $messageUuid)"),
-                        entry.action.reason
-                    )
-
-                    discordHookUrl?.let {
-                        discordService.sendCommunityBanNotification(it, sender, entry)
-                    }
-                }
-            }
-        } else {
-            logger().atWarning()
-                .log("Unable to establish Cloud connection. Punishment actions for ${sender.name}: ${entry.word} / ${entry.action.actionType} will be ignored.")
-        }
-
         delay(3.seconds)
         Bukkit.getServer().deleteMessage(message)
         historyService.markDeleted(messageUuid, "Arty Support (BLOCKED: ${entry.word})")
     }
-
-    private fun isCloud() = Bukkit.getPluginManager().isPluginEnabled("surf-cloud-bukkit")
 }

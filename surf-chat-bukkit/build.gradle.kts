@@ -21,7 +21,6 @@ surfPaperPluginApi {
     mainClass("dev.slne.surf.chat.bukkit.BukkitMain")
     foliaSupported(true)
     generateLibraryLoader(false)
-    withCloudCommon()
 
     serverDependencies {
         registerSoft("MiniPlaceholders")

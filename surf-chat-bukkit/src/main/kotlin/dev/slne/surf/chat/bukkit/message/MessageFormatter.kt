@@ -5,18 +5,14 @@ import com.sksamuel.aedile.core.expireAfterWrite
 import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.util.*
 import dev.slne.surf.surfapi.core.api.messages.Colors
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
-import dev.slne.surf.surfapi.core.api.messages.adventure.clickOpensUrl
-import dev.slne.surf.surfapi.core.api.messages.adventure.clickSuggestsCommand
-import dev.slne.surf.surfapi.core.api.messages.adventure.playSound
-import dev.slne.surf.surfapi.core.api.messages.adventure.sound
-import kotlinx.coroutines.Dispatchers
-import net.kyori.adventure.sound.Sound
+import dev.slne.surf.surfapi.core.api.messages.adventure.*
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextReplacementConfig
 import net.kyori.adventure.text.format.TextDecoration
-import kotlin.error
+import org.bukkit.Material
+import org.bukkit.entity.Player
 import kotlin.time.Duration.Companion.minutes
 
 /**
@@ -37,7 +33,7 @@ class MessageFormatter {
 
     fun formatGlobal(messageData: MessageData) = buildText {
         val viewer = messageData.receiver ?: return Component.empty()
-        val player = messageData.sender ?: return Component.empty()
+        val player = messageData.sender.player() ?: return Component.empty()
 
         if (viewer.hasPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_DELETE)) {
             appendDelete(messageData)
@@ -59,7 +55,7 @@ class MessageFormatter {
         clickSuggestsCommand("/msg ${player.name} ")
     }
 
-    override fun formatIncomingPm(messageData: MessageData) = buildText {
+    fun formatIncomingPm(messageData: MessageData) = buildText {
         val senderName = messageData.sender.name
 
         darkSpacer(">> ")
@@ -74,7 +70,7 @@ class MessageFormatter {
         clickSuggestsCommand("/msg $senderName ")
     }
 
-    override fun formatOutgoingPm(messageData: MessageData) = buildText {
+    fun formatOutgoingPm(messageData: MessageData) = buildText {
         val receiverName = messageData.receiver?.name ?: "Error"
 
         darkSpacer(">> ")
@@ -90,7 +86,7 @@ class MessageFormatter {
         clickSuggestsCommand("/msg $receiverName ")
     }
 
-    override fun formatTeamchat(messageData: MessageData) = buildText {
+    fun formatTeamchat(messageData: MessageData) = buildText {
         val player = messageData.sender.player() ?: return Component.empty()
 
         darkSpacer(">> ")
@@ -104,7 +100,7 @@ class MessageFormatter {
         clickSuggestsCommand("/teamchat ")
     }
 
-    override fun formatChannel(messageData: MessageData) = buildText {
+    fun formatChannel(messageData: MessageData) = buildText {
         val player = messageData.sender.player() ?: return Component.empty()
         val receiver = messageData.receiver ?: return Component.empty()
 
@@ -116,7 +112,7 @@ class MessageFormatter {
             appendTeleport(messageData.sender.name, receiver)
         }
 
-        appendChannelPrefix(messageData.channel?.channelName ?: "Unbekannter Kanal")
+        appendChannelPrefix(messageData.channel ?: "Unbekannter Kanal")
         appendName(player)
         darkSpacer(" >> ")
         append(updateLinks(formatItemTag(messageData.message, player)))
@@ -124,7 +120,7 @@ class MessageFormatter {
         clickSuggestsCommand("/msg ${player.name} ")
     }
 
-    override fun formatPmSpy(messageData: MessageData) = buildText {
+    fun formatPmSpy(messageData: MessageData) = buildText {
         val receiver = messageData.receiver ?: return Component.empty()
 
         appendSpyIcon()
@@ -146,7 +142,7 @@ class MessageFormatter {
         clickSuggestsCommand("/msg ${messageData.sender.name} ")
     }
 
-    override fun formatChannelSpy(messageData: MessageData) = buildText {
+    fun formatChannelSpy(messageData: MessageData) = buildText {
         val player = messageData.sender.player() ?: return Component.empty()
         val receiver = messageData.receiver ?: return Component.empty()
 
@@ -161,7 +157,7 @@ class MessageFormatter {
             appendTeleport(messageData.sender.name, receiver)
         }
 
-        appendChannelPrefix(messageData.channel?.channelName ?: "Unbekannter Kanal")
+        appendChannelPrefix(messageData.channel ?: "Unbekannter Kanal")
         appendName(player)
         darkSpacer(" >> ")
         append(updateLinks(formatItemTag(messageData.message, player)))
@@ -174,7 +170,7 @@ class MessageFormatter {
         var message = rawMessage
         val item = player.inventory.itemInMainHand
 
-        if (!itemRegex.containsMatchIn(message.plainText())) {
+        if (!itemRegex.containsMatchIn(message.plain())) {
             return message
         }
 
@@ -207,9 +203,8 @@ class MessageFormatter {
 
         val name = viewer.name
         val pattern = nameRegexCache.get(name)
-        val viewerPlayer = viewer.player() ?: return message
 
-        if (!pattern.containsMatchIn(message.plainText())) {
+        if (!pattern.containsMatchIn(message.plain())) {
             return message
         }
 
@@ -218,31 +213,27 @@ class MessageFormatter {
                 .match(pattern.pattern)
                 .replacement { matchResult ->
                     val matchedText = matchResult.content()
+                    val displayName = if (matchedText.startsWith("@")) {
+                        matchedText
+                    } else {
+                        "@$matchedText"
+                    }
+
                     buildText {
-                        text(matchedText)
+                        text(displayName)
+                        color(Colors.VARIABLE_VALUE)
                         decorate(TextDecoration.BOLD)
                     }
                 }
                 .build()
         )
 
-        plugin.launch(Dispatchers.IO) {
-            if (viewer.configure().pingsEnabled()) {
-                viewerPlayer.playSound(sound {
-                    type(Sound.BLOCK_NOTE_BLOCK_HARP)
-                    source(Sound.Source.PLAYER)
-                    volume(1f)
-                    pitch(2f)
-                }, Sound.Emitter.self())
-            }
-        }
-
         return message
     }
 
     private fun updateLinks(rawMessage: Component): Component {
         var message = rawMessage
-        val text = rawMessage.plainText()
+        val text = rawMessage.plain()
 
         linkRegex.findAll(text).filter { text.contains(it.value) }.forEach {
             message = message.replaceText(

@@ -12,7 +12,6 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.ComponentBuilder
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import java.time.Instant
@@ -38,13 +37,9 @@ fun Cancellable.cancel() {
     isCancelled = true
 }
 
-fun sendTeamMessage(message: SurfComponentBuilder.() -> Unit) =
-    Bukkit.getOnlinePlayers().filter { it.hasPermission(Constants.PERMISSION_TEAMCHAT) }
-        .forEach { it.sendText(message) }
-
 fun Component.plainText(): String = PlainTextComponentSerializer.plainText().serialize(this)
 fun Channel.sendText(block: SurfComponentBuilder.() -> Unit) =
-    members.forEach { it.sendText { block() } }
+    members.forEach { it.player()?.sendText { block() } }
 
 fun Long.coloredComponent(good: Long = 200L, okay: Long = 1000L) =
     buildText {

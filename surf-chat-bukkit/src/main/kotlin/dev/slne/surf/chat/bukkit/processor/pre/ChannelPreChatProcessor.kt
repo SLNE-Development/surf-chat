@@ -4,7 +4,10 @@ import dev.slne.surf.chat.api.message.MessageContext
 import dev.slne.surf.chat.api.processor.PreChatProcessor
 import dev.slne.surf.chat.bukkit.message.MessageFormatter
 import dev.slne.surf.chat.bukkit.processor.ProcessorOrder
+import dev.slne.surf.chat.bukkit.util.player
 import dev.slne.surf.chat.core.service.channelService
+import dev.slne.surf.chat.core.service.spyService
+import org.bukkit.Bukkit
 
 class ChannelPreChatProcessor : PreChatProcessor {
     override val order = ProcessorOrder.CHANNEL
@@ -21,7 +24,7 @@ class ChannelPreChatProcessor : PreChatProcessor {
             return context
         }
 
-        val messageFormatter = MessageFormatter(data.message)
+        val messageFormatter = MessageFormatter()
 
         context.viewers.clear()
         context.viewers.addAll(channel.members.mapNotNull { it.player() })

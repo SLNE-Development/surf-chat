@@ -7,7 +7,6 @@ import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.service.denylistActionService
-import dev.slne.surf.chat.core.service.denylistService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import net.kyori.adventure.text.event.ClickEvent
 import org.bukkit.entity.Player

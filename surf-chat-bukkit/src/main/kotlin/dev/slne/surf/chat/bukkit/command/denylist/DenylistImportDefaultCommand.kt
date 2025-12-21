@@ -7,7 +7,6 @@ import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.denylist.DenylistActionType
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.core.entry.DenylistBatchEntry
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import kotlinx.coroutines.Dispatchers
 import kotlin.time.Duration.Companion.days

@@ -1,22 +1,15 @@
-package dev.slne.surf.chat.velocity.command
+package dev.slne.surf.chat.bukkit.command
 
 import com.velocitypowered.api.proxy.Player
-import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.greedyStringArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.chat.core.Constants
-import dev.slne.surf.chat.core.DirectMessageUpdateType
 import dev.slne.surf.chat.velocity.command.argument.playerArgument
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.surfapi.core.api.util.mutableObject2ObjectMapOf
-import java.io.ByteArrayOutputStream
-import java.io.DataOutputStream
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
-
-private val channel = MinecraftChannelIdentifier.from(Constants.CHANNEL_DM)
 
 val latestDirectMessages = mutableObject2ObjectMapOf<UUID, UUID>()
 
@@ -56,38 +49,5 @@ fun directMessageCommand() = commandAPICommand("msg") {
         }
 
         latestDirectMessages[target.uniqueId] = player.uniqueId
-
-        senderServer.sendPluginMessage(
-            channel,
-            ByteArrayOutputStream().use { byteStream ->
-                DataOutputStream(byteStream).use { out ->
-                    out.writeUTF(DirectMessageUpdateType.SEND_AND_LOG_MESSAGE.toString())
-                    out.writeUTF(player.uniqueId.toString())
-                    out.writeUTF(player.username)
-                    out.writeUTF(target.uniqueId.toString())
-                    out.writeUTF(target.username)
-                    out.writeUTF(messageId.toString())
-                    out.writeUTF(message)
-                    out.writeLong(sentAt)
-                    out.writeUTF(senderServer.serverInfo.name)
-                }
-                byteStream.toByteArray()
-            }
-        )
-
-        targetServer.sendPluginMessage(channel, ByteArrayOutputStream().use { byteStream ->
-            DataOutputStream(byteStream).use { out ->
-                out.writeUTF(DirectMessageUpdateType.RECEIVE_MESSAGE.toString())
-                out.writeUTF(player.uniqueId.toString())
-                out.writeUTF(player.username)
-                out.writeUTF(target.uniqueId.toString())
-                out.writeUTF(target.username)
-                out.writeUTF(messageId.toString())
-                out.writeUTF(message)
-                out.writeLong(sentAt)
-                out.writeUTF(senderServer.serverInfo.name)
-            }
-            byteStream.toByteArray()
-        })
     }
 }

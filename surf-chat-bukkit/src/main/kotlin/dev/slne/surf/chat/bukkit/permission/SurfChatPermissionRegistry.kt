@@ -1,6 +1,5 @@
 package dev.slne.surf.chat.bukkit.permission
 
-import dev.slne.surf.chat.core.Constants
 import dev.slne.surf.surfapi.bukkit.api.permission.PermissionRegistry
 
 object SurfChatPermissionRegistry : PermissionRegistry() {

@@ -4,7 +4,6 @@ import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.bukkit.hook.MiniPlaceholdersHook
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.pluginmessage.pluginMessageSender
-import dev.slne.surf.chat.core.Constants
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

@@ -1,16 +1,10 @@
 package dev.slne.surf.chat.api.processor
 
-class ChatProcessorRegistry(
-    preChatProcessorsProvider: ObjectProvider<PreChatProcessor>,
-    postChatProcessorsProvider: ObjectProvider<PostChatProcessor>
-) {
+val chatProcessorRegistry = ChatProcessorRegistry()
+
+class ChatProcessorRegistry {
     val preChatProcessors = mutableListOf<PreChatProcessor>()
     val postChatProcessors = mutableListOf<PostChatProcessor>()
-
-    init {
-        preChatProcessors.addAll(preChatProcessorsProvider.orderedStream().toList())
-        postChatProcessors.addAll(postChatProcessorsProvider.orderedStream().toList())
-    }
 
     fun clearProcessors() {
         preChatProcessors.clear()

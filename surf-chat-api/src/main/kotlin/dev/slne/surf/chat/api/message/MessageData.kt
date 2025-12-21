@@ -1,5 +1,12 @@
 package dev.slne.surf.chat.api.message
 
+import dev.slne.surf.chat.api.channel.Channel
+import dev.slne.surf.chat.api.entity.User
+import dev.slne.surf.surfapi.core.api.messages.adventure.plain
+import net.kyori.adventure.chat.SignedMessage
+import net.kyori.adventure.text.Component
+import java.util.*
+
 /**
  * Represents a message in the chat system, including its content, metadata, and context.
  */
@@ -20,7 +27,7 @@ data class MessageData(
      * and is critical for operations such as deletion, logging,
      * and ensuring message integrity and traceability across the system.
      */
-    val messageUuid: ChatUuid,
+    val messageUuid: UUID,
 
     /**
      * Represents the sender of the message within the chat system.
@@ -32,7 +39,7 @@ data class MessageData(
      * messages in different contexts, determining sender permissions, and providing additional
      * sender-specific interactions.
      */
-    val senderUuid: ChatUuid,
+    val sender: User,
 
     /**
      * Represents the recipient of a message within the chat system.
@@ -45,7 +52,7 @@ data class MessageData(
      * - Identifying the specific user who is the recipient of a private message.
      * - Checking permissions or contextual data related to the recipient during message processing.
      */
-    val receiverUuid: ChatUuid?,
+    val receiver: User?,
 
     /**
      * Represents the timestamp when the message was sent, measured in milliseconds since the epoch (January 1, 1970, 00:00:00 GMT).
@@ -98,15 +105,7 @@ data class MessageData(
         message.plain()
     }
 
-    val sender: CloudPlayer by lazy {
-        CloudPlayer.Companion[senderUuid] ?: error("Message sender $senderUuid not found")
-    }
-
-    val receiver: CloudPlayer? by lazy {
-        receiverUuid?.let { CloudPlayer.Companion[it] }
-    }
-
-    fun withReceiver(receiver: CloudPlayer?) = copy(receiverUuid = receiver?.uuid)
+    fun withReceiver(receiver: User?) = copy(receiverUuid = receiver)
     fun withChannel(channel: Channel?) = if (channel != null) {
         copy(channel = channel.channelName, type = MessageType.CHANNEL)
     } else {

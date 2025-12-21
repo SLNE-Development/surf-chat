@@ -3,7 +3,6 @@ package dev.slne.surf.chat.bukkit.util
 import com.github.retrooper.packetevents.PacketEvents
 import com.github.retrooper.packetevents.wrapper.PacketWrapper
 import dev.slne.surf.chat.api.channel.Channel
-import dev.slne.surf.chat.core.Constants
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText

@@ -2,7 +2,6 @@ package dev.slne.surf.chat.fallback.service
 
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.denylist.DenylistEntry
-import dev.slne.surf.chat.core.entry.DenylistEntryImpl
 import dev.slne.surf.chat.core.service.DenylistService
 import dev.slne.surf.chat.fallback.entity.DenylistActionEntity
 import dev.slne.surf.chat.fallback.entity.DenylistEntryEntity

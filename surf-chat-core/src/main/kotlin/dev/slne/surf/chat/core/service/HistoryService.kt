@@ -2,7 +2,6 @@ package dev.slne.surf.chat.core.service
 
 import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
-import dev.slne.surf.chat.core.message.MessageData
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import java.util.*

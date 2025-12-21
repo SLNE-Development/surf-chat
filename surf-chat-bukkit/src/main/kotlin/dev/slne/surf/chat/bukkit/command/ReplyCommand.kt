@@ -1,11 +1,10 @@
-package dev.slne.surf.chat.velocity.command
+package dev.slne.surf.chat.bukkit.command
 
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.greedyStringArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.chat.core.Constants
 import dev.slne.surf.chat.core.DirectMessageUpdateType
 import dev.slne.surf.chat.velocity.plugin
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText

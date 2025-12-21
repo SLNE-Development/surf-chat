@@ -1,10 +1,9 @@
-package dev.slne.surf.chat.core.entry
+package dev.slne.surf.chat.bukkit.command.denylist
 
 import dev.slne.surf.chat.api.denylist.DenylistActionType
 import dev.slne.surf.chat.api.denylist.DenylistEntry
 import dev.slne.surf.chat.core.service.denylistActionService
 import dev.slne.surf.chat.core.service.denylistService
-import kotlin.time.Duration
 
 /**
  * Represents a batch of denylist entries created together.

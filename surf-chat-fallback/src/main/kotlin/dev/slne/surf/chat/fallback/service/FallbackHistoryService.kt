@@ -4,7 +4,6 @@ import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.core.entry.HistoryEntryImpl
-import dev.slne.surf.chat.core.message.MessageData
 import dev.slne.surf.chat.core.service.HistoryService
 import dev.slne.surf.chat.fallback.entity.HistoryEntity
 import dev.slne.surf.chat.fallback.table.HistoryTable

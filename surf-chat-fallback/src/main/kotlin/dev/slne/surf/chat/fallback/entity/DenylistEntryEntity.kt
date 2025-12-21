@@ -1,6 +1,5 @@
 package dev.slne.surf.chat.fallback.entity
 
-import dev.slne.surf.chat.core.entry.DenylistEntryImpl
 import dev.slne.surf.chat.fallback.table.DenylistTable
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass

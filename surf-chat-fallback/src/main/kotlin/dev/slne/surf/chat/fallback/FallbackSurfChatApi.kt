@@ -7,7 +7,6 @@ import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.api.server.ChatServer
-import dev.slne.surf.chat.core.message.MessageData
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.chat.core.service.userService

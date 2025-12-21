@@ -1,6 +1,5 @@
 package dev.slne.surf.chat.fallback.util
 
-import dev.slne.surf.chat.core.Constants
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.surfapi.core.api.messages.builder.SurfComponentBuilder

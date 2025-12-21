@@ -22,7 +22,7 @@ interface IgnoreService : DatabaseTableHolder {
      * @param target The UUID of the target player to be ignored.
      * @param targetPlayerName The name of the target player to be ignored.
      */
-    suspend fun ignore(player: UUID, playerName: String, target: UUID, targetPlayerName: String)
+    fun ignore(player: UUID, playerName: String, target: UUID, targetPlayerName: String)
 
     /**
      * Removes an ignored status between the player and the target,
@@ -31,7 +31,7 @@ interface IgnoreService : DatabaseTableHolder {
      * @param player The UUID of the player who is removing the ignore status.
      * @param target The UUID of the player being unignored.
      */
-    suspend fun unIgnore(player: UUID, target: UUID)
+    fun unIgnore(player: UUID, target: UUID)
 
     /**
      * Checks if a given target player is ignored by the specified player.
@@ -40,7 +40,7 @@ interface IgnoreService : DatabaseTableHolder {
      * @param target The UUID of the potential ignored target.
      * @return `true` if the target player is ignored by the specified player, `false` otherwise.
      */
-    suspend fun isIgnored(player: UUID, target: UUID): Boolean
+    fun isIgnored(player: UUID, target: UUID): Boolean
 
     /**
      * Retrieves the ignore list of a specific player.
@@ -50,7 +50,11 @@ interface IgnoreService : DatabaseTableHolder {
      * @param player the unique identifier of the player whose ignore list is being fetched
      * @return a set of {@link IgnoreListEntry} objects representing the players ignored by the specified player
      */
-    suspend fun getIgnoreList(player: UUID): ObjectSet<IgnoreListEntry>
+    suspend fun cacheIgnorelist(player: UUID): ObjectSet<IgnoreListEntry>
+
+    fun getIgnorelist(player: UUID): ObjectSet<IgnoreListEntry>
+
+    suspend fun saveIgnorelist(player: UUID, ignorelist: ObjectSet<IgnoreListEntry>)
 
     /**
      * Companion object for accessing the singleton instance of the IgnoreService.

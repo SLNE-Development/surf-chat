@@ -36,6 +36,17 @@ fun CommandSender.realName() = when (this) {
     else -> "Error"
 }
 
+fun Audience.toUserOrNull() = when (this) {
+    is Player -> userService.getUser(this.uniqueId)
+    else -> null
+}
+
+fun Audience.toUserOrThrow() = when (this) {
+    is Player -> userService.getUser(this.uniqueId)
+        ?: error("User not found for player ${this.name}")
+
+    else -> error("Audience is not a player")
+}
+
 
 fun User.sendText(block: SurfComponentBuilder.() -> Unit) = player()?.sendText { block() }
-fun ChannelMember.sendText(block: SurfComponentBuilder.() -> Unit) = player()?.sendText { block() }

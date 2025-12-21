@@ -1,7 +1,6 @@
 package dev.slne.surf.chat.bukkit
 
 import dev.slne.surf.chat.bukkit.listener.*
-import dev.slne.surf.chat.core.Constants
 import dev.slne.surf.surfapi.bukkit.api.event.register
 import org.bukkit.Bukkit
 

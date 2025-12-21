@@ -3,6 +3,7 @@ package dev.slne.surf.chat.bukkit.util
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.entity.User
+import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.bukkit.hook.MiniPlaceholdersHook
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
@@ -23,7 +24,7 @@ fun SurfComponentBuilder.appendDelete(messageData: MessageData) = append(buildTe
     darkSpacer("]")
     darkSpacer(" ")
     clickEvent(ClickEvent.callback {
-        val signature = messageData.signedMessage?.signature() ?: run {
+        val signature = messageData.signature ?: run {
             it.sendText {
                 appendPrefix()
                 error("Die Nachricht besitzt eine ungültige Signatur und konnte nicht gelöscht werden.")
@@ -61,7 +62,7 @@ fun SurfComponentBuilder.appendMessageData(messageData: MessageData) = append(bu
     variableValue(messageData.sentAt.unixTime())
     appendNewline()
     info("Gesendet auf Server ")
-    variableValue(messageData.server.name)
+    variableValue(messageData.server)
 })
 
 fun SurfComponentBuilder.appendName(player: Player) = append {

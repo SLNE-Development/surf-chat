@@ -1,6 +1,5 @@
-package dev.slne.surf.chat.api.entity
+package dev.slne.surf.chat.api.channel
 
-import dev.slne.surf.chat.api.channel.ChannelRole
 import java.util.*
 
 /**
@@ -10,11 +9,11 @@ import java.util.*
  * @property name The name of the channel member.
  * @property role The role of the channel member in the chat channel.
  */
-interface ChannelMember {
-    val uuid: UUID // The unique ID of the member
-    val name: String // The name of the member
-    var role: ChannelRole // The role of the member in the channel
-
+data class ChannelMember(
+    val uuid: UUID,
+    val name: String,
+    var role: ChannelRole
+) {
     /**
      * Checks if the member has moderator permissions.
      *

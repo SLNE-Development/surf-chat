@@ -4,7 +4,7 @@ import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.anyExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
-import dev.slne.surf.chat.api.entry.DenylistActionType
+import dev.slne.surf.chat.api.denylist.DenylistActionType
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.entry.DenylistBatchEntry

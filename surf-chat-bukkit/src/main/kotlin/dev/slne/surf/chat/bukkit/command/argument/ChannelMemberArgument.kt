@@ -5,7 +5,6 @@ import dev.jorel.commandapi.arguments.Argument
 import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.CustomArgument
 import dev.jorel.commandapi.arguments.StringArgument
-import dev.slne.surf.chat.api.entity.ChannelMember
 import dev.slne.surf.chat.bukkit.util.user
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.userService

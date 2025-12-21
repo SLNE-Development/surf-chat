@@ -1,7 +1,7 @@
 package dev.slne.surf.chat.core.service
 
+import dev.slne.surf.chat.api.denylist.DenylistEntry
 import dev.slne.surf.chat.api.entity.User
-import dev.slne.surf.chat.api.entry.DenylistEntry
 import dev.slne.surf.surfapi.core.api.util.requiredService
 
 interface DiscordService {

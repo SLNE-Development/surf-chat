@@ -3,7 +3,7 @@ package dev.slne.surf.chat.bukkit.command.denylist.action
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.*
-import dev.slne.surf.chat.api.entry.DenylistActionType
+import dev.slne.surf.chat.api.denylist.DenylistActionType
 import dev.slne.surf.chat.bukkit.command.argument.denylistActionTypeArgument
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin

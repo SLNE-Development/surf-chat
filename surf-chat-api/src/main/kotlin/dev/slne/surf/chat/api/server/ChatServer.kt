@@ -1,11 +1,11 @@
 package dev.slne.surf.chat.api.server
 
-interface ChatServer {
+data class ChatServer(
     /**
      * The user-facing display name of the chat server.
      * This is intended to be shown to end users.
      */
-    val name: String
+    val name: String,
 
     /**
      * The internal name of the chat server, used for identification within the system.
@@ -15,27 +15,23 @@ interface ChatServer {
      * Use [internalName] when you need a value that does not change and is not user-facing.
      */
     val internalName: String
+) {
+
 
     companion object {
-        fun default() = object : ChatServer {
-            override val name: String
-                get() = "Unspecified"
-            override val internalName: String
-                get() = "null"
-        }
+        fun default() = ChatServer(
+            name = "Default",
+            internalName = "default"
+        )
 
-        fun of(internalName: String) = object : ChatServer {
-            override val name: String
-                get() = internalName.lowercase().replaceFirstChar { it.uppercase() }
-            override val internalName: String
-                get() = internalName
-        }
+        fun of(internalName: String) = ChatServer(
+            name = internalName.lowercase().replaceFirstChar { it.uppercase() },
+            internalName = internalName
+        )
 
-        fun of(name: String, internalName: String) = object : ChatServer {
-            override val name: String
-                get() = name
-            override val internalName: String
-                get() = internalName
-        }
+        fun of(name: String, internalName: String) = ChatServer(
+            name = name,
+            internalName = internalName
+        )
     }
 }

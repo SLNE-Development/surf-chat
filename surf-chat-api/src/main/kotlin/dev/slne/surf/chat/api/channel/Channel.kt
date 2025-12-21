@@ -1,6 +1,16 @@
 package dev.slne.surf.chat.api.channel
 
-import dev.slne.surf.chat.api.entity.ChannelMember
+/**
+ * Represents a chat channel in the system.
+ *
+ * @property channelUuid The unique identifier of the channel.
+ * @property channelName The name of the channel.
+ * @property members The set of members currently in the channel.
+ * @property bannedPlayers The set of users banned from the channel.
+ * @property invitedPlayers The set of users invited to the channel.
+ * @property visibility The visibility status of the channel.
+ * @property createdAt The timestamp (in milliseconds since epoch) when the channel was created.
+ */
 import dev.slne.surf.chat.api.entity.User
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import java.util.*
@@ -16,21 +26,23 @@ import java.util.*
  * @property visibility The visibility status of the channel.
  * @property createdAt The timestamp (in milliseconds since epoch) when the channel was created.
  */
-interface Channel {
-    val channelUuid: UUID
-    val channelName: String
-    val members: ObjectSet<ChannelMember>
-    val bannedPlayers: ObjectSet<User>
-    val invitedPlayers: ObjectSet<User>
-    var visibility: ChannelVisibility
-    val createdAt: Long
-
+abstract class Channel(
+    open val channelUuid: UUID,
+    open val channelName: String,
+    open val members: ObjectSet<ChannelMember>,
+    open val bannedPlayers: ObjectSet<UUID>,
+    open val invitedPlayers: ObjectSet<UUID>,
+    open var visibility: ChannelVisibility,
+    open val createdAt: Long
+) {
     /**
      * Allows a user to join the channel.
      *
      * @param user The user attempting to join the channel.
      */
-    fun join(user: User)
+    fun join(user: User) {
+        members.add(ChannelMember(user.uuid, user.name, ChannelRole.MEMBER))
+    }
 
     /**
      * Removes a member from the channel.
@@ -71,14 +83,18 @@ interface Channel {
      *
      * @param member The member to transfer ownership to.
      */
-    fun transfer(member: ChannelMember)
+    fun transfer(member: ChannelMember) {
+        members.removeIf { it.role == ChannelRole.OWNER }
+        members.removeIf { it.uuid == member.uuid }
+        members.add(ChannelMember(member.uuid, member.name, ChannelRole.OWNER))
+    }
 
     /**
      * Leaves the channel and transfers ownership to another member.
      *
      * @param member The member to transfer ownership to.
      */
-    fun leaveAndTransfer(member: ChannelMember)
+    abstract fun leaveAndTransfer(member: ChannelMember)
 
     /**
      * Checks if a user is invited to the channel.
@@ -86,7 +102,7 @@ interface Channel {
      * @param user The user to check.
      * @return `true` if the user is invited, otherwise `false`.
      */
-    fun isInvited(user: User) = invitedPlayers.contains(user)
+    fun isInvited(user: User) = invitedPlayers.contains(user.uuid)
 
     /**
      * Invites a user to the channel.
@@ -94,7 +110,7 @@ interface Channel {
      * @param user The user to invite.
      * @return `true` if the user was successfully invited, otherwise `false`.
      */
-    fun invite(user: User) = invitedPlayers.add(user)
+    fun invite(user: User) = invitedPlayers.add(user.uuid)
 
     /**
      * Revokes an invitation for a user.
@@ -102,7 +118,7 @@ interface Channel {
      * @param user The user whose invitation is to be revoked.
      * @return `true` if the invitation was successfully revoked, otherwise `false`.
      */
-    fun revoke(user: User) = invitedPlayers.remove(user)
+    fun revoke(user: User) = invitedPlayers.remove(user.uuid)
 
     /**
      * Promotes a member to a higher role in the channel.
@@ -110,7 +126,16 @@ interface Channel {
      * @param member The member to promote.
      * @return `true` if the promotion was successful, otherwise `false`.
      */
-    fun promote(member: ChannelMember): Boolean
+    fun promote(member: ChannelMember): Boolean {
+        if (member.role == ChannelRole.MODERATOR) {
+            return false
+        }
+
+        member.role = ChannelRole.MODERATOR
+
+        members.remove(member)
+        return members.add(member)
+    }
 
     /**
      * Demotes a member to a lower role in the channel.
@@ -118,14 +143,30 @@ interface Channel {
      * @param member The member to demote.
      * @return `true` if the demotion was successful, otherwise `false`.
      */
-    fun demote(member: ChannelMember): Boolean
+    fun demote(member: ChannelMember): Boolean {
+        if (member.role == ChannelRole.MEMBER) {
+            return false
+        }
+
+        member.role = ChannelRole.MEMBER
+
+        members.remove(member)
+        return members.add(member)
+    }
 
     /**
      * Bans a user from the channel.
      *
      * @param user The user to ban.
      */
-    fun ban(user: User)
+    fun ban(user: User) {
+        if (this.isBanned(user)) {
+            return
+        }
+
+        members.removeIf { it.uuid == user.uuid }
+        bannedPlayers.add(user.uuid)
+    }
 
     /**
      * Unbans a user from the channel.
@@ -133,7 +174,7 @@ interface Channel {
      * @param user The user to unban.
      * @return `true` if the user was successfully unbanned, otherwise `false`.
      */
-    fun unban(user: User) = bannedPlayers.remove(user)
+    fun unban(user: User) = bannedPlayers.remove(user.uuid)
 
     /**
      * Checks if a user is banned from the channel.
@@ -141,12 +182,18 @@ interface Channel {
      * @param user The user to check.
      * @return `true` if the user is banned, otherwise `false`.
      */
-    fun isBanned(user: User): Boolean = bannedPlayers.contains(user)
+    fun isBanned(user: User): Boolean = bannedPlayers.contains(user.uuid)
 
     /**
      * Kicks a member from the channel.
      *
      * @param member The member to kick.
      */
-    fun kick(member: ChannelMember)
+    fun kick(member: ChannelMember) {
+        if (!members.contains(member)) {
+            return
+        }
+
+        leaveAndTransfer(member)
+    }
 }

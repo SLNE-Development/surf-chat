@@ -1,4 +1,4 @@
-package dev.slne.surf.chat.api.entry
+package dev.slne.surf.chat.api.denylist
 
 /**
  * Represents the type of action to be taken for a denylist entry.

@@ -1,8 +1,7 @@
 package dev.slne.surf.chat.core.entry
 
-import dev.slne.surf.chat.api.DenylistAction
-import dev.slne.surf.chat.api.entry.DenylistActionType
-import dev.slne.surf.chat.api.entry.DenylistEntry
+import dev.slne.surf.chat.api.denylist.DenylistActionType
+import dev.slne.surf.chat.api.denylist.DenylistEntry
 import dev.slne.surf.chat.core.service.denylistActionService
 import dev.slne.surf.chat.core.service.denylistService
 import kotlin.time.Duration

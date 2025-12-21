@@ -5,14 +5,14 @@ import it.unimi.dsi.fastutil.objects.ObjectSet
 /**
  * Represents a group chat consisting of multiple chat servers.
  */
-interface ChatGroup {
+data class ChatGroup(
     /**
      * The name of the chat group.
      *
      * Represents the display name of the group, typically used for identifying the chat group within interfaces
      * or user-facing components.
      */
-    val name: String
+    val name: String,
 
     /**
      * A set of chat servers that are members of the chat group.
@@ -21,4 +21,4 @@ interface ChatGroup {
      * It may be used for operations such as querying, managing, or broadcasting messages to all member servers within the group.
      */
     val members: ObjectSet<ChatServer>
-}
+)

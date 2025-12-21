@@ -5,7 +5,6 @@ import dev.jorel.commandapi.arguments.Argument
 import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.CustomArgument
 import dev.jorel.commandapi.arguments.StringArgument
-import dev.slne.surf.chat.api.DenylistAction
 import dev.slne.surf.chat.core.service.denylistActionService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 

@@ -1,7 +1,6 @@
 package dev.slne.surf.chat.core.entry
 
-import dev.slne.surf.chat.api.DenylistAction
-import dev.slne.surf.chat.api.entry.DenylistEntry
+import dev.slne.surf.chat.api.denylist.DenylistEntry
 
 /**
  * Represents the implementation of a denylist entry in the chat moderation system.

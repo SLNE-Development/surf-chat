@@ -11,10 +11,6 @@ object BukkitListenerManager {
         ConnectListener().register()
 
         Bukkit.getMessenger().registerIncomingPluginChannel(
-            plugin, Constants.CHANNEL_DM,
-            DirectMessageListener()
-        )
-        Bukkit.getMessenger().registerIncomingPluginChannel(
             plugin, Constants.CHANNEL_SERVER_RESPONSE,
             ServerResponseListener()
         );

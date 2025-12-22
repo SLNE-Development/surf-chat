@@ -64,7 +64,7 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
             val filter = query?.parseFilters() ?: HistoryFilter.empty()
             val page = query?.get("--page")?.toIntOrNull() ?: 1
 
-            val history = historyService.findHistoryEntry(filter)
+            val history = historyService.findHistoryEntry(filter).sortedBy { it.sentAt }
 
             if (history.isEmpty()) {
                 player.sendText {

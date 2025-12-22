@@ -1,9 +1,11 @@
 package dev.slne.surf.chat.bukkit.command.denylist
 
+import dev.slne.surf.chat.api.denylist.DenylistAction
 import dev.slne.surf.chat.api.denylist.DenylistActionType
 import dev.slne.surf.chat.api.denylist.DenylistEntry
 import dev.slne.surf.chat.core.service.denylistActionService
 import dev.slne.surf.chat.core.service.denylistService
+import kotlin.time.Duration
 
 /**
  * Represents a batch of denylist entries created together.
@@ -75,7 +77,7 @@ class DenylistBatchEntry private constructor(
 
         fun build(): DenylistBatchEntry {
             val now = System.currentTimeMillis()
-            val action: DenylistAction = DenylistActionImpl(
+            val action = DenylistAction(
                 name = "${actionType.name.lowercase()}-$reason",
                 actionType = actionType,
                 reason = punishReason,
@@ -83,7 +85,7 @@ class DenylistBatchEntry private constructor(
             )
 
             val entries = words.map { word ->
-                DenylistEntryImpl(
+                DenylistEntry(
                     word = word,
                     reason = reason,
                     addedBy = staff,

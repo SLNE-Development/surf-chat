@@ -13,7 +13,7 @@ class ServerResponseListener : PluginMessageListener {
         player: Player,
         message: ByteArray
     ) {
-        if (channel != Constants.CHANNEL_SERVER_RESPONSE) {
+        if (channel != "surf-chat:server_response") {
             return
         }
 

@@ -1,6 +1,7 @@
 package dev.slne.surf.chat.fallback.user
 
 import dev.slne.surf.chat.api.channel.Channel
+import dev.slne.surf.chat.api.channel.ChannelMember
 import dev.slne.surf.chat.api.entity.ConfigurableUser
 import dev.slne.surf.chat.api.entity.User
 import org.bukkit.Bukkit

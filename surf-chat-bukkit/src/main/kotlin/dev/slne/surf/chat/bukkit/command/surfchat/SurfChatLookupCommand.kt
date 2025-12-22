@@ -129,7 +129,7 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
                                 append(CommonComponents.EM_DASH)
                                 appendSpace()
                                 variableKey("Server: ")
-                                variableValue(entry.server.name)
+                                variableValue(entry.server)
                                 appendNewline()
                                 append(CommonComponents.EM_DASH)
                                 appendSpace()
@@ -178,28 +178,20 @@ private suspend fun Map<String, String>.parseFilters(): HistoryFilter {
         return millis
     }
 
-    return object : HistoryFilter {
-        override val messageUuid: UUID? =
-            this@parseFilters["--messageUuid"]?.let { runCatching { UUID.fromString(it) }.getOrNull() }
-        override val senderUuid: UUID? = senderUuid
-        override val receiverUuid: UUID? = receiverUuid
-        override val messageType: MessageType? =
-            this@parseFilters["--type"]?.let { runCatching { MessageType.valueOf(it.uppercase()) }.getOrNull() }
-        override val range: Long? =
-            this@parseFilters["--range"]?.let { parseRangeToMillis(it) }
-        override val messageLike: String? =
-            this@parseFilters["--message"]
-        override val server: ChatServer? = this@parseFilters["--server"]?.let {
+    return HistoryFilter(
+        this@parseFilters["--messageUuid"]?.let { runCatching { UUID.fromString(it) }.getOrNull() },
+        senderUuid,
+        receiverUuid,
+        this@parseFilters["--type"]?.let { runCatching { MessageType.valueOf(it.uppercase()) }.getOrNull() },
+        this@parseFilters["--range"]?.let { parseRangeToMillis(it) },
+        this@parseFilters["--message"],
+        this@parseFilters["--server"]?.let {
             ChatServer.of(it)
-        }
-        override val channel: String? =
-            this@parseFilters["--channel"]
-        override val deletedBy: String? =
-            this@parseFilters["--deletedBy"]
-        override val type: MessageType? =
-            this@parseFilters["--type"]?.let { runCatching { MessageType.valueOf(it.uppercase()) }.getOrNull() }
-        override val limit: Int? =
-            this@parseFilters["--limit"]?.toIntOrNull()
-    }
+        },
+        this@parseFilters["--channel"],
+        this@parseFilters["--deletedBy"],
+        this@parseFilters["--type"]?.let { runCatching { MessageType.valueOf(it.uppercase()) }.getOrNull() },
+        this@parseFilters["--limit"]?.toIntOrNull()
+    )
 }
 

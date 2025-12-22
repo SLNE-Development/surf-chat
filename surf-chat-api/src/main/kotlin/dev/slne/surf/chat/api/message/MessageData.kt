@@ -2,6 +2,7 @@ package dev.slne.surf.chat.api.message
 
 import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.entity.User
+import dev.slne.surf.chat.api.server.ChatServer
 import dev.slne.surf.surfapi.core.api.messages.adventure.plain
 import net.kyori.adventure.chat.SignedMessage
 import net.kyori.adventure.text.Component
@@ -69,7 +70,7 @@ data class MessageData(
      * The `server` property is particularly useful when messages or communication need to be
      * associated with specific servers in a multi-server environment.
      */
-    val server: String,
+    val server: ChatServer,
 
     /**
      * Represents the associated chat channel for a message.
@@ -105,7 +106,7 @@ data class MessageData(
         message.plain()
     }
 
-    fun withReceiver(receiver: User?) = copy(receiverUuid = receiver)
+    fun withReceiver(receiver: User?) = copy(receiver = receiver)
     fun withChannel(channel: Channel?) = if (channel != null) {
         copy(channel = channel.channelName, type = MessageType.CHANNEL)
     } else {

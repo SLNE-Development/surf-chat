@@ -18,7 +18,7 @@ class ConnectListener : Listener {
 
             if (!ALREADY_REQUESTED) {
                 delay(1000)
-                pluginMessageSender(Constants.CHANNEL_SERVER_REQUEST, event.player) {
+                pluginMessageSender("surf-chat:server_request", event.player) {
                     writeUTF("Requesting data...")
                 }
                 ALREADY_REQUESTED = true

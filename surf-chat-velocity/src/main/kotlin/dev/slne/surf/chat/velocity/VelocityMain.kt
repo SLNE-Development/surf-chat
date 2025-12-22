@@ -8,7 +8,6 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
 import com.velocitypowered.api.plugin.annotation.DataDirectory
 import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier
-import dev.slne.surf.chat.core.Constants
 import dev.slne.surf.chat.velocity.handler.ServerRequestHandler
 
 import java.nio.file.Path
@@ -28,8 +27,8 @@ class VelocityMain @Inject constructor(
         INSTANCE = this
 
         plugin.proxy.eventManager.register(plugin, ServerRequestHandler())
-        plugin.proxy.channelRegistrar.register(MinecraftChannelIdentifier.from(Constants.CHANNEL_SERVER_RESPONSE))
-        plugin.proxy.channelRegistrar.register(MinecraftChannelIdentifier.from(Constants.CHANNEL_SERVER_REQUEST))
+        plugin.proxy.channelRegistrar.register(MinecraftChannelIdentifier.from("surf-chat:server_request"))
+        plugin.proxy.channelRegistrar.register(MinecraftChannelIdentifier.from("surf-chat:server_response"))
     }
 
     companion object {

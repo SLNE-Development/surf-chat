@@ -34,4 +34,17 @@ data class ChatServer(
             internalName = internalName
         )
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is ChatServer) return false
+
+        if (internalName != other.internalName) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return internalName.hashCode()
+    }
 }

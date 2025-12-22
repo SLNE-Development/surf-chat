@@ -4,17 +4,14 @@ import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.PluginMessageEvent
 import com.velocitypowered.api.proxy.ServerConnection
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier
-
-import dev.slne.surf.chat.core.Constants
-
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 
 class ServerRequestHandler {
     private val channelServerRequest: MinecraftChannelIdentifier =
-        MinecraftChannelIdentifier.from(Constants.CHANNEL_SERVER_REQUEST)
+        MinecraftChannelIdentifier.from("surf-chat:server_request")
     private val channelServerResponse: MinecraftChannelIdentifier =
-        MinecraftChannelIdentifier.from(Constants.CHANNEL_SERVER_RESPONSE)
+        MinecraftChannelIdentifier.from("surf-chat:server_response")
 
     @Subscribe
     fun onPluginMessage(event: PluginMessageEvent) {

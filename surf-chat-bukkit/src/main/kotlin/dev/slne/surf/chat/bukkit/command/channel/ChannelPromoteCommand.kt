@@ -5,8 +5,10 @@ import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.channel.Channel
+import dev.slne.surf.chat.api.channel.ChannelMember
 import dev.slne.surf.chat.bukkit.command.argument.channelMemberArgument
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.util.player
 import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.bukkit.util.user
 import dev.slne.surf.chat.core.service.channelService
@@ -53,7 +55,7 @@ fun CommandAPICommand.channelPromoteCommand() = subcommand("promote") {
             success(" befördert.")
         }
 
-        target.sendText {
+        target.player()?.sendText {
             appendPrefix()
             info("Du wurdest befördert.")
         }

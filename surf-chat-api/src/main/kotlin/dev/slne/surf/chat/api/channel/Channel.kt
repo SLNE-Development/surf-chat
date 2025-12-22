@@ -1,17 +1,7 @@
 package dev.slne.surf.chat.api.channel
 
-/**
- * Represents a chat channel in the system.
- *
- * @property channelUuid The unique identifier of the channel.
- * @property channelName The name of the channel.
- * @property members The set of members currently in the channel.
- * @property bannedPlayers The set of users banned from the channel.
- * @property invitedPlayers The set of users invited to the channel.
- * @property visibility The visibility status of the channel.
- * @property createdAt The timestamp (in milliseconds since epoch) when the channel was created.
- */
 import dev.slne.surf.chat.api.entity.User
+import dev.slne.surf.chat.api.surfChatApi
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import java.util.*
 
@@ -26,14 +16,14 @@ import java.util.*
  * @property visibility The visibility status of the channel.
  * @property createdAt The timestamp (in milliseconds since epoch) when the channel was created.
  */
-abstract class Channel(
-    open val channelUuid: UUID,
-    open val channelName: String,
-    open val members: ObjectSet<ChannelMember>,
-    open val bannedPlayers: ObjectSet<UUID>,
-    open val invitedPlayers: ObjectSet<UUID>,
-    open var visibility: ChannelVisibility,
-    open val createdAt: Long
+data class Channel(
+    val channelUuid: UUID,
+    val channelName: String,
+    val members: ObjectSet<ChannelMember>,
+    val bannedPlayers: ObjectSet<UUID>,
+    val invitedPlayers: ObjectSet<UUID>,
+    var visibility: ChannelVisibility,
+    val createdAt: Long
 ) {
     /**
      * Allows a user to join the channel.
@@ -94,7 +84,25 @@ abstract class Channel(
      *
      * @param member The member to transfer ownership to.
      */
-    abstract fun leaveAndTransfer(member: ChannelMember)
+    fun leaveAndTransfer(member: ChannelMember) {
+        if (this.isOwner(member)) {
+            var nextOwner =
+                this.members.firstOrNull { it.hasModeratorPermissions() && it.uuid != member.uuid }
+
+            if (nextOwner == null) {
+                nextOwner = this.members.firstOrNull { it.uuid != member.uuid }
+            }
+
+            if (nextOwner == null) {
+                surfChatApi.deleteChannel(this)
+                return
+            }
+
+            this.transfer(nextOwner)
+        }
+
+        this.removeMember(member)
+    }
 
     /**
      * Checks if a user is invited to the channel.

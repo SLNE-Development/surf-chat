@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.fallback.entity
 
-import dev.slne.surf.chat.fallback.model.FallbackIgnoreListEntry
+import dev.slne.surf.chat.api.entry.IgnoreListEntry
 import dev.slne.surf.chat.fallback.table.IgnoreListTable
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
@@ -15,7 +15,7 @@ class IgnoreListEntity(id: EntityID<Int>) : IntEntity(id) {
     var targetName by IgnoreListTable.targetName
     var createdAt by IgnoreListTable.createdAt
 
-    fun toDto() = FallbackIgnoreListEntry(
+    fun toDto() = IgnoreListEntry(
         userUuid,
         userName,
         targetUuid,

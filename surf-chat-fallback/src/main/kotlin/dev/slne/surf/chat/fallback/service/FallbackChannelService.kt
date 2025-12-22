@@ -2,12 +2,11 @@ package dev.slne.surf.chat.fallback.service
 
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.channel.Channel
+import dev.slne.surf.chat.api.channel.ChannelMember
 import dev.slne.surf.chat.api.channel.ChannelRole
 import dev.slne.surf.chat.api.channel.ChannelVisibility
 import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.core.service.ChannelService
-import dev.slne.surf.chat.fallback.model.FallbackChannel
-import dev.slne.surf.chat.fallback.user.FallbackChannelMember
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.util.Services
@@ -23,12 +22,12 @@ class FallbackChannelService : ChannelService, Services.Fallback {
         val members = mutableObjectSetOf<ChannelMember>()
 
         members.add(
-            FallbackChannelMember(
+            ChannelMember(
                 owner.uuid, owner.name, ChannelRole.OWNER
             )
         )
 
-        val channel = FallbackChannel(
+        val channel = Channel(
             UUID.randomUUID(), name, members, mutableObjectSetOf(), mutableObjectSetOf(),
             ChannelVisibility.PRIVATE, System.currentTimeMillis()
         )

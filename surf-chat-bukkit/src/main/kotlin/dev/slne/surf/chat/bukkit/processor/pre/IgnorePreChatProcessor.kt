@@ -7,7 +7,7 @@ import dev.slne.surf.chat.bukkit.processor.ProcessorOrder
 import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.core.service.ignoreService
 
-class IgnorePreChatProcessor : PreChatProcessor {
+object IgnorePreChatProcessor : PreChatProcessor {
     override val order = ProcessorOrder.IGNORE
 
     override fun process(context: MessageContext): MessageContext {

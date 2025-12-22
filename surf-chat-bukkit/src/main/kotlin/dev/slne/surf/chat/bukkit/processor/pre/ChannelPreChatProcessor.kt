@@ -9,7 +9,7 @@ import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.spyService
 import org.bukkit.Bukkit
 
-class ChannelPreChatProcessor : PreChatProcessor {
+object ChannelPreChatProcessor : PreChatProcessor {
     override val order = ProcessorOrder.CHANNEL
 
     private val channelExceptPattern =

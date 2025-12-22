@@ -8,7 +8,7 @@ import dev.slne.surf.chat.bukkit.util.appendWarningPrefix
 import dev.slne.surf.chat.bukkit.util.sendText
 import java.net.URI
 
-class LinkPreChatProcessor : PreChatProcessor {
+object LinkPreChatProcessor : PreChatProcessor {
     override val order = ProcessorOrder.VALIDATE
 
     private val urlRegex = Regex(

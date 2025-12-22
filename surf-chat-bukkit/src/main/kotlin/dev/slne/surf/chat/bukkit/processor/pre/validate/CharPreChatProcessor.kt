@@ -6,7 +6,7 @@ import dev.slne.surf.chat.bukkit.processor.ProcessorOrder
 import dev.slne.surf.chat.bukkit.util.appendWarningPrefix
 import dev.slne.surf.chat.bukkit.util.sendText
 
-class CharPreChatProcessor : PreChatProcessor {
+object CharPreChatProcessor : PreChatProcessor {
     private val validCharactersRegex =
         "^[\\u0020-\\u007EäöüÄÖÜß€@£¥|²³µ½¼¾«»¡¿°§´`^~¨]+$".toRegex()
     override val order = ProcessorOrder.VALIDATE

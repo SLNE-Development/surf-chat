@@ -6,7 +6,7 @@ import dev.slne.surf.chat.api.processor.PreChatProcessor
 import dev.slne.surf.chat.bukkit.message.MessageFormatter
 import dev.slne.surf.chat.bukkit.processor.ProcessorOrder
 
-class FormatPreChatProcessor : PreChatProcessor {
+object FormatPreChatProcessor : PreChatProcessor {
     override val order = ProcessorOrder.FORMAT
 
     override fun process(context: MessageContext): MessageContext {

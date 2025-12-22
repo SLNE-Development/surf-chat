@@ -8,7 +8,7 @@ import dev.slne.surf.chat.bukkit.util.isConsole
 import dev.slne.surf.chat.bukkit.util.toUserOrNull
 import dev.slne.surf.chat.core.service.ignoreService
 
-class CorrectViewersPreChatProcessor : PreChatProcessor {
+object CorrectViewersPreChatProcessor : PreChatProcessor {
     override val order = ProcessorOrder.CORRECT_VIEWERS
 
     override fun process(context: MessageContext): MessageContext {

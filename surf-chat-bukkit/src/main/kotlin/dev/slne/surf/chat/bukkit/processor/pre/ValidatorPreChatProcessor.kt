@@ -7,7 +7,7 @@ import dev.slne.surf.chat.bukkit.processor.ProcessorOrder
 import dev.slne.surf.chat.bukkit.util.appendWarningPrefix
 import dev.slne.surf.chat.bukkit.util.sendText
 
-class ValidatorPreChatProcessor : PreChatProcessor {
+object ValidatorPreChatProcessor : PreChatProcessor {
     override val order = ProcessorOrder.VALIDATE
 
     override fun process(context: MessageContext): MessageContext {

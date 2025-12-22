@@ -11,7 +11,7 @@ import dev.slne.surf.surfapi.core.api.util.mutableObjectListOf
 import it.unimi.dsi.fastutil.objects.ObjectList
 import java.util.*
 
-class SpamPreChatProcessor : PreChatProcessor {
+object SpamPreChatProcessor : PreChatProcessor {
     override val order = ProcessorOrder.VALIDATE
     private val messageTimestamps = mutableObject2ObjectMapOf<UUID, ObjectList<Long>>()
 

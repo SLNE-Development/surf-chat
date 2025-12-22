@@ -2,9 +2,15 @@ package dev.slne.surf.chat.bukkit
 
 import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
 import com.github.shynixn.mccoroutine.folia.launch
+import dev.slne.surf.chat.api.processor.chatProcessorRegistry
 import dev.slne.surf.chat.api.server.ChatServer
 import dev.slne.surf.chat.bukkit.config.DiscordConfigProvider
 import dev.slne.surf.chat.bukkit.config.SurfChatConfigProvider
+import dev.slne.surf.chat.bukkit.processor.post.LogPostChatProcessor
+import dev.slne.surf.chat.bukkit.processor.pre.*
+import dev.slne.surf.chat.bukkit.processor.pre.validate.CharPreChatProcessor
+import dev.slne.surf.chat.bukkit.processor.pre.validate.LinkPreChatProcessor
+import dev.slne.surf.chat.bukkit.processor.pre.validate.SpamPreChatProcessor
 import dev.slne.surf.chat.core.service.databaseService
 import dev.slne.surf.chat.core.service.denylistActionService
 import dev.slne.surf.chat.core.service.denylistService
@@ -20,6 +26,17 @@ class BukkitMain : SuspendingJavaPlugin() {
     override fun onLoad() {
         databaseService.establishConnection(plugin.dataPath)
         databaseService.createTables()
+
+        chatProcessorRegistry.register(CharPreChatProcessor)
+        chatProcessorRegistry.register(LinkPreChatProcessor)
+        chatProcessorRegistry.register(SpamPreChatProcessor)
+        chatProcessorRegistry.register(ChannelPreChatProcessor)
+        chatProcessorRegistry.register(CorrectViewersPreChatProcessor)
+        chatProcessorRegistry.register(FormatPreChatProcessor)
+        chatProcessorRegistry.register(IgnorePreChatProcessor)
+        chatProcessorRegistry.register(ValidatorPreChatProcessor)
+
+        chatProcessorRegistry.register(LogPostChatProcessor)
     }
 
     override fun onEnable() {

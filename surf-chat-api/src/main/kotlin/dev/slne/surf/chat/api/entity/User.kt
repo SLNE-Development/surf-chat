@@ -1,8 +1,6 @@
 package dev.slne.surf.chat.api.entity
 
 import dev.slne.surf.chat.api.entry.IgnoreListEntry
-import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
-import it.unimi.dsi.fastutil.objects.ObjectSet
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import java.util.*
@@ -22,5 +20,5 @@ data class User(
     var channelInviteMessagesEnabled: Boolean = true,
     var chatPingsEnabled: Boolean = true,
 
-    val ignorelist: ObjectSet<IgnoreListEntry> = mutableObjectSetOf()
+    val ignorelist: MutableList<IgnoreListEntry> = mutableListOf()
 )

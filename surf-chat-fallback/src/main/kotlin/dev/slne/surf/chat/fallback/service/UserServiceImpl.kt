@@ -4,6 +4,7 @@ import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.core.service.UserService
 import dev.slne.surf.chat.fallback.repository.userRepository
+import dev.slne.surf.chat.fallback.table.IgnoreListTable
 import dev.slne.surf.chat.fallback.table.UserTable
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import net.kyori.adventure.util.Services
@@ -29,7 +30,7 @@ class UserServiceImpl : UserService, Services.Fallback {
     override fun createTable() {
         transaction {
             SchemaUtils.create(
-                UserTable
+                UserTable, IgnoreListTable
             )
         }
     }

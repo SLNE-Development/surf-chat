@@ -38,6 +38,7 @@ object RedisRequestListener {
                 append(formatter.formatIncomingPm(context.request.messageData))
             }
             context.respond(DirectMessageResponse(DirectMessageResponse.DirectMessageStatus.SUCCESS))
+            return
         }
 
         context.respond(DirectMessageResponse(DirectMessageResponse.DirectMessageStatus.DIRECT_MESSAGES_DISABLED))

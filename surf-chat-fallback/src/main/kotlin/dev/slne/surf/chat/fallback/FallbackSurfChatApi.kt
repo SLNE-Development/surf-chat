@@ -44,12 +44,8 @@ class FallbackSurfChatApi : SurfChatApi, Services.Fallback {
         )
     }
 
-    override fun getUser(name: String) = userService.getUser(name)
-    override fun getUser(uuid: UUID) = userService.getUser(uuid)
-    override fun createUser(
-        name: String,
-        uuid: UUID
-    ) = userService.getOfflineUser(uuid, name)
+    override fun getUser(name: String) = userService.findUserByName(name)
+    override fun getUser(uuid: UUID) = userService.findUserByUuid(uuid)
 
     override suspend fun lookupHistory(filter: HistoryFilter) =
         historyService.findHistoryEntry(filter)

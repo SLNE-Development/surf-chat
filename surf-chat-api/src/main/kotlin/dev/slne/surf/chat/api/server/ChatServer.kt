@@ -1,5 +1,8 @@
 package dev.slne.surf.chat.api.server
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class ChatServer(
     /**
      * The user-facing display name of the chat server.

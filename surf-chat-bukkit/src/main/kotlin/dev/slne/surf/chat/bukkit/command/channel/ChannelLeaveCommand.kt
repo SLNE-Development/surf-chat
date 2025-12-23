@@ -5,6 +5,7 @@ import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.util.channelMember
 import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.bukkit.util.user
 import dev.slne.surf.chat.core.service.channelService

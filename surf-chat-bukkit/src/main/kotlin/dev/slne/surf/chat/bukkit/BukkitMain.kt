@@ -11,11 +11,9 @@ import dev.slne.surf.chat.bukkit.processor.pre.*
 import dev.slne.surf.chat.bukkit.processor.pre.validate.CharPreChatProcessor
 import dev.slne.surf.chat.bukkit.processor.pre.validate.LinkPreChatProcessor
 import dev.slne.surf.chat.bukkit.processor.pre.validate.SpamPreChatProcessor
-import dev.slne.surf.chat.core.service.databaseService
-import dev.slne.surf.chat.core.service.denylistActionService
-import dev.slne.surf.chat.core.service.denylistService
-import dev.slne.surf.chat.core.service.functionalityService
+import dev.slne.surf.chat.core.service.*
 import dev.slne.surf.surfapi.bukkit.api.metrics.Metrics
+import kotlinx.coroutines.runBlocking
 import org.bukkit.plugin.java.JavaPlugin
 
 val plugin get() = JavaPlugin.getPlugin(BukkitMain::class.java)
@@ -51,9 +49,20 @@ class BukkitMain : SuspendingJavaPlugin() {
         }
 
         metrics = Metrics(this, 27048)
+        redisLoader.connect()
     }
 
     override fun onDisable() {
+        redisLoader.disconnect()
+
+        runBlocking {
+            logger.info("Saving online users...")
+            userService.onlineUsers.forEach {
+                userService.saveUser(it)
+            }
+            logger.info("Online users saved.")
+        }
+
         databaseService.closeConnection()
 
         if (::metrics.isInitialized) {

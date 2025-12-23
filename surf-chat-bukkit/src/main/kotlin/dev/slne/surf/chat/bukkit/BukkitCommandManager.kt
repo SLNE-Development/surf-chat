@@ -4,6 +4,7 @@ import dev.slne.surf.chat.bukkit.command.channel.channelAdminCommand
 import dev.slne.surf.chat.bukkit.command.channel.channelCommand
 import dev.slne.surf.chat.bukkit.command.denylist.action.denylistActionCommand
 import dev.slne.surf.chat.bukkit.command.denylist.denylistCommand
+import dev.slne.surf.chat.bukkit.command.directMessageCommand
 import dev.slne.surf.chat.bukkit.command.ignore.ignoreCommand
 import dev.slne.surf.chat.bukkit.command.settings.settingsCommand
 import dev.slne.surf.chat.bukkit.command.spy.directMessageSpyCommand
@@ -21,5 +22,6 @@ object BukkitCommandManager {
         denylistActionCommand()
         ignoreCommand()
         directMessageSpyCommand()
+        directMessageCommand()
     }
 }

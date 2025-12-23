@@ -12,7 +12,7 @@ import org.bukkit.Bukkit
 
 class UserArgument(nodeName: String) :
     CustomArgument<User, String>(StringArgument(nodeName), { info ->
-        userService.getUser(info.input)
+        userService.findUserByName(info.input)
             ?: throw CustomArgumentException.fromAdventureComponent {
                 buildText {
                     appendPrefix()

@@ -4,9 +4,9 @@ import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.message.MessageContext
 import dev.slne.surf.chat.api.processor.PreChatProcessor
 import dev.slne.surf.chat.bukkit.processor.ProcessorOrder
+import dev.slne.surf.chat.bukkit.util.ignores
 import dev.slne.surf.chat.bukkit.util.isConsole
 import dev.slne.surf.chat.bukkit.util.toUserOrNull
-import dev.slne.surf.chat.core.service.ignoreService
 
 object CorrectViewersPreChatProcessor : PreChatProcessor {
     override val order = ProcessorOrder.CORRECT_VIEWERS
@@ -23,6 +23,6 @@ object CorrectViewersPreChatProcessor : PreChatProcessor {
             return false
         }
 
-        return ignoreService.getIgnorelist(player.uuid).any { it.target == sender.uuid }
+        return player.ignores(sender.uuid)
     }
 }

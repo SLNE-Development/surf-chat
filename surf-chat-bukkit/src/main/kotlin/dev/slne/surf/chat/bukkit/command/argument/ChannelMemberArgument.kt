@@ -6,6 +6,7 @@ import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.CustomArgument
 import dev.jorel.commandapi.arguments.StringArgument
 import dev.slne.surf.chat.api.channel.ChannelMember
+import dev.slne.surf.chat.bukkit.util.channelMember
 import dev.slne.surf.chat.bukkit.util.user
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.userService
@@ -15,9 +16,10 @@ import dev.slne.surf.surfapi.core.api.util.emptyObjectSet
 class ChannelMemberArgument(nodeName: String) :
     CustomArgument<ChannelMember, String>(StringArgument(nodeName), { info ->
         val target =
-            userService.getUser(info.input) ?: throw CustomArgumentException.fromMessageBuilder(
-                MessageBuilder("Der Spieler ${info.input} wurde nicht gefunden.")
-            )
+            userService.findUserByName(info.input)
+                ?: throw CustomArgumentException.fromMessageBuilder(
+                    MessageBuilder("Der Spieler ${info.input} wurde nicht gefunden.")
+                )
         val user = info.sender.user() ?: throw CustomArgumentException.fromAdventureComponent {
             buildText {
                 appendPrefix()

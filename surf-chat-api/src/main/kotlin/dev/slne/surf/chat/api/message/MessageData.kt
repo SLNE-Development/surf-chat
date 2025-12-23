@@ -2,12 +2,15 @@ package dev.slne.surf.chat.api.message
 
 import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.entity.User
+import dev.slne.surf.chat.api.serializer.SerializableSignature
 import dev.slne.surf.chat.api.server.ChatServer
 import dev.slne.surf.surfapi.core.api.messages.adventure.plain
-import net.kyori.adventure.chat.SignedMessage
-import net.kyori.adventure.text.Component
+import dev.slne.surf.surfapi.core.api.serializer.adventure.component.SerializableComponent
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import java.util.*
 
+@Serializable
 /**
  * Represents a message in the chat system, including its content, metadata, and context.
  */
@@ -19,7 +22,7 @@ data class MessageData(
      * message formatting, validation, and data handling. The content can be processed in multiple ways, such as editing,
      * displaying, or validating based on the message type and other metadata.
      */
-    val message: Component,
+    val message: SerializableComponent,
 
     /**
      * A unique identifier for a specific message.
@@ -28,7 +31,7 @@ data class MessageData(
      * and is critical for operations such as deletion, logging,
      * and ensuring message integrity and traceability across the system.
      */
-    val messageUuid: UUID,
+    val messageUuid: @Contextual UUID,
 
     /**
      * Represents the sender of the message within the chat system.
@@ -87,7 +90,7 @@ data class MessageData(
      * This property contains cryptographic information, such as a signature, to verify the authenticity and integrity
      * of the associated message. If `null`, the message is considered unsigned or its signature data is unavailable.
      */
-    val signature: SignedMessage.Signature?,
+    val signature: SerializableSignature?,
 
     /**
      * Defines the type of the message associated with this object.

@@ -10,6 +10,7 @@ import dev.slne.surf.chat.api.channel.ChannelMember
 import dev.slne.surf.chat.bukkit.command.argument.channelMemberArgument
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.bukkit.util.channelMember
 import dev.slne.surf.chat.bukkit.util.player
 import dev.slne.surf.chat.bukkit.util.user
 import dev.slne.surf.chat.core.service.channelService

@@ -10,6 +10,8 @@ import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.api.server.ChatServer
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.bukkit.redis.event.TeamchatMessageRedisEvent
+import dev.slne.surf.chat.bukkit.redisApi
 import dev.slne.surf.chat.bukkit.util.user
 import dev.slne.surf.chat.core.service.historyService
 import net.kyori.adventure.text.Component
@@ -39,7 +41,11 @@ fun teamchatCommand() = commandAPICommand("teamchat", plugin) {
             MessageType.TEAM
         )
 
-        // TODO: Send Message (redis)
+        redisApi.publishEvent(
+            TeamchatMessageRedisEvent(
+                messageData
+            )
+        )
 
         plugin.launch {
             historyService.logMessage(messageData)

@@ -15,6 +15,7 @@ dependencies {
     compileOnly(libs.miniplaceholder.api)
 
     runtimeOnly(project(":surf-chat-fallback"))
+    implementation("dev.slne.surf:surf-redis:1.0.0-SNAPSHOT")
 }
 
 surfPaperPluginApi {

@@ -5,6 +5,7 @@ import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.api.message.MessageValidationResult
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.bukkit.util.hasPermission
 import dev.slne.surf.chat.core.service.denylistService
 import dev.slne.surf.chat.core.service.functionalityService
 import org.bukkit.Bukkit

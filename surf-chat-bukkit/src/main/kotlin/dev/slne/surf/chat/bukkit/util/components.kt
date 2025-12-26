@@ -8,7 +8,6 @@ import dev.slne.surf.chat.bukkit.hook.MiniPlaceholdersHook
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.service.historyService
-import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
@@ -128,9 +127,11 @@ fun SurfComponentBuilder.appendWarningPrefix() = append {
 }
 
 fun SurfComponentBuilder.appendBotIcon() = append {
-    darkSpacer("[")
-    info("ARTY".toSmallCaps())
-    darkSpacer("]")
+    darkSpacer(">>")
+    appendSpace()
+    error("AUTOMOD", TextDecoration.BOLD)
+    appendSpace()
+    spacer("|")
     appendSpace()
 }
 

@@ -4,8 +4,10 @@ import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.api.processor.chatProcessorRegistry
 import dev.slne.surf.chat.api.server.ChatServer
+import dev.slne.surf.chat.bukkit.config.AiModerationConfig
 import dev.slne.surf.chat.bukkit.config.DiscordConfigProvider
 import dev.slne.surf.chat.bukkit.config.SurfChatConfigProvider
+import dev.slne.surf.chat.bukkit.processor.post.AiModerationPostChatProcessor
 import dev.slne.surf.chat.bukkit.processor.post.LogPostChatProcessor
 import dev.slne.surf.chat.bukkit.processor.pre.*
 import dev.slne.surf.chat.bukkit.processor.pre.validate.CharPreChatProcessor
@@ -19,6 +21,8 @@ val plugin get() = JavaPlugin.getPlugin(BukkitMain::class.java)
 
 class BukkitMain : SuspendingJavaPlugin() {
     override fun onLoad() {
+        AiModerationConfig.init()
+
         databaseService.establishConnection(plugin.dataPath)
         databaseService.createTables()
 
@@ -32,6 +36,7 @@ class BukkitMain : SuspendingJavaPlugin() {
         chatProcessorRegistry.register(ValidatorPreChatProcessor)
 
         chatProcessorRegistry.register(LogPostChatProcessor)
+        chatProcessorRegistry.register(AiModerationPostChatProcessor)
     }
 
     override fun onEnable() {

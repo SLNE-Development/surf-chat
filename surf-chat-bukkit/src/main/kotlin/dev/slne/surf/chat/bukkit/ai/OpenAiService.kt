@@ -5,6 +5,7 @@ import com.openai.client.okhttp.OpenAIOkHttpClientAsync
 import com.openai.models.moderations.Moderation
 import com.openai.models.moderations.ModerationCreateParams
 import com.sksamuel.aedile.core.asLoadingCache
+import dev.slne.surf.chat.bukkit.config.aiModerationConfig
 import dev.slne.surf.surfapi.core.api.util.emptyObject2DoubleMap
 import it.unimi.dsi.fastutil.objects.Object2DoubleMap
 import it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap
@@ -16,7 +17,7 @@ import kotlin.time.toJavaDuration
 val openAiService = OpenAiService()
 
 class OpenAiService {
-    private val client = OpenAIOkHttpClientAsync.fromEnv()
+    private val client = OpenAIOkHttpClientAsync.builder().apiKey(aiModerationConfig.apiKey).build()
 
     val resultCache = Caffeine
         .newBuilder()

@@ -12,6 +12,7 @@ data class AiModerationConfig(
     val webhookUrl: String = "",
     val webhookAvatarUrl: String = "https://i.imgur.com/4vEeYfH.png",
     val userPanelPrefix: String = "https://support.castcrafter.de/cloud/cloud-players/",
+    val apiKey: String = ""
 ) {
 
     companion object {

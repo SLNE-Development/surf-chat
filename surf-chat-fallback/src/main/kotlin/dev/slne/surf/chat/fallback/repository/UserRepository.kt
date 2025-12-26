@@ -50,7 +50,7 @@ class UserRepository {
     }
 
     suspend fun saveUser(user: User) = newSuspendedTransaction(Dispatchers.IO) {
-        UserTable.upsert {
+        UserTable.upsert(UserTable.uuid) {
             it[name] = user.name
             it[uuid] = user.uuid
             it[directMessagesEnabled] = user.directMessagesEnabled

@@ -12,13 +12,10 @@ import dev.slne.surf.chat.bukkit.processor.pre.validate.CharPreChatProcessor
 import dev.slne.surf.chat.bukkit.processor.pre.validate.LinkPreChatProcessor
 import dev.slne.surf.chat.bukkit.processor.pre.validate.SpamPreChatProcessor
 import dev.slne.surf.chat.core.service.*
-import dev.slne.surf.surfapi.bukkit.api.metrics.Metrics
 import kotlinx.coroutines.runBlocking
 import org.bukkit.plugin.java.JavaPlugin
 
 val plugin get() = JavaPlugin.getPlugin(BukkitMain::class.java)
-
-lateinit var metrics: Metrics
 
 class BukkitMain : SuspendingJavaPlugin() {
     override fun onLoad() {
@@ -47,8 +44,6 @@ class BukkitMain : SuspendingJavaPlugin() {
             denylistActionService.fetchActions()
             functionalityService.fetch(server)
         }
-
-        metrics = Metrics(this, 27048)
         redisLoader.connect()
     }
 
@@ -64,10 +59,6 @@ class BukkitMain : SuspendingJavaPlugin() {
         }
 
         databaseService.closeConnection()
-
-        if (::metrics.isInitialized) {
-            metrics.shutdown()
-        }
     }
 
     val surfChatConfig = SurfChatConfigProvider()

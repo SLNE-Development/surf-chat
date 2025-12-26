@@ -20,15 +20,10 @@ fun CommandAPICommand.settingsDirectMessagesCommand() = subcommand("directMessag
 
         plugin.launch {
             val user = player.user() ?: return@launch
-            val configurable = user.configure()
-            val currentValue = configurable.directMessagesEnabled()
+            val currentValue = user.directMessagesEnabled
 
             if (newValue == null) {
-                if (currentValue) {
-                    configurable.disableDirectMessages()
-                } else {
-                    configurable.enableDirectMessages()
-                }
+                user.directMessagesEnabled = !currentValue
 
                 player.sendText {
                     appendPrefix()
@@ -44,9 +39,9 @@ fun CommandAPICommand.settingsDirectMessagesCommand() = subcommand("directMessag
                 }
 
                 if (newValue == true) {
-                    configurable.enableDirectMessages()
+                    user.directMessagesEnabled = true
                 } else {
-                    configurable.disableDirectMessages()
+                    user.directMessagesEnabled = false
                 }
 
                 player.sendText {

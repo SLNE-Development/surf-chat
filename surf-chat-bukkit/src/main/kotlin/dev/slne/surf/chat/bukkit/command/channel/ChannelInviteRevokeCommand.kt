@@ -13,6 +13,7 @@ import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.sendText
 import dev.slne.surf.chat.bukkit.util.user
 import dev.slne.surf.chat.core.service.channelService
+import dev.slne.surf.chat.core.util.channelMember
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 fun CommandAPICommand.channelInviteRevokeCommand() = subcommand("revoke") {
@@ -65,7 +66,7 @@ fun CommandAPICommand.channelInviteRevokeCommand() = subcommand("revoke") {
         }
 
         plugin.launch {
-            if (target.configure().invitesEnabled()) {
+            if (target.channelInviteMessagesEnabled) {
                 target.sendText {
                     appendPrefix()
                     info("Deine Einladung in den Nachrichtenkanal ")

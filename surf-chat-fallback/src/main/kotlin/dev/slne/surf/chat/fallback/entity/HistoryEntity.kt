@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.fallback.entity
 
-import dev.slne.surf.chat.core.entry.HistoryEntryImpl
+import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.fallback.table.HistoryTable
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
@@ -19,15 +19,15 @@ class HistoryEntity(id: EntityID<Int>) : IntEntity(id) {
     var channel by HistoryTable.channel
     var deletedBy by HistoryTable.deletedBy
 
-    fun toDto() = HistoryEntryImpl(
+    fun toDto() = HistoryEntry(
         messageUuid,
         senderUuid,
+        receiverUuid,
         type,
         sentAt,
         message,
-        server,
+        server.name,
+        channel,
         deletedBy,
-        receiverUuid,
-        channel
     )
 }

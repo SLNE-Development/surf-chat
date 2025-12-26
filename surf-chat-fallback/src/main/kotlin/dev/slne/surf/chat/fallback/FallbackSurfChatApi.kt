@@ -5,9 +5,9 @@ import dev.slne.surf.chat.api.SurfChatApi
 import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.entry.HistoryFilter
+import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.api.server.ChatServer
-import dev.slne.surf.chat.core.message.MessageData
 import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.chat.core.service.userService
@@ -29,35 +29,23 @@ class FallbackSurfChatApi : SurfChatApi, Services.Fallback {
         signedMessage: SignedMessage?,
         messageUuid: UUID
     ) {
-        historyService.logMessage(object : MessageData {
-            override val message: Component
-                get() = message
-            override val messageUuid: UUID
-                get() = messageUuid
-            override val sender: User
-                get() = sender
-            override val receiver: User?
-                get() = receiver
-            override val sentAt: Long
-                get() = sentAt
-            override val server: ChatServer
-                get() = server
-            override val channel: Channel?
-                get() = channel
-            override val signedMessage: SignedMessage?
-                get() = signedMessage
-            override val type: MessageType
-                get() = type
-
-        })
+        historyService.logMessage(
+            MessageData(
+                message = message,
+                type = type,
+                sender = sender,
+                receiver = receiver,
+                sentAt = sentAt,
+                server = server,
+                channel = channel?.channelName,
+                signature = signedMessage?.signature(),
+                messageUuid = messageUuid
+            )
+        )
     }
 
-    override fun getUser(name: String) = userService.getUser(name)
-    override fun getUser(uuid: UUID) = userService.getUser(uuid)
-    override fun createUser(
-        name: String,
-        uuid: UUID
-    ) = userService.getOfflineUser(uuid, name)
+    override fun getUser(name: String) = userService.findUserByName(name)
+    override fun getUser(uuid: UUID) = userService.findUserByUuid(uuid)
 
     override suspend fun lookupHistory(filter: HistoryFilter) =
         historyService.findHistoryEntry(filter)

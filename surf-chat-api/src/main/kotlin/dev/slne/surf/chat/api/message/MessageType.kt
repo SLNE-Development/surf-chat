@@ -1,5 +1,8 @@
 package dev.slne.surf.chat.api.message
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 /**
  * Represents the type of a message in the chat system.
  */

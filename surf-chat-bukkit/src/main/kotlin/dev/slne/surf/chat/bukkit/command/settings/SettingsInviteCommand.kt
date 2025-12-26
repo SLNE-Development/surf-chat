@@ -20,15 +20,13 @@ fun CommandAPICommand.settingsInviteCommand() = subcommand("invites") {
 
         plugin.launch {
             val user = player.user() ?: return@launch
-            val configurable = user.configure()
-
-            val currentValue = configurable.invitesEnabled()
+            val currentValue = user.channelInviteMessagesEnabled
 
             if (newValue == null) {
                 if (currentValue) {
-                    configurable.disableInvites()
+                    user.channelInviteMessagesEnabled = false
                 } else {
-                    configurable.enableInvites()
+                    user.channelInviteMessagesEnabled = true
                 }
 
                 player.sendText {
@@ -49,9 +47,9 @@ fun CommandAPICommand.settingsInviteCommand() = subcommand("invites") {
                 }
 
                 if (newValue == true) {
-                    configurable.enableInvites()
+                    user.channelInviteMessagesEnabled = true
                 } else {
-                    configurable.disableInvites()
+                    user.channelInviteMessagesEnabled = false
                 }
 
                 player.sendText {

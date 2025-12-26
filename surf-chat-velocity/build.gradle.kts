@@ -9,7 +9,3 @@ velocityPluginFile {
     authors = listOf("red")
     version = "${project.version}"
 }
-
-dependencies {
-    api(project(":surf-chat-core"))
-}

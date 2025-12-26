@@ -3,11 +3,11 @@ package dev.slne.surf.chat.bukkit.command.denylist.action
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.*
-import dev.slne.surf.chat.api.entry.DenylistActionType
+import dev.slne.surf.chat.api.denylist.DenylistAction
+import dev.slne.surf.chat.api.denylist.DenylistActionType
 import dev.slne.surf.chat.bukkit.command.argument.denylistActionTypeArgument
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.core.entry.DenylistActionImpl
 import dev.slne.surf.chat.core.service.denylistActionService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
@@ -33,7 +33,7 @@ fun CommandAPICommand.denylistActionAddCommand() = subcommand("add") {
             return@anyExecutor
         } else {
             denylistActionService.addLocalAction(
-                DenylistActionImpl(
+                DenylistAction(
                     name,
                     type,
                     reason,
@@ -61,7 +61,7 @@ fun CommandAPICommand.denylistActionAddCommand() = subcommand("add") {
             }
 
             denylistActionService.addAction(
-                DenylistActionImpl(
+                DenylistAction(
                     name,
                     type,
                     reason,

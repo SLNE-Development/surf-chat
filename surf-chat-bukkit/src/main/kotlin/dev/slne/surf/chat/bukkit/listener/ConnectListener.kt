@@ -1,10 +1,11 @@
 package dev.slne.surf.chat.bukkit.listener
 
 import com.github.shynixn.mccoroutine.folia.launch
+import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.bukkit.hook.MiniPlaceholdersHook
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.pluginmessage.pluginMessageSender
-import dev.slne.surf.chat.core.Constants
+import dev.slne.surf.chat.core.service.userService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -19,11 +20,18 @@ class ConnectListener : Listener {
 
             if (!ALREADY_REQUESTED) {
                 delay(1000)
-                pluginMessageSender(Constants.CHANNEL_SERVER_REQUEST, event.player) {
+                pluginMessageSender("surf-chat:server_request", event.player) {
                     writeUTF("Requesting data...")
                 }
                 ALREADY_REQUESTED = true
             }
+
+            val user = userService.loadUserByUuid(event.player.uniqueId) ?: User(
+                event.player.name,
+                event.player.uniqueId
+            )
+
+            userService.onlineUsers.add(user)
         }
 
         if (plugin.connectionMessageConfig.enabled) {

@@ -1,133 +1,77 @@
 package dev.slne.surf.chat.bukkit.listener
 
 import com.github.shynixn.mccoroutine.folia.launch
+import dev.slne.surf.chat.api.message.MessageContext
+import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.api.message.MessageType
-import dev.slne.surf.chat.api.message.MessageValidationResult
-import dev.slne.surf.chat.bukkit.message.MessageDataImpl
-import dev.slne.surf.chat.bukkit.message.MessageFormatterImpl
-import dev.slne.surf.chat.bukkit.message.MessageValidatorImpl
+import dev.slne.surf.chat.api.processor.chatProcessorRegistry
 import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.bukkit.util.*
+import dev.slne.surf.chat.bukkit.util.cancel
+import dev.slne.surf.chat.bukkit.util.toUserOrThrow
 import dev.slne.surf.chat.core.service.channelService
-import dev.slne.surf.chat.core.service.denylistActionService
-import dev.slne.surf.chat.core.service.historyService
-import dev.slne.surf.chat.core.service.spyService
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
-import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import io.papermc.paper.event.player.AsyncChatEvent
-import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import java.util.*
 
 class AsyncChatListener : Listener {
-    private val channelExceptPattern =
-        Regex("^@(all|a|here|everyone)\\b\\s*", RegexOption.IGNORE_CASE)
-
     @EventHandler
     fun onAsyncChat(event: AsyncChatEvent) {
         val time = System.currentTimeMillis()
-        val player = event.player
-        val user = player.user() ?: return
+        val player = event.player.toUserOrThrow()
 
         val server = plugin.server
         val message = event.message()
         val messageId = UUID.randomUUID()
-        val plainMessage = message.plainText()
 
-        val messageFormatter = MessageFormatterImpl(message.remove(channelExceptPattern))
-        val validationResult = MessageValidatorImpl.componentValidator(message).validate(user)
-
-        if (validationResult.isFailure()) {
-            val error = validationResult.getErrorOrNull() ?: return
-
-            player.sendText {
-                appendWarningPrefix()
-                append(error.errorMessage)
-            }
-
-            if (error is MessageValidationResult.MessageValidationError.DenylistedWord) {
-                plugin.launch {
-                    denylistActionService.makeAction(
-                        messageId,
-                        error.denylistEntry,
-                        event.signedMessage(),
-                        user,
-                        if (plugin.discordConfig.config.enabled) plugin.discordConfig.config.webhook else null
-                    )
-                }
-            } else {
-                event.cancel()
-            }
-
-            if (
-                error is MessageValidationResult.MessageValidationError.BadLink ||
-                error is MessageValidationResult.MessageValidationError.BadCharacters ||
-                error is MessageValidationResult.MessageValidationError.EmptyContent ||
-                error is MessageValidationResult.MessageValidationError.DenylistedWord
-            ) {
-                sendTeamMessage {
-                    appendBotIcon()
-                    info("Eine Nachricht von ")
-                    variableValue(user.name)
-                    info(" wurde blockiert.")
-                    appendSpace()
-                    info("Grund: ")
-                    variableValue(error.name)
-
-                    hoverEvent(buildText {
-                        info(plainMessage)
-                    })
-                }
-            }
-        }
-
-        val data = MessageDataImpl(
+        var data = MessageData(
             message,
-            user,
+            messageId,
+            player,
             null,
             time,
-            messageId,
             server,
-            null,
-            event.signedMessage(),
+            channelService.getChannel(player)?.channelName,
+            event.signedMessage().signature(),
             MessageType.GLOBAL
         )
 
-        val channel = channelService.getChannel(user)
+        val result = runPreProcessors(MessageContext(data, event.isCancelled, event.viewers()))
+        data = result.messageData
 
-        if (channel != null && !channelExceptPattern.containsMatchIn(plainMessage)) {
-            event.viewers().clear()
-            event.viewers().addAll(channel.members.mapNotNull { it.player() })
-            event.viewers()
-                .addAll(spyService.getChannelSpies(channel).mapNotNull { Bukkit.getPlayer(it) })
-            event.renderer { _, _, _, viewerAudience ->
-                val channelData = data.withChannel(channel).withReceiver(viewerAudience.user())
+        if (result.isCancelled) {
+            event.cancel()
+        }
 
-                if (spyService.getChannelSpies(channel).mapNotNull { Bukkit.getPlayer(it) }
-                        .contains(viewerAudience)) {
-                    return@renderer messageFormatter.formatChannelSpy(
-                        channelData
-                    )
-                }
-
-                messageFormatter.formatChannel(
-                    channelData
-                )
-            }
-        } else {
-            event.viewers().removeIf { it.isConsole() }
-            event.renderer { _, _, _, viewerAudience ->
-                messageFormatter.formatGlobal(
-                    data.withReceiver(viewerAudience.user())
-                )
+        event.renderer { _, _, _, viewer ->
+            viewer.toUserOrThrow().let {
+                result.render.invoke(it)
             }
         }
 
         plugin.launch {
-            historyService.logMessage(
-                data.withChannel(channel)
-            )
+            runPostProcessors(MessageContext(data, event.isCancelled, event.viewers()))
         }
     }
+
+    private fun runPreProcessors(
+        original: MessageContext
+    ): MessageContext {
+        var context = original
+
+        chatProcessorRegistry.preChatProcessors.sortedBy { it.order }.forEach { processor ->
+            context = processor.process(context)
+
+            if (context.isCancelled) {
+                return context
+            }
+        }
+
+        return context
+    }
+
+    private suspend fun runPostProcessors(context: MessageContext) =
+        chatProcessorRegistry.postChatProcessors.forEach { processor ->
+            processor.process(context)
+        }
 }

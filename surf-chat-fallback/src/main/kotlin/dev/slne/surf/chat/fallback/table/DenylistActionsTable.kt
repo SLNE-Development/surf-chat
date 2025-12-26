@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.fallback.table
 
-import dev.slne.surf.chat.api.entry.DenylistActionType
+import dev.slne.surf.chat.api.denylist.DenylistActionType
 import org.jetbrains.exposed.dao.id.IntIdTable
 
 object DenylistActionsTable : IntIdTable("chat_denylist_actions") {

@@ -57,14 +57,6 @@ interface SurfChatApi {
      */
     fun getUser(uuid: UUID): User?
 
-    /**
-     * Creates a new user in the system.
-     *
-     * @param name The name of the user.
-     * @param uuid The UUID of the user.
-     * @return The created user object.
-     */
-    fun createUser(name: String, uuid: UUID): User
 
     /**
      * Looks up chat history based on a filter.

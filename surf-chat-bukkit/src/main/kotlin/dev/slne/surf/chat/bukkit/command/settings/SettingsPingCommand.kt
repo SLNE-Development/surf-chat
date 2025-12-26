@@ -20,15 +20,13 @@ fun CommandAPICommand.settingsPingCommand() = subcommand("pings") {
 
         plugin.launch {
             val user = player.user() ?: return@launch
-            val configurable = user.configure()
-
-            val currentValue = configurable.pingsEnabled()
+            val currentValue = user.chatPingsEnabled
 
             if (newValue == null) {
                 if (currentValue) {
-                    configurable.disablePings()
+                    user.chatPingsEnabled = false
                 } else {
-                    configurable.enablePings()
+                    user.chatPingsEnabled = true
                 }
 
                 player.sendText {
@@ -49,9 +47,9 @@ fun CommandAPICommand.settingsPingCommand() = subcommand("pings") {
                 }
 
                 if (newValue == true) {
-                    configurable.enablePings()
+                    user.chatPingsEnabled = true
                 } else {
-                    configurable.disablePings()
+                    user.chatPingsEnabled = false
                 }
 
                 player.sendText {

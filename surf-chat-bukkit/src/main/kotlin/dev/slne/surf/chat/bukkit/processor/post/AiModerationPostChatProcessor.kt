@@ -103,8 +103,7 @@ object AiModerationPostChatProcessor : PostChatProcessor {
         messageContext: MessageContext,
         classification: OpenAiService.ClassificationResult
     ) {
-        val senderUuid = messageContext.messageData.sender
-
+        val senderUuid = messageContext.messageData.sender.uuid
         val webhook = Webhook {
             username = "Arty AI Moderation"
             avatarUrl = aiModerationConfig.webhookAvatarUrl
@@ -162,7 +161,7 @@ object AiModerationPostChatProcessor : PostChatProcessor {
                 field {
                     name = "Sender"
                     value =
-                        "[${nameOrUuid(senderUuid.uuid)}](${aiModerationConfig.userPanelPrefix}$senderUuid)"
+                        "[${nameOrUuid(senderUuid)}](${aiModerationConfig.userPanelPrefix}$senderUuid)"
                     inline = true
                 }
 

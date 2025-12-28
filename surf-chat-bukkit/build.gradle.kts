@@ -16,9 +16,8 @@ dependencies {
 
     runtimeOnly(project(":surf-chat-fallback"))
     implementation("dev.slne.surf:surf-redis:1.0.0-SNAPSHOT")
-    implementation("com.github.BinaryWriter:discord-webhooks:1.0") {
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk8")
-        exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-serialization-json")
+    implementation("de.maxbossing:kotlin-discord-webhook:1") {
+        exclude("org.jetbrains.kotlin")
     }
     implementation("com.openai:openai-java:4.11.0") {
         exclude(group = "org.apache.httpcomponents.client5")

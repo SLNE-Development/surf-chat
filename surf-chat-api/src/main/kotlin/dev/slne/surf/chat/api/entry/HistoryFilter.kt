@@ -34,7 +34,7 @@ data class HistoryFilter(
 ) {
     companion object {
         fun empty() = HistoryFilter(
-            null, null, null, null, null, null, null, null, null, null, null
+            null, null, null, null, null, null, null, null, null, null, 50
         )
     }
 }

@@ -6,6 +6,7 @@ import dev.slne.surf.chat.api.processor.PostChatProcessor
 import dev.slne.surf.chat.bukkit.ai.OpenAiService
 import dev.slne.surf.chat.bukkit.ai.openAiService
 import dev.slne.surf.chat.bukkit.config.aiModerationConfig
+import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.redis.event.TeamMessageRedisEvent
 import dev.slne.surf.chat.bukkit.redisApi
 import dev.slne.surf.chat.bukkit.util.appendBotIcon
@@ -104,100 +105,105 @@ object AiModerationPostChatProcessor : PostChatProcessor {
         classification: OpenAiService.ClassificationResult
     ) {
         val senderUuid = messageContext.messageData.sender.uuid
-        sendWebhook(URI.create(aiModerationConfig.webhookUrl).toURL()) {
-            name("Arty AI Moderation")
-            avatar(aiModerationConfig.webhookAvatarUrl)
-            embed {
-                thumbnail {
-                    url("https://mc-heads.net/avatar/$senderUuid")
-                }
-                title("Chat Nachricht moderiert")
 
-                when (classification.action) {
-                    OpenAiService.ClassificationAction.SILENT_FLAG -> {
-                        content("Nachricht wurde als unangemessen markiert — bitte überprüfen und ggf. handeln")
-
+        runCatching {
+            sendWebhook(URI.create(aiModerationConfig.webhookUrl).toURL()) {
+                name("Arty AI Moderation")
+                avatar(aiModerationConfig.webhookAvatarUrl)
+                embed {
+                    thumbnail {
+                        url("https://mc-heads.net/avatar/$senderUuid")
                     }
+                    title("Chat Nachricht moderiert")
 
-                    OpenAiService.ClassificationAction.DELETE -> {
-                        content("Die Chat Nachricht wurde gelöscht.")
-                    }
-
-                    OpenAiService.ClassificationAction.MUTE -> {
-                        content("Die Chat Nachricht wurde gelöscht und der Absender wurde für 7 Tage stumm geschaltet — bitte überprüfen")
-                    }
-
-                    else -> Unit
-                }
-
-                color(
                     when (classification.action) {
-                        OpenAiService.ClassificationAction.SILENT_FLAG -> Color.YELLOW
-                        OpenAiService.ClassificationAction.DELETE -> Color.RED
-                        OpenAiService.ClassificationAction.MUTE -> Color.MAGENTA
-                        else -> Color.WHITE
+                        OpenAiService.ClassificationAction.SILENT_FLAG -> {
+                            content("Nachricht wurde als unangemessen markiert — bitte überprüfen und ggf. handeln")
+
+                        }
+
+                        OpenAiService.ClassificationAction.DELETE -> {
+                            content("Die Chat Nachricht wurde gelöscht.")
+                        }
+
+                        OpenAiService.ClassificationAction.MUTE -> {
+                            content("Die Chat Nachricht wurde gelöscht und der Absender wurde für 7 Tage stumm geschaltet — bitte überprüfen")
+                        }
+
+                        else -> Unit
                     }
-                )
 
-                field {
-                    name("Nachricht")
-                    value(messageContext.messageData.plainMessage)
-                    inline = false
-                }
+                    color(
+                        when (classification.action) {
+                            OpenAiService.ClassificationAction.SILENT_FLAG -> Color.YELLOW
+                            OpenAiService.ClassificationAction.DELETE -> Color.RED
+                            OpenAiService.ClassificationAction.MUTE -> Color.MAGENTA
+                            else -> Color.WHITE
+                        }
+                    )
 
-                field {
-                    name("Kategorien")
-                    value(buildString {
-                        classification.flaggedScores.object2DoubleEntrySet()
-                            .sortedByDescending { it.doubleValue }
-                            .forEachIndexed { index, entry ->
-                                val category = entry.key
-                                val scorePercent = entry.doubleValue * 100
-                                append("- ${category.name} (${"%.2f".format(scorePercent)} %)")
-                                if (index != classification.flaggedScores.size - 1) {
-                                    append("\n")
+                    field {
+                        name("Nachricht")
+                        value(messageContext.messageData.plainMessage)
+                        inline = false
+                    }
+
+                    field {
+                        name("Kategorien")
+                        value(buildString {
+                            classification.flaggedScores.object2DoubleEntrySet()
+                                .sortedByDescending { it.doubleValue }
+                                .forEachIndexed { index, entry ->
+                                    val category = entry.key
+                                    val scorePercent = entry.doubleValue * 100
+                                    append("- ${category.name} (${"%.2f".format(scorePercent)} %)")
+                                    if (index != classification.flaggedScores.size - 1) {
+                                        append("\n")
+                                    }
                                 }
-                            }
-                    })
-                    inline = false
-                }
+                        })
+                        inline = false
+                    }
 
-                field {
-                    name("Sender")
-                    value("[${nameOrUuid(senderUuid)}](${aiModerationConfig.userPanelPrefix}$senderUuid)")
-                    inline = true
-                }
-
-                val receiverUuid = messageContext.messageData.receiver?.uuid
-                if (receiverUuid != null) {
                     field {
-                        name("Receiver")
-                        value("[${nameOrUuid(receiverUuid)}](${aiModerationConfig.userPanelPrefix}$receiverUuid)")
+                        name("Sender")
+                        value("[${nameOrUuid(senderUuid)}](${aiModerationConfig.userPanelPrefix}$senderUuid)")
                         inline = true
                     }
-                }
 
-                field {
-                    name("Server")
-                    value(messageContext.messageData.server.internalName)
-                    inline = true
-                }
+                    val receiverUuid = messageContext.messageData.receiver?.uuid
+                    if (receiverUuid != null) {
+                        field {
+                            name("Receiver")
+                            value("[${nameOrUuid(receiverUuid)}](${aiModerationConfig.userPanelPrefix}$receiverUuid)")
+                            inline = true
+                        }
+                    }
 
-                val channel = messageContext.messageData.channel
-                if (channel != null) {
                     field {
-                        name("Channel")
-                        value(channel)
+                        name("Server")
+                        value(messageContext.messageData.server.internalName)
                         inline = true
                     }
-                }
 
-                field {
-                    name("Type")
-                    value(messageContext.messageData.type.name)
-                    inline = true
+                    val channel = messageContext.messageData.channel
+                    if (channel != null) {
+                        field {
+                            name("Channel")
+                            value(channel)
+                            inline = true
+                        }
+                    }
+
+                    field {
+                        name("Type")
+                        value(messageContext.messageData.type.name)
+                        inline = true
+                    }
                 }
             }
+        }.onFailure {
+            plugin.logger.warning("Failed to send webhook for AI moderation!")
         }
     }
 

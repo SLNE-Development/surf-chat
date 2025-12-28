@@ -208,7 +208,7 @@ private suspend fun Map<String, String>.parseFilters(): HistoryFilter {
         },
         channel = this["--channel"],
         deletedBy = this["--deletedBy"],
-        limit = this["--limit"]?.toIntOrNull(),
+        limit = this["--limit"]?.toIntOrNull() ?: 50,
         type = this["--type"]?.let { runCatching { MessageType.valueOf(it.uppercase()) }.getOrNull() }
     )
 }

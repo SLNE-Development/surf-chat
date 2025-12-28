@@ -1,5 +1,6 @@
 package dev.slne.surf.chat.bukkit.processor.post
 
+import de.maxbossing.webhookbuilder.sendWebhook
 import dev.slne.surf.chat.api.message.MessageContext
 import dev.slne.surf.chat.api.processor.PostChatProcessor
 import dev.slne.surf.chat.bukkit.ai.OpenAiService
@@ -11,10 +12,9 @@ import dev.slne.surf.chat.bukkit.util.appendBotIcon
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
-import me.binarywriter.discordwebhooks.data.Image
-import me.binarywriter.discordwebhooks.data.Webhook
 import org.bukkit.Bukkit
 import java.awt.Color
+import java.net.URI
 import java.util.*
 
 object AiModerationPostChatProcessor : PostChatProcessor {
@@ -104,47 +104,50 @@ object AiModerationPostChatProcessor : PostChatProcessor {
         classification: OpenAiService.ClassificationResult
     ) {
         val senderUuid = messageContext.messageData.sender.uuid
-        val webhook = Webhook {
-            username = "Arty AI Moderation"
-            avatarUrl = aiModerationConfig.webhookAvatarUrl
+        sendWebhook(URI.create(aiModerationConfig.webhookUrl).toURL()) {
+            name("Arty AI Moderation")
+            avatar(aiModerationConfig.webhookAvatarUrl)
             embed {
-                image = Image("https://mc-heads.net/avatar/$senderUuid")
+                thumbnail {
+                    url("https://mc-heads.net/avatar/$senderUuid")
+                }
+                title("Chat Nachricht moderiert")
 
-                title = "Chat Nachricht moderiert"
                 when (classification.action) {
                     OpenAiService.ClassificationAction.SILENT_FLAG -> {
-                        description =
-                            "Nachricht wurde als unangemessen markiert — bitte überprüfen und ggf. handeln"
+                        content("Nachricht wurde als unangemessen markiert — bitte überprüfen und ggf. handeln")
+
                     }
 
                     OpenAiService.ClassificationAction.DELETE -> {
-                        description = "Die Chat Nachricht wurde gelöscht."
+                        content("Die Chat Nachricht wurde gelöscht.")
                     }
 
                     OpenAiService.ClassificationAction.MUTE -> {
-                        description =
-                            "Die Chat Nachricht wurde gelöscht und der Absender wurde für 7 Tage stumm geschaltet — bitte überprüfen"
+                        content("Die Chat Nachricht wurde gelöscht und der Absender wurde für 7 Tage stumm geschaltet — bitte überprüfen")
                     }
 
                     else -> Unit
                 }
 
-                color = when (classification.action) {
-                    OpenAiService.ClassificationAction.SILENT_FLAG -> Color.YELLOW
-                    OpenAiService.ClassificationAction.DELETE -> Color.RED
-                    OpenAiService.ClassificationAction.MUTE -> Color.MAGENTA
-                    else -> Color.WHITE
-                }
+                color(
+                    when (classification.action) {
+                        OpenAiService.ClassificationAction.SILENT_FLAG -> Color.YELLOW
+                        OpenAiService.ClassificationAction.DELETE -> Color.RED
+                        OpenAiService.ClassificationAction.MUTE -> Color.MAGENTA
+                        else -> Color.WHITE
+                    }
+                )
 
                 field {
-                    name = "Nachricht"
-                    value = messageContext.messageData.plainMessage
+                    name("Nachricht")
+                    value(messageContext.messageData.plainMessage)
                     inline = false
                 }
 
                 field {
-                    name = "Kategorien"
-                    value = buildString {
+                    name("Kategorien")
+                    value(buildString {
                         classification.flaggedScores.object2DoubleEntrySet()
                             .sortedByDescending { it.doubleValue }
                             .forEachIndexed { index, entry ->
@@ -155,50 +158,47 @@ object AiModerationPostChatProcessor : PostChatProcessor {
                                     append("\n")
                                 }
                             }
-                    }
+                    })
+                    inline = false
                 }
 
                 field {
-                    name = "Sender"
-                    value =
-                        "[${nameOrUuid(senderUuid)}](${aiModerationConfig.userPanelPrefix}$senderUuid)"
+                    name("Sender")
+                    value("[${nameOrUuid(senderUuid)}](${aiModerationConfig.userPanelPrefix}$senderUuid)")
                     inline = true
                 }
 
                 val receiverUuid = messageContext.messageData.receiver?.uuid
                 if (receiverUuid != null) {
                     field {
-                        name = "Receiver"
-                        value =
-                            "[${nameOrUuid(receiverUuid)}](${aiModerationConfig.userPanelPrefix}$receiverUuid)"
+                        name("Receiver")
+                        value("[${nameOrUuid(receiverUuid)}](${aiModerationConfig.userPanelPrefix}$receiverUuid)")
                         inline = true
                     }
                 }
 
                 field {
-                    name = "Server"
-                    value = messageContext.messageData.server.internalName
+                    name("Server")
+                    value(messageContext.messageData.server.internalName)
                     inline = true
                 }
 
                 val channel = messageContext.messageData.channel
                 if (channel != null) {
                     field {
-                        name = "Channel"
-                        value = channel
+                        name("Channel")
+                        value(channel)
                         inline = true
                     }
                 }
 
                 field {
-                    name = "Type"
-                    value = messageContext.messageData.type.name
+                    name("Type")
+                    value(messageContext.messageData.type.name)
                     inline = true
                 }
             }
         }
-
-        webhook.send(aiModerationConfig.webhookUrl)
     }
 
     private fun nameOrUuid(uuid: UUID): String {

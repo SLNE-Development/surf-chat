@@ -9,6 +9,7 @@ import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.cancel
 import dev.slne.surf.chat.bukkit.util.toUserOrThrow
 import dev.slne.surf.chat.core.service.channelService
+import dev.slne.surf.core.api.common.surfCoreApi
 import io.papermc.paper.event.player.AsyncChatEvent
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -20,7 +21,6 @@ class AsyncChatListener : Listener {
         val time = System.currentTimeMillis()
         val player = event.player.toUserOrThrow()
 
-        val server = plugin.server
         val message = event.message()
         val messageId = UUID.randomUUID()
 
@@ -30,7 +30,7 @@ class AsyncChatListener : Listener {
             player,
             null,
             time,
-            server,
+            surfCoreApi.getCurrentServerName(),
             channelService.getChannel(player)?.channelName,
             event.signedMessage().signature(),
             MessageType.GLOBAL

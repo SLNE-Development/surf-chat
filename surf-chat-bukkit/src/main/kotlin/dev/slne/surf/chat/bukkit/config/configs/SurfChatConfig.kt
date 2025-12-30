@@ -5,7 +5,6 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable
 @ConfigSerializable
 data class SurfChatConfig(
     val autoDisablingConfig: AutoDisablingConfig = AutoDisablingConfig(),
-    val chatServerConfig: ChatServerConfig = ChatServerConfig(),
     val chatMotdConfig: ChatMotdConfig = ChatMotdConfig(),
     val connectionMessageConfig: ConnectionMessageConfig = ConnectionMessageConfig(),
     val spamConfig: SpamConfig = SpamConfig(),

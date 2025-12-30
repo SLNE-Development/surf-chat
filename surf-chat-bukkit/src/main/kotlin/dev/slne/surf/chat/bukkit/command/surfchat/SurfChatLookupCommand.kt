@@ -10,7 +10,6 @@ import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.api.message.MessageType
-import dev.slne.surf.chat.api.server.ChatServer
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.appendLinePrefix
@@ -203,9 +202,7 @@ private suspend fun Map<String, String>.parseFilters(): HistoryFilter {
         messageType = this["--type"]?.let { runCatching { MessageType.valueOf(it.uppercase()) }.getOrNull() },
         range = this["--range"]?.let { parseRangeToMillis(it) },
         messageLike = this["--message"],
-        server = this["--server"]?.let {
-            ChatServer.of(it)
-        },
+        server = this["--server"],
         channel = this["--channel"],
         deletedBy = this["--deletedBy"],
         limit = this["--limit"]?.toIntOrNull() ?: 50,

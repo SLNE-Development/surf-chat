@@ -182,7 +182,7 @@ object AiModerationPostChatProcessor : PostChatProcessor {
 
                     field {
                         name("Server")
-                        value(messageContext.messageData.server.internalName)
+                        value(messageContext.messageData.server)
                         inline = true
                     }
 

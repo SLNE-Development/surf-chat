@@ -4,11 +4,9 @@ import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.bukkit.hook.MiniPlaceholdersHook
 import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.bukkit.pluginmessage.pluginMessageSender
 import dev.slne.surf.chat.core.service.userService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -17,15 +15,6 @@ class ConnectListener : Listener {
     @EventHandler
     fun onJoin(event: PlayerJoinEvent) {
         plugin.launch(Dispatchers.IO) {
-
-            if (!ALREADY_REQUESTED) {
-                delay(1000)
-                pluginMessageSender("surf-chat:server_request", event.player) {
-                    writeUTF("Requesting data...")
-                }
-                ALREADY_REQUESTED = true
-            }
-
             val user = userService.loadUserByUuid(event.player.uniqueId) ?: User(
                 event.player.name,
                 event.player.uniqueId
@@ -53,9 +42,5 @@ class ConnectListener : Listener {
                 )
             }
         }
-    }
-
-    companion object {
-        var ALREADY_REQUESTED = false
     }
 }

@@ -9,6 +9,7 @@ import dev.slne.surf.chat.bukkit.command.argument.niceToggleArgument
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.service.functionalityService
+import dev.slne.surf.core.api.common.surfCoreApi
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import org.bukkit.Bukkit
 
@@ -20,7 +21,7 @@ fun CommandAPICommand.functionalityChangeCommand() = subcommand("change") {
 
         plugin.launch {
             if (toggle) {
-                functionalityService.enableLocalChat(plugin.server)
+                functionalityService.enableLocalChat(surfCoreApi.getCurrentServerName())
                 player.sendText {
                     appendPrefix()
                     success("Der Chat wurde aktiviert.")
@@ -38,7 +39,7 @@ fun CommandAPICommand.functionalityChangeCommand() = subcommand("change") {
                         }
                     }
             } else {
-                functionalityService.disableLocalChat(plugin.server)
+                functionalityService.disableLocalChat(surfCoreApi.getCurrentServerName())
                 player.sendText {
                     appendPrefix()
                     success("Der Chat wurde deaktiviert.")

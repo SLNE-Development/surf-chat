@@ -3,7 +3,6 @@ package dev.slne.surf.chat.api.message
 import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.serializer.SerializableSignature
-import dev.slne.surf.chat.api.server.ChatServer
 import dev.slne.surf.surfapi.core.api.messages.adventure.plain
 import dev.slne.surf.surfapi.core.api.serializer.adventure.component.SerializableComponent
 import kotlinx.serialization.Contextual
@@ -73,7 +72,7 @@ data class MessageData(
      * The `server` property is particularly useful when messages or communication need to be
      * associated with specific servers in a multi-server environment.
      */
-    val server: ChatServer,
+    val server: String,
 
     /**
      * Represents the associated chat channel for a message.

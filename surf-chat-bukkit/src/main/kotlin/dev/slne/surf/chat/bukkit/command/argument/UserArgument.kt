@@ -7,8 +7,8 @@ import dev.jorel.commandapi.arguments.CustomArgument
 import dev.jorel.commandapi.arguments.StringArgument
 import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.core.service.userService
+import dev.slne.surf.core.api.common.surfCoreApi
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
-import org.bukkit.Bukkit
 
 class UserArgument(nodeName: String) :
     CustomArgument<User, String>(StringArgument(nodeName), { info ->
@@ -22,7 +22,7 @@ class UserArgument(nodeName: String) :
     }) {
     init {
         replaceSuggestions(ArgumentSuggestions.stringCollection {
-            Bukkit.getOnlinePlayers().map { it.name }
+            surfCoreApi.getOnlinePlayers().mapNotNull { it.lastKnownName }
         })
     }
 }

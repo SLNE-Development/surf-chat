@@ -5,16 +5,15 @@ import dev.jorel.commandapi.arguments.Argument
 import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.CustomArgument
 import dev.jorel.commandapi.arguments.StringArgument
-import dev.slne.surf.chat.api.server.ChatServer
-import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.core.api.common.surfCoreApi
 
 class ChatServerArgument(nodeName: String) :
-    CustomArgument<ChatServer, String>(StringArgument(nodeName), { info ->
-        ChatServer.of(info.input)
+    CustomArgument<String, String>(StringArgument(nodeName), { info ->
+        info.input
     }) {
     init {
         replaceSuggestions(ArgumentSuggestions.stringCollection {
-            listOf(plugin.server.internalName)
+            listOf(surfCoreApi.getCurrentServerName())
         })
     }
 }

@@ -167,7 +167,7 @@ fun SurfComponentBuilder.appendMessageData(messageData: MessageData) = append(bu
     appendSpace()
     spacer("auf")
     appendSpace()
-    variableValue(messageData.server.internalName)
+    variableValue(messageData.server)
 })
 
 private val zone = ZoneId.of("Europe/Berlin")

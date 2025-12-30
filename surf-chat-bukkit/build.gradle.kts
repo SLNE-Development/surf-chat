@@ -31,6 +31,8 @@ surfPaperPluginApi {
     foliaSupported(true)
     generateLibraryLoader(false)
 
+    withCorePaper()
+
     serverDependencies {
         registerSoft("MiniPlaceholders")
     }

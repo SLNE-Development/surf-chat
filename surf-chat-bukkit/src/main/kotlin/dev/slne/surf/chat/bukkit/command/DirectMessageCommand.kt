@@ -17,6 +17,7 @@ import dev.slne.surf.chat.bukkit.redis.response.DirectMessageResponse
 import dev.slne.surf.chat.bukkit.redisApi
 import dev.slne.surf.chat.bukkit.util.toUserOrThrow
 import dev.slne.surf.chat.core.service.userService
+import dev.slne.surf.core.api.common.surfCoreApi
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import net.kyori.adventure.text.Component
@@ -57,7 +58,7 @@ fun directMessageCommand() = commandAPICommand("msg") {
                 player.toUserOrThrow(),
                 targetUser,
                 sentAt,
-                plugin.server,
+                surfCoreApi.getCurrentServerName(),
                 null,
                 null,
                 MessageType.DIRECT

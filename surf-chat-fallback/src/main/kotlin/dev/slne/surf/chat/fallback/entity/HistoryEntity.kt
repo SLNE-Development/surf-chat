@@ -26,7 +26,7 @@ class HistoryEntity(id: EntityID<Int>) : IntEntity(id) {
         type,
         sentAt,
         message,
-        server.name,
+        server,
         channel,
         deletedBy,
     )

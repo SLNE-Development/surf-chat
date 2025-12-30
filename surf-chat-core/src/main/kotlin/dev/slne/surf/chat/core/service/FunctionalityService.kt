@@ -1,6 +1,5 @@
 package dev.slne.surf.chat.core.service
 
-import dev.slne.surf.chat.api.server.ChatServer
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectSet
 
@@ -16,28 +15,28 @@ interface FunctionalityService : DatabaseTableHolder {
      * @param server The chat server to check for the enabled state of the functionality.
      * @return `true` if the functionality is enabled for the specified chat server, `false` otherwise.
      */
-    suspend fun isEnabledForServer(server: ChatServer): Boolean
+    suspend fun isEnabledForServer(server: String): Boolean
 
     /**
      * Retrieves a set of all chat servers currently registered in the system.
      *
      * @return a set of all available chat servers.
      */
-    suspend fun getAllServers(): ObjectSet<ChatServer>
+    suspend fun getAllServers(): ObjectSet<String>
 
     /**
      * Retrieves a set of all chat servers that are currently enabled.
      *
      * @return an ObjectSet containing all enabled ChatServer instances.
      */
-    suspend fun getAllEnabledServers(): ObjectSet<ChatServer>
+    suspend fun getAllEnabledServers(): ObjectSet<String>
 
     /**
      * Retrieves a set of all chat servers that are currently disabled.
      *
      * @return An ObjectSet containing all ChatServer instances classified as disabled.
      */
-    suspend fun getAllDisabledServers(): ObjectSet<ChatServer>
+    suspend fun getAllDisabledServers(): ObjectSet<String>
 
     /**
      * Fetches data or performs operations for the specified chat server.
@@ -46,7 +45,7 @@ interface FunctionalityService : DatabaseTableHolder {
      *                    This server instance provides the necessary context and configuration
      *                    for the operation.
      */
-    suspend fun fetch(localServer: ChatServer)
+    suspend fun fetch(localServer: String)
 
     /**
      * Enables the local chat functionality for the specified chat server.
@@ -54,7 +53,7 @@ interface FunctionalityService : DatabaseTableHolder {
      *
      * @param localServer The chat server instance for which the local chat will be enabled.
      */
-    suspend fun enableLocalChat(localServer: ChatServer)
+    suspend fun enableLocalChat(localServer: String)
 
     /**
      * Toggles the local chat's enabled state for the specified chat server.
@@ -66,7 +65,7 @@ interface FunctionalityService : DatabaseTableHolder {
      * @return A boolean value indicating the new enabled state of the local chat for the given server.
      *         Returns true if the local chat is now enabled, otherwise false.
      */
-    suspend fun toggleLocalChat(localServer: ChatServer): Boolean
+    suspend fun toggleLocalChat(localServer: String): Boolean
 
     /**
      * Disables the local chat functionality for the specified chat server.
@@ -74,7 +73,7 @@ interface FunctionalityService : DatabaseTableHolder {
      *
      * @param localServer The chat server instance for which the local chat will be disabled.
      */
-    suspend fun disableLocalChat(localServer: ChatServer)
+    suspend fun disableLocalChat(localServer: String)
 
     /**
      * Checks if the local chat feature is currently enabled.

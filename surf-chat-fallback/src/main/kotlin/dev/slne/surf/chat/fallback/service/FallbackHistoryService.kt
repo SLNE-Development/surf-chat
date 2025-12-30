@@ -117,7 +117,7 @@ class FallbackHistoryService : HistoryService, Services.Fallback {
                             messageType = it[HistoryTable.type],
                             sentAt = it[HistoryTable.sentAt],
                             message = it[HistoryTable.message],
-                            server = it[HistoryTable.server].name,
+                            server = it[HistoryTable.server],
                             deletedBy = it[HistoryTable.deletedBy],
                             receiverUuid = it[HistoryTable.receiverUuid],
                             channel = it[HistoryTable.channel]

@@ -44,7 +44,7 @@ fun CommandAPICommand.functionalityListCommand() = subcommand("list") {
         plugin.launch {
             val content = functionalityService.getAllServers().map {
                 FunctionalityStatusEntry(
-                    it.name,
+                    it,
                     functionalityService.isEnabledForServer(it)
                 )
             }

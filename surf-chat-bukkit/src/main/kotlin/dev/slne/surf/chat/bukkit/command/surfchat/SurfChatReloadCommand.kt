@@ -3,7 +3,6 @@ package dev.slne.surf.chat.bukkit.command.surfchat
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.anyExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
-import dev.slne.surf.chat.bukkit.listener.ConnectListener
 import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.coloredComponent
@@ -16,8 +15,6 @@ fun CommandAPICommand.surfChatReloadCommand() = subcommand("reload") {
         val ms = measureTimeMillis {
             plugin.surfChatConfig.reload()
             plugin.discordConfig.reload()
-
-            ConnectListener.ALREADY_REQUESTED = false
         }
 
         executor.sendText {

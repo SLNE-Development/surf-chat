@@ -1,7 +1,6 @@
 package dev.slne.surf.chat.fallback.service
 
 import com.google.auto.service.AutoService
-import dev.slne.surf.chat.api.server.ChatServer
 import dev.slne.surf.chat.core.service.FunctionalityService
 import dev.slne.surf.chat.fallback.entity.FunctionalityEntity
 import dev.slne.surf.chat.fallback.table.FunctionalityTable
@@ -23,58 +22,58 @@ class FallbackFunctionalityService : FunctionalityService, Services.Fallback {
         }
     }
 
-    override suspend fun isEnabledForServer(server: ChatServer): Boolean = newSuspendedTransaction(
+    override suspend fun isEnabledForServer(server: String): Boolean = newSuspendedTransaction(
         Dispatchers.IO
     ) {
-        FunctionalityEntity.find { FunctionalityTable.server eq server.internalName }
+        FunctionalityEntity.find { FunctionalityTable.server eq server }
             .firstOrNull()?.chatEnabled ?: true
     }
 
-    override suspend fun getAllServers(): ObjectSet<ChatServer> = newSuspendedTransaction(
+    override suspend fun getAllServers(): ObjectSet<String> = newSuspendedTransaction(
         Dispatchers.IO
     ) {
         FunctionalityEntity.all().map {
-            ChatServer.of(it.server)
+            it.server
         }.toObjectSet()
     }
 
-    override suspend fun getAllEnabledServers(): ObjectSet<ChatServer> = newSuspendedTransaction(
+    override suspend fun getAllEnabledServers(): ObjectSet<String> = newSuspendedTransaction(
         Dispatchers.IO
     ) {
         FunctionalityEntity.find { FunctionalityTable.chatEnabled eq true }.map {
-            ChatServer.of(it.server)
+            it.server
         }.toObjectSet()
     }
 
-    override suspend fun getAllDisabledServers(): ObjectSet<ChatServer> = newSuspendedTransaction(
+    override suspend fun getAllDisabledServers(): ObjectSet<String> = newSuspendedTransaction(
         Dispatchers.IO
     ) {
         FunctionalityEntity.find { FunctionalityTable.chatEnabled eq false }.map {
-            ChatServer.of(it.server)
+            it.server
         }.toObjectSet()
     }
 
-    override suspend fun fetch(localServer: ChatServer) = newSuspendedTransaction(Dispatchers.IO) {
+    override suspend fun fetch(localServer: String) = newSuspendedTransaction(Dispatchers.IO) {
         localChatEnabled =
-            FunctionalityEntity.find { FunctionalityTable.server eq localServer.internalName }
+            FunctionalityEntity.find { FunctionalityTable.server eq localServer }
                 .firstOrNull()?.chatEnabled ?: true
     }
 
-    override suspend fun enableLocalChat(localServer: ChatServer) {
+    override suspend fun enableLocalChat(localServer: String) {
         localChatEnabled = true
 
         newSuspendedTransaction(Dispatchers.IO) {
-            FunctionalityTable.upsert(where = { FunctionalityTable.server eq localServer.internalName }) {
+            FunctionalityTable.upsert(where = { FunctionalityTable.server eq localServer }) {
                 it[chatEnabled] = true
             }
         }
     }
 
-    override suspend fun toggleLocalChat(localServer: ChatServer): Boolean {
+    override suspend fun toggleLocalChat(localServer: String): Boolean {
         localChatEnabled = !localChatEnabled
 
         newSuspendedTransaction(Dispatchers.IO) {
-            FunctionalityTable.upsert(where = { FunctionalityTable.server eq localServer.internalName }) {
+            FunctionalityTable.upsert(where = { FunctionalityTable.server eq localServer }) {
                 it[chatEnabled] = localChatEnabled
             }
         }
@@ -82,11 +81,11 @@ class FallbackFunctionalityService : FunctionalityService, Services.Fallback {
         return localChatEnabled
     }
 
-    override suspend fun disableLocalChat(localServer: ChatServer) {
+    override suspend fun disableLocalChat(localServer: String) {
         localChatEnabled = false
 
         newSuspendedTransaction(Dispatchers.IO) {
-            FunctionalityTable.upsert(where = { FunctionalityTable.server eq localServer.internalName }) {
+            FunctionalityTable.upsert(where = { FunctionalityTable.server eq localServer }) {
                 it[chatEnabled] = false
             }
         }

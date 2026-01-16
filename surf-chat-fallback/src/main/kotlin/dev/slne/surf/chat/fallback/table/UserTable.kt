@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.fallback.table
 
-import org.jetbrains.exposed.dao.id.LongIdTable
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.dao.id.LongIdTable
 
 object UserTable : LongIdTable("chat_users") {
     val uuid = uuid("uuid").uniqueIndex()

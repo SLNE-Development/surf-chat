@@ -10,7 +10,7 @@ import java.util.*
  * for individual users, as well as check the current status of these notification preferences.
  * The implementation includes database-backed functionality to persist user preferences.
  */
-interface NotificationService : DatabaseTableHolder {
+interface NotificationService {
     /**
      * Checks if the ping notifications are enabled for the user identified by the given UUID.
      *

@@ -14,7 +14,7 @@ import it.unimi.dsi.fastutil.objects.ObjectList
  * and retrieve all denylist entries. It supports both locally-stored entries
  * and entries managed in persistent storage.
  */
-interface DenylistService : DatabaseTableHolder {
+interface DenylistService {
     /**
      * Adds a new entry to the denylist with the specified details.
      *

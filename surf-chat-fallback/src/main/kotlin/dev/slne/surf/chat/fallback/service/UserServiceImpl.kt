@@ -4,12 +4,8 @@ import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.core.service.UserService
 import dev.slne.surf.chat.fallback.repository.userRepository
-import dev.slne.surf.chat.fallback.table.IgnoreListTable
-import dev.slne.surf.chat.fallback.table.UserTable
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import net.kyori.adventure.util.Services
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
 @AutoService(UserService::class)
@@ -25,13 +21,5 @@ class UserServiceImpl : UserService, Services.Fallback {
 
     override suspend fun saveUser(user: User) {
         userRepository.saveUser(user)
-    }
-
-    override fun createTable() {
-        transaction {
-            SchemaUtils.create(
-                UserTable, IgnoreListTable
-            )
-        }
     }
 }

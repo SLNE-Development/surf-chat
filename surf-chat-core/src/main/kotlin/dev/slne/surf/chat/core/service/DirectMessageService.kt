@@ -7,7 +7,7 @@ import java.util.*
  * Service interface responsible for managing the enablement and disablement of direct messages for users.
  * This service allows querying if direct messages are enabled, and provides the functionality to enable or disable them.
  */
-interface DirectMessageService : DatabaseTableHolder {
+interface DirectMessageService {
     /**
      * Checks if direct messages are enabled for the specified user.
      *

@@ -9,7 +9,7 @@ import net.kyori.adventure.util.Services
 import java.util.*
 
 @AutoService(SpyService::class)
-class FallbackSpyService : SpyService, Services.Fallback {
+class SpyServiceImpl : SpyService, Services.Fallback {
     val privateMessageSpies = mutableObject2ObjectMapOf<UUID, ObjectList<UUID>>()
 
     override fun getPrivateMessageSpies(player: UUID) =

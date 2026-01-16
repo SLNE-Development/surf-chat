@@ -5,57 +5,46 @@ import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.core.service.HistoryService
-import dev.slne.surf.chat.fallback.entity.HistoryEntity
 import dev.slne.surf.chat.fallback.table.HistoryTable
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.*
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.insert
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.selectAll
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.transactions.suspendTransaction
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.upsert
 import dev.slne.surf.surfapi.core.api.messages.adventure.plain
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectSet
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toSet
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeout
 import net.kyori.adventure.util.Services
-import org.jetbrains.exposed.sql.Op
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.greaterEq
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
 @AutoService(HistoryService::class)
-class FallbackHistoryService : HistoryService, Services.Fallback {
+class HistoryServiceImpl : HistoryService, Services.Fallback {
     private val loadHistoryMutex = Mutex()
 
-    override fun createTable() {
-        transaction {
-            SchemaUtils.create(HistoryTable)
-        }
-    }
-
     override suspend fun logMessage(messageData: MessageData) =
-        newSuspendedTransaction(Dispatchers.IO) {
-            HistoryEntity.new {
-                messageUuid = messageData.messageUuid
-                senderUuid = messageData.sender.uuid
-                receiverUuid = messageData.receiver?.uuid
-                message = messageData.message.plain()
-                sentAt = messageData.sentAt
-                server = messageData.server
-                type = messageData.type
-                deletedBy = null
+        suspendTransaction {
+            HistoryTable.insert {
+                it[messageUuid] = messageData.messageUuid
+                it[senderUuid] = messageData.sender.uuid
+                it[receiverUuid] = messageData.receiver?.uuid
+                it[message] = messageData.message.plain()
+                it[sentAt] = messageData.sentAt
+                it[server] = messageData.server
+                it[type] = messageData.type
+                it[deletedBy] = null
             }
-
-            return@newSuspendedTransaction
+            return@suspendTransaction
         }
 
     override suspend fun findHistoryEntry(filter: HistoryFilter): ObjectSet<HistoryEntry> =
         withTimeout(10_000L) {
             loadHistoryMutex.withLock {
-                newSuspendedTransaction(Dispatchers.IO) {
+                suspendTransaction {
                     val now = System.currentTimeMillis()
                     val conditions = mutableListOf<Op<Boolean>>()
 
@@ -116,7 +105,7 @@ class FallbackHistoryService : HistoryService, Services.Fallback {
                             deletedBy = it[HistoryTable.deletedBy],
                             receiverUuid = it[HistoryTable.receiverUuid]
                         )
-                    }.toObjectSet()
+                    }.toSet().toObjectSet()
                 }
             }
         }
@@ -127,12 +116,11 @@ class FallbackHistoryService : HistoryService, Services.Fallback {
     }
 
     override suspend fun markDeleted(messageUuid: UUID, deleter: String) =
-        newSuspendedTransaction(
-            Dispatchers.IO
-        ) {
-            HistoryEntity.findSingleByAndUpdate(HistoryTable.messageUuid eq messageUuid) {
-                it.deletedBy = deleter
+        suspendTransaction {
+            HistoryTable.upsert {
+                it[this.messageUuid] = messageUuid
+                it[deletedBy] = deleter
             }
-            return@newSuspendedTransaction
+            return@suspendTransaction
         }
 }

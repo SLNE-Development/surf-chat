@@ -17,7 +17,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @AutoService(DiscordService::class)
-class FallbackDiscordService : DiscordService, Services.Fallback {
+class DiscordServiceImpl : DiscordService, Services.Fallback {
     private val client = OkHttpClient()
     private val gson = Gson()
 

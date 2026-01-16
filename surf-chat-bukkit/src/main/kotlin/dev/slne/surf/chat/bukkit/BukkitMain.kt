@@ -8,7 +8,11 @@ import dev.slne.surf.chat.bukkit.config.DiscordConfigProvider
 import dev.slne.surf.chat.bukkit.config.SurfChatConfigProvider
 import dev.slne.surf.chat.bukkit.processor.post.AiModerationPostChatProcessor
 import dev.slne.surf.chat.bukkit.processor.post.LogPostChatProcessor
-import dev.slne.surf.chat.bukkit.processor.pre.*
+import dev.slne.surf.chat.bukkit.processor.post.PrivateMessageSpyPostChatProcessor
+import dev.slne.surf.chat.bukkit.processor.pre.CorrectViewersPreChatProcessor
+import dev.slne.surf.chat.bukkit.processor.pre.FormatPreChatProcessor
+import dev.slne.surf.chat.bukkit.processor.pre.IgnorePreChatProcessor
+import dev.slne.surf.chat.bukkit.processor.pre.ValidatorPreChatProcessor
 import dev.slne.surf.chat.bukkit.processor.pre.validate.CharPreChatProcessor
 import dev.slne.surf.chat.bukkit.processor.pre.validate.LinkPreChatProcessor
 import dev.slne.surf.chat.bukkit.processor.pre.validate.SpamPreChatProcessor
@@ -29,7 +33,6 @@ class BukkitMain : SuspendingJavaPlugin() {
         chatProcessorRegistry.register(CharPreChatProcessor)
         chatProcessorRegistry.register(LinkPreChatProcessor)
         chatProcessorRegistry.register(SpamPreChatProcessor)
-        chatProcessorRegistry.register(ChannelPreChatProcessor)
         chatProcessorRegistry.register(CorrectViewersPreChatProcessor)
         chatProcessorRegistry.register(FormatPreChatProcessor)
         chatProcessorRegistry.register(IgnorePreChatProcessor)
@@ -37,12 +40,12 @@ class BukkitMain : SuspendingJavaPlugin() {
 
         chatProcessorRegistry.register(LogPostChatProcessor)
         chatProcessorRegistry.register(AiModerationPostChatProcessor)
+        chatProcessorRegistry.register(PrivateMessageSpyPostChatProcessor)
     }
 
     override fun onEnable() {
         BukkitCommandManager.registerCommands()
         BukkitListenerManager.registerBukkitListeners()
-        BukkitListenerManager.registerPacketListeners()
 
         launch {
             denylistService.fetch()

@@ -1,23 +1,14 @@
 package dev.slne.surf.chat.core.service
 
-import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectList
 import java.util.*
 
-
 /**
  * Service responsible for managing spying operations within the chat system.
- * Allows tracking and controlling spying activities on chat channels and private messages.
+ * Allows tracking and controlling spying activities on private messages.
  */
 interface SpyService {
-    /**
-     * Retrieves the list of spies for a given chat channel.
-     *
-     * @param channel The chat channel for which to fetch the spies.
-     * @return A list of UUIDs representing the spies monitoring the specified channel.
-     */
-    fun getChannelSpies(channel: Channel): ObjectList<UUID>
 
     /**
      * Retrieves the list of spies monitoring a specific player's private messages.
@@ -26,24 +17,6 @@ interface SpyService {
      * @return A list of UUIDs representing the spies currently monitoring the player's private messages.
      */
     fun getPrivateMessageSpies(player: UUID): ObjectList<UUID>
-
-    /**
-     * Adds a spy to monitor activities within a specified chat channel.
-     *
-     * @param player The UUID of the player to be registered as a channel spy.
-     * @param channel The chat channel that the player will monitor.
-     * @return `true` if the player was successfully added as a spy, otherwise `false`.
-     */
-    fun addChannelSpy(player: UUID, channel: Channel): Boolean
-
-    /**
-     * Removes a player's spy access to the specified chat channel.
-     *
-     * @param player The UUID of the player whose spying access is to be removed.
-     * @param channel The chat channel from which the player is to be unregistered as a spy.
-     * @return `true` if the player's spying access was successfully removed, otherwise `false`.
-     */
-    fun removeChannelSpy(player: UUID, channel: Channel): Boolean
 
     /**
      * Adds a spy for monitoring private messages between a specified player and target.
@@ -63,13 +36,6 @@ interface SpyService {
      */
     fun removePrivateMessageSpy(player: UUID, target: UUID): Boolean
 
-    /**
-     * Checks whether the specified chat channel has any active spies monitoring it.
-     *
-     * @param channel The chat channel to check for active spies.
-     * @return `true` if the channel has active spies, otherwise `false`.
-     */
-    fun hasChannelSpies(channel: Channel): Boolean
 
     /**
      * Checks if the specified player has spies monitoring their private messages.
@@ -80,28 +46,12 @@ interface SpyService {
     fun hasPrivateMessageSpies(player: UUID): Boolean
 
     /**
-     * Checks if the specified player is currently spying on any chat channels.
-     *
-     * @param player The UUID of the player being checked.
-     * @return `true` if the player is actively spying on any chat channels, otherwise `false`.
-     */
-    fun isChannelSpying(player: UUID): Boolean
-
-    /**
      * Checks if the specified player is currently set as spying on private messages.
      *
      * @param player The UUID of the player to check for private message spying status.
      * @return `true` if the player is spying on private messages, `false` otherwise.
      */
     fun isPrivateMessageSpying(player: UUID): Boolean
-
-    /**
-     * Clears all channel spying data associated with the specified player.
-     * This operation removes the player from monitoring any chat channels they were spying on.
-     *
-     * @param player The UUID of the player whose channel spying data is to be cleared.
-     */
-    fun clearChannelSpies(player: UUID)
 
     /**
      * Clears all spies monitoring private messages for the specified player.
@@ -117,7 +67,7 @@ interface SpyService {
      * Cleans up spy-related tracking or data associated with the specified player.
      *
      * The cleanup operation ensures that any references to the player's spying activities,
-     * such as spying on channels or private messages, are removed to maintain data consistency.
+     * such as spying on private messages, are removed to maintain data consistency.
      *
      * @param player The UUID of the player whose spy data is to be cleaned up.
      */
@@ -126,14 +76,14 @@ interface SpyService {
     /**
      * Companion object for accessing the singleton instance of the SpyService.
      * SpyService is responsible for managing spying operations in the system,
-     * including tracking players spying on channels or private messages.
+     * including tracking players spying on private messages.
      */
     companion object {
         /**
          * Singleton instance of the SpyService interface.
          *
          * SpyService is responsible for managing spying operations within the system.
-         * This includes tracking users who are spying on channels or private messages,
+         * This includes tracking users who are spying on private messages,
          * adding or removing spies, and cleaning up spying data for specific users.
          */
         val INSTANCE = requiredService<SpyService>()

@@ -13,7 +13,6 @@ import java.util.*
  * @property range The time range (in milliseconds) to filter messages by, or `null` if not applicable.
  * @property messageLike A substring to search for in the message content, or `null` if not applicable.
  * @property server The server to filter messages by, or `null` if not applicable.
- * @property channel The channel to filter messages by, or `null` if not applicable.
  * @property deletedBy The identifier of the user who deleted the message to filter by, or `null` if not applicable.
  * @property type The type of the message to filter by, or `null` if not applicable.
  * @property limit The maximum number of results to return, or `null` if not applicable.
@@ -26,14 +25,13 @@ data class HistoryFilter(
     val range: Long?,
     val messageLike: String?,
     val server: String?,
-    val channel: String?,
     val deletedBy: String?,
     val type: MessageType?,
     val limit: Int?
 ) {
     companion object {
         fun empty() = HistoryFilter(
-            null, null, null, null, null, null, null, null, null, null, 50
+            null, null, null, null, null, null, null, null, null, 50
         )
     }
 }

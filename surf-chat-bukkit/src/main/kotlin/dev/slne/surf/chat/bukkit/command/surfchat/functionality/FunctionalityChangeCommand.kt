@@ -6,7 +6,7 @@ import dev.jorel.commandapi.kotlindsl.anyExecutor
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.bukkit.command.argument.niceToggleArgument
-import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.service.functionalityService
 import dev.slne.surf.core.api.common.surfCoreApi
@@ -14,7 +14,7 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import org.bukkit.Bukkit
 
 fun CommandAPICommand.functionalityChangeCommand() = subcommand("change") {
-    withPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_FUNCTIONALITY_TOGGLE)
+    withPermission(PermissionRegistry.COMMAND_SURFCHAT_FUNCTIONALITY_TOGGLE)
     niceToggleArgument("toggle")
     anyExecutor { player, args ->
         val toggle: Boolean by args
@@ -28,7 +28,7 @@ fun CommandAPICommand.functionalityChangeCommand() = subcommand("change") {
                 }
 
                 Bukkit.getOnlinePlayers()
-                    .filter { it.hasPermission(SurfChatPermissionRegistry.TEAM_NOTIFY_FUNCTIONALITY) }
+                    .filter { it.hasPermission(PermissionRegistry.TEAM_NOTIFY_FUNCTIONALITY) }
                     .forEach {
                         it.sendText {
                             appendPrefix()
@@ -46,7 +46,7 @@ fun CommandAPICommand.functionalityChangeCommand() = subcommand("change") {
                 }
 
                 Bukkit.getOnlinePlayers()
-                    .filter { it.hasPermission(SurfChatPermissionRegistry.TEAM_NOTIFY_FUNCTIONALITY) }
+                    .filter { it.hasPermission(PermissionRegistry.TEAM_NOTIFY_FUNCTIONALITY) }
                     .forEach {
                         it.sendText {
                             appendPrefix()

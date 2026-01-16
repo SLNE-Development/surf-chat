@@ -1,7 +1,7 @@
 package dev.slne.surf.chat.bukkit.redis.listener
 
 import dev.slne.surf.chat.bukkit.message.MessageFormatter
-import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
 import dev.slne.surf.chat.bukkit.redis.event.TeamMessageRedisEvent
 import dev.slne.surf.chat.bukkit.redis.event.TeamchatMessageRedisEvent
 import dev.slne.surf.redis.event.OnRedisEvent
@@ -14,7 +14,7 @@ object RedisEventListener {
         val formatter = MessageFormatter()
 
         Bukkit.getOnlinePlayers()
-            .filter { it.hasPermission(SurfChatPermissionRegistry.COMMAND_TEAMCHAT) }.forEach {
+            .filter { it.hasPermission(PermissionRegistry.COMMAND_TEAMCHAT) }.forEach {
                 it.sendText {
                     append(formatter.formatTeamchat(event.messageData))
                 }
@@ -26,7 +26,7 @@ object RedisEventListener {
         val message = event.message
 
         Bukkit.getOnlinePlayers()
-            .filter { it.hasPermission(SurfChatPermissionRegistry.PREFIX_TEAM) }.forEach {
+            .filter { it.hasPermission(PermissionRegistry.PREFIX_TEAM) }.forEach {
                 it.sendText {
                     append(message)
                 }

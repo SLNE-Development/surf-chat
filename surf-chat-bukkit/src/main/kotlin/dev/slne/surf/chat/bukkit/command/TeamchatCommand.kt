@@ -7,7 +7,7 @@ import dev.jorel.commandapi.kotlindsl.greedyStringArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.api.message.MessageType
-import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.redis.event.TeamchatMessageRedisEvent
 import dev.slne.surf.chat.bukkit.redisApi
@@ -20,7 +20,7 @@ import java.util.*
 fun teamchatCommand() = commandAPICommand("teamchat", plugin) {
     withAliases("tc")
     greedyStringArgument("message")
-    withPermission(SurfChatPermissionRegistry.COMMAND_TEAMCHAT)
+    withPermission(PermissionRegistry.COMMAND_TEAMCHAT)
 
     playerExecutor { player, args ->
         val message: String by args
@@ -33,7 +33,6 @@ fun teamchatCommand() = commandAPICommand("teamchat", plugin) {
             null,
             System.currentTimeMillis(),
             surfCoreApi.getCurrentServerName(),
-            null,
             null,
             MessageType.TEAM
         )

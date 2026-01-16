@@ -4,7 +4,7 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.message.MessageType
-import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
 import dev.slne.surf.chat.bukkit.util.appendSpace
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.CommonComponents
@@ -14,7 +14,7 @@ import dev.slne.surf.surfapi.core.api.messages.pagination.Pagination
 import net.kyori.adventure.text.format.TextDecoration
 
 fun CommandAPICommand.surfChatLookupHelpCommand() = subcommand("lookuphelp") {
-    withPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_LOOKUP_HELP)
+    withPermission(PermissionRegistry.COMMAND_SURFCHAT_LOOKUP_HELP)
     playerExecutor { player, _ ->
         val pagination = Pagination<HelpEntry> {
             title {
@@ -81,11 +81,6 @@ fun CommandAPICommand.surfChatLookupHelpCommand() = subcommand("lookuphelp") {
                             "server",
                             "Nach Server filtern.",
                             "--server survival01"
-                        ),
-                        HelpEntry(
-                            "channel",
-                            "Nach Kanal filtern.",
-                            "--channel testkanal"
                         ),
                         HelpEntry(
                             "sender",

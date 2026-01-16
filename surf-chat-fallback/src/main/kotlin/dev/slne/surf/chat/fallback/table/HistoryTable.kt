@@ -11,6 +11,5 @@ object HistoryTable : IntIdTable("chat_history") {
     val sentAt = long("sent_at")
     val type = enumeration<MessageType>("type")
     val server = text("server")
-    val channel = text("channel_name").nullable()
     val deletedBy = text("deleted_by").nullable()
 }

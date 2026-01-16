@@ -5,14 +5,14 @@ import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.bukkit.command.argument.userArgument
-import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
 import dev.slne.surf.chat.bukkit.util.hasPermission
 import dev.slne.surf.chat.bukkit.util.user
 import dev.slne.surf.chat.core.service.spyService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 fun directMessageSpyCommand() = commandAPICommand("spy") {
-    withPermission(SurfChatPermissionRegistry.COMMAND_DIRECT_SPY)
+    withPermission(PermissionRegistry.COMMAND_DIRECT_SPY)
     directMessageSpyClearCommand()
     userArgument("target")
     playerExecutor { player, args ->
@@ -27,7 +27,7 @@ fun directMessageSpyCommand() = commandAPICommand("spy") {
             return@playerExecutor
         }
 
-        if (target.hasPermission(SurfChatPermissionRegistry.TEAM_BYPASS_SPY)) {
+        if (target.hasPermission(PermissionRegistry.TEAM_BYPASS_SPY)) {
             player.sendText {
                 appendPrefix()
                 error("Du kannst keine Teammitglieder spionieren!")

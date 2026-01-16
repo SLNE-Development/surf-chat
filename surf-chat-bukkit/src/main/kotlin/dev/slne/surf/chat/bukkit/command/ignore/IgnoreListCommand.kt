@@ -4,7 +4,7 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.entry.IgnoreListEntry
-import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
 import dev.slne.surf.chat.bukkit.util.unixTime
 import dev.slne.surf.chat.bukkit.util.user
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
@@ -15,7 +15,7 @@ import dev.slne.surf.surfapi.core.api.messages.pagination.Pagination
 import net.kyori.adventure.text.format.TextDecoration
 
 fun CommandAPICommand.ignoreListCommand() = subcommand("list") {
-    withPermission(SurfChatPermissionRegistry.COMMAND_IGNORE_LIST)
+    withPermission(PermissionRegistry.COMMAND_IGNORE_LIST)
     playerExecutor { player, _ ->
         val ignoreList = player.user()?.ignorelist ?: return@playerExecutor
 

@@ -6,13 +6,13 @@ import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.bukkit.command.argument.niceToggleArgument
-import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.user
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 fun CommandAPICommand.settingsPingCommand() = subcommand("pings") {
-    withPermission(SurfChatPermissionRegistry.COMMAND_SETTINGS_PING)
+    withPermission(PermissionRegistry.COMMAND_SETTINGS_PING)
     niceToggleArgument("newValue", true)
 
     playerExecutor { player, args ->

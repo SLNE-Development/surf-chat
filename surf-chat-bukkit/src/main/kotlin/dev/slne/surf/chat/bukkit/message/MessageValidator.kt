@@ -3,7 +3,7 @@ package dev.slne.surf.chat.bukkit.message
 import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.api.message.MessageValidationResult
-import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.hasPermission
 import dev.slne.surf.chat.core.service.denylistService
@@ -15,7 +15,7 @@ class MessageValidator {
         val user = messageData.sender
         val message = messageData.plainMessage
 
-        if (user.hasPermission(SurfChatPermissionRegistry.TEAM_BYPASS_FILTER)) {
+        if (user.hasPermission(PermissionRegistry.TEAM_BYPASS_FILTER)) {
             return MessageValidationResult.Success()
         }
 
@@ -24,7 +24,7 @@ class MessageValidator {
         }
 
         if (!functionalityService.isLocalChatEnabled() && !user.hasPermission(
-                SurfChatPermissionRegistry.TEAM_BYPASS_FUNCTIONALITY
+                PermissionRegistry.TEAM_BYPASS_FUNCTIONALITY
             )
         ) {
             return MessageValidationResult.Failure(MessageValidationResult.MessageValidationError.ChatDisabled())
@@ -48,7 +48,7 @@ class MessageValidator {
 
 
     fun checkAutoDisabling(player: User): Boolean =
-        !player.hasPermission(SurfChatPermissionRegistry.AUTO_CHAT_DISABLING_BYPASS)
+        !player.hasPermission(PermissionRegistry.AUTO_CHAT_DISABLING_BYPASS)
                 && Bukkit.getOnlinePlayers()
             .count() > plugin.autoDisablingConfig.maximumPlayersBeforeDisable
                 && plugin.autoDisablingConfig.enabled

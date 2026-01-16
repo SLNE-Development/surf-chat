@@ -11,8 +11,4 @@ object BukkitListenerManager {
         DisconnectListener().register()
         ConnectListener().register()
     }
-
-    fun registerPacketListeners() {
-
-    }
 }

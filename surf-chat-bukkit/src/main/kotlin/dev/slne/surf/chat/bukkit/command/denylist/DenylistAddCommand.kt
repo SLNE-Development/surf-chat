@@ -5,14 +5,14 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.*
 import dev.slne.surf.chat.api.denylist.DenylistAction
 import dev.slne.surf.chat.bukkit.command.argument.denylistActionArgument
-import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.realName
 import dev.slne.surf.chat.core.service.denylistService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 fun CommandAPICommand.denylistAddCommand() = subcommand("add") {
-    withPermission(SurfChatPermissionRegistry.COMMAND_DENYLIST_ADD)
+    withPermission(PermissionRegistry.COMMAND_DENYLIST_ADD)
     stringArgument("word")
     denylistActionArgument("action")
     greedyStringArgument("reason", optional = true)

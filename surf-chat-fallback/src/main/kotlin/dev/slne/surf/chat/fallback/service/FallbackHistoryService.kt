@@ -45,7 +45,6 @@ class FallbackHistoryService : HistoryService, Services.Fallback {
                 message = messageData.message.plain()
                 sentAt = messageData.sentAt
                 server = messageData.server
-                channel = messageData.channel
                 type = messageData.type
                 deletedBy = null
             }
@@ -93,10 +92,6 @@ class FallbackHistoryService : HistoryService, Services.Fallback {
                         conditions += HistoryTable.server eq it
                     }
 
-                    filter.channel?.let {
-                        conditions += HistoryTable.channel eq it
-                    }
-
                     filter.messageUuid?.let {
                         conditions += HistoryTable.messageUuid eq it
                     }
@@ -119,8 +114,7 @@ class FallbackHistoryService : HistoryService, Services.Fallback {
                             message = it[HistoryTable.message],
                             server = it[HistoryTable.server],
                             deletedBy = it[HistoryTable.deletedBy],
-                            receiverUuid = it[HistoryTable.receiverUuid],
-                            channel = it[HistoryTable.channel]
+                            receiverUuid = it[HistoryTable.receiverUuid]
                         )
                     }.toObjectSet()
                 }

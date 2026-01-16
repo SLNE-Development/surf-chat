@@ -1,7 +1,5 @@
 package dev.slne.surf.chat.bukkit
 
-import dev.slne.surf.chat.bukkit.command.channel.channelAdminCommand
-import dev.slne.surf.chat.bukkit.command.channel.channelCommand
 import dev.slne.surf.chat.bukkit.command.denylist.action.denylistActionCommand
 import dev.slne.surf.chat.bukkit.command.denylist.denylistCommand
 import dev.slne.surf.chat.bukkit.command.directMessageCommand
@@ -16,8 +14,6 @@ object BukkitCommandManager {
         settingsCommand()
         surfChatCommand()
         teamchatCommand()
-        channelCommand()
-        channelAdminCommand()
         denylistCommand()
         denylistActionCommand()
         ignoreCommand()

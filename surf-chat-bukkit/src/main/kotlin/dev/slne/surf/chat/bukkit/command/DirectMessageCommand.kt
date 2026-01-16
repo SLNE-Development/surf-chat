@@ -60,7 +60,6 @@ fun directMessageCommand() = commandAPICommand("msg") {
                 sentAt,
                 surfCoreApi.getCurrentServerName(),
                 null,
-                null,
                 MessageType.DIRECT
             )
 

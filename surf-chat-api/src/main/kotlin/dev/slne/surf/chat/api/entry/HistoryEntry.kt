@@ -13,7 +13,6 @@ import java.util.*
  * @property sentAt The timestamp (in milliseconds since epoch) when the message was sent.
  * @property message The content of the message.
  * @property server The server where the message was sent.
- * @property channel The channel where the message was sent, or `null` if not applicable.
  * @property deletedBy The identifier of the user who deleted the message, or `null` if not deleted.
  */
 data class HistoryEntry(
@@ -24,6 +23,5 @@ data class HistoryEntry(
     val sentAt: Long,
     val message: String,
     val server: String,
-    val channel: String?,
     val deletedBy: String?
 )

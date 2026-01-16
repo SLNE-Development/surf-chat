@@ -4,7 +4,7 @@ import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.anyExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
-import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.coloredComponent
 import dev.slne.surf.chat.core.service.denylistActionService
@@ -12,7 +12,7 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import kotlin.system.measureTimeMillis
 
 fun CommandAPICommand.denylistActionFetchCommand() = subcommand("fetch") {
-    withPermission(SurfChatPermissionRegistry.COMMAND_DENYLIST_ACTION_FETCH)
+    withPermission(PermissionRegistry.COMMAND_DENYLIST_ACTION_FETCH)
     anyExecutor { executor, _ ->
         executor.sendText {
             appendPrefix()

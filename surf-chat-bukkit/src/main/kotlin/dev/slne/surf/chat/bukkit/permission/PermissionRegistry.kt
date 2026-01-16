@@ -2,7 +2,7 @@ package dev.slne.surf.chat.bukkit.permission
 
 import dev.slne.surf.surfapi.bukkit.api.permission.PermissionRegistry
 
-object SurfChatPermissionRegistry : PermissionRegistry() {
+object PermissionRegistry : PermissionRegistry() {
     private const val PREFIX = "surf.chat"
     private const val PREFIX_COMMAND = "$PREFIX.command"
     val PREFIX_TEAM = create("$PREFIX.team")
@@ -49,33 +49,6 @@ object SurfChatPermissionRegistry : PermissionRegistry() {
 
     val COMMAND_DIRECT_SPY = create("$PREFIX_COMMAND.direct-spy")
     val COMMAND_DIRECT_SPY_CLEAR = create("$PREFIX_COMMAND.direct-spy.clear")
-
-    val COMMAND_CHANNEL = create("$PREFIX_COMMAND.channel")
-    val COMMAND_CHANNEL_ACCEPT = create("$PREFIX_COMMAND.channel.accept")
-    val COMMAND_CHANNEL_CREATE = create("$PREFIX_COMMAND.channel.create")
-    val COMMAND_CHANNEL_DELETE = create("$PREFIX_COMMAND.channel.delete")
-    val COMMAND_CHANNEL_LIST = create("$PREFIX_COMMAND.channel.list")
-    val COMMAND_CHANNEL_INFO = create("$PREFIX_COMMAND.channel.info")
-    val COMMAND_CHANNEL_BAN = create("$PREFIX_COMMAND.channel.ban")
-    val COMMAND_CHANNEL_UNBAN = create("$PREFIX_COMMAND.channel.unban")
-    val COMMAND_CHANNEL_KICK = create("$PREFIX_COMMAND.channel.kick")
-    val COMMAND_CHANNEL_JOIN = create("$PREFIX_COMMAND.channel.join")
-    val COMMAND_CHANNEL_LEAVE = create("$PREFIX_COMMAND.channel.leave")
-    val COMMAND_CHANNEL_PROMOTE = create("$PREFIX_COMMAND.channel.promote")
-    val COMMAND_CHANNEL_DEMOTE = create("$PREFIX_COMMAND.channel.demote")
-    val COMMAND_CHANNEL_TRANSFER = create("$PREFIX_COMMAND.channel.transfer")
-    val COMMAND_CHANNEL_INVITE = create("$PREFIX_COMMAND.channel.invite")
-    val COMMAND_CHANNEL_REVOKE = create("$PREFIX_COMMAND.channel.revoke")
-    val COMMAND_CHANNEL_DECLINE = create("$PREFIX_COMMAND.channel.deny")
-    val COMMAND_CHANNEL_MEMBERS = create("$PREFIX_COMMAND.channel.members")
-
-    val COMMAND_CHANNEL_VISIBILITY = create("$PREFIX_COMMAND.channel.mode")
-    val COMMAND_CHANNEL_ADMIN = create("$PREFIX_COMMAND.channel.admin")
-    val COMMAND_CHANNEL_ADMIN_MOVE = create("$PREFIX_COMMAND.channel.admin.move")
-    val COMMAND_CHANNEL_ADMIN_JOIN = create("$PREFIX_COMMAND.channel.admin.join")
-    val COMMAND_CHANNEL_ADMIN_DELETE = create("$PREFIX_COMMAND.channel.admin.delete")
-    val COMMAND_CHANNEL_ADMIN_SPY = create("$PREFIX_COMMAND.channel.admin.spy")
-    val COMMAND_CHANNEL_ADMIN_SPY_CLEAR = create("$PREFIX_COMMAND.channel.admin.spy.clear")
 
     val COMMAND_SETTINGS = create("$PREFIX_COMMAND.settings")
     val COMMAND_SETTINGS_PING = create("$PREFIX_COMMAND.settings.ping")

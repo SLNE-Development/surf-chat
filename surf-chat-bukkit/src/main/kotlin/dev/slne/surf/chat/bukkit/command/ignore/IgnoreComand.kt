@@ -5,7 +5,7 @@ import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.bukkit.command.argument.userStringArgument
-import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.ignore
 import dev.slne.surf.chat.bukkit.util.ignores
@@ -15,7 +15,7 @@ import dev.slne.surf.chat.core.service.userService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 fun ignoreCommand() = commandAPICommand("ignore", plugin) {
-    withPermission(SurfChatPermissionRegistry.COMMAND_IGNORE)
+    withPermission(PermissionRegistry.COMMAND_IGNORE)
     ignoreListCommand()
     userStringArgument("target")
     playerExecutor { player, args ->

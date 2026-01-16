@@ -4,7 +4,7 @@ import com.github.benmanes.caffeine.cache.Caffeine
 import com.sksamuel.aedile.core.expireAfterWrite
 import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.message.MessageData
-import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
 import dev.slne.surf.chat.bukkit.util.*
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.*
@@ -18,7 +18,7 @@ import kotlin.time.Duration.Companion.minutes
 /**
  * Interface for formatting messages in various contexts within the chat system.
  *
- * This interface defines methods for formatting global, private, team, channel, and spy messages.
+ * This interface defines methods for formatting global, private, team, and spy messages.
  * Each method accepts message data and returns a formatted `Component` object suitable for the
  * specific context in which the message will be displayed or processed.
  */
@@ -35,11 +35,11 @@ class MessageFormatter {
         val viewer = messageData.receiver ?: return Component.empty()
         val player = messageData.sender.player() ?: return Component.empty()
 
-        if (viewer.hasPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_DELETE)) {
+        if (viewer.hasPermission(PermissionRegistry.COMMAND_SURFCHAT_DELETE)) {
             appendDelete(messageData)
         }
 
-        if (viewer.hasPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_TELEPORT)) {
+        if (viewer.hasPermission(PermissionRegistry.COMMAND_SURFCHAT_TELEPORT)) {
             appendTeleport(messageData.sender.name, viewer)
         }
 
@@ -100,33 +100,13 @@ class MessageFormatter {
         clickSuggestsCommand("/teamchat ")
     }
 
-    fun formatChannel(messageData: MessageData) = buildText {
-        val player = messageData.sender.player() ?: return Component.empty()
-        val receiver = messageData.receiver ?: return Component.empty()
-
-        if (receiver.hasPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_DELETE)) {
-            appendDelete(messageData)
-        }
-
-        if (receiver.hasPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_TELEPORT)) {
-            appendTeleport(messageData.sender.name, receiver)
-        }
-
-        appendChannelPrefix(messageData.channel ?: "Unbekannter Kanal")
-        appendName(player)
-        darkSpacer(" >> ")
-        append(updateLinks(formatItemTag(messageData.message, player)))
-        hoverEvent(buildText { appendMessageData(messageData) })
-        clickSuggestsCommand("/msg ${player.name} ")
-    }
-
     fun formatPmSpy(messageData: MessageData) = buildText {
         val receiver = messageData.receiver ?: return Component.empty()
 
         appendSpyIcon()
         appendSpace()
 
-        if (receiver.hasPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_TELEPORT)) {
+        if (receiver.hasPermission(PermissionRegistry.COMMAND_SURFCHAT_TELEPORT)) {
             appendTeleport(messageData.sender.name, receiver)
         }
 
@@ -140,29 +120,6 @@ class MessageFormatter {
         append(updateLinks(messageData.message))
         hoverEvent(buildText { appendMessageData(messageData) })
         clickSuggestsCommand("/msg ${messageData.sender.name} ")
-    }
-
-    fun formatChannelSpy(messageData: MessageData) = buildText {
-        val player = messageData.sender.player() ?: return Component.empty()
-        val receiver = messageData.receiver ?: return Component.empty()
-
-        appendSpyIcon()
-        appendSpace()
-
-        if (receiver.hasPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_DELETE)) {
-            appendDelete(messageData)
-        }
-
-        if (receiver.hasPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_TELEPORT)) {
-            appendTeleport(messageData.sender.name, receiver)
-        }
-
-        appendChannelPrefix(messageData.channel ?: "Unbekannter Kanal")
-        appendName(player)
-        darkSpacer(" >> ")
-        append(updateLinks(formatItemTag(messageData.message, player)))
-        hoverEvent(buildText { appendMessageData(messageData) })
-        clickSuggestsCommand("/msg ${player.name} ")
     }
 
 

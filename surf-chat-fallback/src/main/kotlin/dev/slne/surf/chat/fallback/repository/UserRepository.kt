@@ -54,7 +54,6 @@ class UserRepository {
             it[name] = user.name
             it[uuid] = user.uuid
             it[directMessagesEnabled] = user.directMessagesEnabled
-            it[channelInviteMessagesEnabled] = user.channelInviteMessagesEnabled
             it[chatPingsEnabled] = user.chatPingsEnabled
         }
 
@@ -76,7 +75,6 @@ class UserRepository {
             name = row[UserTable.name],
             uuid = row[UserTable.uuid],
             directMessagesEnabled = row[UserTable.directMessagesEnabled],
-            channelInviteMessagesEnabled = row[UserTable.channelInviteMessagesEnabled],
             chatPingsEnabled = row[UserTable.chatPingsEnabled]
         )
     }

@@ -7,13 +7,13 @@ import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.denylist.DenylistAction
 import dev.slne.surf.chat.bukkit.command.argument.denylistActionArgument
-import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.service.denylistActionService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 fun CommandAPICommand.denylistActionRemoveCommand() = subcommand("remove") {
-    withPermission(SurfChatPermissionRegistry.COMMAND_DENYLIST_ACTION_REMOVE)
+    withPermission(PermissionRegistry.COMMAND_DENYLIST_ACTION_REMOVE)
     denylistActionArgument("action")
     anyExecutor { executor, args ->
         val action: DenylistAction by args

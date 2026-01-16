@@ -186,15 +186,6 @@ object AiModerationPostChatProcessor : PostChatProcessor {
                         inline = true
                     }
 
-                    val channel = messageContext.messageData.channel
-                    if (channel != null) {
-                        field {
-                            name("Channel")
-                            value(channel)
-                            inline = true
-                        }
-                    }
-
                     field {
                         name("Type")
                         value(messageContext.messageData.type.name)

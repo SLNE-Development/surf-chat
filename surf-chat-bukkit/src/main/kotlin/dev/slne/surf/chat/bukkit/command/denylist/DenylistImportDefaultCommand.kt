@@ -5,7 +5,7 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.anyExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.denylist.DenylistActionType
-import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import kotlinx.coroutines.Dispatchers
@@ -39,7 +39,7 @@ import kotlin.time.Duration.Companion.days
 
 
 fun CommandAPICommand.denylistImportDefaultCommand() = subcommand("importdefaults") {
-    withPermission(SurfChatPermissionRegistry.COMMAND_DENYLIST_DEFAULTS)
+    withPermission(PermissionRegistry.COMMAND_DENYLIST_DEFAULTS)
     anyExecutor { executor, _ ->
         executor.sendText {
             appendPrefix()

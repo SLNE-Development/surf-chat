@@ -16,7 +16,6 @@ class HistoryEntity(id: EntityID<Int>) : IntEntity(id) {
     var sentAt by HistoryTable.sentAt
     var type by HistoryTable.type
     var server by HistoryTable.server
-    var channel by HistoryTable.channel
     var deletedBy by HistoryTable.deletedBy
 
     fun toDto() = HistoryEntry(
@@ -27,7 +26,6 @@ class HistoryEntity(id: EntityID<Int>) : IntEntity(id) {
         sentAt,
         message,
         server,
-        channel,
         deletedBy,
     )
 }

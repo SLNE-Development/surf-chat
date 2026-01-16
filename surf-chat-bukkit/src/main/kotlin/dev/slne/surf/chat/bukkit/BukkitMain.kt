@@ -16,7 +16,11 @@ import dev.slne.surf.chat.bukkit.processor.pre.ValidatorPreChatProcessor
 import dev.slne.surf.chat.bukkit.processor.pre.validate.CharPreChatProcessor
 import dev.slne.surf.chat.bukkit.processor.pre.validate.LinkPreChatProcessor
 import dev.slne.surf.chat.bukkit.processor.pre.validate.SpamPreChatProcessor
-import dev.slne.surf.chat.core.service.*
+import dev.slne.surf.chat.core.databaseLoader
+import dev.slne.surf.chat.core.service.denylistActionService
+import dev.slne.surf.chat.core.service.denylistService
+import dev.slne.surf.chat.core.service.functionalityService
+import dev.slne.surf.chat.core.service.userService
 import dev.slne.surf.core.api.common.surfCoreApi
 import kotlinx.coroutines.runBlocking
 import org.bukkit.plugin.java.JavaPlugin
@@ -26,9 +30,6 @@ val plugin get() = JavaPlugin.getPlugin(BukkitMain::class.java)
 class BukkitMain : SuspendingJavaPlugin() {
     override fun onLoad() {
         AiModerationConfig.init()
-
-        databaseService.establishConnection(plugin.dataPath)
-        databaseService.createTables()
 
         chatProcessorRegistry.register(CharPreChatProcessor)
         chatProcessorRegistry.register(LinkPreChatProcessor)
@@ -48,6 +49,8 @@ class BukkitMain : SuspendingJavaPlugin() {
         BukkitListenerManager.registerBukkitListeners()
 
         launch {
+            databaseLoader.connect(plugin.dataPath)
+
             denylistService.fetch()
             denylistActionService.fetchActions()
             functionalityService.fetch(surfCoreApi.getCurrentServerName())
@@ -66,7 +69,7 @@ class BukkitMain : SuspendingJavaPlugin() {
             logger.info("Online users saved.")
         }
 
-        databaseService.closeConnection()
+        databaseLoader.disconnect()
     }
 
     val surfChatConfig = SurfChatConfigProvider()

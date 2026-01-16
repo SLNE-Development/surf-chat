@@ -13,7 +13,7 @@ class SpyServiceImpl : SpyService, Services.Fallback {
     val privateMessageSpies = mutableObject2ObjectMapOf<UUID, ObjectList<UUID>>()
 
     override fun getPrivateMessageSpies(player: UUID) =
-        privateMessageSpies.get(player) ?: mutableObjectListOf()
+        privateMessageSpies[player] ?: mutableObjectListOf()
 
 
     override fun addPrivateMessageSpy(player: UUID, target: UUID) =

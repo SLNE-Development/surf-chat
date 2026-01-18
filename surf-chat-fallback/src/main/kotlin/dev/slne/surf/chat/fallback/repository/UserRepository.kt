@@ -22,18 +22,14 @@ val userRepository = UserRepository()
 class UserRepository {
     suspend fun loadUserByUuid(uuid: UUID): User? = suspendTransaction {
         UserTable.selectAll().where(UserTable.uuid eq uuid).firstOrNull()?.let { userRow ->
-            val ignorelist = IgnoreListTable.selectAll()
-                .where(IgnoreListTable.userId eq userRow[UserTable.id].value).map { ignoreListRow ->
-                    IgnoreListEntry(
-                        userRow[UserTable.uuid],
-                        userRow[UserTable.name],
-                        ignoreListRow[IgnoreListTable.targetUuid],
-                        ignoreListRow[IgnoreListTable.targetName],
-                        ignoreListRow[IgnoreListTable.createdAt]
-                    )
-                }
             toUser(userRow).apply {
-                this.ignorelist.addAll(ignorelist.toList())
+                this.ignorelist.addAll(
+                    loadIgnorelistById(
+                        userRow[UserTable.id].value,
+                        userRow[UserTable.uuid],
+                        userRow[UserTable.name]
+                    )
+                )
             }
         }
     }
@@ -53,6 +49,25 @@ class UserRepository {
             toUser(userRow).apply {
                 this.ignorelist.addAll(ignorelist.toList())
             }
+        }
+    }
+
+    suspend fun loadUserOrCreateByUuid(uuid: UUID, name: String): User = suspendTransaction {
+        UserTable.selectAll().where(UserTable.uuid eq uuid).firstOrNull()?.let {
+            toUser(it)
+        } ?: run {
+            UserTable.insert {
+                it[this.uuid] = uuid
+                it[this.name] = name
+                it[this.directMessagesEnabled] = true
+                it[this.chatPingsEnabled] = true
+            }
+            User(
+                name = name,
+                uuid = uuid,
+                directMessagesEnabled = true,
+                chatPingsEnabled = true
+            )
         }
     }
 
@@ -84,5 +99,22 @@ class UserRepository {
             directMessagesEnabled = row[UserTable.directMessagesEnabled],
             chatPingsEnabled = row[UserTable.chatPingsEnabled]
         )
+    }
+
+    private suspend fun loadIgnorelistById(
+        id: Long,
+        uuid: UUID,
+        name: String
+    ): List<IgnoreListEntry> = suspendTransaction {
+        IgnoreListTable.selectAll()
+            .where(IgnoreListTable.userId eq id).map { ignoreListRow ->
+                IgnoreListEntry(
+                    uuid,
+                    name,
+                    ignoreListRow[IgnoreListTable.targetUuid],
+                    ignoreListRow[IgnoreListTable.targetName],
+                    ignoreListRow[IgnoreListTable.createdAt]
+                )
+            }.toList()
     }
 }

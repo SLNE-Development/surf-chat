@@ -13,7 +13,7 @@ import java.util.*
 class UserServiceImpl : UserService, Services.Fallback {
     private val _users = mutableObject2ObjectMapOf<UUID, User>()
 
-    override val onlineUsers = _users.values.toObjectSet()
+    override val onlineUsers get() = _users.values.toObjectSet()
 
     override fun findUserByUuid(uuid: UUID) = onlineUsers.find { it.uuid == uuid }
     override fun findUserByName(name: String) =
@@ -26,6 +26,11 @@ class UserServiceImpl : UserService, Services.Fallback {
     override fun invalidateUser(userUuid: UUID) {
         _users.remove(userUuid)
     }
+
+    override suspend fun loadUserOrCreateByUuid(
+        uuid: UUID,
+        name: String
+    ): User = userRepository.loadUserOrCreateByUuid(uuid, name)
 
     override suspend fun loadUserByUuid(uuid: UUID) = userRepository.loadUserByUuid(uuid)
     override suspend fun loadUserByName(name: String) = userRepository.loadUserByName(name)

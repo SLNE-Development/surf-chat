@@ -6,6 +6,9 @@ import dev.slne.surf.chat.api.processor.chatProcessorRegistry
 import dev.slne.surf.chat.bukkit.config.AiModerationConfig
 import dev.slne.surf.chat.bukkit.config.DiscordConfigProvider
 import dev.slne.surf.chat.bukkit.config.SurfChatConfigProvider
+import dev.slne.surf.chat.bukkit.listener.AsyncChatListener
+import dev.slne.surf.chat.bukkit.listener.ConnectListener
+import dev.slne.surf.chat.bukkit.listener.DisconnectListener
 import dev.slne.surf.chat.bukkit.processor.post.AiModerationPostChatProcessor
 import dev.slne.surf.chat.bukkit.processor.post.LogPostChatProcessor
 import dev.slne.surf.chat.bukkit.processor.post.PrivateMessageSpyPostChatProcessor
@@ -22,6 +25,7 @@ import dev.slne.surf.chat.core.service.denylistService
 import dev.slne.surf.chat.core.service.functionalityService
 import dev.slne.surf.chat.core.service.userService
 import dev.slne.surf.core.api.common.surfCoreApi
+import dev.slne.surf.surfapi.bukkit.api.event.register
 import kotlinx.coroutines.runBlocking
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -46,7 +50,11 @@ class BukkitMain : SuspendingJavaPlugin() {
 
     override fun onEnable() {
         BukkitCommandManager.registerCommands()
-        BukkitListenerManager.registerBukkitListeners()
+
+
+        AsyncChatListener().register()
+        DisconnectListener().register()
+        ConnectListener.register()
 
         launch {
             databaseLoader.connect(plugin.dataPath)

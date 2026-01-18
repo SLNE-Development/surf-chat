@@ -45,7 +45,7 @@ fun Audience.toUserOrNull() = when (this) {
 
 fun Audience.toUserOrThrow() = when (this) {
     is Player -> userService.findUserByUuid(this.uniqueId)
-        ?: error("User not found for player ${this.name}")
+        ?: error("User not found for player ${this.name}: ${userService.onlineUsers.map { it.uuid }}")
 
     else -> error("Audience is not a player")
 }

@@ -117,8 +117,7 @@ class HistoryServiceImpl : HistoryService, Services.Fallback {
 
     override suspend fun markDeleted(messageUuid: UUID, deleter: String) =
         suspendTransaction {
-            HistoryTable.upsert {
-                it[this.messageUuid] = messageUuid
+            HistoryTable.upsert(where = ({ HistoryTable.messageUuid eq messageUuid })) {
                 it[deletedBy] = deleter
             }
             return@suspendTransaction

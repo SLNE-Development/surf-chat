@@ -13,6 +13,8 @@ import dev.slne.surf.chat.bukkit.util.appendBotIcon
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
+import net.kyori.adventure.text.event.ClickEvent
 import org.bukkit.Bukkit
 import java.awt.Color
 import java.net.URI
@@ -55,6 +57,29 @@ object AiModerationPostChatProcessor : PostChatProcessor {
 
                         hoverEvent(buildText {
                             text(plain, Colors.WHITE)
+                        })
+                    }
+                    append {
+                        spacer(" [")
+                        text("LÖSCHEN", Colors.RED)
+                        spacer("]")
+                        hoverEvent(
+                            buildText {
+                                text("Klicke hier, um die Nachricht zu löschen", Colors.RED)
+                            }
+                        )
+                        clickEvent(ClickEvent.callback {
+                            val signature = messageContext.messageData.signature
+
+                            if (signature == null) {
+                                it.sendText {
+                                    appendPrefix()
+                                    error("Die Nachricht konnte nicht gelöscht werden!")
+                                }
+                                return@callback
+                            }
+
+                            Bukkit.getServer().deleteMessage(signature)
                         })
                     }
                 }

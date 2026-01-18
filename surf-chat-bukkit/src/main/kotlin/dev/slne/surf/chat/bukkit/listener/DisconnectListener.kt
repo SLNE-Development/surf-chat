@@ -23,6 +23,8 @@ class DisconnectListener : Listener {
             )
         }
 
+        userService.invalidateUser(user.uuid)
+
         plugin.launch {
             userService.saveUser(user)
         }

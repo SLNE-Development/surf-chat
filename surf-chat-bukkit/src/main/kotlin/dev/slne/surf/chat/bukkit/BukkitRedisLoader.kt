@@ -11,7 +11,7 @@ class BukkitRedisLoader {
     lateinit var redisApi: RedisApi
 
     fun connect() {
-        redisApi = RedisApi.create(plugin.dataPath)
+        redisApi = RedisApi.create()
         redisApi.registerRequestHandler(RedisRequestListener)
         redisApi.subscribeToEvents(RedisEventListener)
         redisApi.freezeAndConnect()

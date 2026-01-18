@@ -16,6 +16,9 @@ interface UserService {
     fun findUserByUuid(uuid: UUID): User?
     fun findUserByName(name: String): User?
 
+    fun cacheUser(user: User)
+    fun invalidateUser(userUuid: UUID)
+
     suspend fun loadUserByUuid(uuid: UUID): User?
     suspend fun loadUserByName(name: String): User?
 

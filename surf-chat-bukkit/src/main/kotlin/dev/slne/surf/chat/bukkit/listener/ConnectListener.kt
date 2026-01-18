@@ -20,7 +20,7 @@ class ConnectListener : Listener {
                 event.player.uniqueId
             )
 
-            userService.onlineUsers.add(user)
+            userService.cacheUser(user)
         }
 
         if (plugin.connectionMessageConfig.enabled) {

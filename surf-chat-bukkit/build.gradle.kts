@@ -15,7 +15,6 @@ dependencies {
     compileOnly(libs.miniplaceholder.api)
 
     runtimeOnly(project(":surf-chat-fallback"))
-    implementation("dev.slne.surf:surf-redis:1.0.0-SNAPSHOT")
     implementation("de.maxbossing:kotlin-discord-webhook:1") {
         exclude("org.jetbrains.kotlin")
     }
@@ -32,6 +31,7 @@ surfPaperPluginApi {
     generateLibraryLoader(false)
 
     withCorePaper()
+    withSurfRedis()
 
     serverDependencies {
         registerSoft("MiniPlaceholders")

@@ -10,7 +10,7 @@ import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.*
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.insert
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.selectAll
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.transactions.suspendTransaction
-import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.upsert
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.update
 import dev.slne.surf.surfapi.core.api.messages.adventure.plain
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectSet
@@ -117,7 +117,7 @@ class HistoryServiceImpl : HistoryService, Services.Fallback {
 
     override suspend fun markDeleted(messageUuid: UUID, deleter: String) =
         suspendTransaction {
-            HistoryTable.upsert(where = ({ HistoryTable.messageUuid eq messageUuid })) {
+            HistoryTable.update(where = { HistoryTable.messageUuid eq messageUuid }) {
                 it[deletedBy] = deleter
             }
             return@suspendTransaction

@@ -54,7 +54,8 @@ class FunctionalityServiceImpl : FunctionalityService, Services.Fallback {
         localChatEnabled = true
 
         suspendTransaction {
-            FunctionalityTable.upsert(where = { FunctionalityTable.server eq localServer }) {
+            FunctionalityTable.upsert {
+                it[FunctionalityTable.server] = localServer
                 it[chatEnabled] = localChatEnabled
             }
         }
@@ -64,7 +65,8 @@ class FunctionalityServiceImpl : FunctionalityService, Services.Fallback {
         localChatEnabled = !localChatEnabled
 
         suspendTransaction {
-            FunctionalityTable.upsert(where = { FunctionalityTable.server eq localServer }) {
+            FunctionalityTable.upsert {
+                it[FunctionalityTable.server] = localServer
                 it[chatEnabled] = localChatEnabled
             }
         }
@@ -76,7 +78,8 @@ class FunctionalityServiceImpl : FunctionalityService, Services.Fallback {
         localChatEnabled = false
 
         suspendTransaction {
-            FunctionalityTable.upsert(where = { FunctionalityTable.server eq localServer }) {
+            FunctionalityTable.upsert {
+                it[FunctionalityTable.server] = localServer
                 it[chatEnabled] = false
             }
         }

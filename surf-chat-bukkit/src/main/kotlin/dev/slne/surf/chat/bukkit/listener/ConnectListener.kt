@@ -26,6 +26,8 @@ object ConnectListener : Listener {
                     plugin.connectionMessageConfig.joinMessage
                 )
             )
+        } else {
+            event.joinMessage(null)
         }
 
         if (plugin.chatMotdConfig.enabled) {

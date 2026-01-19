@@ -21,6 +21,8 @@ class DisconnectListener : Listener {
                     plugin.connectionMessageConfig.leaveMessage
                 )
             )
+        } else {
+            event.quitMessage(null)
         }
 
         userService.invalidateUser(user.uuid)

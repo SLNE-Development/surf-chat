@@ -59,14 +59,10 @@ class UserRepository {
             UserTable.insert {
                 it[this.uuid] = uuid
                 it[this.name] = name
-                it[this.directMessagesEnabled] = true
-                it[this.chatPingsEnabled] = true
             }
             User(
                 name = name,
-                uuid = uuid,
-                directMessagesEnabled = true,
-                chatPingsEnabled = true
+                uuid = uuid
             )
         }
     }
@@ -75,8 +71,6 @@ class UserRepository {
         UserTable.upsert {
             it[name] = user.name
             it[uuid] = user.uuid
-            it[directMessagesEnabled] = user.directMessagesEnabled
-            it[chatPingsEnabled] = user.chatPingsEnabled
         }
 
         val userId =
@@ -95,9 +89,7 @@ class UserRepository {
     private fun toUser(row: ResultRow): User {
         return User(
             name = row[UserTable.name],
-            uuid = row[UserTable.uuid],
-            directMessagesEnabled = row[UserTable.directMessagesEnabled],
-            chatPingsEnabled = row[UserTable.chatPingsEnabled]
+            uuid = row[UserTable.uuid]
         )
     }
 

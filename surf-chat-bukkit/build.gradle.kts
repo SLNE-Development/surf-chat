@@ -23,6 +23,7 @@ dependencies {
         exclude(group = "org.apache.httpcomponents.core5")
         exclude(group = "org.jetbrains.kotlin")
     }
+    compileOnly("dev.slne.surf.settings:surf-settings-api:1.21.11-2.0.0-SNAPSHOT")
 }
 
 surfPaperPluginApi {
@@ -35,6 +36,7 @@ surfPaperPluginApi {
 
     serverDependencies {
         registerSoft("MiniPlaceholders")
+        registerSoft("surf-settings-paper")
     }
 
     authors.add("red")

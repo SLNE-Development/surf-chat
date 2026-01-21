@@ -6,6 +6,4 @@ import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.dao.id.LongIdTa
 object UserTable : LongIdTable("chat_users") {
     val uuid = nativeUuid("uuid").uniqueIndex()
     val name = varchar("name", 16)
-    val directMessagesEnabled = bool("direct_messages_enabled").default(true)
-    val chatPingsEnabled = bool("chat_pings_enabled").default(true)
 }

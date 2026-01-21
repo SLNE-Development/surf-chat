@@ -1,5 +1,6 @@
 package dev.slne.surf.chat.bukkit.redis.listener
 
+import dev.slne.surf.chat.bukkit.hook.SettingsHook
 import dev.slne.surf.chat.bukkit.message.MessageFormatter
 import dev.slne.surf.chat.bukkit.redis.request.DirectMessageRequest
 import dev.slne.surf.chat.bukkit.redis.response.DirectMessageResponse
@@ -33,7 +34,7 @@ object RedisRequestListener {
             return
         }
 
-        if (targetUser.directMessagesEnabled) {
+        if (SettingsHook.hasDirectMessagesEnabled(targetUser.uuid)) {
             target.sendText {
                 append(formatter.formatIncomingPm(context.request.messageData))
             }

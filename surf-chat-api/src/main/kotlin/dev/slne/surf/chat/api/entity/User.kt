@@ -16,8 +16,5 @@ data class User(
     val name: String,
     val uuid: @Contextual UUID,
 
-    var directMessagesEnabled: Boolean = true,
-    var chatPingsEnabled: Boolean = true,
-
     val ignorelist: MutableList<IgnoreListEntry> = mutableListOf()
 )

@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Caffeine
 import com.sksamuel.aedile.core.expireAfterWrite
 import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.message.MessageData
+import dev.slne.surf.chat.bukkit.hook.SettingsHook
 import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
 import dev.slne.surf.chat.bukkit.util.*
 import dev.slne.surf.surfapi.core.api.messages.Colors
@@ -11,7 +12,9 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.*
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextReplacementConfig
 import net.kyori.adventure.text.format.TextDecoration
+import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import kotlin.time.Duration.Companion.minutes
 
@@ -184,6 +187,12 @@ class MessageFormatter {
                 }
                 .build()
         )
+
+        if (SettingsHook.hasChatPingsEnabled(viewer.uuid)) {
+            Bukkit.getPlayer(viewer.uuid)?.playSound(true) {
+                type(Sound.BLOCK_NOTE_BLOCK_HARP)
+            }
+        }
 
         return message
     }

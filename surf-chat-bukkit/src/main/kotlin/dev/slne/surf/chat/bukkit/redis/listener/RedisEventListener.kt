@@ -1,7 +1,9 @@
 package dev.slne.surf.chat.bukkit.redis.listener
 
+import dev.slne.surf.chat.bukkit.hook.SettingsHook
 import dev.slne.surf.chat.bukkit.message.MessageFormatter
 import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
+import dev.slne.surf.chat.bukkit.redis.event.DirectMessageRedisEvent
 import dev.slne.surf.chat.bukkit.redis.event.TeamMessageRedisEvent
 import dev.slne.surf.chat.bukkit.redis.event.TeamchatMessageRedisEvent
 import dev.slne.surf.redis.event.OnRedisEvent
@@ -31,5 +33,19 @@ object RedisEventListener {
                     append(message)
                 }
             }
+    }
+
+    @OnRedisEvent
+    fun onDirectMessage(event: DirectMessageRedisEvent) {
+        val target = Bukkit.getPlayer(event.messageData.receiver?.uuid ?: return) ?: return
+        val formatter = MessageFormatter()
+
+        if (!SettingsHook.hasDirectMessagesEnabled(target.uniqueId)) {
+            return
+        }
+
+        target.sendText {
+            append(formatter.formatIncomingPm(event.messageData))
+        }
     }
 }

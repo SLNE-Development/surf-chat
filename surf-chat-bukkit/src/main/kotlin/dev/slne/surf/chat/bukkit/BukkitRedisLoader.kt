@@ -1,7 +1,6 @@
 package dev.slne.surf.chat.bukkit
 
 import dev.slne.surf.chat.bukkit.redis.listener.RedisEventListener
-import dev.slne.surf.chat.bukkit.redis.listener.RedisRequestListener
 import dev.slne.surf.redis.RedisApi
 
 val redisLoader = BukkitRedisLoader()
@@ -12,7 +11,6 @@ class BukkitRedisLoader {
 
     fun connect() {
         redisApi = RedisApi.create()
-        redisApi.registerRequestHandler(RedisRequestListener)
         redisApi.subscribeToEvents(RedisEventListener)
         redisApi.freezeAndConnect()
     }

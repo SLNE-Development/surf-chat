@@ -6,13 +6,13 @@ import dev.jorel.commandapi.kotlindsl.*
 import dev.slne.surf.chat.api.denylist.DenylistAction
 import dev.slne.surf.chat.api.denylist.DenylistActionType
 import dev.slne.surf.chat.bukkit.command.argument.denylistActionTypeArgument
-import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.service.denylistActionService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 fun CommandAPICommand.denylistActionAddCommand() = subcommand("add") {
-    withPermission(SurfChatPermissionRegistry.COMMAND_DENYLIST_ACTION_ADD)
+    withPermission(PermissionRegistry.COMMAND_DENYLIST_ACTION_ADD)
     stringArgument("name")
     denylistActionTypeArgument("type")
     integerArgument("durationInMinutes", 0)
@@ -25,7 +25,7 @@ fun CommandAPICommand.denylistActionAddCommand() = subcommand("add") {
 
         if (denylistActionService.hasLocalAction(name)) {
             executor.sendText {
-                appendPrefix()
+                appendErrorPrefix()
                 error("Die Aktion ")
                 variableValue(name)
                 error(" ist bereits in der internen Aktionsliste vorhanden.")
@@ -43,7 +43,7 @@ fun CommandAPICommand.denylistActionAddCommand() = subcommand("add") {
         }
 
         executor.sendText {
-            appendPrefix()
+            appendSuccessPrefix()
             success("Die Aktion ")
             variableValue(name)
             success(" wurde erfolgreich zur internen Aktionsliste hinzugefügt.")
@@ -52,7 +52,7 @@ fun CommandAPICommand.denylistActionAddCommand() = subcommand("add") {
         plugin.launch {
             if (denylistActionService.hasAction(name)) {
                 executor.sendText {
-                    appendPrefix()
+                    appendErrorPrefix()
                     error("Die Aktion ")
                     variableValue(name)
                     error(" ist bereits in der externen Aktionsliste vorhanden.")
@@ -70,7 +70,7 @@ fun CommandAPICommand.denylistActionAddCommand() = subcommand("add") {
             )
 
             executor.sendText {
-                appendPrefix()
+                appendSuccessPrefix()
                 success("Die Aktion ")
                 variableValue(name)
                 success(" wurde erfolgreich zur externen Aktionsliste hinzugefügt.")

@@ -5,14 +5,14 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.*
 import dev.slne.surf.chat.api.denylist.DenylistAction
 import dev.slne.surf.chat.bukkit.command.argument.denylistActionArgument
-import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.realName
 import dev.slne.surf.chat.core.service.denylistService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 fun CommandAPICommand.denylistAddCommand() = subcommand("add") {
-    withPermission(SurfChatPermissionRegistry.COMMAND_DENYLIST_ADD)
+    withPermission(PermissionRegistry.COMMAND_DENYLIST_ADD)
     stringArgument("word")
     denylistActionArgument("action")
     greedyStringArgument("reason", optional = true)
@@ -26,7 +26,7 @@ fun CommandAPICommand.denylistAddCommand() = subcommand("add") {
 
         if (denylistService.hasLocalEntry(word)) {
             executor.sendText {
-                appendPrefix()
+                appendErrorPrefix()
                 error("Der Eintrag ")
                 variableValue(word)
                 error(" ist bereits in der internen Denylist vorhanden.")
@@ -37,7 +37,7 @@ fun CommandAPICommand.denylistAddCommand() = subcommand("add") {
         denylistService.addLocalEntry(word, reason ?: "Verbotenes Wort", name, addedAt, action)
 
         executor.sendText {
-            appendPrefix()
+            appendSuccessPrefix()
             success("Der Eintrag ")
             variableValue(word)
             success(" wurde erfolgreich zur internen Denylist hinzugefügt.")
@@ -46,7 +46,7 @@ fun CommandAPICommand.denylistAddCommand() = subcommand("add") {
         plugin.launch {
             if (denylistService.hasEntry(word)) {
                 executor.sendText {
-                    appendPrefix()
+                    appendErrorPrefix()
                     error("Der Eintrag ")
                     variableValue(word)
                     error(" ist bereits in der externen Denylist vorhanden.")
@@ -57,7 +57,7 @@ fun CommandAPICommand.denylistAddCommand() = subcommand("add") {
             denylistService.addEntry(word, reason ?: "Verbotenes Wort", name, addedAt, action)
 
             executor.sendText {
-                appendPrefix()
+                appendSuccessPrefix()
                 success("Der Eintrag ")
                 variableValue(word)
                 success(" wurde erfolgreich zur externen Denylist hinzugefügt.")

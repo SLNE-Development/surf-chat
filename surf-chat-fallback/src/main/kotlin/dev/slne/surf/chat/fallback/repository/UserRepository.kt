@@ -4,34 +4,37 @@ import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.entry.IgnoreListEntry
 import dev.slne.surf.chat.fallback.table.IgnoreListTable
 import dev.slne.surf.chat.fallback.table.UserTable
-import kotlinx.coroutines.Dispatchers
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.ResultRow
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.eq
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.deleteWhere
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.insert
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.selectAll
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.transactions.suspendTransaction
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.upsert
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import java.util.*
 
 val userRepository = UserRepository()
 
 class UserRepository {
-    suspend fun loadUserByUuid(uuid: UUID): User? = newSuspendedTransaction(Dispatchers.IO) {
+    suspend fun loadUserByUuid(uuid: UUID): User? = suspendTransaction {
         UserTable.selectAll().where(UserTable.uuid eq uuid).firstOrNull()?.let { userRow ->
-            val ignorelist = IgnoreListTable.selectAll()
-                .where(IgnoreListTable.userId eq userRow[UserTable.id].value).map { ignoreListRow ->
-                    IgnoreListEntry(
-                        userRow[UserTable.uuid],
-                        userRow[UserTable.name],
-                        ignoreListRow[IgnoreListTable.targetUuid],
-                        ignoreListRow[IgnoreListTable.targetName],
-                        ignoreListRow[IgnoreListTable.createdAt]
-                    )
-                }
             toUser(userRow).apply {
-                this.ignorelist.addAll(ignorelist)
+                this.ignorelist.addAll(
+                    loadIgnorelistById(
+                        userRow[UserTable.id].value,
+                        userRow[UserTable.uuid],
+                        userRow[UserTable.name]
+                    )
+                )
             }
         }
     }
 
-    suspend fun loadUserByName(name: String): User? = newSuspendedTransaction(Dispatchers.IO) {
+    suspend fun loadUserByName(name: String): User? = suspendTransaction {
         UserTable.selectAll().where(UserTable.name eq name).firstOrNull()?.let { userRow ->
             val ignorelist = IgnoreListTable.selectAll()
                 .where(IgnoreListTable.userId eq userRow[UserTable.id].value).map { ignoreListRow ->
@@ -44,18 +47,30 @@ class UserRepository {
                     )
                 }
             toUser(userRow).apply {
-                this.ignorelist.addAll(ignorelist)
+                this.ignorelist.addAll(ignorelist.toList())
             }
         }
     }
 
-    suspend fun saveUser(user: User) = newSuspendedTransaction(Dispatchers.IO) {
-        UserTable.upsert(UserTable.uuid) {
+    suspend fun loadUserOrCreateByUuid(uuid: UUID, name: String): User = suspendTransaction {
+        UserTable.selectAll().where(UserTable.uuid eq uuid).firstOrNull()?.let {
+            toUser(it)
+        } ?: run {
+            UserTable.insert {
+                it[this.uuid] = uuid
+                it[this.name] = name
+            }
+            User(
+                name = name,
+                uuid = uuid
+            )
+        }
+    }
+
+    suspend fun saveUser(user: User) = suspendTransaction {
+        UserTable.upsert {
             it[name] = user.name
             it[uuid] = user.uuid
-            it[directMessagesEnabled] = user.directMessagesEnabled
-            it[channelInviteMessagesEnabled] = user.channelInviteMessagesEnabled
-            it[chatPingsEnabled] = user.chatPingsEnabled
         }
 
         val userId =
@@ -74,10 +89,24 @@ class UserRepository {
     private fun toUser(row: ResultRow): User {
         return User(
             name = row[UserTable.name],
-            uuid = row[UserTable.uuid],
-            directMessagesEnabled = row[UserTable.directMessagesEnabled],
-            channelInviteMessagesEnabled = row[UserTable.channelInviteMessagesEnabled],
-            chatPingsEnabled = row[UserTable.chatPingsEnabled]
+            uuid = row[UserTable.uuid]
         )
+    }
+
+    private suspend fun loadIgnorelistById(
+        id: Long,
+        uuid: UUID,
+        name: String
+    ): List<IgnoreListEntry> = suspendTransaction {
+        IgnoreListTable.selectAll()
+            .where(IgnoreListTable.userId eq id).map { ignoreListRow ->
+                IgnoreListEntry(
+                    uuid,
+                    name,
+                    ignoreListRow[IgnoreListTable.targetUuid],
+                    ignoreListRow[IgnoreListTable.targetName],
+                    ignoreListRow[IgnoreListTable.createdAt]
+                )
+            }.toList()
     }
 }

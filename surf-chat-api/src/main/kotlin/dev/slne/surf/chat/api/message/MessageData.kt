@@ -1,6 +1,5 @@
 package dev.slne.surf.chat.api.message
 
-import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.serializer.SerializableSignature
 import dev.slne.surf.surfapi.core.api.messages.adventure.plain
@@ -49,7 +48,6 @@ data class MessageData(
      *
      * This property indicates the user intended to receive the message. It can be `null`
      * if the message is not directed to a specific user, such as global announcements
-     * or channel-wide messages.
      *
      * Common use cases:
      * - Identifying the specific user who is the recipient of a private message.
@@ -75,22 +73,12 @@ data class MessageData(
     val server: String,
 
     /**
-     * Represents the associated chat channel for a message.
-     *
-     * This property contains the channel instance through which the message was sent or is associated.
-     * It may be `null` if the message is not part of any channel, such as in the case of private messages
-     * or global broadcasts.
-     */
-    val channel: String?,
-
-    /**
      * Represents the signed metadata of the message.
      *
      * This property contains cryptographic information, such as a signature, to verify the authenticity and integrity
      * of the associated message. If `null`, the message is considered unsigned or its signature data is unavailable.
      */
     val signature: SerializableSignature?,
-
     /**
      * Defines the type of the message associated with this object.
      *
@@ -98,7 +86,6 @@ data class MessageData(
      * helping to determine its context, audience, and handling. Possible values
      * are defined in the `MessageType` enum, including:
      * - `GLOBAL`: Visible to all users.
-     * - `CHANNEL`: Confined to a specific channel.
      * - `TEAM`: Targeted to a team.
      * - `DIRECT`: Sent directly between users.
      */
@@ -109,9 +96,4 @@ data class MessageData(
     }
 
     fun withReceiver(receiver: User?) = copy(receiver = receiver)
-    fun withChannel(channel: Channel?) = if (channel != null) {
-        copy(channel = channel.channelName, type = MessageType.CHANNEL)
-    } else {
-        this
-    }
 }

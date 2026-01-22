@@ -1,7 +1,5 @@
 package dev.slne.surf.chat.bukkit.util
 
-import dev.slne.surf.chat.api.channel.Channel
-import dev.slne.surf.chat.api.channel.ChannelMember
 import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.entry.IgnoreListEntry
 import dev.slne.surf.chat.core.service.userService
@@ -22,10 +20,6 @@ fun Audience.user() = when (this) {
     else -> null
 }
 
-fun User.channelMember(channel: Channel) = channel.members.find { it.uuid == this.uuid }
-
-fun ChannelMember.player() = Bukkit.getPlayer(this.uuid)
-fun ChannelMember.user() = userService.findUserByUuid(uuid)
 fun Audience.isConsole() = this is ConsoleCommandSender
 
 fun Audience.name() = when (this) {
@@ -51,7 +45,7 @@ fun Audience.toUserOrNull() = when (this) {
 
 fun Audience.toUserOrThrow() = when (this) {
     is Player -> userService.findUserByUuid(this.uniqueId)
-        ?: error("User not found for player ${this.name}")
+        ?: error("User not found for player ${this.name}: ${userService.onlineUsers.map { it.uuid }}")
 
     else -> error("Audience is not a player")
 }

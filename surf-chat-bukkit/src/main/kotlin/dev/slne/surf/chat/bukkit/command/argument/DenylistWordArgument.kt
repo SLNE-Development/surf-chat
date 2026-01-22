@@ -13,7 +13,7 @@ class DenylistWordArgument(nodeName: String) :
         denylistService.getLocalEntry(info.input)
             ?: throw CustomArgumentException.fromAdventureComponent {
                 buildText {
-                    appendPrefix()
+                    appendErrorPrefix()
                     error("Das Wort ist nicht auf der internen Denylist.")
                 }
             }

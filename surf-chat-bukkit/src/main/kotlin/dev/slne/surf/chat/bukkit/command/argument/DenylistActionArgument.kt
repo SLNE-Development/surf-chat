@@ -14,7 +14,7 @@ class DenylistActionArgument(nodeName: String) :
         denylistActionService.getLocalAction(info.input)
             ?: throw CustomArgumentException.fromAdventureComponent {
                 buildText {
-                    appendPrefix()
+                    appendErrorPrefix()
                     error("Diese Action wurde nicht gefunden.")
                 }
             }

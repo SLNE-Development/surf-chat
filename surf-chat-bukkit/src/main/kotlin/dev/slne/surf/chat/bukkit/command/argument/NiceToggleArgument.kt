@@ -14,7 +14,7 @@ class NiceToggleArgument(nodeName: String) :
             "disable", "off", "aus" -> false
             else -> throw CustomArgumentException.fromAdventureComponent {
                 buildText {
-                    appendPrefix()
+                    appendErrorPrefix()
                     error("Bitte gebe entweder 'enable', 'disable', 'on' oder 'off' an.")
                 }
             }

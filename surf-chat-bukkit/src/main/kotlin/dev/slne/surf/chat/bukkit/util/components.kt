@@ -1,11 +1,10 @@
 package dev.slne.surf.chat.bukkit.util
 
 import com.github.shynixn.mccoroutine.folia.launch
-import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.bukkit.hook.MiniPlaceholdersHook
-import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.surfapi.core.api.messages.Colors
@@ -29,7 +28,7 @@ fun SurfComponentBuilder.appendDelete(messageData: MessageData) = append(buildTe
     clickEvent(ClickEvent.callback {
         val signature = messageData.signature ?: run {
             it.sendText {
-                appendPrefix()
+                appendErrorPrefix()
                 error("Die Nachricht besitzt eine ungültige Signatur und konnte nicht gelöscht werden.")
             }
             return@callback
@@ -37,10 +36,10 @@ fun SurfComponentBuilder.appendDelete(messageData: MessageData) = append(buildTe
 
         Bukkit.getServer().deleteMessage(signature)
         Bukkit.getOnlinePlayers()
-            .filter { online -> online.hasPermission(SurfChatPermissionRegistry.TEAM_NOTIFY_DELETION) }
+            .filter { online -> online.hasPermission(PermissionRegistry.TEAM_NOTIFY_DELETION) }
             .forEach { online ->
                 online.sendText {
-                    appendPrefix()
+                    appendInfoPrefix()
                     variableValue(it.name())
                     info(" hat eine Nachricht von ")
                     variableValue(messageData.sender.name)
@@ -83,33 +82,6 @@ fun SurfComponentBuilder.appendConfirm(execution: String) = append {
     clickEvent(ClickEvent.runCommand(execution))
     hoverEvent(buildText {
         success("Klicke, um die Aktion zu bestätigen")
-    })
-}
-
-fun SurfComponentBuilder.appendChannelPrefix(channelName: String) = append {
-    darkSpacer("[")
-    variableValue(channelName)
-    darkSpacer("]")
-    darkSpacer(" ")
-}
-
-fun SurfComponentBuilder.appendInviteAccept(channel: Channel) = append {
-    darkSpacer("[")
-    success("AKZEPTIEREN")
-    darkSpacer("] ")
-    clickEvent(ClickEvent.runCommand("/channel accept ${channel.channelName}"))
-    hoverEvent(buildText {
-        success("Klicke, um die Einladung zu ${channel.channelName} anzunehmen")
-    })
-}
-
-fun SurfComponentBuilder.appendInviteDecline(channel: Channel) = append {
-    darkSpacer("[")
-    error("ABLEHNEN")
-    darkSpacer("] ")
-    clickEvent(ClickEvent.runCommand("/channel decline ${channel.channelName}"))
-    hoverEvent(buildText {
-        error("Klicke, um die Einladung zu ${channel.channelName} abzulehnen")
     })
 }
 

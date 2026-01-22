@@ -11,10 +11,15 @@ val userService = requiredService<UserService>()
  * Defines the operations for managing user information, allowing retrieval of online
  * and offline users by unique identifiers or names.
  */
-interface UserService : DatabaseTableHolder {
+interface UserService {
     val onlineUsers: ObjectSet<User>
     fun findUserByUuid(uuid: UUID): User?
     fun findUserByName(name: String): User?
+
+    fun cacheUser(user: User)
+    fun invalidateUser(userUuid: UUID)
+
+    suspend fun loadUserOrCreateByUuid(uuid: UUID, name: String): User
 
     suspend fun loadUserByUuid(uuid: UUID): User?
     suspend fun loadUserByName(name: String): User?

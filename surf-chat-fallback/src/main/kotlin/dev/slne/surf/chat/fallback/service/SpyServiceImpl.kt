@@ -1,7 +1,6 @@
 package dev.slne.surf.chat.fallback.service
 
 import com.google.auto.service.AutoService
-import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.chat.core.service.SpyService
 import dev.slne.surf.surfapi.core.api.util.mutableObject2ObjectMapOf
 import dev.slne.surf.surfapi.core.api.util.mutableObjectListOf
@@ -10,25 +9,12 @@ import net.kyori.adventure.util.Services
 import java.util.*
 
 @AutoService(SpyService::class)
-class FallbackSpyService : SpyService, Services.Fallback {
-    val channelsSpies = mutableObject2ObjectMapOf<Channel, ObjectList<UUID>>()
+class SpyServiceImpl : SpyService, Services.Fallback {
     val privateMessageSpies = mutableObject2ObjectMapOf<UUID, ObjectList<UUID>>()
 
-    override fun getChannelSpies(channel: Channel) =
-        channelsSpies.get(channel) ?: mutableObjectListOf()
-
     override fun getPrivateMessageSpies(player: UUID) =
-        privateMessageSpies.get(player) ?: mutableObjectListOf()
+        privateMessageSpies[player] ?: mutableObjectListOf()
 
-    override fun addChannelSpy(
-        player: UUID,
-        channel: Channel
-    ) = channelsSpies.computeIfAbsent(channel) { mutableObjectListOf() }.add(player)
-
-    override fun removeChannelSpy(
-        player: UUID,
-        channel: Channel
-    ) = channelsSpies[channel]?.remove(player) ?: false
 
     override fun addPrivateMessageSpy(player: UUID, target: UUID) =
         privateMessageSpies.computeIfAbsent(target) { mutableObjectListOf() }.add(player)
@@ -36,20 +22,11 @@ class FallbackSpyService : SpyService, Services.Fallback {
     override fun removePrivateMessageSpy(player: UUID, target: UUID) =
         privateMessageSpies[target]?.remove(player) ?: false
 
-    override fun hasChannelSpies(channel: Channel) =
-        channelsSpies.containsKey(channel) && channelsSpies[channel]?.isNotEmpty() == true
-
     override fun hasPrivateMessageSpies(player: UUID) =
         privateMessageSpies.containsKey(player) && privateMessageSpies[player]?.isNotEmpty() == true
 
-    override fun isChannelSpying(player: UUID) = channelsSpies.values.any { it.contains(player) }
     override fun isPrivateMessageSpying(player: UUID) =
         privateMessageSpies.containsKey(player) && privateMessageSpies[player]?.isNotEmpty() == true
-
-    override fun clearChannelSpies(player: UUID) {
-        channelsSpies.values.forEach { it.remove(player) }
-        channelsSpies.keys.removeIf { channelsSpies[it]?.isEmpty() == true }
-    }
 
     override fun clearPrivateMessageSpies(player: UUID) {
         privateMessageSpies.values.forEach { it.remove(player) }
@@ -57,7 +34,6 @@ class FallbackSpyService : SpyService, Services.Fallback {
     }
 
     override fun cleanup(player: UUID) {
-        this.clearChannelSpies(player)
         this.clearPrivateMessageSpies(player)
     }
 }

@@ -4,7 +4,7 @@ import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.anyExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
-import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.service.denylistService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
@@ -12,11 +12,11 @@ import net.kyori.adventure.text.event.ClickEvent
 import org.bukkit.entity.Player
 
 fun CommandAPICommand.denylistClearCommand() = subcommand("clear") {
-    withPermission(SurfChatPermissionRegistry.COMMAND_DENYLIST_CLEAR)
+    withPermission(PermissionRegistry.COMMAND_DENYLIST_CLEAR)
     anyExecutor { executor, _ ->
         if (executor is Player) {
             executor.sendText {
-                appendPrefix()
+                appendInfoPrefix()
                 info("Möchtest du die Denylist wirklich leeren? ")
                 append {
                     spacer("[")
@@ -27,7 +27,7 @@ fun CommandAPICommand.denylistClearCommand() = subcommand("clear") {
                             denylistService.clearEntries()
                             denylistService.clearLocalEntries()
                             executor.sendText {
-                                appendPrefix()
+                                appendSuccessPrefix()
                                 success("Die Denylist wurde geleert.")
                             }
                         }
@@ -40,7 +40,7 @@ fun CommandAPICommand.denylistClearCommand() = subcommand("clear") {
         plugin.launch {
             denylistService.clearEntries()
             executor.sendText {
-                appendPrefix()
+                appendSuccessPrefix()
                 success("Die Denylist wurde geleert.")
             }
         }

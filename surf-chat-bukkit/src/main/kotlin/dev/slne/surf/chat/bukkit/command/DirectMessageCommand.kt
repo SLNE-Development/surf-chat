@@ -12,8 +12,7 @@ import dev.slne.surf.chat.api.processor.chatProcessorRegistry
 import dev.slne.surf.chat.bukkit.command.argument.userStringArgument
 import dev.slne.surf.chat.bukkit.message.MessageFormatter
 import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.bukkit.redis.request.DirectMessageRequest
-import dev.slne.surf.chat.bukkit.redis.response.DirectMessageResponse
+import dev.slne.surf.chat.bukkit.redis.event.DirectMessageRedisEvent
 import dev.slne.surf.chat.bukkit.redisApi
 import dev.slne.surf.chat.bukkit.util.toUserOrThrow
 import dev.slne.surf.chat.core.service.userService
@@ -38,7 +37,7 @@ fun directMessageCommand() = commandAPICommand("msg") {
         plugin.launch {
             val targetUser = userService.findOrLoadByName(target) ?: run {
                 player.sendText {
-                    appendPrefix()
+                    appendErrorPrefix()
                     error("Der Spieler wurde nicht gefunden.")
                 }
                 return@launch
@@ -46,7 +45,7 @@ fun directMessageCommand() = commandAPICommand("msg") {
 
             if (targetUser.uuid == player.uniqueId) {
                 player.sendText {
-                    appendPrefix()
+                    appendErrorPrefix()
                     error("Du kannst dir keine Nachrichten senden.")
                 }
                 return@launch
@@ -60,34 +59,24 @@ fun directMessageCommand() = commandAPICommand("msg") {
                 sentAt,
                 surfCoreApi.getCurrentServerName(),
                 null,
-                null,
                 MessageType.DIRECT
             )
 
             val messageFormatter = MessageFormatter()
-            val isSuccessful =
-                redisApi.sendRequest<DirectMessageResponse>(DirectMessageRequest(messageData)).success
+            val isOnline = surfCoreApi.getPlayer(targetUser.uuid) != null
 
             val result = runPreProcessors(MessageContext(messageData, false, mutableObjectSetOf()))
             messageData = result.messageData
 
-            if (!result.isCancelled) {
+            if (isOnline) {
                 player.sendText {
-                    when (isSuccessful) {
-                        DirectMessageResponse.DirectMessageStatus.SUCCESS -> {
-                            append(messageFormatter.formatOutgoingPm(messageData))
-                        }
-
-                        DirectMessageResponse.DirectMessageStatus.DIRECT_MESSAGES_DISABLED -> {
-                            appendPrefix()
-                            error("Der Spieler hat Direktnachrichten deaktiviert.")
-                        }
-
-                        else -> {
-                            appendPrefix()
-                            error("Der Spieler wurde nicht gefunden oder hat Direktnachrichten deaktiviert.")
-                        }
-                    }
+                    append(messageFormatter.formatOutgoingPm(messageData))
+                }
+                redisApi.publishEvent(DirectMessageRedisEvent(messageData))
+            } else {
+                player.sendText {
+                    appendErrorPrefix()
+                    error("Der Spieler ist nicht online.")
                 }
             }
 

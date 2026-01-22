@@ -7,20 +7,20 @@ import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.denylist.DenylistAction
 import dev.slne.surf.chat.bukkit.command.argument.denylistActionArgument
-import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.service.denylistActionService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 fun CommandAPICommand.denylistActionRemoveCommand() = subcommand("remove") {
-    withPermission(SurfChatPermissionRegistry.COMMAND_DENYLIST_ACTION_REMOVE)
+    withPermission(PermissionRegistry.COMMAND_DENYLIST_ACTION_REMOVE)
     denylistActionArgument("action")
     anyExecutor { executor, args ->
         val action: DenylistAction by args
 
         if (!denylistActionService.hasLocalAction(action.name)) {
             executor.sendText {
-                appendPrefix()
+                appendErrorPrefix()
                 error("Die Aktion ")
                 variableValue(action.name)
                 error(" ist nicht in der internen Aktionsliste vorhanden.")
@@ -31,7 +31,7 @@ fun CommandAPICommand.denylistActionRemoveCommand() = subcommand("remove") {
         }
 
         executor.sendText {
-            appendPrefix()
+            appendSuccessPrefix()
             success("Die Aktion ")
             variableValue(action.name)
             success(" wurde erfolgreich aus der internen Aktionsliste gelöscht.")
@@ -40,7 +40,7 @@ fun CommandAPICommand.denylistActionRemoveCommand() = subcommand("remove") {
         plugin.launch {
             if (!denylistActionService.hasAction(action.name)) {
                 executor.sendText {
-                    appendPrefix()
+                    appendErrorPrefix()
                     error("Die Aktion ")
                     variableValue(action.name)
                     error(" ist nicht in der externen Aktionsliste vorhanden.")
@@ -51,7 +51,7 @@ fun CommandAPICommand.denylistActionRemoveCommand() = subcommand("remove") {
             denylistActionService.removeAction(action)
 
             executor.sendText {
-                appendPrefix()
+                appendSuccessPrefix()
                 success("Die Aktion ")
                 variableValue(action.name)
                 success(" wurde erfolgreich aus der externen Aktionsliste gelöscht.")

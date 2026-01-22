@@ -6,20 +6,20 @@ import dev.jorel.commandapi.kotlindsl.anyExecutor
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.bukkit.command.argument.denylistWordArgument
-import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.service.denylistService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 fun CommandAPICommand.denylistRemoveCommand() = subcommand("remove") {
-    withPermission(SurfChatPermissionRegistry.COMMAND_DENYLIST_REMOVE)
+    withPermission(PermissionRegistry.COMMAND_DENYLIST_REMOVE)
     denylistWordArgument("word")
     anyExecutor { executor, args ->
         val word: String by args
 
         if (!denylistService.hasLocalEntry(word)) {
             executor.sendText {
-                appendPrefix()
+                appendErrorPrefix()
                 error("Der Eintrag ")
                 variableValue(word)
                 error(" ist nicht in der internen Denylist vorhanden.")
@@ -30,7 +30,7 @@ fun CommandAPICommand.denylistRemoveCommand() = subcommand("remove") {
         denylistService.removeLocalEntry(word)
 
         executor.sendText {
-            appendPrefix()
+            appendSuccessPrefix()
             success("Der Eintrag ")
             variableValue(word)
             success(" wurde erfolgreich aus der internen Denylist gelöscht.")
@@ -39,7 +39,7 @@ fun CommandAPICommand.denylistRemoveCommand() = subcommand("remove") {
         plugin.launch {
             if (!denylistService.hasEntry(word)) {
                 executor.sendText {
-                    appendPrefix()
+                    appendErrorPrefix()
                     error("Der Eintrag ")
                     variableValue(word)
                     error(" ist nicht in der externen Denylist vorhanden.")
@@ -50,7 +50,7 @@ fun CommandAPICommand.denylistRemoveCommand() = subcommand("remove") {
             denylistService.removeEntry(word)
 
             executor.sendText {
-                appendPrefix()
+                appendSuccessPrefix()
                 success("Der Eintrag ")
                 variableValue(word)
                 success(" wurde erfolgreich aus der externen Denylist gelöscht.")

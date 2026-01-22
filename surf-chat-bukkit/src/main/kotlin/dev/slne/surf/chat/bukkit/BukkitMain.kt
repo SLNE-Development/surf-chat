@@ -6,14 +6,26 @@ import dev.slne.surf.chat.api.processor.chatProcessorRegistry
 import dev.slne.surf.chat.bukkit.config.AiModerationConfig
 import dev.slne.surf.chat.bukkit.config.DiscordConfigProvider
 import dev.slne.surf.chat.bukkit.config.SurfChatConfigProvider
+import dev.slne.surf.chat.bukkit.listener.AsyncChatListener
+import dev.slne.surf.chat.bukkit.listener.ConnectListener
+import dev.slne.surf.chat.bukkit.listener.DisconnectListener
 import dev.slne.surf.chat.bukkit.processor.post.AiModerationPostChatProcessor
 import dev.slne.surf.chat.bukkit.processor.post.LogPostChatProcessor
-import dev.slne.surf.chat.bukkit.processor.pre.*
+import dev.slne.surf.chat.bukkit.processor.post.PrivateMessageSpyPostChatProcessor
+import dev.slne.surf.chat.bukkit.processor.pre.CorrectViewersPreChatProcessor
+import dev.slne.surf.chat.bukkit.processor.pre.FormatPreChatProcessor
+import dev.slne.surf.chat.bukkit.processor.pre.IgnorePreChatProcessor
+import dev.slne.surf.chat.bukkit.processor.pre.ValidatorPreChatProcessor
 import dev.slne.surf.chat.bukkit.processor.pre.validate.CharPreChatProcessor
 import dev.slne.surf.chat.bukkit.processor.pre.validate.LinkPreChatProcessor
 import dev.slne.surf.chat.bukkit.processor.pre.validate.SpamPreChatProcessor
-import dev.slne.surf.chat.core.service.*
+import dev.slne.surf.chat.core.databaseLoader
+import dev.slne.surf.chat.core.service.denylistActionService
+import dev.slne.surf.chat.core.service.denylistService
+import dev.slne.surf.chat.core.service.functionalityService
+import dev.slne.surf.chat.core.service.userService
 import dev.slne.surf.core.api.common.surfCoreApi
+import dev.slne.surf.surfapi.bukkit.api.event.register
 import kotlinx.coroutines.runBlocking
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -23,13 +35,9 @@ class BukkitMain : SuspendingJavaPlugin() {
     override fun onLoad() {
         AiModerationConfig.init()
 
-        databaseService.establishConnection(plugin.dataPath)
-        databaseService.createTables()
-
         chatProcessorRegistry.register(CharPreChatProcessor)
         chatProcessorRegistry.register(LinkPreChatProcessor)
         chatProcessorRegistry.register(SpamPreChatProcessor)
-        chatProcessorRegistry.register(ChannelPreChatProcessor)
         chatProcessorRegistry.register(CorrectViewersPreChatProcessor)
         chatProcessorRegistry.register(FormatPreChatProcessor)
         chatProcessorRegistry.register(IgnorePreChatProcessor)
@@ -37,14 +45,20 @@ class BukkitMain : SuspendingJavaPlugin() {
 
         chatProcessorRegistry.register(LogPostChatProcessor)
         chatProcessorRegistry.register(AiModerationPostChatProcessor)
+        chatProcessorRegistry.register(PrivateMessageSpyPostChatProcessor)
     }
 
     override fun onEnable() {
         BukkitCommandManager.registerCommands()
-        BukkitListenerManager.registerBukkitListeners()
-        BukkitListenerManager.registerPacketListeners()
+
+
+        AsyncChatListener().register()
+        DisconnectListener().register()
+        ConnectListener.register()
 
         launch {
+            databaseLoader.connect(plugin.dataPath)
+
             denylistService.fetch()
             denylistActionService.fetchActions()
             functionalityService.fetch(surfCoreApi.getCurrentServerName())
@@ -63,7 +77,7 @@ class BukkitMain : SuspendingJavaPlugin() {
             logger.info("Online users saved.")
         }
 
-        databaseService.closeConnection()
+        databaseLoader.disconnect()
     }
 
     val surfChatConfig = SurfChatConfigProvider()

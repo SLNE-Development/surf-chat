@@ -2,11 +2,8 @@ package dev.slne.surf.chat.bukkit.util
 
 import com.github.retrooper.packetevents.PacketEvents
 import com.github.retrooper.packetevents.wrapper.PacketWrapper
-import dev.slne.surf.chat.api.channel.Channel
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
-import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
-import dev.slne.surf.surfapi.core.api.messages.builder.SurfComponentBuilder
 import net.kyori.adventure.text.BuildableComponent
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.ComponentBuilder
@@ -38,8 +35,6 @@ fun Cancellable.cancel() {
 }
 
 fun Component.plainText(): String = PlainTextComponentSerializer.plainText().serialize(this)
-fun Channel.sendText(block: SurfComponentBuilder.() -> Unit) =
-    members.forEach { it.player()?.sendText { block() } }
 
 fun Long.coloredComponent(good: Long = 200L, okay: Long = 1000L) =
     buildText {

@@ -8,7 +8,6 @@ import dev.slne.surf.chat.api.processor.chatProcessorRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.cancel
 import dev.slne.surf.chat.bukkit.util.toUserOrThrow
-import dev.slne.surf.chat.core.service.channelService
 import dev.slne.surf.core.api.common.surfCoreApi
 import io.papermc.paper.event.player.AsyncChatEvent
 import org.bukkit.event.EventHandler
@@ -31,7 +30,6 @@ class AsyncChatListener : Listener {
             null,
             time,
             surfCoreApi.getCurrentServerName(),
-            channelService.getChannel(player)?.channelName,
             event.signedMessage().signature(),
             MessageType.GLOBAL
         )

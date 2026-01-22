@@ -10,7 +10,7 @@ import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.api.message.MessageType
-import dev.slne.surf.chat.bukkit.permission.SurfChatPermissionRegistry
+import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.appendLinePrefix
 import dev.slne.surf.chat.bukkit.util.formatAgo
@@ -27,7 +27,7 @@ import net.kyori.adventure.text.format.TextDecoration
 import java.util.*
 
 fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
-    withPermission(SurfChatPermissionRegistry.COMMAND_SURFCHAT_LOOKUP)
+    withPermission(PermissionRegistry.COMMAND_SURFCHAT_LOOKUP)
     optionalArgument(
         MapArgumentBuilder<String, String>("query", ' ')
             .withKeyMapper { it }
@@ -43,7 +43,6 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
                     "--server",
                     "--sender",
                     "--receiver",
-                    "--channel",
                     "--messageUuid"
                 )
             )
@@ -55,7 +54,7 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
         val query: Map<String, String>? by args
 
         player.sendText {
-            appendPrefix()
+            appendInfoPrefix()
             info("Es wird nach Ergebnissen gesucht...")
         }
 
@@ -67,7 +66,7 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
 
             if (history.isEmpty()) {
                 player.sendText {
-                    appendPrefix()
+                    appendErrorPrefix()
                     error("Es wurden keine Ergebnisse gefunden.")
                 }
                 return@launch
@@ -131,14 +130,6 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
                                 hoverEvent(buildText {
                                     info("auf Server ")
                                     variableValue(entry.server)
-
-                                    val channel = entry.channel
-
-                                    if (channel != null) {
-                                        appendSpace()
-                                        info("im Kanal ")
-                                        variableValue(channel)
-                                    }
                                 })
                             }
                             appendSpace()
@@ -203,7 +194,6 @@ private suspend fun Map<String, String>.parseFilters(): HistoryFilter {
         range = this["--range"]?.let { parseRangeToMillis(it) },
         messageLike = this["--message"],
         server = this["--server"],
-        channel = this["--channel"],
         deletedBy = this["--deletedBy"],
         limit = this["--limit"]?.toIntOrNull() ?: 50,
         type = this["--type"]?.let { runCatching { MessageType.valueOf(it.uppercase()) }.getOrNull() }

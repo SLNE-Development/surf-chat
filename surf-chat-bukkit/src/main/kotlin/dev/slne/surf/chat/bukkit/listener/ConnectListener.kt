@@ -1,7 +1,6 @@
 package dev.slne.surf.chat.bukkit.listener
 
 import com.github.shynixn.mccoroutine.folia.launch
-import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.bukkit.hook.MiniPlaceholdersHook
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.service.userService
@@ -11,16 +10,13 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 
-class ConnectListener : Listener {
+object ConnectListener : Listener {
     @EventHandler
     fun onJoin(event: PlayerJoinEvent) {
         plugin.launch(Dispatchers.IO) {
-            val user = userService.loadUserByUuid(event.player.uniqueId) ?: User(
-                event.player.name,
-                event.player.uniqueId
-            )
+            val user = userService.loadUserOrCreateByUuid(event.player.uniqueId, event.player.name)
 
-            userService.onlineUsers.add(user)
+            userService.cacheUser(user)
         }
 
         if (plugin.connectionMessageConfig.enabled) {
@@ -30,6 +26,8 @@ class ConnectListener : Listener {
                     plugin.connectionMessageConfig.joinMessage
                 )
             )
+        } else {
+            event.joinMessage(null)
         }
 
         if (plugin.chatMotdConfig.enabled) {

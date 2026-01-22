@@ -10,9 +10,6 @@ enum class MessageType {
     /** A global message visible to all users. */
     GLOBAL,
 
-    /** A message sent within a specific channel. */
-    CHANNEL,
-
     /** A message sent to a team. */
     TEAM,
 

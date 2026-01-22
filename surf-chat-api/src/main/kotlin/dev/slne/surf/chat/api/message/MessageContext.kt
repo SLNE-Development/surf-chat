@@ -24,7 +24,7 @@ data class MessageContext(
         fun defaultRenderer(): (viewer: User) -> Component {
             return { _ ->
                 buildText {
-                    appendPrefix()
+                    appendErrorPrefix()
                     error("Internal chat formatting error: no renderer set for message context")
                 }
             }

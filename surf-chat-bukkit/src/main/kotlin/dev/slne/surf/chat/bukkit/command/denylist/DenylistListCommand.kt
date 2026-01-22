@@ -24,7 +24,7 @@ fun CommandAPICommand.denylistListCommand() = subcommand("list") {
 
         if (denylistEntries.isEmpty()) {
             executor.sendText {
-                appendPrefix()
+                appendErrorPrefix()
                 error("Es sind keine Einträge in der internen Denylist vorhanden.")
             }
             return@anyExecutor

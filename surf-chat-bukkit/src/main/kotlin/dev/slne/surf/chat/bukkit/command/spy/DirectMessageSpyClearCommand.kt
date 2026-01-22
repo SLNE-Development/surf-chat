@@ -12,7 +12,7 @@ fun CommandAPICommand.directMessageSpyClearCommand() = subcommand("clear") {
     playerExecutor { player, args ->
         if (!spyService.isPrivateMessageSpying(player.uniqueId)) {
             player.sendText {
-                appendPrefix()
+                appendErrorPrefix()
                 error("Du spionierst aktuell bei keinem Spieler.")
             }
             return@playerExecutor
@@ -21,7 +21,7 @@ fun CommandAPICommand.directMessageSpyClearCommand() = subcommand("clear") {
         spyService.clearPrivateMessageSpies(player.uniqueId)
 
         player.sendText {
-            appendPrefix()
+            appendSuccessPrefix()
             success("Du spionierst jetzt bei keinem Spieler mehr.")
         }
     }

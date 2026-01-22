@@ -26,7 +26,7 @@ fun CommandAPICommand.denylistAddCommand() = subcommand("add") {
 
         if (denylistService.hasLocalEntry(word)) {
             executor.sendText {
-                appendPrefix()
+                appendErrorPrefix()
                 error("Der Eintrag ")
                 variableValue(word)
                 error(" ist bereits in der internen Denylist vorhanden.")
@@ -37,7 +37,7 @@ fun CommandAPICommand.denylistAddCommand() = subcommand("add") {
         denylistService.addLocalEntry(word, reason ?: "Verbotenes Wort", name, addedAt, action)
 
         executor.sendText {
-            appendPrefix()
+            appendSuccessPrefix()
             success("Der Eintrag ")
             variableValue(word)
             success(" wurde erfolgreich zur internen Denylist hinzugefügt.")
@@ -46,7 +46,7 @@ fun CommandAPICommand.denylistAddCommand() = subcommand("add") {
         plugin.launch {
             if (denylistService.hasEntry(word)) {
                 executor.sendText {
-                    appendPrefix()
+                    appendErrorPrefix()
                     error("Der Eintrag ")
                     variableValue(word)
                     error(" ist bereits in der externen Denylist vorhanden.")
@@ -57,7 +57,7 @@ fun CommandAPICommand.denylistAddCommand() = subcommand("add") {
             denylistService.addEntry(word, reason ?: "Verbotenes Wort", name, addedAt, action)
 
             executor.sendText {
-                appendPrefix()
+                appendSuccessPrefix()
                 success("Der Eintrag ")
                 variableValue(word)
                 success(" wurde erfolgreich zur externen Denylist hinzugefügt.")

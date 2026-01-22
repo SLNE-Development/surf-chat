@@ -21,7 +21,7 @@ fun CommandAPICommand.ignoreListCommand() = subcommand("list") {
 
         if (ignoreList.isEmpty()) {
             player.sendText {
-                appendPrefix()
+                appendErrorPrefix()
                 error("Du ignorierst aktuell niemanden.")
             }
             return@playerExecutor

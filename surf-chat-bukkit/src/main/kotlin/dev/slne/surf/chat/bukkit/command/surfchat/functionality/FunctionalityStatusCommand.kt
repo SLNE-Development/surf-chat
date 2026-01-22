@@ -11,7 +11,7 @@ fun CommandAPICommand.functionalityStatusCommand() = subcommand("status") {
     withPermission(PermissionRegistry.COMMAND_SURFCHAT_FUNCTIONALITY_STATUS)
     anyExecutor { player, _ ->
         player.sendText {
-            appendPrefix()
+            appendInfoPrefix()
             info("Der Chat ist derzeit ")
             variableValue(if (functionalityService.isLocalChatEnabled()) "aktiviert" else "deaktiviert")
             info(".")

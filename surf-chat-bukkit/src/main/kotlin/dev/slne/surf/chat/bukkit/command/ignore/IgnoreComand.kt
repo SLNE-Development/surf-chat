@@ -24,7 +24,7 @@ fun ignoreCommand() = commandAPICommand("ignore", plugin) {
         plugin.launch {
             val targetUser = userService.findOrLoadByName(target) ?: run {
                 player.sendText {
-                    appendPrefix()
+                    appendErrorPrefix()
                     error("Der Spieler ")
                     variableValue(target)
                     error(" wurde nicht gefunden.")
@@ -36,7 +36,7 @@ fun ignoreCommand() = commandAPICommand("ignore", plugin) {
 
             if (player.uniqueId == targetUser.uuid) {
                 player.sendText {
-                    appendPrefix()
+                    appendErrorPrefix()
                     error("Du kannst dich nicht selbst ignorieren.")
                 }
                 return@launch
@@ -46,7 +46,7 @@ fun ignoreCommand() = commandAPICommand("ignore", plugin) {
                 user.unignore(targetUser.uuid)
 
                 player.sendText {
-                    appendPrefix()
+                    appendSuccessPrefix()
                     success("Du ignorierst nun nicht mehr ")
                     variableValue(targetUser.name)
                     success(".")
@@ -57,7 +57,7 @@ fun ignoreCommand() = commandAPICommand("ignore", plugin) {
             user.ignore(targetUser.name, targetUser.uuid)
 
             player.sendText {
-                appendPrefix()
+                appendSuccessPrefix()
                 success("Du ignorierst nun ")
                 variableValue(targetUser.name)
                 success(".")

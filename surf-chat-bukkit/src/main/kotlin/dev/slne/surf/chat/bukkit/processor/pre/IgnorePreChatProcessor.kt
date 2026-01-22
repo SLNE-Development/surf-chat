@@ -15,7 +15,7 @@ object IgnorePreChatProcessor : PreChatProcessor {
 
         if (isIgnored(data.receiver, data.sender)) {
             data.sender.sendText {
-                appendPrefix()
+                appendErrorPrefix()
                 error("Deine Nachricht konnte nicht zugestellt werden.")
             }
             context.cancel()

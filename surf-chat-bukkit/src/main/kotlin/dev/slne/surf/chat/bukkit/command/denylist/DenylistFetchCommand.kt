@@ -15,7 +15,7 @@ fun CommandAPICommand.denylistFetchCommand() = subcommand("fetch") {
     withPermission(PermissionRegistry.COMMAND_DENYLIST_FETCH)
     anyExecutor { executor, args ->
         executor.sendText {
-            appendPrefix()
+            appendInfoPrefix()
             info("Die Denylist wird aktualisiert...")
         }
 
@@ -25,7 +25,7 @@ fun CommandAPICommand.denylistFetchCommand() = subcommand("fetch") {
             }
 
             executor.sendText {
-                appendPrefix()
+                appendSuccessPrefix()
                 success("Die Denylist wurde erfolgreich aktualisiert")
                 appendSpace()
                 spacer("(")

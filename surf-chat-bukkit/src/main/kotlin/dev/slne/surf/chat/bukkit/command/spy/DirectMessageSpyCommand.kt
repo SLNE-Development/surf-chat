@@ -21,7 +21,7 @@ fun directMessageSpyCommand() = commandAPICommand("spy") {
 
         if (user.uuid == target.uuid) {
             player.sendText {
-                appendPrefix()
+                appendErrorPrefix()
                 error("Du kannst dich nicht selbst spionieren!")
             }
             return@playerExecutor
@@ -29,7 +29,7 @@ fun directMessageSpyCommand() = commandAPICommand("spy") {
 
         if (target.hasPermission(PermissionRegistry.TEAM_BYPASS_SPY)) {
             player.sendText {
-                appendPrefix()
+                appendErrorPrefix()
                 error("Du kannst keine Teammitglieder spionieren!")
             }
             return@playerExecutor
@@ -39,7 +39,7 @@ fun directMessageSpyCommand() = commandAPICommand("spy") {
             spyService.removePrivateMessageSpy(player.uniqueId, target.uuid)
 
             player.sendText {
-                appendPrefix()
+                appendSuccessPrefix()
                 success("Du spionierst nun ")
                 variableValue(target.name)
                 success("s private Nachrichten nicht mehr.")
@@ -47,7 +47,7 @@ fun directMessageSpyCommand() = commandAPICommand("spy") {
         } else {
             spyService.addPrivateMessageSpy(player.uniqueId, target.uuid)
             player.sendText {
-                appendPrefix()
+                appendSuccessPrefix()
                 success("Du spionierst nun ")
                 variableValue(target.name)
                 success("s private Nachrichten.")

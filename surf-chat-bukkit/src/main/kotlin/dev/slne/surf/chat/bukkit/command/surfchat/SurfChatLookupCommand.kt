@@ -54,7 +54,7 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
         val query: Map<String, String>? by args
 
         player.sendText {
-            appendPrefix()
+            appendInfoPrefix()
             info("Es wird nach Ergebnissen gesucht...")
         }
 
@@ -66,7 +66,7 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
 
             if (history.isEmpty()) {
                 player.sendText {
-                    appendPrefix()
+                    appendErrorPrefix()
                     error("Es wurden keine Ergebnisse gefunden.")
                 }
                 return@launch

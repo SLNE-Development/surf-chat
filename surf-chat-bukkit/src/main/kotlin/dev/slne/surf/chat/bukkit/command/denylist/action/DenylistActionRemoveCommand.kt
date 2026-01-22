@@ -20,7 +20,7 @@ fun CommandAPICommand.denylistActionRemoveCommand() = subcommand("remove") {
 
         if (!denylistActionService.hasLocalAction(action.name)) {
             executor.sendText {
-                appendPrefix()
+                appendErrorPrefix()
                 error("Die Aktion ")
                 variableValue(action.name)
                 error(" ist nicht in der internen Aktionsliste vorhanden.")
@@ -31,7 +31,7 @@ fun CommandAPICommand.denylistActionRemoveCommand() = subcommand("remove") {
         }
 
         executor.sendText {
-            appendPrefix()
+            appendSuccessPrefix()
             success("Die Aktion ")
             variableValue(action.name)
             success(" wurde erfolgreich aus der internen Aktionsliste gelöscht.")
@@ -40,7 +40,7 @@ fun CommandAPICommand.denylistActionRemoveCommand() = subcommand("remove") {
         plugin.launch {
             if (!denylistActionService.hasAction(action.name)) {
                 executor.sendText {
-                    appendPrefix()
+                    appendErrorPrefix()
                     error("Die Aktion ")
                     variableValue(action.name)
                     error(" ist nicht in der externen Aktionsliste vorhanden.")
@@ -51,7 +51,7 @@ fun CommandAPICommand.denylistActionRemoveCommand() = subcommand("remove") {
             denylistActionService.removeAction(action)
 
             executor.sendText {
-                appendPrefix()
+                appendSuccessPrefix()
                 success("Die Aktion ")
                 variableValue(action.name)
                 success(" wurde erfolgreich aus der externen Aktionsliste gelöscht.")

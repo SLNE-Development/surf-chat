@@ -136,7 +136,7 @@ class MessageFormatter {
 
         if (item.type == Material.AIR) {
             player.sendText {
-                appendPrefix()
+                appendErrorPrefix()
                 error("Du hast kein Item in der Hand!")
             }
             return message

@@ -19,7 +19,7 @@ fun CommandAPICommand.denylistRemoveCommand() = subcommand("remove") {
 
         if (!denylistService.hasLocalEntry(word)) {
             executor.sendText {
-                appendPrefix()
+                appendErrorPrefix()
                 error("Der Eintrag ")
                 variableValue(word)
                 error(" ist nicht in der internen Denylist vorhanden.")
@@ -30,7 +30,7 @@ fun CommandAPICommand.denylistRemoveCommand() = subcommand("remove") {
         denylistService.removeLocalEntry(word)
 
         executor.sendText {
-            appendPrefix()
+            appendSuccessPrefix()
             success("Der Eintrag ")
             variableValue(word)
             success(" wurde erfolgreich aus der internen Denylist gelöscht.")
@@ -39,7 +39,7 @@ fun CommandAPICommand.denylistRemoveCommand() = subcommand("remove") {
         plugin.launch {
             if (!denylistService.hasEntry(word)) {
                 executor.sendText {
-                    appendPrefix()
+                    appendErrorPrefix()
                     error("Der Eintrag ")
                     variableValue(word)
                     error(" ist nicht in der externen Denylist vorhanden.")
@@ -50,7 +50,7 @@ fun CommandAPICommand.denylistRemoveCommand() = subcommand("remove") {
             denylistService.removeEntry(word)
 
             executor.sendText {
-                appendPrefix()
+                appendSuccessPrefix()
                 success("Der Eintrag ")
                 variableValue(word)
                 success(" wurde erfolgreich aus der externen Denylist gelöscht.")

@@ -25,7 +25,7 @@ fun CommandAPICommand.denylistActionAddCommand() = subcommand("add") {
 
         if (denylistActionService.hasLocalAction(name)) {
             executor.sendText {
-                appendPrefix()
+                appendErrorPrefix()
                 error("Die Aktion ")
                 variableValue(name)
                 error(" ist bereits in der internen Aktionsliste vorhanden.")
@@ -43,7 +43,7 @@ fun CommandAPICommand.denylistActionAddCommand() = subcommand("add") {
         }
 
         executor.sendText {
-            appendPrefix()
+            appendSuccessPrefix()
             success("Die Aktion ")
             variableValue(name)
             success(" wurde erfolgreich zur internen Aktionsliste hinzugefügt.")
@@ -52,7 +52,7 @@ fun CommandAPICommand.denylistActionAddCommand() = subcommand("add") {
         plugin.launch {
             if (denylistActionService.hasAction(name)) {
                 executor.sendText {
-                    appendPrefix()
+                    appendErrorPrefix()
                     error("Die Aktion ")
                     variableValue(name)
                     error(" ist bereits in der externen Aktionsliste vorhanden.")
@@ -70,7 +70,7 @@ fun CommandAPICommand.denylistActionAddCommand() = subcommand("add") {
             )
 
             executor.sendText {
-                appendPrefix()
+                appendSuccessPrefix()
                 success("Die Aktion ")
                 variableValue(name)
                 success(" wurde erfolgreich zur externen Aktionsliste hinzugefügt.")

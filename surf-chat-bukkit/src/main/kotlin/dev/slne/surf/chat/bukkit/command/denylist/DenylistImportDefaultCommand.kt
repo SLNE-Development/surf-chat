@@ -42,7 +42,7 @@ fun CommandAPICommand.denylistImportDefaultCommand() = subcommand("importdefault
     withPermission(PermissionRegistry.COMMAND_DENYLIST_DEFAULTS)
     anyExecutor { executor, _ ->
         executor.sendText {
-            appendPrefix()
+            appendInfoPrefix()
             info("Importiere Standard-Wortfilter...")
         }
 
@@ -118,7 +118,7 @@ fun CommandAPICommand.denylistImportDefaultCommand() = subcommand("importdefault
             }
 
             executor.sendText {
-                appendPrefix()
+                appendSuccessPrefix()
                 success("Import der Standard-Wortfilter abgeschlossen.")
             }
         }

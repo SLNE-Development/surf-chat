@@ -37,7 +37,7 @@ fun CommandAPICommand.functionalityListCommand() = subcommand("list") {
         }
 
         player.sendText {
-            appendPrefix()
+            appendInfoPrefix()
             info("Lädt...")
         }
 

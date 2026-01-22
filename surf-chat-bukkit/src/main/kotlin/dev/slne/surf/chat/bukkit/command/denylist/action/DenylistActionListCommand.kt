@@ -23,7 +23,7 @@ fun CommandAPICommand.denylistActionListCommand() = subcommand("list") {
 
         if (localDenylistActions.isEmpty()) {
             executor.sendText {
-                appendPrefix()
+                appendErrorPrefix()
                 error("Es sind keine Aktionen in der internen Aktionsliste vorhanden.")
             }
             return@anyExecutor

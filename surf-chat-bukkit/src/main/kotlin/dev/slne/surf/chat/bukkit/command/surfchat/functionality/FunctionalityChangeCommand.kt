@@ -23,7 +23,7 @@ fun CommandAPICommand.functionalityChangeCommand() = subcommand("change") {
             if (toggle) {
                 functionalityService.enableLocalChat(surfCoreApi.getCurrentServerName())
                 player.sendText {
-                    appendPrefix()
+                    appendSuccessPrefix()
                     success("Der Chat wurde aktiviert.")
                 }
 
@@ -31,7 +31,7 @@ fun CommandAPICommand.functionalityChangeCommand() = subcommand("change") {
                     .filter { it.hasPermission(PermissionRegistry.TEAM_NOTIFY_FUNCTIONALITY) }
                     .forEach {
                         it.sendText {
-                            appendPrefix()
+                            appendInfoPrefix()
                             variableValue(player.name)
                             info(" hat den Chat für den Server ")
                             variableValue(plugin.server.name)
@@ -41,7 +41,7 @@ fun CommandAPICommand.functionalityChangeCommand() = subcommand("change") {
             } else {
                 functionalityService.disableLocalChat(surfCoreApi.getCurrentServerName())
                 player.sendText {
-                    appendPrefix()
+                    appendSuccessPrefix()
                     success("Der Chat wurde deaktiviert.")
                 }
 
@@ -49,7 +49,7 @@ fun CommandAPICommand.functionalityChangeCommand() = subcommand("change") {
                     .filter { it.hasPermission(PermissionRegistry.TEAM_NOTIFY_FUNCTIONALITY) }
                     .forEach {
                         it.sendText {
-                            appendPrefix()
+                            appendSuccessPrefix()
                             variableValue(player.name)
                             info(" hat den Chat für den Server ")
                             variableValue(plugin.server.name)

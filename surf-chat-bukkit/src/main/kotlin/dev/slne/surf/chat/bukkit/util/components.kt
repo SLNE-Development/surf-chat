@@ -28,7 +28,7 @@ fun SurfComponentBuilder.appendDelete(messageData: MessageData) = append(buildTe
     clickEvent(ClickEvent.callback {
         val signature = messageData.signature ?: run {
             it.sendText {
-                appendPrefix()
+                appendErrorPrefix()
                 error("Die Nachricht besitzt eine ungültige Signatur und konnte nicht gelöscht werden.")
             }
             return@callback
@@ -39,7 +39,7 @@ fun SurfComponentBuilder.appendDelete(messageData: MessageData) = append(buildTe
             .filter { online -> online.hasPermission(PermissionRegistry.TEAM_NOTIFY_DELETION) }
             .forEach { online ->
                 online.sendText {
-                    appendPrefix()
+                    appendInfoPrefix()
                     variableValue(it.name())
                     info(" hat eine Nachricht von ")
                     variableValue(messageData.sender.name)

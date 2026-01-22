@@ -73,7 +73,7 @@ object AiModerationPostChatProcessor : PostChatProcessor {
 
                             if (signature == null) {
                                 it.sendText {
-                                    appendPrefix()
+                                    appendErrorPrefix()
                                     error("Die Nachricht konnte nicht gelöscht werden!")
                                 }
                                 return@callback

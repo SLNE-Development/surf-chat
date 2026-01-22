@@ -16,7 +16,7 @@ fun CommandAPICommand.denylistActionClearCommand() = subcommand("clear") {
     anyExecutor { executor, _ ->
         if (executor is Player) {
             executor.sendText {
-                appendPrefix()
+                appendInfoPrefix()
                 info("Möchtest du die Denylist Aktionen wirklich leeren? ")
                 append {
                     spacer("[")
@@ -27,7 +27,7 @@ fun CommandAPICommand.denylistActionClearCommand() = subcommand("clear") {
                             denylistActionService.clearActions()
                             denylistActionService.clearLocalActions()
                             executor.sendText {
-                                appendPrefix()
+                                appendInfoPrefix()
                                 success("Die Denylist Aktionen wurde geleert.")
                             }
                         }
@@ -40,7 +40,7 @@ fun CommandAPICommand.denylistActionClearCommand() = subcommand("clear") {
         plugin.launch {
             denylistActionService.clearActions()
             executor.sendText {
-                appendPrefix()
+                appendSuccessPrefix()
                 success("Die Denylist Aktionen wurde geleert.")
             }
         }

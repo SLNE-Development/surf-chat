@@ -37,7 +37,7 @@ fun directMessageCommand() = commandAPICommand("msg") {
         plugin.launch {
             val targetUser = userService.findOrLoadByName(target) ?: run {
                 player.sendText {
-                    appendPrefix()
+                    appendErrorPrefix()
                     error("Der Spieler wurde nicht gefunden.")
                 }
                 return@launch
@@ -45,7 +45,7 @@ fun directMessageCommand() = commandAPICommand("msg") {
 
             if (targetUser.uuid == player.uniqueId) {
                 player.sendText {
-                    appendPrefix()
+                    appendErrorPrefix()
                     error("Du kannst dir keine Nachrichten senden.")
                 }
                 return@launch
@@ -75,7 +75,7 @@ fun directMessageCommand() = commandAPICommand("msg") {
                 redisApi.publishEvent(DirectMessageRedisEvent(messageData))
             } else {
                 player.sendText {
-                    appendPrefix()
+                    appendErrorPrefix()
                     error("Der Spieler ist nicht online.")
                 }
             }

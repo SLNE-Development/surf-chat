@@ -19,7 +19,7 @@ class DenylistActionTypeArgument(nodeName: String) :
             "ban-permanent" -> DenylistActionType.PERMANENT_BAN
             else -> throw CustomArgumentException.fromAdventureComponent {
                 buildText {
-                    appendPrefix()
+                    appendErrorPrefix()
                     error("Der Aktionstyp '${info.input()}' ist ungültig. Gültige Typen sind: kick, ban, mute, warn, communityban, ban-permanent.")
                 }
             }

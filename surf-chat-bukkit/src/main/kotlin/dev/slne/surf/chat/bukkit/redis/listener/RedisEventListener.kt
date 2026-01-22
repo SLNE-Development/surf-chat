@@ -7,8 +7,10 @@ import dev.slne.surf.chat.bukkit.redis.event.DirectMessageRedisEvent
 import dev.slne.surf.chat.bukkit.redis.event.TeamMessageRedisEvent
 import dev.slne.surf.chat.bukkit.redis.event.TeamchatMessageRedisEvent
 import dev.slne.surf.redis.event.OnRedisEvent
+import dev.slne.surf.surfapi.core.api.messages.adventure.playSound
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import org.bukkit.Bukkit
+import org.bukkit.Sound
 
 object RedisEventListener {
     @OnRedisEvent
@@ -42,6 +44,12 @@ object RedisEventListener {
 
         if (!SettingsHook.hasDirectMessagesEnabled(target.uniqueId)) {
             return
+        }
+
+        if (SettingsHook.hasChatPingsEnabled(target.uniqueId)) {
+            target.playSound(true) {
+                type(Sound.ENTITY_CHICKEN_EGG)
+            }
         }
 
         target.sendText {

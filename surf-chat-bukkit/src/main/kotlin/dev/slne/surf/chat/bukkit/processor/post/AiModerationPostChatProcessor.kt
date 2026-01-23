@@ -6,10 +6,12 @@ import dev.slne.surf.chat.api.processor.PostChatProcessor
 import dev.slne.surf.chat.bukkit.ai.OpenAiService
 import dev.slne.surf.chat.bukkit.ai.openAiService
 import dev.slne.surf.chat.bukkit.config.aiModerationConfig
+import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.redis.event.TeamMessageRedisEvent
 import dev.slne.surf.chat.bukkit.redisApi
 import dev.slne.surf.chat.bukkit.util.appendBotIcon
+import dev.slne.surf.chat.bukkit.util.hasPermission
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
@@ -27,6 +29,10 @@ object AiModerationPostChatProcessor : PostChatProcessor {
         }
 
         if (!aiModerationConfig.enabled) {
+            return
+        }
+
+        if (messageContext.messageData.sender.hasPermission(PermissionRegistry.BYPASS_FILTER)) {
             return
         }
 

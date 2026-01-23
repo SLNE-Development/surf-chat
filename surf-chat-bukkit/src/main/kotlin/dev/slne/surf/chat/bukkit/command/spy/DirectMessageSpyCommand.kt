@@ -27,7 +27,7 @@ fun directMessageSpyCommand() = commandAPICommand("spy") {
             return@playerExecutor
         }
 
-        if (target.hasPermission(PermissionRegistry.TEAM_BYPASS_SPY)) {
+        if (target.hasPermission(PermissionRegistry.BYPASS_SPY)) {
             player.sendText {
                 appendErrorPrefix()
                 error("Du kannst keine Teammitglieder spionieren!")

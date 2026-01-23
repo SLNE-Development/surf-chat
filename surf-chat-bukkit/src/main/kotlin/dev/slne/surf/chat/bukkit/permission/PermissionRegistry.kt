@@ -7,11 +7,11 @@ object PermissionRegistry : PermissionRegistry() {
     private const val PREFIX_COMMAND = "$PREFIX.command"
     val PREFIX_TEAM = create("$PREFIX.team")
 
-    val AUTO_CHAT_DISABLING_BYPASS = create("$PREFIX.disabling.bypass")
+    val BYPASS_DISABLING = create("$PREFIX.disabling.bypass")
+    val BYPASS_FILTER = create("$PREFIX.bypass.filter")
+    val BYPASS_SPY = create("$PREFIX.bypass.spy")
+    val BYPASS_FUNCTIONALITY = create("$PREFIX.bypass.functionality")
 
-    val TEAM_BYPASS_FILTER = create("$PREFIX_TEAM.bypass.filter")
-    val TEAM_BYPASS_SPY = create("$PREFIX_TEAM.bypass.spy")
-    val TEAM_BYPASS_FUNCTIONALITY = create("$PREFIX_TEAM.bypass.functionality")
     val TEAM_NOTIFY_FUNCTIONALITY = create("$PREFIX_TEAM.notify.functionality")
     val TEAM_NOTIFY_DELETION = create("$PREFIX_TEAM.notify.deletion")
 
@@ -49,11 +49,6 @@ object PermissionRegistry : PermissionRegistry() {
 
     val COMMAND_DIRECT_SPY = create("$PREFIX_COMMAND.direct-spy")
     val COMMAND_DIRECT_SPY_CLEAR = create("$PREFIX_COMMAND.direct-spy.clear")
-
-    val COMMAND_SETTINGS = create("$PREFIX_COMMAND.settings")
-    val COMMAND_SETTINGS_PING = create("$PREFIX_COMMAND.settings.ping")
-    val COMMAND_SETTINGS_INVITES = create("$PREFIX_COMMAND.settings.invites")
-    val COMMAND_SETTINGS_DIRECT_MESSAGES = create("$PREFIX_COMMAND.settings.direct-messages")
 
     val COMMAND_TEAMCHAT = create("$PREFIX_COMMAND.teamchat")
 }

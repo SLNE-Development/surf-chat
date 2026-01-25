@@ -200,7 +200,7 @@ class MessageFormatter {
 
         val message = rawMessage.replaceText(
             TextReplacementConfig.builder()
-                .match(regex.pattern)
+                .match(regex.toPattern())
                 .replacement { match ->
                     val raw = match.build().plain()
                     val clean = raw.removePrefix("@").lowercase()

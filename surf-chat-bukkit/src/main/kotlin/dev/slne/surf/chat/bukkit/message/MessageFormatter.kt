@@ -194,6 +194,7 @@ class MessageFormatter {
                             text(display)
                             color(Colors.VARIABLE_VALUE)
                             decorate(TextDecoration.BOLD)
+                            clickSuggestsCommand("/msg $name ")
                         }
                     }
                     .build()

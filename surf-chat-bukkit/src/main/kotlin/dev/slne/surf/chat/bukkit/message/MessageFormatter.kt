@@ -1,3 +1,5 @@
+@file:Suppress("RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_WARNING")
+
 package dev.slne.surf.chat.bukkit.message
 
 import com.github.benmanes.caffeine.cache.Caffeine
@@ -6,6 +8,7 @@ import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.bukkit.hook.SettingsHook
 import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
+import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.*
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.*
@@ -127,6 +130,10 @@ class MessageFormatter {
 
 
     private fun formatItemTag(rawMessage: Component, player: Player): Component {
+        if (!plugin.surfChatConfig.config.itemPlaceholder) {
+            return rawMessage
+        }
+
         var message = rawMessage
         val item = player.inventory.itemInMainHand
 
@@ -160,42 +167,48 @@ class MessageFormatter {
 
     private fun highlightPlayers(rawMessage: Component, viewer: User): Component {
         var message = rawMessage
+        val plain = message.plain()
 
-        val name = viewer.name
-        val pattern = nameRegexCache.get(name)
+        if (plain.isEmpty()) return message
 
-        if (!pattern.containsMatchIn(message.plain())) {
-            return message
+        var viewerMentioned = false
+
+        for (player in Bukkit.getOnlinePlayers()) {
+            val name = player.name
+            val regex = nameRegexCache.get(name)
+
+            if (!regex.containsMatchIn(plain)) continue
+
+            message = message.replaceText(
+                TextReplacementConfig.builder()
+                    .match(regex.pattern)
+                    .replacement { match ->
+                        if (player.uniqueId == viewer.uuid) {
+                            viewerMentioned = true
+                        }
+
+                        val raw = match.content()
+                        val display = if (raw.startsWith("@")) raw else "@$raw"
+
+                        buildText {
+                            text(display)
+                            color(Colors.VARIABLE_VALUE)
+                            decorate(TextDecoration.BOLD)
+                        }
+                    }
+                    .build()
+            )
         }
 
-        message = message.replaceText(
-            TextReplacementConfig.builder()
-                .match(pattern.pattern)
-                .replacement { matchResult ->
-                    val matchedText = matchResult.content()
-                    val displayName = if (matchedText.startsWith("@")) {
-                        matchedText
-                    } else {
-                        "@$matchedText"
-                    }
-
-                    buildText {
-                        text(displayName)
-                        color(Colors.VARIABLE_VALUE)
-                        decorate(TextDecoration.BOLD)
-                    }
-                }
-                .build()
-        )
-
-        if (SettingsHook.hasChatPingsEnabled(viewer.uuid)) {
+        if (viewerMentioned && SettingsHook.hasChatPingsEnabled(viewer.uuid)) {
             Bukkit.getPlayer(viewer.uuid)?.playSound(true) {
-                type(Sound.BLOCK_NOTE_BLOCK_HARP)
+                type(Sound.ENTITY_CHICKEN_EGG)
             }
         }
 
         return message
     }
+
 
     private fun updateLinks(rawMessage: Component): Component {
         var message = rawMessage

@@ -165,45 +165,63 @@ class MessageFormatter {
         return message
     }
 
-    private fun highlightPlayers(rawMessage: Component, viewer: User): Component {
-        var message = rawMessage
-        val plain = message.plain()
+    private fun ensureMentionCache() {
+        if (!dirty) return
 
-        if (plain.isEmpty()) return message
+        val players = Bukkit.getOnlinePlayers()
+        dirty = false
+
+        if (players.isEmpty()) {
+            cachedRegex = null
+            cachedPlayerMap = emptyMap()
+            return
+        }
+
+        cachedPlayerMap = players.associateBy { it.name.lowercase() }
+
+        val pattern = players.joinToString("|") {
+            Regex.escape(it.name)
+        }
+
+        cachedRegex = Regex("\\b@?($pattern)\\b", RegexOption.IGNORE_CASE)
+    }
+
+
+    private fun highlightPlayers(rawMessage: Component, viewer: User): Component {
+        ensureMentionCache()
+
+        val regex = cachedRegex ?: return rawMessage
+        val playerMap = cachedPlayerMap
+
+        val plain = rawMessage.plain()
+        if (!regex.containsMatchIn(plain)) return rawMessage
 
         var viewerMentioned = false
 
-        for (player in Bukkit.getOnlinePlayers()) {
-            val name = player.name
-            val regex = nameRegexCache.get(name)
+        val message = rawMessage.replaceText(
+            TextReplacementConfig.builder()
+                .match(regex.pattern)
+                .replacement { match ->
+                    val raw = match.build().plain()
+                    val clean = raw.removePrefix("@").lowercase()
+                    val player = playerMap[clean] ?: return@replacement match
 
-            if (!regex.containsMatchIn(plain)) continue
-
-            message = message.replaceText(
-                TextReplacementConfig.builder()
-                    .match(regex.pattern)
-                    .replacement { match ->
-                        if (player.uniqueId == viewer.uuid) {
-                            viewerMentioned = true
-                        }
-
-                        val raw = match.content()
-                        val display = if (raw.startsWith("@")) raw else "@$raw"
-
-                        buildText {
-                            text(display)
-                            color(Colors.VARIABLE_VALUE)
-                            decorate(TextDecoration.BOLD)
-                            clickSuggestsCommand("/msg $name ")
-                        }
+                    if (player.uniqueId == viewer.uuid) {
+                        viewerMentioned = true
                     }
-                    .build()
-            )
-        }
+
+                    buildText {
+                        text("@${player.name}")
+                        color(Colors.VARIABLE_VALUE)
+                        decorate(TextDecoration.BOLD)
+                    }
+                }
+                .build()
+        )
 
         if (viewerMentioned && SettingsHook.hasChatPingsEnabled(viewer.uuid)) {
             Bukkit.getPlayer(viewer.uuid)?.playSound(true) {
-                type(Sound.ENTITY_CHICKEN_EGG)
+                type(Sound.BLOCK_NOTE_BLOCK_HARP)
             }
         }
 
@@ -233,5 +251,17 @@ class MessageFormatter {
         }
 
         return message
+    }
+
+    companion object {
+        @Volatile
+        var cachedRegex: Regex? = null
+
+        @Volatile
+        var cachedPlayerMap: Map<String, Player> = emptyMap()
+
+        @Volatile
+        var dirty = true
+
     }
 }

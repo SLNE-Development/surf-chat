@@ -2,6 +2,7 @@ package dev.slne.surf.chat.bukkit.listener
 
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.bukkit.hook.MiniPlaceholdersHook
+import dev.slne.surf.chat.bukkit.message.MessageFormatter
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.service.userService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
@@ -13,6 +14,8 @@ import org.bukkit.event.player.PlayerJoinEvent
 object ConnectListener : Listener {
     @EventHandler
     fun onJoin(event: PlayerJoinEvent) {
+        MessageFormatter.dirty = true
+
         plugin.launch(Dispatchers.IO) {
             val user = userService.loadUserOrCreateByUuid(event.player.uniqueId, event.player.name)
 

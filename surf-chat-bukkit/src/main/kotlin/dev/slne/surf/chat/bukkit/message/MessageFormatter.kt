@@ -214,6 +214,7 @@ class MessageFormatter {
                         text("@${player.name}")
                         color(Colors.VARIABLE_VALUE)
                         decorate(TextDecoration.BOLD)
+                        clickSuggestsCommand("/msg ${player.name} ")
                     }
                 }
                 .build()
@@ -221,7 +222,7 @@ class MessageFormatter {
 
         if (viewerMentioned && SettingsHook.hasChatPingsEnabled(viewer.uuid)) {
             Bukkit.getPlayer(viewer.uuid)?.playSound(true) {
-                type(Sound.BLOCK_NOTE_BLOCK_HARP)
+                type(Sound.ENTITY_CHICKEN_EGG)
             }
         }
 

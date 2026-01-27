@@ -13,6 +13,7 @@ dependencies {
 
     compileOnly(libs.playerholder.api)
     compileOnly(libs.miniplaceholder.api)
+    compileOnly(libs.luckperms.api)
 
     runtimeOnly(project(":surf-chat-fallback"))
     implementation("de.maxbossing:kotlin-discord-webhook:1") {

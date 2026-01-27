@@ -5,7 +5,6 @@ import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
-import dev.slne.surf.chat.bukkit.util.appendSpace
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.CommonComponents
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
@@ -31,7 +30,11 @@ fun CommandAPICommand.surfChatLookupHelpCommand() = subcommand("lookuphelp") {
                         appendSpace()
                         variableValue(help.content)
                         appendNewline()
-                        appendSpace(5)
+                        appendSpace()
+                        appendSpace()
+                        appendSpace()
+                        appendSpace()
+                        appendSpace()
                         spacer("z.B.")
                         appendSpace()
                         spacer(help.example)

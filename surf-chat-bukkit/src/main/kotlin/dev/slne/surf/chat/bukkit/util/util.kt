@@ -4,9 +4,7 @@ import com.github.retrooper.packetevents.PacketEvents
 import com.github.retrooper.packetevents.wrapper.PacketWrapper
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
-import net.kyori.adventure.text.BuildableComponent
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.ComponentBuilder
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.entity.Player
@@ -59,10 +57,6 @@ fun Long.coloredComponent(good: Long = 200L, okay: Long = 1000L) =
 
 fun TextColor.miniMessage() =
     "<${this.asHexString()}>"
-
-fun <C : BuildableComponent<C, B>, B : ComponentBuilder<C, B>> ComponentBuilder<C, B>.appendSpace(
-    amount: Int,
-) = repeat(amount) { appendSpace() }
 
 fun PacketWrapper<*>.send(player: Player) =
     PacketEvents.getAPI().playerManager.sendPacket(player, this)

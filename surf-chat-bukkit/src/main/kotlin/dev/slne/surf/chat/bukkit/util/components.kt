@@ -3,7 +3,7 @@ package dev.slne.surf.chat.bukkit.util
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.message.MessageData
-import dev.slne.surf.chat.bukkit.hook.MiniPlaceholdersHook
+import dev.slne.surf.chat.bukkit.hook.LuckPermsHook
 import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.service.historyService
@@ -13,6 +13,7 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.surfapi.core.api.messages.builder.SurfComponentBuilder
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.format.TextDecoration
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.time.Instant
@@ -58,9 +59,7 @@ fun SurfComponentBuilder.appendDelete(messageData: MessageData) = append(buildTe
 })
 
 fun SurfComponentBuilder.appendName(player: Player) = append {
-    append(
-        MiniPlaceholdersHook.parse(player, "<luckperms_prefix><player_name>")
-    )
+    append(MiniMessage.miniMessage().deserialize(LuckPermsHook.getPrefix(player) + player.name))
 }
 
 fun SurfComponentBuilder.appendTeleport(name: String, viewer: User) = append {

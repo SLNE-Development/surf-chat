@@ -1,3 +1,5 @@
+@file:Suppress("RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_WARNING")
+
 package dev.slne.surf.chat.bukkit.message
 
 import com.github.benmanes.caffeine.cache.Caffeine
@@ -6,6 +8,7 @@ import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.bukkit.hook.SettingsHook
 import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
+import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.*
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.*
@@ -127,6 +130,10 @@ class MessageFormatter {
 
 
     private fun formatItemTag(rawMessage: Component, player: Player): Component {
+        if (!plugin.surfChatConfig.config.itemPlaceholder) {
+            return rawMessage
+        }
+
         var message = rawMessage
         val item = player.inventory.itemInMainHand
 
@@ -158,44 +165,70 @@ class MessageFormatter {
         return message
     }
 
-    private fun highlightPlayers(rawMessage: Component, viewer: User): Component {
-        var message = rawMessage
+    private fun ensureMentionCache() {
+        if (!dirty) return
 
-        val name = viewer.name
-        val pattern = nameRegexCache.get(name)
+        val players = Bukkit.getOnlinePlayers()
+        dirty = false
 
-        if (!pattern.containsMatchIn(message.plain())) {
-            return message
+        if (players.isEmpty()) {
+            cachedRegex = null
+            cachedPlayerMap = emptyMap()
+            return
         }
 
-        message = message.replaceText(
+        cachedPlayerMap = players.associateBy { it.name.lowercase() }
+
+        val pattern = players.joinToString("|") {
+            Regex.escape(it.name)
+        }
+
+        cachedRegex = Regex("\\b@?($pattern)\\b", RegexOption.IGNORE_CASE)
+    }
+
+
+    private fun highlightPlayers(rawMessage: Component, viewer: User): Component {
+        ensureMentionCache()
+
+        val regex = cachedRegex ?: return rawMessage
+        val playerMap = cachedPlayerMap
+
+        val plain = rawMessage.plain()
+        if (!regex.containsMatchIn(plain)) return rawMessage
+
+        var viewerMentioned = false
+
+        val message = rawMessage.replaceText(
             TextReplacementConfig.builder()
-                .match(pattern.pattern)
-                .replacement { matchResult ->
-                    val matchedText = matchResult.content()
-                    val displayName = if (matchedText.startsWith("@")) {
-                        matchedText
-                    } else {
-                        "@$matchedText"
+                .match(regex.toPattern())
+                .replacement { match ->
+                    val raw = match.build().plain()
+                    val clean = raw.removePrefix("@").lowercase()
+                    val player = playerMap[clean] ?: return@replacement match
+
+                    if (player.uniqueId == viewer.uuid) {
+                        viewerMentioned = true
                     }
 
                     buildText {
-                        text(displayName)
+                        text("@${player.name}")
                         color(Colors.VARIABLE_VALUE)
                         decorate(TextDecoration.BOLD)
+                        clickSuggestsCommand("/msg ${player.name} ")
                     }
                 }
                 .build()
         )
 
-        if (SettingsHook.hasChatPingsEnabled(viewer.uuid)) {
+        if (viewerMentioned && SettingsHook.hasChatPingsEnabled(viewer.uuid)) {
             Bukkit.getPlayer(viewer.uuid)?.playSound(true) {
-                type(Sound.BLOCK_NOTE_BLOCK_HARP)
+                type(Sound.ENTITY_CHICKEN_EGG)
             }
         }
 
         return message
     }
+
 
     private fun updateLinks(rawMessage: Component): Component {
         var message = rawMessage
@@ -219,5 +252,17 @@ class MessageFormatter {
         }
 
         return message
+    }
+
+    companion object {
+        @Volatile
+        var cachedRegex: Regex? = null
+
+        @Volatile
+        var cachedPlayerMap: Map<String, Player> = emptyMap()
+
+        @Volatile
+        var dirty = true
+
     }
 }

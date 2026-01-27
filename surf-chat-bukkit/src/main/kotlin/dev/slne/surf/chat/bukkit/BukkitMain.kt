@@ -4,7 +4,6 @@ import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.api.processor.chatProcessorRegistry
 import dev.slne.surf.chat.bukkit.config.AiModerationConfig
-import dev.slne.surf.chat.bukkit.config.DiscordConfigProvider
 import dev.slne.surf.chat.bukkit.config.SurfChatConfigProvider
 import dev.slne.surf.chat.bukkit.listener.AsyncChatListener
 import dev.slne.surf.chat.bukkit.listener.ConnectListener
@@ -50,8 +49,7 @@ class BukkitMain : SuspendingJavaPlugin() {
 
     override fun onEnable() {
         BukkitCommandManager.registerCommands()
-
-
+        
         AsyncChatListener().register()
         DisconnectListener().register()
         ConnectListener.register()
@@ -81,7 +79,6 @@ class BukkitMain : SuspendingJavaPlugin() {
     }
 
     val surfChatConfig = SurfChatConfigProvider()
-    val discordConfig = DiscordConfigProvider()
     val connectionMessageConfig get() = surfChatConfig.config.connectionMessageConfig
     val chatMotdConfig get() = surfChatConfig.config.chatMotdConfig
     val autoDisablingConfig get() = surfChatConfig.config.autoDisablingConfig

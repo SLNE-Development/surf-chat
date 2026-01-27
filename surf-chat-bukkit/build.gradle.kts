@@ -1,3 +1,4 @@
+import dev.slne.surf.surfapi.gradle.util.registerRequired
 import dev.slne.surf.surfapi.gradle.util.registerSoft
 
 plugins {
@@ -13,6 +14,7 @@ dependencies {
 
     compileOnly(libs.playerholder.api)
     compileOnly(libs.miniplaceholder.api)
+    compileOnly(libs.luckperms.api)
 
     runtimeOnly(project(":surf-chat-fallback"))
     implementation("de.maxbossing:kotlin-discord-webhook:1") {
@@ -37,6 +39,7 @@ surfPaperPluginApi {
     serverDependencies {
         registerSoft("MiniPlaceholders")
         registerSoft("surf-settings-paper")
+        registerRequired("LuckPerms")
     }
 
     authors.add("red")

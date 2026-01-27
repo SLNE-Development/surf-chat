@@ -1,3 +1,4 @@
+import dev.slne.surf.surfapi.gradle.util.registerRequired
 import dev.slne.surf.surfapi.gradle.util.registerSoft
 
 plugins {
@@ -38,6 +39,7 @@ surfPaperPluginApi {
     serverDependencies {
         registerSoft("MiniPlaceholders")
         registerSoft("surf-settings-paper")
+        registerRequired("LuckPerms")
     }
 
     authors.add("red")

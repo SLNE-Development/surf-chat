@@ -3,7 +3,6 @@ package dev.slne.surf.chat.fallback.repository
 import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.entry.IgnoreListEntry
 import dev.slne.surf.chat.fallback.table.IgnoreListTable
-import dev.slne.surf.chat.fallback.table.UserTable
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.ResultRow
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.eq
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.deleteWhere
@@ -37,11 +36,11 @@ class UserRepository {
     suspend fun loadUserByName(name: String): User? = suspendTransaction {
         UserTable.selectAll().where(UserTable.name eq name).firstOrNull()?.let { userRow ->
             val ignorelist = IgnoreListTable.selectAll()
-                .where(IgnoreListTable.userId eq userRow[UserTable.id].value).map { ignoreListRow ->
+                .where(IgnoreListTable.userUuid eq userRow[UserTable.id].value).map { ignoreListRow ->
                     IgnoreListEntry(
                         userRow[UserTable.uuid],
                         userRow[UserTable.name],
-                        ignoreListRow[IgnoreListTable.targetUuid],
+                        ignoreListRow[IgnoreListTable.ignoredUuid],
                         ignoreListRow[IgnoreListTable.targetName],
                         ignoreListRow[IgnoreListTable.createdAt]
                     )
@@ -75,11 +74,11 @@ class UserRepository {
 
         val userId =
             UserTable.selectAll().where(UserTable.uuid eq user.uuid).first()[UserTable.id].value
-        IgnoreListTable.deleteWhere { IgnoreListTable.userId eq userId }
+        IgnoreListTable.deleteWhere { IgnoreListTable.userUuid eq userId }
         user.ignorelist.forEach { entry ->
             IgnoreListTable.insert {
-                it[this.userId] = userId
-                it[targetUuid] = entry.target
+                it[this.userUuid] = userId
+                it[ignoredUuid] = entry.target
                 it[targetName] = entry.targetName
                 it[createdAt] = entry.createdAt
             }
@@ -99,11 +98,11 @@ class UserRepository {
         name: String
     ): List<IgnoreListEntry> = suspendTransaction {
         IgnoreListTable.selectAll()
-            .where(IgnoreListTable.userId eq id).map { ignoreListRow ->
+            .where(IgnoreListTable.userUuid eq id).map { ignoreListRow ->
                 IgnoreListEntry(
                     uuid,
                     name,
-                    ignoreListRow[IgnoreListTable.targetUuid],
+                    ignoreListRow[IgnoreListTable.ignoredUuid],
                     ignoreListRow[IgnoreListTable.targetName],
                     ignoreListRow[IgnoreListTable.createdAt]
                 )

@@ -4,6 +4,8 @@ import dev.slne.surf.chat.api.denylist.DenylistAction
 import dev.slne.surf.chat.api.denylist.DenylistEntry
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectList
+import java.time.OffsetDateTime
+import java.util.UUID
 
 /**
  * Represents a service for managing and interacting with a denylist system.
@@ -20,15 +22,13 @@ interface DenylistService {
      *
      * @param word The word or phrase being added to the denylist.
      * @param reason A description or justification for why the word is being added to the denylist.
-     * @param addedBy The identifier of the user who is adding this entry.
-     * @param addedAt The timestamp (in milliseconds) when the entry is added.
+     * @param addedByUuid The identifier of the user who is adding this entry.
      * @param action The action to enforce for entries matching this word.
      */
     suspend fun addEntry(
         word: String,
         reason: String,
-        addedBy: String,
-        addedAt: Long,
+        addedByUuid: UUID,
         action: DenylistAction
     )
 
@@ -44,8 +44,8 @@ interface DenylistService {
     fun addLocalEntry(
         word: String,
         reason: String,
-        addedBy: String,
-        addedAt: Long,
+        addedBy: UUID,
+        addedAt: OffsetDateTime,
         action: DenylistAction
     )
 

@@ -17,8 +17,11 @@ class DatabaseLoaderImpl : DatabaseLoader, Services.Fallback {
 
         suspendTransaction {
             SchemaUtils.create(
-                DenylistActionsTable, DenylistTable,
-                FunctionalityTable, HistoryTable, IgnoreListTable, UserTable
+                DenylistActionsTable,
+                DenylistTable,
+                FunctionalityTable,
+                HistoryTable,
+                IgnoreListTable,
             )
         }
     }

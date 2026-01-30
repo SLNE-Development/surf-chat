@@ -12,7 +12,6 @@ interface DenylistActionService {
     suspend fun addAction(action: DenylistAction)
     suspend fun removeAction(action: DenylistAction)
     suspend fun hasAction(name: String): Boolean
-    suspend fun getActionById(id: Long): DenylistAction?
     suspend fun clearActions(): Int
     suspend fun fetchActions()
     suspend fun makeAction(

@@ -1,81 +1,85 @@
 package dev.slne.surf.chat.fallback.service
 
 import com.google.auto.service.AutoService
-import com.google.gson.Gson
 import dev.slne.surf.chat.api.denylist.DenylistEntry
-import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.core.service.DiscordService
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import dev.slne.surf.surfapi.core.api.service.PlayerLookupService
+import dev.slne.surf.surfapi.core.api.util.logger
+import io.ktor.client.*
+import io.ktor.client.engine.okhttp.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import net.kyori.adventure.util.Services
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
-import java.time.Instant
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 @AutoService(DiscordService::class)
 class DiscordServiceImpl : DiscordService, Services.Fallback {
-    private val client = OkHttpClient()
-    private val gson = Gson()
+    private val log = logger()
+    private val client = HttpClient(OkHttp) {
+        install(ContentNegotiation) {
+            json(Json {
+                encodeDefaults = true
+            })
+        }
+    }
 
+    @Serializable
     private data class EmbedField(
         val name: String,
         val value: String,
         val inline: Boolean = false
     )
 
+    @Serializable
     private data class Embed(
         val title: String,
         val color: Int,
         val fields: List<EmbedField>
     )
 
+    @Serializable
     private data class WebhookPayload(
         val embeds: List<Embed>
     )
 
     override suspend fun sendCommunityBanNotification(
         url: String,
-        user: User,
+        userUuid: UUID,
         denylistEntry: DenylistEntry
-    ) = withContext(Dispatchers.IO) {
-        val timestamp = Instant.ofEpochMilli(denylistEntry.addedAt)
-            .atZone(ZoneId.systemDefault())
-            .format(DateTimeFormatter.RFC_1123_DATE_TIME)
+    ) {
+        val userName = PlayerLookupService.getUsername(userUuid) ?: "Unknown User"
+        val addedByName = denylistEntry.addedBy?.let { PlayerLookupService.getUsername(it) } ?: "Unknown Moderator"
+        val timestamp = denylistEntry.addedAt.format(DateTimeFormatter.RFC_1123_DATE_TIME)
 
         val embed = Embed(
             title = "Community Ban",
             color = 0xFF0000,
             fields = listOf(
-                EmbedField("User", "${user.name} (${user.uuid})", inline = true),
+                EmbedField("User", "$userName ($userUuid)", inline = true),
                 EmbedField("Reason", denylistEntry.reason),
                 EmbedField("Word Triggered", denylistEntry.word, inline = true),
-                EmbedField("Added By", denylistEntry.addedBy, inline = true),
+                EmbedField("Added By", addedByName, inline = true),
                 EmbedField("Action", denylistEntry.action.name, inline = true),
                 EmbedField("Timestamp", timestamp)
             )
         )
 
         val payload = WebhookPayload(listOf(embed))
-        val jsonPayload = gson.toJson(payload)
-        val requestBody =
-            jsonPayload.toRequestBody("application/json; charset=utf-8".toMediaType())
-        val request = Request.Builder()
-            .url(url)
-            .post(requestBody)
-            .build()
 
         try {
-            client.newCall(request).execute().use { response ->
-                if (!response.isSuccessful) {
-                    error("Failed to send discord embed: status=${response.code}, message=${response.message}")
-                }
+            client.post(url) {
+                contentType(ContentType.Application.Json)
+                setBody(payload)
             }
         } catch (e: Exception) {
-            error("Error sending Discord webhook: ${e.message}")
+            log.atSevere()
+                .withCause(e)
+                .log("Error sending Discord webhook: ${e.message}")
         }
     }
 }

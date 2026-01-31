@@ -1,13 +1,11 @@
 package dev.slne.surf.chat.api.message
 
-import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.serializer.SerializableSignature
 import dev.slne.surf.surfapi.core.api.messages.adventure.plain
 import dev.slne.surf.surfapi.core.api.serializer.adventure.component.SerializableComponent
 import dev.slne.surf.surfapi.core.api.serializer.java.datetime.datetime.offset.SerializableOffsetDateTime
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
-import java.time.OffsetDateTime
 import java.util.*
 
 @Serializable
@@ -43,7 +41,7 @@ data class MessageData(
      * messages in different contexts, determining sender permissions, and providing additional
      * sender-specific interactions.
      */
-    val sender: User,
+    val sender: @Contextual UUID,
 
     /**
      * Represents the recipient of a message within the chat system.
@@ -55,7 +53,7 @@ data class MessageData(
      * - Identifying the specific user who is the recipient of a private message.
      * - Checking permissions or contextual data related to the recipient during message processing.
      */
-    val receiver: User?,
+    val receiver: @Contextual UUID?,
 
     /**
      * Represents the timestamp when the message was sent, measured in milliseconds since the epoch (January 1, 1970, 00:00:00 GMT).
@@ -97,5 +95,5 @@ data class MessageData(
         message.plain()
     }
 
-    fun withReceiver(receiver: User?) = copy(receiver = receiver)
+    fun withReceiver(receiver: UUID?) = copy(receiver = receiver)
 }

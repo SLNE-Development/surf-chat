@@ -74,7 +74,7 @@ fun CommandAPICommand.denylistImportDefaultCommand() = subcommand("importdefault
                 DenylistBatchEntry.builder()
                     .withReason("Starke Beleidigungen")
                     .withStaff("Arty Support")
-                    .withActionType(DenylistActionType.EXPIREABLE_BAN)
+                    .withActionType(DenylistActionType.EXPIRABLE_BAN)
                     .withPunishReason("Inhalte mit abwertender, beleidigender oder diskriminierender Sprache")
                     .withDuration(14.days)
                     .withWords(
@@ -89,7 +89,7 @@ fun CommandAPICommand.denylistImportDefaultCommand() = subcommand("importdefault
                 DenylistBatchEntry.builder()
                     .withReason("Mittelstarke Beleidigungen")
                     .withStaff("Arty Support")
-                    .withActionType(DenylistActionType.EXPIREABLE_BAN)
+                    .withActionType(DenylistActionType.EXPIRABLE_BAN)
                     .withPunishReason("Inhalte mit persönlichen Beleidigungen mittlerer Stufe")
                     .withDuration(7.days)
                     .withWords(

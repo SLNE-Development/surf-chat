@@ -5,13 +5,14 @@ import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.Component
 import java.util.*
 
+typealias MessageContextRenderer = (viewerUUID: UUID, viewAudience: Audience) -> Component
+
 data class MessageContext(
     var messageData: MessageData,
     var isCancelled: Boolean,
     val viewers: MutableSet<Audience>,
-    var render: MessageRenderer = defaultRenderer()
+    var render: MessageContextRenderer = defaultRenderer()
 ) {
-    typealias MessageRenderer = (viewerUUID: UUID, viewAudience: Audience) -> Component
 
     fun cancel() {
         isCancelled = true
@@ -23,7 +24,7 @@ data class MessageContext(
     }
 
     companion object {
-        fun defaultRenderer(): MessageRenderer = { _, _ ->
+        fun defaultRenderer(): MessageContextRenderer = { _, _ ->
             buildText {
                 appendErrorPrefix()
                 error("Internal chat formatting error: no renderer set for message context")

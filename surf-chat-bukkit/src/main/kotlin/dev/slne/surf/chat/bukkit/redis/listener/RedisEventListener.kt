@@ -45,8 +45,10 @@ object RedisEventListener {
             }
         }
 
-        targetPlayer.sendText {
-            append(formatter.formatIncomingPm(event.messageData))
+        plugin.launch {
+            targetPlayer.sendText {
+                append(formatter.formatIncomingPm(event.messageData))
+            }
         }
     }
 }

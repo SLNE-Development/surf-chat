@@ -42,4 +42,5 @@ data class IgnoreListEntry(
      * or historical context of entries is relevant.
      */
     val createdAt: SerializableOffsetDateTime
-)
+){
+}

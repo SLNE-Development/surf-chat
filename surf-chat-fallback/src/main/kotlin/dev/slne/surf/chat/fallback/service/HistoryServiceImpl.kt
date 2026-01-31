@@ -24,8 +24,8 @@ class HistoryServiceImpl : HistoryService, Services.Fallback {
     override suspend fun logMessage(messageData: MessageData) {
         HistoryRepository.createHistoryEntry(
             messageUuid = messageData.messageUuid,
-            senderUuid = messageData.sender.uuid,
-            receiverUuid = messageData.receiver?.uuid,
+            senderUuid = messageData.sender,
+            receiverUuid = messageData.receiver,
             message = messageData.message.plain(),
             sentAt = messageData.sentAt,
             type = messageData.type,

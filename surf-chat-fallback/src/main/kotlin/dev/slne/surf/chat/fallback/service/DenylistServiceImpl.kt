@@ -20,7 +20,7 @@ class DenylistServiceImpl : DenylistService, Services.Fallback {
     override suspend fun addEntry(
         word: String,
         reason: String,
-        addedByUuid: UUID,
+        addedByUuid: UUID?,
         action: DenylistAction
     ) {
         DenyListRepository.createDenylistEntry(word, reason, addedByUuid, action.name)

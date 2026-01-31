@@ -4,7 +4,6 @@ package dev.slne.surf.chat.bukkit.message
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.sksamuel.aedile.core.expireAfterWrite
-import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.bukkit.hook.SettingsHook
 import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
@@ -20,6 +19,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
+import java.util.UUID
 import kotlin.time.Duration.Companion.minutes
 
 /**
@@ -67,27 +67,27 @@ object MessageFormatter {
                 senderPlayer
             )
         )
-        hoverEvent(buildText { appendMessageData(messageData) })
+        hoverEvent(buildText { appendMessageData(senderPlayer.name, messageData) })
         clickSuggestsCommand("/msg ${senderPlayer.name} ")
     }
 
-    fun formatIncomingPm(messageData: MessageData) = buildText {
-        val senderName = messageData.sender.name
+    suspend fun formatIncomingPm(messageData: MessageData) = buildText {
+        val senderUser = messageData.senderUser()
 
         darkSpacer(">> ")
         text("PM", Colors.RED)
         darkSpacer(" | ")
-        variableValue(senderName)
+        variableValue(senderUser.lastKnownName ?: senderUser.uuid.toString())
         darkSpacer(" -> ")
         variableValue("Dir")
         darkSpacer(" >> ")
         append(updateLinks(messageData.message))
-        hoverEvent(buildText { appendMessageData(messageData) })
-        clickSuggestsCommand("/msg $senderName ")
+        hoverEvent(buildText { appendMessageData(senderUser.lastKnownName ?: senderUser.uuid.toString(), messageData) })
+        clickSuggestsCommand("/msg $senderUser ")
     }
 
-    fun formatOutgoingPm(messageData: MessageData) = buildText {
-        val receiverName = messageData.receiver?.name ?: "Error"
+    suspend fun formatOutgoingPm(messageData: MessageData) = buildText {
+        val receiverName = messageData.receiverUser()?.lastKnownName ?: "Error"
 
         darkSpacer(">> ")
         text("PM", Colors.RED)
@@ -98,12 +98,12 @@ object MessageFormatter {
         darkSpacer(" >> ")
         append(updateLinks(messageData.message))
 
-        hoverEvent(buildText { appendMessageData(messageData) })
+        hoverEvent(buildText { appendMessageData(receiverName, messageData) })
         clickSuggestsCommand("/msg $receiverName ")
     }
 
     fun formatTeamchat(messageData: MessageData) = buildText {
-        val player = messageData.sender.player() ?: return Component.empty()
+        val player = Bukkit.getPlayer(messageData.sender) ?: return Component.empty()
 
         darkSpacer(">> ")
         text("TEAM", Colors.RED, TextDecoration.BOLD)
@@ -112,30 +112,33 @@ object MessageFormatter {
         darkSpacer(" >> ")
         append(updateLinks(formatItemTag(messageData.message, player)))
 
-        hoverEvent(buildText { appendMessageData(messageData) })
+        hoverEvent(buildText { appendMessageData(player.name, messageData) })
         clickSuggestsCommand("/teamchat ")
     }
 
-    fun formatPmSpy(messageData: MessageData) = buildText {
+    suspend fun formatPmSpy(messageData: MessageData) = buildText {
         val receiver = messageData.receiver ?: return Component.empty()
+        val receiverUser = messageData.receiverUser()
+        val receiverName = receiverUser?.lastKnownName ?: return Component.empty()
+        val senderName = messageData.senderUser().lastKnownName ?: return Component.empty()
 
         appendSpyIcon()
         appendSpace()
 
         if (receiver.hasPermission(PermissionRegistry.COMMAND_SURFCHAT_TELEPORT)) {
-            appendTeleport(messageData.sender.name, receiver)
+            appendTeleport(receiverName, receiver)
         }
 
-        variableValue(messageData.sender.name)
+        variableValue(senderName)
         appendSpace()
         darkSpacer("-->")
         appendSpace()
-        variableValue(receiver.name)
+        variableValue(receiverName)
         spacer(":")
         appendSpace()
         append(updateLinks(messageData.message))
-        hoverEvent(buildText { appendMessageData(messageData) })
-        clickSuggestsCommand("/msg ${messageData.sender.name} ")
+        hoverEvent(buildText { appendMessageData(senderName, messageData) })
+        clickSuggestsCommand("/msg $senderName ")
     }
 
 
@@ -197,7 +200,7 @@ object MessageFormatter {
     }
 
 
-    private fun highlightPlayers(rawMessage: Component, viewer: User): Component {
+    private fun highlightPlayers(rawMessage: Component, viewerUuid: UUID): Component {
         ensureMentionCache()
 
         val regex = cachedRegex ?: return rawMessage
@@ -216,7 +219,7 @@ object MessageFormatter {
                     val clean = raw.removePrefix("@").lowercase()
                     val player = playerMap[clean] ?: return@replacement match
 
-                    if (player.uniqueId == viewer.uuid) {
+                    if (player.uniqueId == viewerUuid) {
                         viewerMentioned = true
                     }
 
@@ -230,8 +233,8 @@ object MessageFormatter {
                 .build()
         )
 
-        if (viewerMentioned && SettingsHook.hasChatPingsEnabled(viewer.uuid)) {
-            Bukkit.getPlayer(viewer.uuid)?.playSound(true) {
+        if (viewerMentioned && SettingsHook.hasChatPingsEnabled(viewerUuid)) {
+            Bukkit.getPlayer(viewerUuid)?.playSound(true) {
                 type(Sound.ENTITY_CHICKEN_EGG)
             }
         }

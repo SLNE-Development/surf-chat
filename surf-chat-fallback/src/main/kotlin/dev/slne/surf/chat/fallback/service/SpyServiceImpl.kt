@@ -2,38 +2,38 @@ package dev.slne.surf.chat.fallback.service
 
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.core.service.SpyService
-import dev.slne.surf.surfapi.core.api.util.mutableObject2ObjectMapOf
-import dev.slne.surf.surfapi.core.api.util.mutableObjectListOf
-import it.unimi.dsi.fastutil.objects.ObjectList
 import net.kyori.adventure.util.Services
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 @AutoService(SpyService::class)
 class SpyServiceImpl : SpyService, Services.Fallback {
-    val privateMessageSpies = mutableObject2ObjectMapOf<UUID, ObjectList<UUID>>()
+    val privateMessageSpies = ConcurrentHashMap<UUID, MutableSet<UUID>>()
 
-    override fun getPrivateMessageSpies(player: UUID) =
-        privateMessageSpies[player] ?: mutableObjectListOf()
+    override fun getPrivateMessageSpies(player: UUID) = privateMessageSpies.getOrDefault(player, emptySet())
 
+    override fun addPrivateMessageSpy(player: UUID, target: UUID) = privateMessageSpies
+        .computeIfAbsent(player) { ConcurrentHashMap.newKeySet() }
+        .add(target)
 
-    override fun addPrivateMessageSpy(player: UUID, target: UUID) =
-        privateMessageSpies.computeIfAbsent(target) { mutableObjectListOf() }.add(player)
+    override fun removePrivateMessageSpy(player: UUID, target: UUID): Boolean {
+        var removed = false
 
-    override fun removePrivateMessageSpy(player: UUID, target: UUID) =
-        privateMessageSpies[target]?.remove(player) ?: false
+        privateMessageSpies.computeIfPresent(player) { _, spies ->
+            removed = spies.remove(target)
+            if (spies.isEmpty()) null else spies
+        }
 
-    override fun hasPrivateMessageSpies(player: UUID) =
-        privateMessageSpies.containsKey(player) && privateMessageSpies[player]?.isNotEmpty() == true
+        return removed
+    }
 
-    override fun isPrivateMessageSpying(player: UUID) =
-        privateMessageSpies.containsKey(player) && privateMessageSpies[player]?.isNotEmpty() == true
+    override fun isPrivateMessageSpying(player: UUID) = privateMessageSpies.containsKey(player)
 
     override fun clearPrivateMessageSpies(player: UUID) {
-        privateMessageSpies.values.forEach { it.remove(player) }
-        privateMessageSpies.keys.removeIf { privateMessageSpies[it]?.isEmpty() == true }
+        privateMessageSpies.remove(player)
     }
 
     override fun cleanup(player: UUID) {
-        this.clearPrivateMessageSpies(player)
+        clearPrivateMessageSpies(player)
     }
 }

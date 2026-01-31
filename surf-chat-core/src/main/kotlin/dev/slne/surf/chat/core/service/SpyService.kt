@@ -16,7 +16,7 @@ interface SpyService {
      * @param player The UUID of the player whose private message spies are to be fetched.
      * @return A list of UUIDs representing the spies currently monitoring the player's private messages.
      */
-    fun getPrivateMessageSpies(player: UUID): ObjectList<UUID>
+    fun getPrivateMessageSpies(player: UUID): Set<UUID>
 
     /**
      * Adds a spy for monitoring private messages between a specified player and target.
@@ -36,14 +36,6 @@ interface SpyService {
      */
     fun removePrivateMessageSpy(player: UUID, target: UUID): Boolean
 
-
-    /**
-     * Checks if the specified player has spies monitoring their private messages.
-     *
-     * @param player The UUID of the player to check for private message spies.
-     * @return `true` if the player has private message spies, `false` otherwise.
-     */
-    fun hasPrivateMessageSpies(player: UUID): Boolean
 
     /**
      * Checks if the specified player is currently set as spying on private messages.

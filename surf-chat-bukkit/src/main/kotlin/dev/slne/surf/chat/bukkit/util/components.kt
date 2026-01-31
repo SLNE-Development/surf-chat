@@ -1,7 +1,6 @@
 package dev.slne.surf.chat.bukkit.util
 
 import com.github.shynixn.mccoroutine.folia.launch
-import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.bukkit.hook.LuckPermsHook
 import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
@@ -11,46 +10,52 @@ import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.surfapi.core.api.messages.builder.SurfComponentBuilder
+import dev.slne.surf.surfapi.core.api.service.PlayerLookupService
+import kotlinx.coroutines.launch
+import net.kyori.adventure.text.event.ClickCallback
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.time.Instant
+import java.time.OffsetDateTime
 import java.time.ZoneId
-import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
+import java.util.*
 
 fun SurfComponentBuilder.appendDelete(messageData: MessageData) = append(buildText {
     darkSpacer("[")
     error("X")
     darkSpacer("]")
     darkSpacer(" ")
-    clickEvent(ClickEvent.callback {
+    clickEvent(ClickEvent.callback { clicked ->
         val signature = messageData.signature ?: run {
-            it.sendText {
+            clicked.sendText {
                 appendErrorPrefix()
                 error("Die Nachricht besitzt eine ungültige Signatur und konnte nicht gelöscht werden.")
             }
             return@callback
         }
 
+
         Bukkit.getServer().deleteMessage(signature)
-        Bukkit.getOnlinePlayers()
-            .filter { online -> online.hasPermission(PermissionRegistry.TEAM_NOTIFY_DELETION) }
-            .forEach { online ->
-                online.sendText {
-                    appendInfoPrefix()
-                    variableValue(it.name())
-                    info(" hat eine Nachricht von ")
-                    variableValue(messageData.sender.name)
-                    info(" gelöscht: ")
-                    append(messageData.message)
-                }
-            }
 
         plugin.launch {
-            historyService.markDeleted(messageData.messageUuid,)
+            launch {
+                historyService.markDeleted(messageData.messageUuid, clicked.uuid())
+            }
+
+            val message = buildText {
+                appendInfoPrefix()
+                variableValue(clicked.name())
+                info(" hat eine Nachricht von ")
+                variableValue(PlayerLookupService.getUsername(messageData.sender) ?: messageData.sender.toString())
+                info(" gelöscht: ")
+                append(messageData.message)
+            }
+
+            Bukkit.broadcast(message, PermissionRegistry.TEAM_NOTIFY_DELETION)
         }
     })
     hoverEvent(buildText {
@@ -62,12 +67,15 @@ fun SurfComponentBuilder.appendName(player: Player) = append {
     append(MiniMessage.miniMessage().deserialize(LuckPermsHook.getPrefix(player) + player.name))
 }
 
-fun SurfComponentBuilder.appendTeleport(name: String, viewer: User) = append {
+fun SurfComponentBuilder.appendTeleport(name: String, uuid: UUID) = append {
     darkSpacer("[")
     info("TP")
     darkSpacer("]")
     darkSpacer(" ")
-    clickEvent(ClickEvent.runCommand("/teleport ${viewer.name} $name"))
+    clickEvent(ClickEvent.callback(ClickCallback.widen({ player ->
+        val target = Bukkit.getPlayer(uuid) ?: return@widen
+        player.teleportAsync(target.location)
+    }, Player::class.java)))
     hoverEvent(buildText {
         info("Klicke, um dich zu $name zu teleportieren")
     })
@@ -119,12 +127,12 @@ fun SurfComponentBuilder.appendStatusIcon(status: Boolean) = append {
 
 fun SurfComponentBuilder.appendLinePrefix() = darkSpacer(">")
 
-fun SurfComponentBuilder.appendMessageData(messageData: MessageData) = append(buildText {
+fun SurfComponentBuilder.appendMessageData(senderName: String, messageData: MessageData) = append {
     appendLinePrefix()
     appendSpace()
     spacer("von")
     appendSpace()
-    variableValue(messageData.sender.name)
+    variableValue(senderName)
 
     appendNewline()
     appendLinePrefix()
@@ -139,11 +147,10 @@ fun SurfComponentBuilder.appendMessageData(messageData: MessageData) = append(bu
     spacer("auf")
     appendSpace()
     variableValue(messageData.server)
-})
+}
 
 private val zone = ZoneId.of("Europe/Berlin")
-fun Long.formatTime(): String =
-    ZonedDateTime.ofInstant(Instant.ofEpochMilli(this), zone).format(timeFormatter)
+fun OffsetDateTime.formatTime(): String = this.atZoneSameInstant(zone).format(timeFormatter)
 
 fun Long.formatAgo(): String {
     val then = Instant.ofEpochMilli(this)

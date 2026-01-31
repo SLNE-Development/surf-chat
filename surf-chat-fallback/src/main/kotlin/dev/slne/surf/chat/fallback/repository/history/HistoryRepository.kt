@@ -19,7 +19,7 @@ interface HistoryRepository {
 
     suspend fun markDeleted(
         messageUuid: UUID,
-        deletedBy: UUID,
+        deletedBy: UUID?,
         deletionReason: String?,
         deletedAt: OffsetDateTime
     )

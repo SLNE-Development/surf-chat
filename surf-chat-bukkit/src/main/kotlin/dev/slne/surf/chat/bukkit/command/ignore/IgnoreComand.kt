@@ -7,10 +7,8 @@ import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.bukkit.command.argument.userStringArgument
 import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.bukkit.util.ignore
-import dev.slne.surf.chat.bukkit.util.ignores
 import dev.slne.surf.chat.bukkit.util.toUserOrThrow
-import dev.slne.surf.chat.bukkit.util.unignore
+import dev.slne.surf.chat.core.service.ignoreService
 import dev.slne.surf.chat.core.service.userService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
@@ -42,9 +40,7 @@ fun ignoreCommand() = commandAPICommand("ignore", plugin) {
                 return@launch
             }
 
-            if (user.ignores(targetUser.uuid)) {
-                user.unignore(targetUser.uuid)
-
+            if (ignoreService.unignore(user, targetUser)) {
                 player.sendText {
                     appendSuccessPrefix()
                     success("Du ignorierst nun nicht mehr ")
@@ -54,7 +50,7 @@ fun ignoreCommand() = commandAPICommand("ignore", plugin) {
                 return@launch
             }
 
-            user.ignore(targetUser.name, targetUser.uuid)
+            ignoreService.ignore(user, targetUser)
 
             player.sendText {
                 appendSuccessPrefix()

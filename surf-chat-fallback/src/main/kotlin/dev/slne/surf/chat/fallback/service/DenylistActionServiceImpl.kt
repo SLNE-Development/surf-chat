@@ -3,7 +3,6 @@ package dev.slne.surf.chat.fallback.service
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.denylist.DenylistAction
 import dev.slne.surf.chat.api.denylist.DenylistEntry
-import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.core.service.DenylistActionService
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.chat.fallback.repository.denylist.DenyListRepository
@@ -50,15 +49,16 @@ class DenylistActionServiceImpl : DenylistActionService, Services.Fallback {
 
     override fun clearLocalActions() = cache.clear()
 
-    override suspend fun makeAction(
+    override suspend fun deleteMessage(
         messageUuid: UUID,
         entry: DenylistEntry,
         message: SignedMessage,
-        sender: User,
+        deletedBy: UUID,
+        deletionReason: String?,
         discordHookUrl: String?
     ) {
         delay(3.seconds)
         server.deleteMessage(message)
-        historyService.markDeleted(messageUuid,)
+        historyService.markDeleted(messageUuid, deletedBy, deletionReason)
     }
 }

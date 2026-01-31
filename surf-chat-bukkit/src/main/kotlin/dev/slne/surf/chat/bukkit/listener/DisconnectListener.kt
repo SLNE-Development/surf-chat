@@ -1,11 +1,13 @@
 package dev.slne.surf.chat.bukkit.listener
 
+import com.destroystokyo.paper.event.player.PlayerConnectionCloseEvent
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.bukkit.hook.MiniPlaceholdersHook
 import dev.slne.surf.chat.bukkit.message.MessageFormatter
 import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.bukkit.util.user
-import dev.slne.surf.chat.core.service.userService
+import dev.slne.surf.chat.core.service.ignoreService
+import dev.slne.surf.chat.core.service.spyService
+import kotlinx.coroutines.launch
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerQuitEvent
@@ -14,8 +16,6 @@ class DisconnectListener : Listener {
     @EventHandler
     fun onDisconnect(event: PlayerQuitEvent) {
         MessageFormatter.dirty = true
-
-        val user = event.player.user() ?: return
 
         if (plugin.connectionMessageConfig.enabled) {
             event.quitMessage(
@@ -27,11 +27,14 @@ class DisconnectListener : Listener {
         } else {
             event.quitMessage(null)
         }
+    }
 
-        userService.invalidateUser(user.uuid)
-
+    @EventHandler
+    fun onPlayerConnectionClose(event: PlayerConnectionCloseEvent) {
         plugin.launch {
-            userService.saveUser(user)
+            val uuid = event.playerUniqueId
+            launch { ignoreService.cleanup(uuid) }
+            spyService.cleanup(uuid)
         }
     }
 }

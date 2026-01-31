@@ -49,7 +49,7 @@ interface HistoryService {
      */
     suspend fun markDeleted(
         messageUuid: UUID,
-        deletedBy: UUID,
+        deletedBy: UUID?,
         deletionReason: String? = null,
         deletedAt: OffsetDateTime = OffsetDateTime.now()
     )

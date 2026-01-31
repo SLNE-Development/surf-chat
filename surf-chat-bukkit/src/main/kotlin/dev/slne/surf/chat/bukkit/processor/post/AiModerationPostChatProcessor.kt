@@ -1,5 +1,6 @@
 package dev.slne.surf.chat.bukkit.processor.post
 
+import com.github.shynixn.mccoroutine.folia.launch
 import de.maxbossing.webhookbuilder.sendWebhook
 import dev.slne.surf.chat.api.message.MessageContext
 import dev.slne.surf.chat.api.processor.PostChatProcessor
@@ -12,14 +13,19 @@ import dev.slne.surf.chat.bukkit.redis.event.TeamMessageRedisEvent
 import dev.slne.surf.chat.bukkit.redisApi
 import dev.slne.surf.chat.bukkit.util.appendBotIcon
 import dev.slne.surf.chat.bukkit.util.hasPermission
+import dev.slne.surf.chat.bukkit.util.uuidOrNull
 import dev.slne.surf.chat.core.service.historyService
+import dev.slne.surf.punish.api.punishment.PunishType
+import dev.slne.surf.punish.api.user.PunishmentUser
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
+import dev.slne.surf.surfapi.core.api.service.PlayerLookupService
 import net.kyori.adventure.text.event.ClickEvent
 import org.bukkit.Bukkit
 import java.awt.Color
 import java.net.URI
+import java.time.OffsetDateTime
 import java.util.*
 
 object AiModerationPostChatProcessor : PostChatProcessor {
@@ -32,18 +38,19 @@ object AiModerationPostChatProcessor : PostChatProcessor {
             return
         }
 
-        if (messageContext.messageData.sender.hasPermission(PermissionRegistry.BYPASS_FILTER)) {
+        val messageData = messageContext.messageData
+        if (messageData.sender.hasPermission(PermissionRegistry.BYPASS_FILTER)) {
             return
         }
 
-        val plain = messageContext.messageData.plainMessage
-        val classification = openAiService.resultCache.get(plain)
+        val plain = messageData.plainMessage
+        val classification = openAiService.classifyChatMessage(plain)
 
         if (classification.action == OpenAiService.ClassificationAction.NONE) {
             return
         }
 
-        val name = messageContext.messageData.sender.name
+        val name = PlayerLookupService.getUsername(messageData.sender) ?: messageData.sender.toString()
 
         postWebhook(messageContext, classification)
 
@@ -65,43 +72,55 @@ object AiModerationPostChatProcessor : PostChatProcessor {
                             text(plain, Colors.WHITE)
                         })
                     }
-                    append {
-                        spacer(" [")
-                        text("LÖSCHEN", Colors.RED)
-                        spacer("]")
-                        hoverEvent(
-                            buildText {
-                                text("Klicke hier, um die Nachricht zu löschen", Colors.RED)
-                            }
-                        )
-                        clickEvent(ClickEvent.callback {
-                            val signature = messageContext.messageData.signature
 
-                            if (signature == null) {
-                                it.sendText {
-                                    appendErrorPrefix()
-                                    error("Die Nachricht konnte nicht gelöscht werden!")
+                    if (classification.action != OpenAiService.ClassificationAction.DELETE) {
+                        append {
+                            spacer(" [")
+                            text("LÖSCHEN", Colors.RED)
+                            spacer("]")
+                            hoverEvent(
+                                buildText {
+                                    text("Klicke hier, um die Nachricht zu löschen", Colors.RED)
                                 }
-                                return@callback
-                            }
+                            )
+                            clickEvent(ClickEvent.callback {
+                                val signature = messageData.signature
 
-                            Bukkit.getServer().deleteMessage(signature)
-                        })
+                                if (signature == null) {
+                                    it.sendText {
+                                        appendErrorPrefix()
+                                        error("Die Nachricht konnte nicht gelöscht werden!")
+                                    }
+                                    return@callback
+                                }
+
+                                Bukkit.getServer().deleteMessage(signature)
+                                plugin.launch {
+                                    historyService.markDeleted(
+                                        messageData.messageUuid,
+                                        it.uuidOrNull(),
+                                        "AI classification: ${classification.action.name}"
+                                    )
+                                }
+                            })
+                        }
                     }
                 }
-            ))
+            )).await()
 
         when (classification.action) {
             OpenAiService.ClassificationAction.DELETE -> {
                 historyService.markDeleted(
-                    messageContext.messageData.messageUuid,
+                    messageData.messageUuid,
+                    deletedBy = null,
+                    "AI classification: ${classification.action.name}"
                 )
 
-                messageContext.messageData.signature?.let { Bukkit.getServer().deleteMessage(it) }
+                messageData.signature?.let { Bukkit.getServer().deleteMessage(it) }
             }
 
             OpenAiService.ClassificationAction.MUTE -> {
-                val sender = messageContext.messageData.sender
+                val sender = messageData.sender
                 val note = buildString {
                     append("[AI MODERATION] Unangemessenes Chat verhalten: [")
                     val scores = classification.flaggedScores.object2DoubleEntrySet()
@@ -119,11 +138,10 @@ object AiModerationPostChatProcessor : PostChatProcessor {
                     append("]")
                 }
 
-//                sender.punishmentManager.punish(
-//                    PunishType.MUTE.Expirable(ZonedDateTime.now().plusDays(7))
-//                        .withNote(note),
-//                    "Unangemessenes Chat verhalten"
-//                ) //TODO: Punish
+                PunishmentUser.byUuid(sender)
+                    .punish(PunishType.MUTE.Expirable(OffsetDateTime.now().plusDays(7)) {
+                        note(note)
+                    }, "Unangemessenes Chat verhalten")
             }
 
             else -> Unit
@@ -134,7 +152,7 @@ object AiModerationPostChatProcessor : PostChatProcessor {
         messageContext: MessageContext,
         classification: OpenAiService.ClassificationResult
     ) {
-        val senderUuid = messageContext.messageData.sender.uuid
+        val senderUuid = messageContext.messageData.sender
 
         runCatching {
             sendWebhook(URI.create(aiModerationConfig.webhookUrl).toURL()) {
@@ -149,7 +167,6 @@ object AiModerationPostChatProcessor : PostChatProcessor {
                     when (classification.action) {
                         OpenAiService.ClassificationAction.SILENT_FLAG -> {
                             content("Nachricht wurde als unangemessen markiert — bitte überprüfen und ggf. handeln")
-
                         }
 
                         OpenAiService.ClassificationAction.DELETE -> {
@@ -201,7 +218,7 @@ object AiModerationPostChatProcessor : PostChatProcessor {
                         inline = true
                     }
 
-                    val receiverUuid = messageContext.messageData.receiver?.uuid
+                    val receiverUuid = messageContext.messageData.receiver
                     if (receiverUuid != null) {
                         field {
                             name("Receiver")

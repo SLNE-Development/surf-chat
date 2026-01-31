@@ -10,6 +10,7 @@ import dev.slne.surf.chat.bukkit.hook.SettingsHook
 import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.*
+import dev.slne.surf.surfapi.bukkit.api.extensions.server
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.*
 import net.kyori.adventure.text.Component
@@ -28,7 +29,7 @@ import kotlin.time.Duration.Companion.minutes
  * Each method accepts message data and returns a formatted `Component` object suitable for the
  * specific context in which the message will be displayed or processed.
  */
-class MessageFormatter {
+object MessageFormatter {
     private val linkRegex = Regex("(?i)\\b((https?://)?[\\w-]+(\\.[\\w-]+)+(/\\S*)?)\\b")
     private val itemRegex = Regex("\\[(?i)item]")
     private val nameRegexCache = Caffeine.newBuilder()
@@ -37,28 +38,37 @@ class MessageFormatter {
             Regex("\\b@?${Regex.escape(name)}\\b")
         }
 
+    @Volatile
+    var cachedRegex: Regex? = null
+
+    @Volatile
+    var cachedPlayerMap: Map<String, Player> = emptyMap()
+
+    @Volatile
+    var dirty = true
+
     fun formatGlobal(messageData: MessageData) = buildText {
         val viewer = messageData.receiver ?: return Component.empty()
-        val player = messageData.sender.player() ?: return Component.empty()
+        val senderPlayer = server.getPlayer(messageData.sender) ?: return Component.empty()
 
         if (viewer.hasPermission(PermissionRegistry.COMMAND_SURFCHAT_DELETE)) {
             appendDelete(messageData)
         }
 
         if (viewer.hasPermission(PermissionRegistry.COMMAND_SURFCHAT_TELEPORT)) {
-            appendTeleport(messageData.sender.name, viewer)
+            appendTeleport(senderPlayer.name, senderPlayer.uniqueId)
         }
 
-        appendName(player)
+        appendName(senderPlayer)
         darkSpacer(" >> ")
         append(
             formatItemTag(
                 updateLinks(highlightPlayers(messageData.message, viewer)),
-                player
+                senderPlayer
             )
         )
         hoverEvent(buildText { appendMessageData(messageData) })
-        clickSuggestsCommand("/msg ${player.name} ")
+        clickSuggestsCommand("/msg ${senderPlayer.name} ")
     }
 
     fun formatIncomingPm(messageData: MessageData) = buildText {
@@ -254,15 +264,4 @@ class MessageFormatter {
         return message
     }
 
-    companion object {
-        @Volatile
-        var cachedRegex: Regex? = null
-
-        @Volatile
-        var cachedPlayerMap: Map<String, Player> = emptyMap()
-
-        @Volatile
-        var dirty = true
-
-    }
 }

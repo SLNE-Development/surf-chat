@@ -26,6 +26,7 @@ dependencies {
         exclude(group = "org.jetbrains.kotlin")
     }
     compileOnly("dev.slne.surf.settings:surf-settings-api:1.21.11-2.0.0-SNAPSHOT")
+    compileOnly("dev.slne.surf.punish:surf-punish-api:1.21.11+")
 }
 
 surfPaperPluginApi {
@@ -40,6 +41,7 @@ surfPaperPluginApi {
         registerSoft("MiniPlaceholders")
         registerSoft("surf-settings-paper")
         registerRequired("LuckPerms")
+        registerRequired("surf-punish-paper")
     }
 
     authors.add("red")

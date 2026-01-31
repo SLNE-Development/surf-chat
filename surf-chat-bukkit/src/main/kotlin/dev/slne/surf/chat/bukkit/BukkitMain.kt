@@ -22,16 +22,15 @@ import dev.slne.surf.chat.core.databaseLoader
 import dev.slne.surf.chat.core.service.denylistActionService
 import dev.slne.surf.chat.core.service.denylistService
 import dev.slne.surf.chat.core.service.functionalityService
-import dev.slne.surf.chat.core.service.userService
 import dev.slne.surf.core.api.common.surfCoreApi
 import dev.slne.surf.surfapi.bukkit.api.event.register
-import kotlinx.coroutines.runBlocking
 import org.bukkit.plugin.java.JavaPlugin
 
 val plugin get() = JavaPlugin.getPlugin(BukkitMain::class.java)
 
 class BukkitMain : SuspendingJavaPlugin() {
-    override fun onLoad() {
+
+    override suspend fun onLoadAsync() {
         AiModerationConfig.init()
 
         chatProcessorRegistry.register(CharPreChatProcessor)
@@ -47,9 +46,9 @@ class BukkitMain : SuspendingJavaPlugin() {
         chatProcessorRegistry.register(PrivateMessageSpyPostChatProcessor)
     }
 
-    override fun onEnable() {
+    override suspend fun onEnableAsync() {
         BukkitCommandManager.registerCommands()
-        
+
         AsyncChatListener().register()
         DisconnectListener().register()
         ConnectListener.register()
@@ -64,17 +63,8 @@ class BukkitMain : SuspendingJavaPlugin() {
         redisLoader.connect()
     }
 
-    override fun onDisable() {
+    override suspend fun onDisableAsync() {
         redisLoader.disconnect()
-
-        runBlocking {
-            logger.info("Saving online users...")
-            userService.onlineUsers.forEach {
-                userService.saveUser(it)
-            }
-            logger.info("Online users saved.")
-        }
-
         databaseLoader.disconnect()
     }
 

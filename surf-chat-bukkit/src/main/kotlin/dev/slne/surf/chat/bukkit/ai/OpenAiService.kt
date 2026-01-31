@@ -19,14 +19,16 @@ val openAiService = OpenAiService()
 class OpenAiService {
     private val client = OpenAIOkHttpClientAsync.builder().apiKey(aiModerationConfig.apiKey).build()
 
-    val resultCache = Caffeine
+    private val resultCache = Caffeine
         .newBuilder()
         .expireAfterWrite(3.hours.toJavaDuration())
         .asLoadingCache<String, ClassificationResult> {
-            classifyChatMessage(it)
+            classifyChatMessage0(it)
         }
 
-    suspend fun classifyChatMessage(message: String): ClassificationResult {
+    suspend fun classifyChatMessage(message: String): ClassificationResult = resultCache.get(message)
+
+    private suspend fun classifyChatMessage0(message: String): ClassificationResult {
         val params = ModerationCreateParams.builder()
             .input("[GAME_CHAT: MINECRAFT]\n$message")
             .build()

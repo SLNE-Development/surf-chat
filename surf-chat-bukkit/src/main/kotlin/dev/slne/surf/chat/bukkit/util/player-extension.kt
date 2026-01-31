@@ -1,12 +1,12 @@
 package dev.slne.surf.chat.bukkit.util
 
-import dev.slne.surf.chat.api.entity.User
-import dev.slne.surf.chat.api.entry.IgnoreListEntry
-import dev.slne.surf.chat.core.service.userService
+import dev.slne.surf.surfapi.bukkit.api.extensions.server
+import dev.slne.surf.surfapi.core.api.messages.adventure.getPointer
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.surfapi.core.api.messages.builder.SurfComponentBuilder
 import net.kyori.adventure.audience.Audience
-import org.bukkit.Bukkit
+import net.kyori.adventure.identity.Identity
+import net.kyori.adventure.permission.PermissionChecker
 import org.bukkit.command.BlockCommandSender
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
@@ -14,21 +14,11 @@ import org.bukkit.entity.Player
 import org.bukkit.entity.minecart.CommandMinecart
 import java.util.*
 
-fun User.player() = Bukkit.getPlayer(this.uuid)
-fun Audience.user() = when (this) {
-    is Player -> userService.findUserByUuid(this.uniqueId)
-    else -> null
-}
-
 fun Audience.isConsole() = this is ConsoleCommandSender
-
-fun Audience.name() = when (this) {
-    is Player -> this.name
-    is ConsoleCommandSender -> "Console"
-    else -> "Error"
-}
-
-fun User.hasPermission(permission: String) = player()?.hasPermission(permission) ?: false
+fun Audience.name() = getPointer(Identity.NAME) ?: error("Audience does not provide name pointer")
+fun Audience.uuidOrNull() = getPointer(Identity.UUID)
+fun Audience.uuid() = uuidOrNull() ?: error("Audience does not provide uuid pointer")
+fun Audience.hasPermission(permission: String) = getPointer(PermissionChecker.POINTER)?.test(permission) ?: false
 
 fun CommandSender.realName() = when (this) {
     is Player -> this.name
@@ -38,32 +28,5 @@ fun CommandSender.realName() = when (this) {
     else -> "Error"
 }
 
-fun Audience.toUserOrNull() = when (this) {
-    is Player -> userService.findUserByUuid(this.uniqueId)
-    else -> null
-}
-
-fun Audience.toUserOrThrow() = when (this) {
-    is Player -> userService.findUserByUuid(this.uniqueId)
-        ?: error("User not found for player ${this.name}: ${userService.onlineUsers.map { it.uuid }}")
-
-    else -> error("Audience is not a player")
-}
-
-fun User.ignore(name: String, uuid: UUID) {
-    ignorelist.add(
-        IgnoreListEntry(
-            this.uuid,
-            this.name,
-            uuid,
-            name,
-            System.currentTimeMillis()
-        )
-    )
-}
-
-fun User.unignore(uuid: UUID) = ignorelist.removeIf { it.target == uuid }
-fun User.ignores(uuid: UUID) = ignorelist.any { it.target == uuid }
-
-
-fun User.sendText(block: SurfComponentBuilder.() -> Unit) = player()?.sendText { block() }
+inline fun UUID.sendText(block: SurfComponentBuilder.() -> Unit) = server.getPlayer(this)?.sendText(block)
+fun UUID.hasPermission(permission: String) = server.getPlayer(this)?.hasPermission(permission) ?: false

@@ -10,7 +10,7 @@ import dev.slne.surf.chat.core.service.denylistService
 import dev.slne.surf.chat.core.service.functionalityService
 import org.bukkit.Bukkit
 
-class MessageValidator {
+object MessageValidator {
     fun validate(messageData: MessageData): MessageValidationResult {
         val user = messageData.sender
         val message = messageData.plainMessage

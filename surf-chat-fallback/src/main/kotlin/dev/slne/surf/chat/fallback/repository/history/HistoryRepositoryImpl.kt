@@ -58,7 +58,7 @@ class HistoryRepositoryImpl : HistoryRepository {
 
     override suspend fun markDeleted(
         messageUuid: UUID,
-        deletedBy: UUID,
+        deletedBy: UUID?,
         deletionReason: String?,
         deletedAt: OffsetDateTime
     ): Unit = suspendTransaction {

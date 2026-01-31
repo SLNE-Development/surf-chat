@@ -8,6 +8,7 @@ import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.ResultRow
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.eq
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.greaterEq
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.like
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.neq
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.andWhere
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.insert
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.selectAll
@@ -49,7 +50,15 @@ class HistoryRepositoryImpl : HistoryRepository {
         filter.after?.let { query.andWhere { HistoryTable.sentAt greaterEq it } }
         filter.messageLike?.let { query.andWhere { HistoryTable.message like "%$it%" } }
         filter.deletedBy?.let { query.andWhere { HistoryTable.deletedBy eq it } }
-        filter.deleted?.let { query.andWhere { HistoryTable.deleted eq it } }
+        filter.deleted?.let {
+            query.andWhere {
+                if (it) {
+                    HistoryTable.deletedAt neq null
+                } else {
+                    HistoryTable.deletedAt eq null
+                }
+            }
+        }
         filter.server?.let { query.andWhere { HistoryTable.server eq it } }
         filter.messageUuid?.let { query.andWhere { HistoryTable.messageUuid eq it } }
 
@@ -63,7 +72,6 @@ class HistoryRepositoryImpl : HistoryRepository {
         deletedAt: OffsetDateTime
     ): Unit = suspendTransaction {
         HistoryTable.update({ HistoryTable.messageUuid eq messageUuid }) {
-            it[this.deleted] = true
             it[this.deletedBy] = deletedBy
             it[this.deletionReason] = deletionReason
             it[this.deletedAt] = deletedAt
@@ -79,7 +87,7 @@ class HistoryRepositoryImpl : HistoryRepository {
             message = row[HistoryTable.message],
             sentAt = row[HistoryTable.sentAt],
             server = row[HistoryTable.server],
-            deleted = row[HistoryTable.deleted],
+            deleted = row[HistoryTable.deletedAt] != null,
             deletedAt = row[HistoryTable.deletedAt],
             deletedBy = row[HistoryTable.deletedBy],
             deletionReason = row[HistoryTable.deletionReason]

@@ -152,8 +152,8 @@ fun SurfComponentBuilder.appendMessageData(senderName: String, messageData: Mess
 private val zone = ZoneId.of("Europe/Berlin")
 fun OffsetDateTime.formatTime(): String = this.atZoneSameInstant(zone).format(timeFormatter)
 
-fun Long.formatAgo(): String {
-    val then = Instant.ofEpochMilli(this)
+fun OffsetDateTime.formatAgo(): String {
+    val then = toInstant()
     val now = Instant.now()
 
     val totalSeconds = ChronoUnit.SECONDS.between(then, now)

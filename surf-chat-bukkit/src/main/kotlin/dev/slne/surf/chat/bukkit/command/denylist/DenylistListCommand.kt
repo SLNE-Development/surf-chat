@@ -15,6 +15,39 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.surfapi.core.api.messages.pagination.Pagination
 import net.kyori.adventure.text.format.TextDecoration
 
+private val pagination = Pagination<DenylistEntry> {
+    title {
+        primary("Interne Denylist".toSmallCaps(), TextDecoration.BOLD)
+    }
+
+    rowRenderer { entry, _ ->
+        listOf(
+            buildText {
+                append(CommonComponents.EM_DASH)
+                appendSpace()
+                variableKey(entry.word)
+                appendSpace()
+                spacer("(${entry.addedBy})")
+                hoverEvent(buildText {
+                    append(CommonComponents.EM_DASH)
+                    appendSpace()
+                    variableKey("Grund")
+                    spacer(":")
+                    appendSpace()
+                    variableValue(entry.reason)
+                    appendNewline()
+                    append(CommonComponents.EM_DASH)
+                    appendSpace()
+                    variableKey("Datum")
+                    spacer(":")
+                    appendSpace()
+                    variableValue(entry.addedAt.unixTime())
+                })
+            }
+        )
+    }
+}
+
 fun CommandAPICommand.denylistListCommand() = subcommand("list") {
     withPermission(PermissionRegistry.COMMAND_DENYLIST_LIST)
     integerArgument("page", min = 1, max = Int.MAX_VALUE, optional = true)
@@ -28,39 +61,6 @@ fun CommandAPICommand.denylistListCommand() = subcommand("list") {
                 error("Es sind keine Einträge in der internen Denylist vorhanden.")
             }
             return@anyExecutor
-        }
-
-        val pagination = Pagination<DenylistEntry> {
-            title {
-                primary("Interne Denylist".toSmallCaps(), TextDecoration.BOLD)
-            }
-
-            rowRenderer { entry, _ ->
-                listOf(
-                    buildText {
-                        append(CommonComponents.EM_DASH)
-                        appendSpace()
-                        variableKey(entry.word)
-                        appendSpace()
-                        spacer("(${entry.addedBy})")
-                        hoverEvent(buildText {
-                            append(CommonComponents.EM_DASH)
-                            appendSpace()
-                            variableKey("Grund")
-                            spacer(":")
-                            appendSpace()
-                            variableValue(entry.reason)
-                            appendNewline()
-                            append(CommonComponents.EM_DASH)
-                            appendSpace()
-                            variableKey("Datum")
-                            spacer(":")
-                            appendSpace()
-                            variableValue(entry.addedAt.unixTime())
-                        })
-                    }
-                )
-            }
         }
 
         executor.sendText {

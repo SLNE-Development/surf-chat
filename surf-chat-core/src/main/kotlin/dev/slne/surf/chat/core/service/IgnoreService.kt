@@ -10,6 +10,7 @@ interface IgnoreService {
     suspend fun unignore(uuid: UUID, ignoredUUID: UUID): Boolean
 
     fun isIgnored(uuid: UUID, ignoredUUID: UUID): Boolean
+    fun getCachedIgnoreList(uuid: UUID): List<IgnoreListEntry>
 
     suspend fun loadIgnoreList(uuid: UUID): List<IgnoreListEntry>
     suspend fun cleanup(uuid: UUID)

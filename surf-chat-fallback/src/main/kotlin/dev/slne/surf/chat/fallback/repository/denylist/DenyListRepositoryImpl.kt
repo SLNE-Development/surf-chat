@@ -24,7 +24,7 @@ class DenyListRepositoryImpl : DenyListRepository {
     override suspend fun createDenylistEntry(
         word: String,
         reason: String,
-        addedByUuid: UUID,
+        addedByUuid: UUID?,
         actionName: String
     ): Unit = suspendTransaction {
         val actionID = findActionIDByName(actionName) ?: error("Denylist action not found: $actionName")

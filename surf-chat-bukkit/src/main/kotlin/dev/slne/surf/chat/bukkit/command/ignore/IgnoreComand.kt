@@ -1,61 +1,41 @@
 package dev.slne.surf.chat.bukkit.command.ignore
 
-import com.github.shynixn.mccoroutine.folia.launch
+import dev.jorel.commandapi.CommandAPI
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
-import dev.jorel.commandapi.kotlindsl.getValue
-import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.chat.bukkit.command.argument.userStringArgument
 import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.bukkit.util.toUserOrThrow
 import dev.slne.surf.chat.core.service.ignoreService
-import dev.slne.surf.chat.core.service.userService
+import dev.slne.surf.core.api.common.player.SurfPlayer
+import dev.slne.surf.core.api.paper.command.argument.surfOfflinePlayerArgument
+import dev.slne.surf.surfapi.bukkit.api.command.executors.playerExecutorSuspend
+import dev.slne.surf.surfapi.core.api.command.args.awaitingOrNull
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 fun ignoreCommand() = commandAPICommand("ignore", plugin) {
     withPermission(PermissionRegistry.COMMAND_IGNORE)
     ignoreListCommand()
-    userStringArgument("target")
-    playerExecutor { player, args ->
-        val target: String by args
+    surfOfflinePlayerArgument("target")
+    playerExecutorSuspend { player, args ->
+        val target = args.awaitingOrNull<SurfPlayer?>("target")
+            ?: throw CommandAPI.failWithString("Der Spieler wurde nicht gefunden.")
 
-        plugin.launch {
-            val targetUser = userService.findOrLoadByName(target) ?: run {
-                player.sendText {
-                    appendErrorPrefix()
-                    error("Der Spieler ")
-                    variableValue(target)
-                    error(" wurde nicht gefunden.")
-                }
-                return@launch
+        if (player.uniqueId == target.uuid) {
+            throw CommandAPI.failWithString("Du kannst dich nicht selbst ignorieren.")
+        }
+
+        if (ignoreService.unignore(player.uniqueId, player.uniqueId)) {
+            player.sendText {
+                appendSuccessPrefix()
+                success("Du ignorierst nun nicht mehr ")
+                variableValue(target.lastKnownName ?: target.uuid.toString())
+                success(".")
             }
-
-            val user = player.toUserOrThrow()
-
-            if (player.uniqueId == targetUser.uuid) {
-                player.sendText {
-                    appendErrorPrefix()
-                    error("Du kannst dich nicht selbst ignorieren.")
-                }
-                return@launch
-            }
-
-            if (ignoreService.unignore(user, targetUser)) {
-                player.sendText {
-                    appendSuccessPrefix()
-                    success("Du ignorierst nun nicht mehr ")
-                    variableValue(targetUser.name)
-                    success(".")
-                }
-                return@launch
-            }
-
-            ignoreService.ignore(user, targetUser)
-
+        } else {
+            ignoreService.ignore(player.uniqueId, player.uniqueId)
             player.sendText {
                 appendSuccessPrefix()
                 success("Du ignorierst nun ")
-                variableValue(targetUser.name)
+                variableValue(target.lastKnownName ?: target.uuid.toString())
                 success(".")
             }
         }

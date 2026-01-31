@@ -14,6 +14,32 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.surfapi.core.api.messages.pagination.Pagination
 import net.kyori.adventure.text.format.TextDecoration
 
+private val pagination = Pagination<DenylistAction> {
+    title {
+        primary("Interne Aktionsliste".toSmallCaps(), TextDecoration.BOLD)
+    }
+
+    rowRenderer { entry, _ ->
+        listOf(
+            buildText {
+                append(CommonComponents.EM_DASH)
+                appendSpace()
+                variableKey(entry.name)
+                appendSpace()
+                spacer("(${entry.actionType})")
+                hoverEvent(buildText {
+                    append(CommonComponents.EM_DASH)
+                    appendSpace()
+                    variableKey("Grund")
+                    spacer(":")
+                    appendSpace()
+                    variableValue(entry.reason)
+                })
+            }
+        )
+    }
+}
+
 fun CommandAPICommand.denylistActionListCommand() = subcommand("list") {
     withPermission(PermissionRegistry.COMMAND_DENYLIST_ACTION_LIST)
     integerArgument("page", min = 1, max = Int.MAX_VALUE, optional = true)
@@ -27,32 +53,6 @@ fun CommandAPICommand.denylistActionListCommand() = subcommand("list") {
                 error("Es sind keine Aktionen in der internen Aktionsliste vorhanden.")
             }
             return@anyExecutor
-        }
-
-        val pagination = Pagination<DenylistAction> {
-            title {
-                primary("Interne Aktionsliste".toSmallCaps(), TextDecoration.BOLD)
-            }
-
-            rowRenderer { entry, _ ->
-                listOf(
-                    buildText {
-                        append(CommonComponents.EM_DASH)
-                        appendSpace()
-                        variableKey(entry.name)
-                        appendSpace()
-                        spacer("(${entry.actionType})")
-                        hoverEvent(buildText {
-                            append(CommonComponents.EM_DASH)
-                            appendSpace()
-                            variableKey("Grund")
-                            spacer(":")
-                            appendSpace()
-                            variableValue(entry.reason)
-                        })
-                    }
-                )
-            }
         }
 
         executor.sendText {

@@ -6,7 +6,7 @@ import dev.slne.surf.chat.api.denylist.DenylistEntry
 import java.util.*
 
 interface DenyListRepository {
-    suspend fun createDenylistEntry(word: String, reason: String, addedByUuid: UUID, actionName: String)
+    suspend fun createDenylistEntry(word: String, reason: String, addedByUuid: UUID?, actionName: String)
 
     suspend fun existsEntryByWord(word: String): Boolean
     suspend fun findEntryByWord(word: String): DenylistEntry?

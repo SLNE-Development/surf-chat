@@ -19,7 +19,16 @@ interface FunctionalityService {
     suspend fun fetch(localServer: String)
 
     fun getFunctionalities(): Functionalities
+    suspend fun updateLocalFunctionalities(functionalities: Functionalities)
+    suspend fun updateLocalFunctionalities(update: (Functionalities) -> Functionalities) {
+        updateLocalFunctionalities(getFunctionalities())
+    }
+
     suspend fun updateFunctionalities(functionalities: Functionalities, localServer: String)
+    suspend fun updateFunctionalities(localServer: String, update: (Functionalities) -> Functionalities) {
+        updateFunctionalities(getFunctionalities(localServer), localServer)
+    }
+
     suspend fun getFunctionalities(localServer: String): Functionalities
     suspend fun getFunctionalitiesForAllServers(): Map<String, Functionalities>
 

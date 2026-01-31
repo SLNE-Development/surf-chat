@@ -1,30 +1,24 @@
 package dev.slne.surf.chat.bukkit.command.spy
 
+import dev.jorel.commandapi.CommandAPI
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
+import dev.jorel.commandapi.kotlindsl.entitySelectorArgumentOnePlayer
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.chat.api.entity.User
-import dev.slne.surf.chat.bukkit.command.argument.userArgument
 import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
-import dev.slne.surf.chat.bukkit.util.hasPermission
-import dev.slne.surf.chat.bukkit.util.user
 import dev.slne.surf.chat.core.service.spyService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
+import org.bukkit.entity.Player
 
 fun directMessageSpyCommand() = commandAPICommand("spy") {
     withPermission(PermissionRegistry.COMMAND_DIRECT_SPY)
     directMessageSpyClearCommand()
-    userArgument("target")
+    entitySelectorArgumentOnePlayer("target")
     playerExecutor { player, args ->
-        val user = player.user() ?: return@playerExecutor
-        val target: User by args
+        val target: Player by args
 
-        if (user.uuid == target.uuid) {
-            player.sendText {
-                appendErrorPrefix()
-                error("Du kannst dich nicht selbst spionieren!")
-            }
-            return@playerExecutor
+        if (player.uniqueId == target.uniqueId) {
+            throw CommandAPI.failWithString("Du kannst dich nicht selbst spionieren!")
         }
 
         if (target.hasPermission(PermissionRegistry.BYPASS_SPY)) {
@@ -35,8 +29,8 @@ fun directMessageSpyCommand() = commandAPICommand("spy") {
             return@playerExecutor
         }
 
-        if (spyService.getPrivateMessageSpies(target.uuid).contains(player.uniqueId)) {
-            spyService.removePrivateMessageSpy(player.uniqueId, target.uuid)
+        if (spyService.getPrivateMessageSpies(target.uniqueId).contains(player.uniqueId)) {
+            spyService.removePrivateMessageSpy(player.uniqueId, target.uniqueId)
 
             player.sendText {
                 appendSuccessPrefix()
@@ -45,7 +39,7 @@ fun directMessageSpyCommand() = commandAPICommand("spy") {
                 success("s private Nachrichten nicht mehr.")
             }
         } else {
-            spyService.addPrivateMessageSpy(player.uniqueId, target.uuid)
+            spyService.addPrivateMessageSpy(player.uniqueId, target.uniqueId)
             player.sendText {
                 appendSuccessPrefix()
                 success("Du spionierst nun ")

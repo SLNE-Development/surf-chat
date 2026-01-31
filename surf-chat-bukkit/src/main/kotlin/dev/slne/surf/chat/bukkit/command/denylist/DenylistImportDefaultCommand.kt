@@ -36,8 +36,6 @@ import kotlin.time.Duration.Companion.days
  * ⚠️ Please treat all content in this file as **strictly functional**,
  * not personal or offensive.
  */
-
-
 fun CommandAPICommand.denylistImportDefaultCommand() = subcommand("importdefaults") {
     withPermission(PermissionRegistry.COMMAND_DENYLIST_DEFAULTS)
     anyExecutor { executor, _ ->
@@ -50,7 +48,6 @@ fun CommandAPICommand.denylistImportDefaultCommand() = subcommand("importdefault
             listOf(
                 DenylistBatchEntry.builder()
                     .withReason("Verwenden von Kennzeichen verfassungswidriger und terroristischer Organisationen")
-                    .withStaff("Arty Support")
                     .withActionType(DenylistActionType.COMMUNITY_BAN)
                     .withPunishReason("Verwenden von Kennzeichen verfassungswidriger und terroristischer Organisationen")
                     .withWords(
@@ -60,7 +57,6 @@ fun CommandAPICommand.denylistImportDefaultCommand() = subcommand("importdefault
                     .build(),
                 DenylistBatchEntry.builder()
                     .withReason("Gewaltverherrlichende Inhalte")
-                    .withStaff("Arty Support")
                     .withActionType(DenylistActionType.PERMANENT_BAN)
                     .withPunishReason("Gewaltverherrlichende Inhalte")
                     .withWords(
@@ -73,7 +69,6 @@ fun CommandAPICommand.denylistImportDefaultCommand() = subcommand("importdefault
                     .build(),
                 DenylistBatchEntry.builder()
                     .withReason("Starke Beleidigungen")
-                    .withStaff("Arty Support")
                     .withActionType(DenylistActionType.EXPIRABLE_BAN)
                     .withPunishReason("Inhalte mit abwertender, beleidigender oder diskriminierender Sprache")
                     .withDuration(14.days)
@@ -88,7 +83,6 @@ fun CommandAPICommand.denylistImportDefaultCommand() = subcommand("importdefault
                     ).build(),
                 DenylistBatchEntry.builder()
                     .withReason("Mittelstarke Beleidigungen")
-                    .withStaff("Arty Support")
                     .withActionType(DenylistActionType.EXPIRABLE_BAN)
                     .withPunishReason("Inhalte mit persönlichen Beleidigungen mittlerer Stufe")
                     .withDuration(7.days)
@@ -97,7 +91,6 @@ fun CommandAPICommand.denylistImportDefaultCommand() = subcommand("importdefault
                     ).build(),
                 DenylistBatchEntry.builder()
                     .withReason("Leichte Beleidigungen")
-                    .withStaff("Arty Support")
                     .withActionType(DenylistActionType.MUTE)
                     .withPunishReason("Beleidigende Inhalte")
                     .withDuration(3.days)

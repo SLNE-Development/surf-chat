@@ -28,7 +28,7 @@ interface DenylistService {
     suspend fun addEntry(
         word: String,
         reason: String,
-        addedByUuid: UUID,
+        addedByUuid: UUID?,
         action: DenylistAction
     )
 
@@ -44,7 +44,7 @@ interface DenylistService {
     fun addLocalEntry(
         word: String,
         reason: String,
-        addedBy: UUID,
+        addedBy: UUID?,
         addedAt: OffsetDateTime,
         action: DenylistAction
     )

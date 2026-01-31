@@ -35,7 +35,7 @@ fun CommandAPICommand.surfChatLookupHelpCommand() = subcommand("lookuphelp") {
                         appendSpace()
                         appendSpace()
                         appendSpace()
-                        spacer("z.B.")
+                        spacer("z. B.")
                         appendSpace()
                         spacer(help.example)
                     }
@@ -69,6 +69,11 @@ fun CommandAPICommand.surfChatLookupHelpCommand() = subcommand("lookuphelp") {
                             "deletedBy",
                             "Nach dem Spieler filtern, der die Nachricht gelöscht hat.",
                             "--deletedBy Jo_field"
+                        ),
+                        HelpEntry(
+                            "deleted",
+                            "Nur gelöschte / nicht gelöschte Nachrichten anzeigen.",
+                            "--deleted true"
                         ),
                         HelpEntry(
                             "limit",

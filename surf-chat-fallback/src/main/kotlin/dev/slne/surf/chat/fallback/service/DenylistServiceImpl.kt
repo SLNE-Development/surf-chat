@@ -29,7 +29,7 @@ class DenylistServiceImpl : DenylistService, Services.Fallback {
     override fun addLocalEntry(
         word: String,
         reason: String,
-        addedBy: UUID,
+        addedBy: UUID?,
         addedAt: OffsetDateTime,
         action: DenylistAction
     ) {

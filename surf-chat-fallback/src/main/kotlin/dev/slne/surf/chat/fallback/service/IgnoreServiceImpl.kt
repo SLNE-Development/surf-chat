@@ -4,6 +4,8 @@ import com.github.benmanes.caffeine.cache.Caffeine
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.entry.IgnoreListEntry
 import dev.slne.surf.chat.core.service.IgnoreService
+import dev.slne.surf.chat.fallback.repository.ignore.IgnoreRepository
+import java.time.OffsetDateTime
 import java.util.*
 
 @AutoService(IgnoreService::class)
@@ -12,13 +14,30 @@ class IgnoreServiceImpl : IgnoreService {
         .maximumSize(1000)
         .build<UUID, List<IgnoreListEntry>>()
 
-
     override suspend fun ignore(uuid: UUID, ignoredUUID: UUID): Boolean {
-        TODO("Not yet implemented")
+        val ignored = IgnoreRepository.ignore(uuid, ignoredUUID)
+        if (ignored) {
+            cache.asMap().compute(uuid) { _, ignoreList ->
+                if (ignoreList == null) {
+                    listOf(IgnoreListEntry(uuid, ignoredUUID, OffsetDateTime.now()))
+                } else {
+                    ignoreList + IgnoreListEntry(uuid, ignoredUUID, OffsetDateTime.now())
+                }
+            }
+        }
+
+        return ignored
     }
 
     override suspend fun unignore(uuid: UUID, ignoredUUID: UUID): Boolean {
-        TODO("Not yet implemented")
+        val unignored = IgnoreRepository.unignore(uuid, ignoredUUID)
+        if (unignored) {
+            cache.asMap().compute(uuid) { _, ignoreList ->
+                ignoreList?.filterNot { it.target == ignoredUUID }
+            }
+        }
+
+        return unignored
     }
 
     override fun isIgnored(uuid: UUID, ignoredUUID: UUID): Boolean {
@@ -30,7 +49,9 @@ class IgnoreServiceImpl : IgnoreService {
     }
 
     override suspend fun loadIgnoreList(uuid: UUID): List<IgnoreListEntry> {
-        TODO("Not yet implemented")
+        val ignoreList = IgnoreRepository.findAllByUuid(uuid)
+        cache.put(uuid, ignoreList)
+        return ignoreList
     }
 
     override suspend fun cleanup(uuid: UUID) {

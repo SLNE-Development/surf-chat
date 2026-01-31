@@ -95,7 +95,6 @@ object AiModerationPostChatProcessor : PostChatProcessor {
             OpenAiService.ClassificationAction.DELETE -> {
                 historyService.markDeleted(
                     messageContext.messageData.messageUuid,
-                    "Automod (surf-chat)"
                 )
 
                 messageContext.messageData.signature?.let { Bukkit.getServer().deleteMessage(it) }

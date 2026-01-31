@@ -59,6 +59,6 @@ class DenylistActionServiceImpl : DenylistActionService, Services.Fallback {
     ) {
         delay(3.seconds)
         server.deleteMessage(message)
-        historyService.markDeleted(messageUuid, "Arty Support (BLOCKED: ${entry.word})")
+        historyService.markDeleted(messageUuid,)
     }
 }

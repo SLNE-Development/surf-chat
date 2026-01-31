@@ -13,5 +13,9 @@ object HistoryTable : ULongIdTable("chat_history") {
     val sentAt = offsetDateTime("sent_at")
     val type = enumerationByName<MessageType>("type", 16)
     val server = char("server", 255)
+
+    val deleted = bool("deleted").default(false)
+    val deletedAt = offsetDateTime("deleted_at").nullable()
     val deletedBy = nativeUuid("deleted_by").nullable().default(null)
+    val deletionReason = text("deletion_reason").nullable().default(null)
 }

@@ -191,7 +191,7 @@ private suspend fun Map<String, String>.parseFilters(): HistoryFilter {
         senderUuid = senderUuid,
         receiverUuid = receiverUuid,
         messageType = this["--type"]?.let { runCatching { MessageType.valueOf(it.uppercase()) }.getOrNull() },
-        range = this["--range"]?.let { parseRangeToMillis(it) },
+        after = this["--range"]?.let { parseRangeToMillis(it) },
         messageLike = this["--message"],
         server = this["--server"],
         deletedBy = this["--deletedBy"],

@@ -50,7 +50,7 @@ fun SurfComponentBuilder.appendDelete(messageData: MessageData) = append(buildTe
             }
 
         plugin.launch {
-            historyService.markDeleted(messageData.messageUuid, it.name())
+            historyService.markDeleted(messageData.messageUuid,)
         }
     })
     hoverEvent(buildText {

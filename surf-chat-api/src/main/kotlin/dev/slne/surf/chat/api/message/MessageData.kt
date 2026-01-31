@@ -4,8 +4,10 @@ import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.serializer.SerializableSignature
 import dev.slne.surf.surfapi.core.api.messages.adventure.plain
 import dev.slne.surf.surfapi.core.api.serializer.adventure.component.SerializableComponent
+import dev.slne.surf.surfapi.core.api.serializer.java.datetime.datetime.offset.SerializableOffsetDateTime
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
+import java.time.OffsetDateTime
 import java.util.*
 
 @Serializable
@@ -58,7 +60,7 @@ data class MessageData(
     /**
      * Represents the timestamp when the message was sent, measured in milliseconds since the epoch (January 1, 1970, 00:00:00 GMT).
      */
-    val sentAt: Long,
+    val sentAt: SerializableOffsetDateTime,
 
     /**
      * Represents the chat server associated with the message.

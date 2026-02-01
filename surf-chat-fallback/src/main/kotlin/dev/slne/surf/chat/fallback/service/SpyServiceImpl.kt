@@ -8,32 +8,61 @@ import java.util.concurrent.ConcurrentHashMap
 
 @AutoService(SpyService::class)
 class SpyServiceImpl : SpyService, Services.Fallback {
-    val privateMessageSpies = ConcurrentHashMap<UUID, MutableSet<UUID>>()
+    private val privateMessageSpies = ConcurrentHashMap<UUID, MutableSet<UUID>>()
+    private val observedToSpies = ConcurrentHashMap<UUID, MutableSet<UUID>>()
 
-    override fun getPrivateMessageSpies(player: UUID) = privateMessageSpies.getOrDefault(player, emptySet())
+    override fun getObservingPlayers(observed: UUID) = observedToSpies[observed] ?: emptySet()
 
-    override fun addPrivateMessageSpy(player: UUID, target: UUID) = privateMessageSpies
-        .computeIfAbsent(player) { ConcurrentHashMap.newKeySet() }
-        .add(target)
+    override fun addPrivateMessageSpy(spy: UUID, observed: UUID): Boolean {
+        val added = privateMessageSpies
+            .computeIfAbsent(spy) { ConcurrentHashMap.newKeySet() }
+            .add(observed)
 
-    override fun removePrivateMessageSpy(player: UUID, target: UUID): Boolean {
+        if (added) {
+            observedToSpies
+                .computeIfAbsent(observed) { ConcurrentHashMap.newKeySet() }
+                .add(spy)
+        }
+
+        return added
+    }
+
+    override fun removePrivateMessageSpy(spy: UUID, observed: UUID): Boolean {
         var removed = false
 
-        privateMessageSpies.computeIfPresent(player) { _, spies ->
-            removed = spies.remove(target)
+        privateMessageSpies.computeIfPresent(spy) { _, spies ->
+            removed = spies.remove(observed)
             if (spies.isEmpty()) null else spies
+        }
+
+        if (removed) {
+            observedToSpies.computeIfPresent(observed) { _, spies ->
+                spies.remove(spy)
+                if (spies.isEmpty()) null else spies
+            }
         }
 
         return removed
     }
 
-    override fun isPrivateMessageSpying(player: UUID) = privateMessageSpies.containsKey(player)
+    override fun isPrivateMessageSpying(spy: UUID) = privateMessageSpies.containsKey(spy)
 
-    override fun clearPrivateMessageSpies(player: UUID) {
-        privateMessageSpies.remove(player)
+    override fun clearPrivateMessageSpies(spy: UUID) {
+        privateMessageSpies.remove(spy)?.forEach { observed ->
+            observedToSpies.computeIfPresent(observed) { _, spies ->
+                spies.remove(spy)
+                if (spies.isEmpty()) null else spies
+            }
+        }
     }
 
     override fun cleanup(player: UUID) {
         clearPrivateMessageSpies(player)
+        observedToSpies.remove(player)?.forEach { spy ->
+            privateMessageSpies.computeIfPresent(spy) { _, targets ->
+                targets.remove(player)
+                if (targets.isEmpty()) null else targets
+            }
+        }
     }
 }

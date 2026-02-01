@@ -13,7 +13,7 @@ object PrivateMessageSpyPostChatProcessor : PostChatProcessor {
             return
         }
 
-        spyService.getPrivateMessageSpies(messageContext.messageData.sender).forEach {
+        spyService.getObservingPlayers(messageContext.messageData.sender).forEach {
             it.sendText {
                 append(MessageFormatter.formatPmSpy(messageContext.messageData))
             }

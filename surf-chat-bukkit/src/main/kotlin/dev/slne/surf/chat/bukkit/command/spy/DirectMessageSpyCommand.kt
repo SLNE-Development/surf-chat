@@ -29,7 +29,7 @@ fun directMessageSpyCommand() = commandAPICommand("spy") {
             return@playerExecutor
         }
 
-        if (spyService.getPrivateMessageSpies(target.uniqueId).contains(player.uniqueId)) {
+        if (spyService.getObservingPlayers(target.uniqueId).contains(player.uniqueId)) {
             spyService.removePrivateMessageSpy(player.uniqueId, target.uniqueId)
 
             player.sendText {

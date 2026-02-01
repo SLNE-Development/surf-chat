@@ -53,6 +53,7 @@ class BukkitMain : SuspendingJavaPlugin() {
         ConnectListener.register()
 
         databaseLoader.connect(plugin.dataPath)
+        redisLoader.connect()
 
         denylistService.fetch()
         denylistActionService.fetchActions()

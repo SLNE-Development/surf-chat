@@ -35,7 +35,7 @@ private val pagination = Pagination<IgnoreListPaginationEntry> {
     }
 }
 
-fun CommandAPICommand.ignoreListCommand() = subcommand("list") {
+fun CommandAPICommand.ignoreListCommand() = subcommand("#list") {
     withPermission(PermissionRegistry.COMMAND_IGNORE_LIST)
     playerExecutorSuspend { player, _ ->
         val ignoreList = ignoreService.getCachedIgnoreList(player.uniqueId)

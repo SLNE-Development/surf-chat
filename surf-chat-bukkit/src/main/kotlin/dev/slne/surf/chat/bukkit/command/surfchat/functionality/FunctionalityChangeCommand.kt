@@ -5,8 +5,8 @@ import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.bukkit.command.argument.niceToggleArgument
 import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
-import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.service.functionalityService
+import dev.slne.surf.core.api.common.surfCoreApi
 import dev.slne.surf.surfapi.bukkit.api.command.executors.anyExecutorSuspend
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
@@ -32,7 +32,7 @@ fun CommandAPICommand.functionalityChangeCommand() = subcommand("change") {
                 appendInfoPrefix()
                 variableValue(player.name)
                 info(" hat den Chat für den Server ")
-                variableValue(plugin.server.name)
+                variableValue(surfCoreApi.getCurrentServerName())
                 info(" aktiviert.")
             }
 
@@ -50,7 +50,7 @@ fun CommandAPICommand.functionalityChangeCommand() = subcommand("change") {
                 appendSuccessPrefix()
                 variableValue(player.name)
                 info(" hat den Chat für den Server ")
-                variableValue(plugin.server.name)
+                variableValue(surfCoreApi.getCurrentServerName())
                 info(" deaktiviert.")
             }
 

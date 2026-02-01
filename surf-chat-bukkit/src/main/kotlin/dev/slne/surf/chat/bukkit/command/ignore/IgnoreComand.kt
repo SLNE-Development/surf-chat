@@ -23,7 +23,7 @@ fun ignoreCommand() = commandAPICommand("ignore", plugin) {
             throw CommandAPI.failWithString("Du kannst dich nicht selbst ignorieren.")
         }
 
-        if (ignoreService.unignore(player.uniqueId, player.uniqueId)) {
+        if (ignoreService.unignore(player.uniqueId, target.uuid)) {
             player.sendText {
                 appendSuccessPrefix()
                 success("Du ignorierst nun nicht mehr ")
@@ -31,7 +31,7 @@ fun ignoreCommand() = commandAPICommand("ignore", plugin) {
                 success(".")
             }
         } else {
-            ignoreService.ignore(player.uniqueId, player.uniqueId)
+            ignoreService.ignore(player.uniqueId, target.uuid)
             player.sendText {
                 appendSuccessPrefix()
                 success("Du ignorierst nun ")

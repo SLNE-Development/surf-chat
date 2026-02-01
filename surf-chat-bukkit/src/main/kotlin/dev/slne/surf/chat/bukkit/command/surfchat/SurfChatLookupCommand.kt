@@ -43,7 +43,7 @@ private val pagination = Pagination<RenderData> {
                 append {
                     appendSpace()
                     spacer(entry.sentAt.formatAgo())
-                    if (entry.deletedBy != null) {
+                    if (entry.deleted) {
                         decorate(TextDecoration.STRIKETHROUGH)
                     }
 
@@ -57,7 +57,7 @@ private val pagination = Pagination<RenderData> {
                         error("✘")
                         hoverEvent(buildText {
                             error("Gelöscht von ")
-                            error(entry.deletedBy?.toString() ?: "Unbekannt")
+                            error(entry.deletedBy?.toString() ?: "System")
                             appendNewline()
                             error("Gelöscht am ")
                             error(entry.deletedAt!!.formatTime())

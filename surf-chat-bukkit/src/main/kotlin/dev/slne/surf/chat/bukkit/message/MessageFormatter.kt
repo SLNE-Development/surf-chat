@@ -83,7 +83,7 @@ object MessageFormatter {
         darkSpacer(" >> ")
         append(updateLinks(messageData.message))
         hoverEvent(buildText { appendMessageData(senderUser.lastKnownName ?: senderUser.uuid.toString(), messageData) })
-        clickSuggestsCommand("/msg $senderUser ")
+        clickSuggestsCommand("/msg ${senderUser.lastKnownName} ")
     }
 
     suspend fun formatOutgoingPm(messageData: MessageData) = buildText {

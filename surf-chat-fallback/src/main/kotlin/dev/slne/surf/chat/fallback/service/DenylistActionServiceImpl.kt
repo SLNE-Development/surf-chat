@@ -48,17 +48,4 @@ class DenylistActionServiceImpl : DenylistActionService, Services.Fallback {
     }
 
     override fun clearLocalActions() = cache.clear()
-
-    override suspend fun deleteMessage(
-        messageUuid: UUID,
-        entry: DenylistEntry,
-        message: SignedMessage,
-        deletedBy: UUID,
-        deletionReason: String?,
-        discordHookUrl: String?
-    ) {
-        delay(3.seconds)
-        server.deleteMessage(message)
-        historyService.markDeleted(messageUuid, deletedBy, deletionReason)
-    }
 }

@@ -14,7 +14,6 @@ import dev.slne.surf.chat.bukkit.redisApi
 import dev.slne.surf.chat.bukkit.util.appendBotIcon
 import dev.slne.surf.chat.bukkit.util.hasPermission
 import dev.slne.surf.chat.core.service.deletionService
-import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.punish.api.punishment.PunishType
 import dev.slne.surf.punish.api.user.PunishmentUser
 import dev.slne.surf.surfapi.core.api.messages.Colors
@@ -106,13 +105,10 @@ object AiModerationPostChatProcessor : PostChatProcessor {
 
         when (classification.action) {
             OpenAiService.ClassificationAction.DELETE -> {
-                historyService.markDeleted(
-                    messageData.messageUuid,
-                    deletedBy = null,
-                    "AI classification: ${classification.action.name}"
+                deletionService.deleteMessage(
+                    messageData,
+                    deletionReason = "AI classification: ${classification.action.name}",
                 )
-
-                messageData.signature?.let { Bukkit.getServer().deleteMessage(it) }
             }
 
             OpenAiService.ClassificationAction.MUTE -> {

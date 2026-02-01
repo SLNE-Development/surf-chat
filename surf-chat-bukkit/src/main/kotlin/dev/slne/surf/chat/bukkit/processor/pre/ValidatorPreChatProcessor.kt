@@ -5,6 +5,7 @@ import dev.slne.surf.chat.api.processor.PreChatProcessor
 import dev.slne.surf.chat.bukkit.message.MessageValidator
 import dev.slne.surf.chat.bukkit.processor.ProcessorOrder
 import dev.slne.surf.chat.bukkit.util.sendText
+import dev.slne.surf.surfapi.core.api.messages.Colors
 
 object ValidatorPreChatProcessor : PreChatProcessor {
     override val order = ProcessorOrder.VALIDATE
@@ -19,7 +20,7 @@ object ValidatorPreChatProcessor : PreChatProcessor {
 
             senderUuid.sendText {
                 appendWarningPrefix()
-                error(error.errorMessage)
+                error.errorMessage.colorIfAbsent(Colors.ERROR)
             }
 
             context.cancel()

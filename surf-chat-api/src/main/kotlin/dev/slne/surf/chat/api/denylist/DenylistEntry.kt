@@ -1,5 +1,6 @@
 package dev.slne.surf.chat.api.denylist
 
+import dev.slne.surf.core.api.common.surfCoreApi
 import java.time.OffsetDateTime
 import java.util.*
 
@@ -18,4 +19,6 @@ data class DenylistEntry(
     val addedBy: UUID?,
     val addedAt: OffsetDateTime,
     val action: DenylistAction
-)
+) {
+    suspend fun addedBy() = addedBy?.let { surfCoreApi.getOfflinePlayer(it) }
+}

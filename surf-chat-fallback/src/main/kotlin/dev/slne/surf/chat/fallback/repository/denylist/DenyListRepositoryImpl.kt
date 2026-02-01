@@ -1,5 +1,8 @@
 package dev.slne.surf.chat.fallback.repository.denylist
 
+import com.github.benmanes.caffeine.cache.Caffeine
+import com.sksamuel.aedile.core.asCache
+import com.sksamuel.aedile.core.expireAfterWrite
 import dev.slne.surf.chat.api.denylist.DenylistAction
 import dev.slne.surf.chat.api.denylist.DenylistActionType
 import dev.slne.surf.chat.api.denylist.DenylistEntry
@@ -13,13 +16,33 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.singleOrNull
 import kotlinx.coroutines.flow.toList
 import java.util.*
+import kotlin.time.Duration.Companion.minutes
 
 class DenyListRepositoryImpl : DenyListRepository {
-    private suspend fun findActionIDByName(name: String) = DenylistActionsTable
-        .select(DenylistActionsTable.id)
-        .where { DenylistActionsTable.name eq name }
-        .singleOrNull()
-        ?.let { it[DenylistActionsTable.id] }
+    private val actionIDCache = Caffeine.newBuilder()
+        .expireAfterWrite(5.minutes)
+        .maximumSize(10_000)
+        .asCache<String, ULong>()
+
+    private suspend fun findActionIDByName(name: String): ULong? {
+        val cached = actionIDCache.getIfPresent(name)
+        if (cached != null) {
+            return cached
+        }
+
+        val id = DenylistActionsTable
+            .select(DenylistActionsTable.id)
+            .where { DenylistActionsTable.name eq name }
+            .singleOrNull()
+            ?.let { it[DenylistActionsTable.id] }
+            ?.value
+
+        if (id != null) {
+            actionIDCache.put(name, id)
+        }
+
+        return id
+    }
 
     override suspend fun createDenylistEntry(
         word: String,

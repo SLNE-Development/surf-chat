@@ -7,7 +7,7 @@ import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
 import dev.slne.surf.chat.core.service.spyService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
-fun CommandAPICommand.directMessageSpyClearCommand() = subcommand("clear") {
+fun CommandAPICommand.directMessageSpyClearCommand() = subcommand("#clear") {
     withPermission(PermissionRegistry.COMMAND_DIRECT_SPY_CLEAR)
     playerExecutor { player, args ->
         if (!spyService.isPrivateMessageSpying(player.uniqueId)) {

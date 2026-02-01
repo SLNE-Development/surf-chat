@@ -1,6 +1,7 @@
 package dev.slne.surf.chat.api.entry
 
 import dev.slne.surf.chat.api.message.MessageType
+import dev.slne.surf.core.api.common.surfCoreApi
 import java.time.OffsetDateTime
 import java.util.*
 
@@ -28,4 +29,7 @@ data class HistoryEntry(
     val deletedAt: OffsetDateTime?,
     val deletedBy: UUID?,
     val deletionReason: String?
-)
+) {
+    suspend fun sender() = surfCoreApi.getOfflinePlayer(senderUuid) ?: error("Sender user $senderUuid not found")
+    suspend fun receiver() = receiverUuid?.let { surfCoreApi.getOfflinePlayer(it) }
+}

@@ -23,9 +23,94 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.surfapi.core.api.messages.pagination.Pagination
 import dev.slne.surf.surfapi.core.api.service.PlayerLookupService
 import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import net.kyori.adventure.text.format.TextDecoration
 import java.time.OffsetDateTime
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
+
+private val pagination = Pagination<RenderData> {
+    title {
+        info("Suchergebnisse".toSmallCaps(), TextDecoration.BOLD)
+    }
+    resultsPerPage = 10
+
+    rowRenderer { (senderNames, entry), _ ->
+        listOf(
+            buildText {
+                appendLinePrefix()
+                append {
+                    appendSpace()
+                    spacer(entry.sentAt.formatAgo())
+                    if (entry.deletedBy != null) {
+                        decorate(TextDecoration.STRIKETHROUGH)
+                    }
+
+                    hoverEvent(buildText {
+                        spacer(entry.sentAt.formatTime())
+                    })
+                }
+                appendSpace()
+                if (entry.deleted) {
+                    append {
+                        error("✘")
+                        hoverEvent(buildText {
+                            error("Gelöscht von ")
+                            error(entry.deletedBy?.toString() ?: "Unbekannt")
+                            appendNewline()
+                            error("Gelöscht am ")
+                            error(entry.deletedAt!!.formatTime())
+                        })
+                    }
+                } else {
+                    spacer("-")
+                }
+                appendSpace()
+                append {
+                    val name = senderNames[entry.senderUuid] ?: "#Unbekannt"
+                    variableValue(name)
+                    if (entry.deletedBy != null) {
+                        decorate(TextDecoration.STRIKETHROUGH)
+                    }
+                    hoverEvent(buildText {
+                        spacer("Klicke, um das Profil zu öffnen.")
+                    })
+                    clickOpensUrl("https://laby.net/$name")
+                }
+                appendSpace()
+                append {
+                    info("schrieb")
+                    if (entry.deletedBy != null) {
+                        decorate(TextDecoration.STRIKETHROUGH)
+                    }
+                    hoverEvent(buildText {
+                        info("auf Server ")
+                        variableValue(entry.server)
+                    })
+                }
+                appendSpace()
+                append {
+                    text(entry.message.take(20), Colors.WHITE)
+                    if (entry.message.length > 20) {
+                        text("...", Colors.GRAY)
+                    }
+                    if (entry.deletedBy != null) {
+                        decorate(TextDecoration.STRIKETHROUGH)
+                    }
+
+                    hoverEvent(buildText {
+                        text(entry.message, Colors.WHITE)
+                    })
+                }
+                appendSpace()
+                spacer("(")
+                variableValue(entry.messageType.name)
+                spacer(")")
+            }
+        )
+    }
+}
 
 fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
     withPermission(PermissionRegistry.COMMAND_SURFCHAT_LOOKUP)
@@ -72,94 +157,27 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
             throw CommandAPI.failWithString("Es wurden keine Ergebnisse gefunden.")
         }
 
-        val senderNames = history.map { it.senderUuid }
-            .distinct()
-            .associateWith { PlayerLookupService.getUsername(it) ?: it.toString() }
-
-        val pagination = Pagination<HistoryEntry> {
-            title {
-                info("Suchergebnisse".toSmallCaps(), TextDecoration.BOLD)
-            }
-            resultsPerPage = 10
-
-            rowRenderer { entry, _ ->
-                listOf(
-                    buildText {
-                        appendLinePrefix()
-                        append {
-                            appendSpace()
-                            spacer(entry.sentAt.formatAgo())
-                            if (entry.deletedBy != null) {
-                                decorate(TextDecoration.STRIKETHROUGH)
-                            }
-
-                            hoverEvent(buildText {
-                                spacer(entry.sentAt.formatTime())
-                            })
-                        }
-                        appendSpace()
-                        if (entry.deleted) {
-                            append {
-                                error("✘")
-                                hoverEvent(buildText {
-                                    error("Gelöscht von ")
-                                    error(entry.deletedBy?.toString() ?: "Unbekannt")
-                                    appendNewline()
-                                    error("Gelöscht am ")
-                                    error(entry.deletedAt!!.formatTime())
-                                })
-                            }
-                        } else {
-                            spacer("-")
-                        }
-                        appendSpace()
-                        append {
-                            val name = senderNames[entry.senderUuid] ?: "Unbekannt"
-                            variableValue(name)
-                            if (entry.deletedBy != null) {
-                                decorate(TextDecoration.STRIKETHROUGH)
-                            }
-                            hoverEvent(buildText {
-                                spacer("Klicke, um das Profil zu öffnen.")
-                            })
-                            clickOpensUrl("https://laby.net/$name")
-                        }
-                        appendSpace()
-                        append {
-                            info("schrieb")
-                            if (entry.deletedBy != null) {
-                                decorate(TextDecoration.STRIKETHROUGH)
-                            }
-                            hoverEvent(buildText {
-                                info("auf Server ")
-                                variableValue(entry.server)
-                            })
-                        }
-                        appendSpace()
-                        append {
-                            text(entry.message.take(20), Colors.WHITE)
-                            if (entry.message.length > 20) {
-                                text("...", Colors.GRAY)
-                            }
-                            if (entry.deletedBy != null) {
-                                decorate(TextDecoration.STRIKETHROUGH)
-                            }
-
-                            hoverEvent(buildText {
-                                text(entry.message, Colors.WHITE)
-                            })
-                        }
-                        appendSpace()
-                        spacer("(")
-                        variableValue(entry.messageType.name)
-                        spacer(")")
-                    }
-                )
+        val senderNames = ConcurrentHashMap<UUID, String>()
+        coroutineScope {
+            for (entry in history) {
+                if (senderNames.containsKey(entry.senderUuid)) continue
+                launch {
+                    val sender = entry.sender()
+                    val senderName = sender.lastKnownName ?: entry.senderUuid.toString()
+                    senderNames[entry.senderUuid] = senderName
+                }
             }
         }
 
+        val renderData = history.map { entry ->
+            RenderData(
+                senderNames = senderNames,
+                entry = entry
+            )
+        }
+
         player.sendText {
-            append(pagination.renderComponent(history, page))
+            append(pagination.renderComponent(renderData, page))
         }
     }
 }
@@ -208,3 +226,8 @@ private suspend fun Map<String, String>.parseFilters(): HistoryFilter {
     )
 }
 
+
+private data class RenderData(
+    val senderNames: Map<UUID, String>,
+    val entry: HistoryEntry
+)

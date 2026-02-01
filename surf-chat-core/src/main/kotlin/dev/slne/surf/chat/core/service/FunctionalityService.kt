@@ -21,12 +21,12 @@ interface FunctionalityService {
     fun getFunctionalities(): Functionalities
     suspend fun updateLocalFunctionalities(functionalities: Functionalities)
     suspend fun updateLocalFunctionalities(update: (Functionalities) -> Functionalities) {
-        updateLocalFunctionalities(getFunctionalities())
+        updateLocalFunctionalities(update(getFunctionalities()))
     }
 
     suspend fun updateFunctionalities(functionalities: Functionalities, localServer: String)
     suspend fun updateFunctionalities(localServer: String, update: (Functionalities) -> Functionalities) {
-        updateFunctionalities(getFunctionalities(localServer), localServer)
+        updateFunctionalities(update(getFunctionalities(localServer)), localServer)
     }
 
     suspend fun getFunctionalities(localServer: String): Functionalities

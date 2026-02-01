@@ -20,7 +20,7 @@ object ValidatorPreChatProcessor : PreChatProcessor {
 
             senderUuid.sendText {
                 appendWarningPrefix()
-                error.errorMessage.colorIfAbsent(Colors.ERROR)
+                append(error.errorMessage.colorIfAbsent(Colors.ERROR))
             }
 
             context.cancel()

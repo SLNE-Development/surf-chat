@@ -24,7 +24,7 @@ interface HistoryRepository {
         deletedAt: OffsetDateTime
     )
 
-    suspend fun findHistories(filter: HistoryFilter): Set<HistoryEntry>
+    suspend fun findHistories(filter: HistoryFilter): List<HistoryEntry>
 
     companion object : HistoryRepository by HistoryRepositoryImpl()
 }

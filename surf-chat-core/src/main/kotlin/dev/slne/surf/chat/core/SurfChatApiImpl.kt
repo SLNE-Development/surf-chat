@@ -8,7 +8,7 @@ import dev.slne.surf.chat.api.entry.IgnoreListEntry
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.chat.core.service.ignoreService
-import it.unimi.dsi.fastutil.objects.ObjectSet
+import it.unimi.dsi.fastutil.objects.ObjectList
 import java.util.*
 
 @AutoService(SurfChatApi::class)
@@ -25,7 +25,7 @@ class SurfChatApiImpl : SurfChatApi {
         return ignoreService.loadIgnoreList(uuid)
     }
 
-    override suspend fun lookupHistory(filter: HistoryFilter): ObjectSet<HistoryEntry> {
+    override suspend fun lookupHistory(filter: HistoryFilter): ObjectList<HistoryEntry> {
         return historyService.findHistoryEntry(filter)
     }
 }

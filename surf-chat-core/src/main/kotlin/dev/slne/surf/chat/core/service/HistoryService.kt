@@ -4,6 +4,7 @@ import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.surfapi.core.api.util.requiredService
+import it.unimi.dsi.fastutil.objects.ObjectList
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import java.time.OffsetDateTime
 import java.util.*
@@ -29,7 +30,7 @@ interface HistoryService {
      * @param filter The filter criteria to use for querying the chat history.
      * @return An ObjectSet containing the history entries that match the filter.
      */
-    suspend fun findHistoryEntry(filter: HistoryFilter): ObjectSet<HistoryEntry>
+    suspend fun findHistoryEntry(filter: HistoryFilter): ObjectList<HistoryEntry>
 
     /**
      * Retrieves the count of available lookup attempts or operations allowed.

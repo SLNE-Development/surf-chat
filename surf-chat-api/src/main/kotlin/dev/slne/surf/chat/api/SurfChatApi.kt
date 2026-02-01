@@ -6,6 +6,7 @@ import dev.slne.surf.chat.api.entry.IgnoreListEntry
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.surfapi.core.api.util.requiredService
+import it.unimi.dsi.fastutil.objects.ObjectList
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import kotlinx.coroutines.TimeoutCancellationException
 import net.kyori.adventure.chat.SignedMessage
@@ -32,7 +33,7 @@ interface SurfChatApi {
      * @return A set of history entries matching the filter.
      */
     @Throws(TimeoutCancellationException::class)
-    suspend fun lookupHistory(filter: HistoryFilter): ObjectSet<HistoryEntry>
+    suspend fun lookupHistory(filter: HistoryFilter): ObjectList<HistoryEntry>
 
     companion object {
         /**

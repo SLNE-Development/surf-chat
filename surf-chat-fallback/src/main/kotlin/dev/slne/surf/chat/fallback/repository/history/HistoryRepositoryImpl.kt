@@ -4,18 +4,14 @@ import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.fallback.table.HistoryTable
-import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.ResultRow
-import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.eq
-import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.greaterEq
-import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.like
-import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.neq
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.*
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.andWhere
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.insert
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.selectAll
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.transactions.suspendTransaction
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.update
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toSet
+import kotlinx.coroutines.flow.toList
 import java.time.OffsetDateTime
 import java.util.*
 
@@ -40,7 +36,7 @@ class HistoryRepositoryImpl : HistoryRepository {
         }
     }
 
-    override suspend fun findHistories(filter: HistoryFilter): Set<HistoryEntry> = suspendTransaction {
+    override suspend fun findHistories(filter: HistoryFilter): List<HistoryEntry> = suspendTransaction {
         val query = HistoryTable.selectAll()
             .limit(filter.limit)
 
@@ -62,7 +58,10 @@ class HistoryRepositoryImpl : HistoryRepository {
         filter.server?.let { query.andWhere { HistoryTable.server eq it } }
         filter.messageUuid?.let { query.andWhere { HistoryTable.messageUuid eq it } }
 
-        query.map(::createByRow).toSet()
+        query
+            .orderBy(HistoryTable.sentAt, SortOrder.DESC)
+            .map(::createByRow)
+            .toList()
     }
 
     override suspend fun markDeleted(

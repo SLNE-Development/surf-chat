@@ -7,7 +7,9 @@ import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.core.service.HistoryService
 import dev.slne.surf.chat.fallback.repository.history.HistoryRepository
 import dev.slne.surf.surfapi.core.api.messages.adventure.plain
+import dev.slne.surf.surfapi.core.api.util.toObjectList
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
+import it.unimi.dsi.fastutil.objects.ObjectList
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
@@ -35,9 +37,9 @@ class HistoryServiceImpl : HistoryService, Services.Fallback {
 
     override suspend fun findHistoryEntry(
         filter: HistoryFilter
-    ): ObjectSet<HistoryEntry> = withTimeout(10.seconds) {
+    ): ObjectList<HistoryEntry> = withTimeout(10.seconds) {
         loadHistorySemaphore.withPermit {
-            HistoryRepository.findHistories(filter).toObjectSet()
+            HistoryRepository.findHistories(filter).toObjectList()
         }
     }
 

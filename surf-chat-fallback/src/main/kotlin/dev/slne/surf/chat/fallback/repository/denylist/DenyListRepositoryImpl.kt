@@ -96,8 +96,8 @@ class DenyListRepositoryImpl : DenyListRepository {
         }
     }
 
-    override suspend fun deleteActionByWord(word: String): Int = suspendTransaction {
-        DenylistActionsTable.deleteWhere { DenylistTable.word eq word }
+    override suspend fun deleteActionByName(name: String): Int = suspendTransaction {
+        DenylistActionsTable.deleteWhere { DenylistActionsTable.name eq name }
     }
 
     override suspend fun deleteAllActions(): Int = suspendTransaction {

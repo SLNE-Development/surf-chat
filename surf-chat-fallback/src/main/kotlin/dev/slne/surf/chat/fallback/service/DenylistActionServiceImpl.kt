@@ -2,18 +2,11 @@ package dev.slne.surf.chat.fallback.service
 
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.denylist.DenylistAction
-import dev.slne.surf.chat.api.denylist.DenylistEntry
 import dev.slne.surf.chat.core.service.DenylistActionService
-import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.chat.fallback.repository.denylist.DenyListRepository
-import dev.slne.surf.surfapi.bukkit.api.extensions.server
 import io.ktor.util.collections.*
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
-import kotlinx.coroutines.delay
-import net.kyori.adventure.chat.SignedMessage
 import net.kyori.adventure.util.Services
-import java.util.*
-import kotlin.time.Duration.Companion.seconds
 
 @AutoService(DenylistActionService::class)
 class DenylistActionServiceImpl : DenylistActionService, Services.Fallback {
@@ -24,7 +17,7 @@ class DenylistActionServiceImpl : DenylistActionService, Services.Fallback {
     }
 
     override suspend fun removeAction(action: DenylistAction) {
-        DenyListRepository.deleteActionByWord(action.name)
+        DenyListRepository.deleteActionByName(action.name)
     }
 
     override suspend fun hasAction(name: String): Boolean {

@@ -13,7 +13,7 @@ interface DenyListRepository {
     suspend fun findAllEntries(): List<DenylistEntry>
 
     suspend fun createAction(name: String, type: DenylistActionType, reason: String, duration: Long)
-    suspend fun deleteActionByWord(word: String): Int
+    suspend fun deleteActionByName(name: String): Int
     suspend fun deleteAllActions(): Int
     suspend fun existsActionByName(name: String): Boolean
     suspend fun findAllActions(): List<DenylistAction>

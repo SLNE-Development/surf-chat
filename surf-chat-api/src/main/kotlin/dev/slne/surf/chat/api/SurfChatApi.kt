@@ -3,6 +3,7 @@ package dev.slne.surf.chat.api
 import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.api.entry.IgnoreListEntry
+import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectSet
@@ -18,25 +19,8 @@ interface SurfChatApi {
 
     /**
      * Logs a message in the chat system.
-     *
-     * @param message The content of the message.
-     * @param type The type of the message (e.g., global, etc.).
-     * @param sender The user who sent the message.
-     * @param receiver The user who received the message, or `null` if not applicable.
-     * @param sentAt The timestamp (in milliseconds since epoch) when the message was sent. Defaults to the current time.
-     * @param server The server where the message was sent. Defaults to "unspecified".
-     * @param signedMessage The signed message object, or `null` if not applicable.
      */
-    suspend fun logMessage(
-        message: Component,
-        type: MessageType,
-        sender: UUID,
-        receiver: UUID? = null,
-        sentAt: Long = System.currentTimeMillis(),
-        server: String = "unspecified",
-        signedMessage: SignedMessage? = null,
-        messageUuid: UUID = UUID.randomUUID()
-    )
+    suspend fun logMessage(data: MessageData)
 
     fun getCachedIgnoreList(uuid: UUID): List<IgnoreListEntry>
     suspend fun getIgnoreList(uuid: UUID): List<IgnoreListEntry>

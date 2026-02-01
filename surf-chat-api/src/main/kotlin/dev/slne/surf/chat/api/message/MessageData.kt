@@ -3,10 +3,11 @@ package dev.slne.surf.chat.api.message
 import dev.slne.surf.chat.api.serializer.SerializableSignature
 import dev.slne.surf.core.api.common.surfCoreApi
 import dev.slne.surf.surfapi.core.api.messages.adventure.plain
-import dev.slne.surf.surfapi.core.api.serializer.adventure.component.SerializableComponent
 import dev.slne.surf.surfapi.core.api.serializer.java.datetime.datetime.offset.SerializableOffsetDateTime
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
+import net.kyori.adventure.text.Component
+import java.time.OffsetDateTime
 import java.util.*
 
 @Serializable
@@ -21,7 +22,7 @@ data class MessageData(
      * message formatting, validation, and data handling. The content can be processed in multiple ways, such as editing,
      * displaying, or validating based on the message type and other metadata.
      */
-    val message: SerializableComponent,
+    val message: @Contextual Component,
 
     /**
      * A unique identifier for a specific message.
@@ -59,7 +60,7 @@ data class MessageData(
     /**
      * Represents the timestamp when the message was sent, measured in milliseconds since the epoch (January 1, 1970, 00:00:00 GMT).
      */
-    val sentAt: SerializableOffsetDateTime,
+    val sentAt: @Contextual OffsetDateTime,
 
     /**
      * Represents the chat server associated with the message.

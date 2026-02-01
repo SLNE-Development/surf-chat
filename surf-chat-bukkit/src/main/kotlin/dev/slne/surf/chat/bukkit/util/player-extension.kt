@@ -10,22 +10,22 @@ import net.kyori.adventure.permission.PermissionChecker
 import org.bukkit.command.BlockCommandSender
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
-import org.bukkit.entity.Player
 import org.bukkit.entity.minecart.CommandMinecart
 import java.util.*
 
 fun Audience.isConsole() = this is ConsoleCommandSender
-fun Audience.name() = getPointer(Identity.NAME) ?: error("Audience does not provide name pointer")
+fun Audience.nameOrNull() = getPointer(Identity.NAME)
+fun Audience.nameOrUnknown() = nameOrNull() ?: "#Unknown"
+fun Audience.name() = nameOrNull() ?: error("Audience does not provide name pointer")
 fun Audience.uuidOrNull() = getPointer(Identity.UUID)
 fun Audience.uuid() = uuidOrNull() ?: error("Audience does not provide uuid pointer")
 fun Audience.hasPermission(permission: String) = getPointer(PermissionChecker.POINTER)?.test(permission) ?: false
 
 fun CommandSender.realName() = when (this) {
-    is Player -> this.name
     is ConsoleCommandSender -> "Console"
     is BlockCommandSender -> "Block"
     is CommandMinecart -> "CommandBlockMinecart"
-    else -> "Error"
+    else -> nameOrNull() ?: "#Error"
 }
 
 inline fun UUID.sendText(block: SurfComponentBuilder.() -> Unit) = server.getPlayer(this)?.sendText(block)

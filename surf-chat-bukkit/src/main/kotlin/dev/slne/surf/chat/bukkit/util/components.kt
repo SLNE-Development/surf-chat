@@ -5,6 +5,7 @@ import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.bukkit.hook.LuckPermsHook
 import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
+import dev.slne.surf.chat.core.service.deletionService
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
@@ -12,6 +13,7 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.surfapi.core.api.messages.builder.SurfComponentBuilder
 import dev.slne.surf.surfapi.core.api.service.PlayerLookupService
 import kotlinx.coroutines.launch
+import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.event.ClickCallback
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.format.TextDecoration
@@ -30,32 +32,18 @@ fun SurfComponentBuilder.appendDelete(messageData: MessageData) = append(buildTe
     darkSpacer("]")
     darkSpacer(" ")
     clickEvent(ClickEvent.callback { clicked ->
-        val signature = messageData.signature ?: run {
-            clicked.sendText {
-                appendErrorPrefix()
-                error("Die Nachricht besitzt eine ungültige Signatur und konnte nicht gelöscht werden.")
-            }
-            return@callback
-        }
-
-
-        Bukkit.getServer().deleteMessage(signature)
-
         plugin.launch {
-            launch {
-                historyService.markDeleted(messageData.messageUuid, clicked.uuid())
-            }
+            val deleted = deletionService.deleteMessage(
+                messageData,
+                deleter = clicked,
+            )
 
-            val message = buildText {
-                appendInfoPrefix()
-                variableValue(clicked.name())
-                info(" hat eine Nachricht von ")
-                variableValue(PlayerLookupService.getUsername(messageData.sender) ?: messageData.sender.toString())
-                info(" gelöscht: ")
-                append(messageData.message)
+            if (!deleted) {
+                clicked.sendText {
+                    appendErrorPrefix()
+                    error("Die Nachricht besitzt eine ungültige Signatur und konnte nicht gelöscht werden.")
+                }
             }
-
-            Bukkit.broadcast(message, PermissionRegistry.TEAM_NOTIFY_DELETION)
         }
     })
     hoverEvent(buildText {
@@ -177,5 +165,25 @@ fun OffsetDateTime.formatAgo(): String {
         totalHours > 0 -> "%d.%02dh ago".format(totalHours, minutes)
         totalMinutes > 0 -> "%d.%02dm ago".format(totalMinutes, seconds)
         else -> "%d.%02ds ago".format(seconds, 0)
+    }
+}
+
+object Components {
+    object Deletion {
+        suspend fun createMessageDeletedTeamNotification(deleter: Audience?, data: MessageData) = buildText {
+            val sender = data.senderUser()
+            val senderName = sender.lastKnownName ?: sender.uuid.toString()
+
+            appendInfoPrefix()
+            if (deleter != null) {
+                variableValue(deleter.nameOrUnknown())
+                info(" hat eine Nachricht von ")
+            } else {
+                info("Es wurde eine Nachricht von ")
+            }
+            variableValue(senderName)
+            info(" gelöscht: ")
+            append(data.message)
+        }
     }
 }

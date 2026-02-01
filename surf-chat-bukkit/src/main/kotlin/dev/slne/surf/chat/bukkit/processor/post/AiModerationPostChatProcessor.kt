@@ -20,7 +20,6 @@ import dev.slne.surf.punish.api.user.PunishmentUser
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
-import dev.slne.surf.surfapi.core.api.service.PlayerLookupService
 import net.kyori.adventure.text.event.ClickEvent
 import org.bukkit.Bukkit
 import java.awt.Color
@@ -50,7 +49,7 @@ object AiModerationPostChatProcessor : PostChatProcessor {
             return
         }
 
-        val name = PlayerLookupService.getUsername(messageData.sender) ?: messageData.sender.toString()
+        val name = messageData.senderUser().lastKnownName ?: messageData.sender.toString()
 
         postWebhook(messageContext, classification)
 

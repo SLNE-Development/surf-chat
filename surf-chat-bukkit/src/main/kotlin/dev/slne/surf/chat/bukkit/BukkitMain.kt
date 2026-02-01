@@ -1,7 +1,6 @@
 package dev.slne.surf.chat.bukkit
 
 import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
-import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.api.processor.chatProcessorRegistry
 import dev.slne.surf.chat.bukkit.config.AiModerationConfig
 import dev.slne.surf.chat.bukkit.config.SurfChatConfigProvider
@@ -53,14 +52,11 @@ class BukkitMain : SuspendingJavaPlugin() {
         DisconnectListener().register()
         ConnectListener.register()
 
-        launch {
-            databaseLoader.connect(plugin.dataPath)
+        databaseLoader.connect(plugin.dataPath)
 
-            denylistService.fetch()
-            denylistActionService.fetchActions()
-            functionalityService.fetch(surfCoreApi.getCurrentServerName())
-        }
-        redisLoader.connect()
+        denylistService.fetch()
+        denylistActionService.fetchActions()
+        functionalityService.fetch(surfCoreApi.getCurrentServerName())
     }
 
     override suspend fun onDisableAsync() {

@@ -30,7 +30,6 @@ fun Cancellable.cancel() {
     isCancelled = true
 }
 
-fun Component.plainText(): String = PlainTextComponentSerializer.plainText().serialize(this)
 
 fun Long.coloredComponent(good: Long = 200L, okay: Long = 1000L) =
     buildText {

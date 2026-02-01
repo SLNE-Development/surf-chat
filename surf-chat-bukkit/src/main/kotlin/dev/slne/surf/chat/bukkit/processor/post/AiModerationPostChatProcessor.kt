@@ -13,7 +13,7 @@ import dev.slne.surf.chat.bukkit.redis.event.TeamMessageRedisEvent
 import dev.slne.surf.chat.bukkit.redisApi
 import dev.slne.surf.chat.bukkit.util.appendBotIcon
 import dev.slne.surf.chat.bukkit.util.hasPermission
-import dev.slne.surf.chat.bukkit.util.uuidOrNull
+import dev.slne.surf.chat.core.service.deletionService
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.punish.api.punishment.PunishType
 import dev.slne.surf.punish.api.user.PunishmentUser
@@ -83,24 +83,21 @@ object AiModerationPostChatProcessor : PostChatProcessor {
                                     text("Klicke hier, um die Nachricht zu löschen", Colors.RED)
                                 }
                             )
-                            clickEvent(ClickEvent.callback {
-                                val signature = messageData.signature
-
-                                if (signature == null) {
-                                    it.sendText {
-                                        appendErrorPrefix()
-                                        error("Die Nachricht konnte nicht gelöscht werden!")
-                                    }
-                                    return@callback
-                                }
-
-                                Bukkit.getServer().deleteMessage(signature)
+                            clickEvent(ClickEvent.callback { clicked ->
                                 plugin.launch {
-                                    historyService.markDeleted(
-                                        messageData.messageUuid,
-                                        it.uuidOrNull(),
-                                        "AI classification: ${classification.action.name}"
+                                    val deleted = deletionService.deleteMessage(
+                                        messageData,
+                                        deleter = clicked,
+                                        deletionReason = "AI classification: ${classification.action.name}",
+                                        notifyTeam = false
                                     )
+
+                                    if (!deleted) {
+                                        clicked.sendText {
+                                            appendErrorPrefix()
+                                            error("Die Nachricht konnte nicht gelöscht werden!")
+                                        }
+                                    }
                                 }
                             })
                         }

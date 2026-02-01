@@ -11,8 +11,6 @@ import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.surfapi.core.api.messages.builder.SurfComponentBuilder
-import dev.slne.surf.surfapi.core.api.service.PlayerLookupService
-import kotlinx.coroutines.launch
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.event.ClickCallback
 import net.kyori.adventure.text.event.ClickEvent

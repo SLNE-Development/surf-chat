@@ -19,7 +19,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
-import java.util.UUID
+import java.util.*
 import kotlin.time.Duration.Companion.minutes
 
 /**
@@ -82,7 +82,11 @@ object MessageFormatter {
         variableValue("Dir")
         darkSpacer(" >> ")
         append(updateLinks(messageData.message))
-        hoverEvent(buildText { appendMessageData(senderUser.lastKnownName ?: senderUser.uuid.toString(), messageData) })
+        hoverEvent(buildText {
+            appendMessageData(
+                senderUser.lastKnownName ?: senderUser.uuid.toString(), messageData
+            )
+        })
         clickSuggestsCommand("/msg ${senderUser.lastKnownName} ")
     }
 
@@ -216,7 +220,9 @@ object MessageFormatter {
                 .match(regex.toPattern())
                 .replacement { match ->
                     val raw = match.build().plain()
+                    val hasAt = raw.startsWith("@")
                     val clean = raw.removePrefix("@").lowercase()
+
                     val player = playerMap[clean] ?: return@replacement match
 
                     if (player.uniqueId == viewerUuid) {
@@ -224,7 +230,7 @@ object MessageFormatter {
                     }
 
                     buildText {
-                        text("@${player.name}")
+                        text((if (hasAt) "@" else "@") + player.name)
                         color(Colors.VARIABLE_VALUE)
                         decorate(TextDecoration.BOLD)
                         clickSuggestsCommand("/msg ${player.name} ")
@@ -232,6 +238,7 @@ object MessageFormatter {
                 }
                 .build()
         )
+
 
         if (viewerMentioned && SettingsHook.hasChatPingsEnabled(viewerUuid)) {
             Bukkit.getPlayer(viewerUuid)?.playSound(true) {

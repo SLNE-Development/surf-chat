@@ -1,20 +1,19 @@
 package dev.slne.surf.chat.bukkit.command
 
-import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.greedyStringArgument
-import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.redis.event.TeamchatMessageRedisEvent
 import dev.slne.surf.chat.bukkit.redisApi
-import dev.slne.surf.chat.bukkit.util.user
 import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.core.api.common.surfCoreApi
+import dev.slne.surf.surfapi.bukkit.api.command.executors.playerExecutorSuspend
 import net.kyori.adventure.text.Component
+import java.time.OffsetDateTime
 import java.util.*
 
 fun teamchatCommand() = commandAPICommand("teamchat", plugin) {
@@ -22,16 +21,16 @@ fun teamchatCommand() = commandAPICommand("teamchat", plugin) {
     greedyStringArgument("message")
     withPermission(PermissionRegistry.COMMAND_TEAMCHAT)
 
-    playerExecutor { player, args ->
+    playerExecutorSuspend { player, args ->
         val message: String by args
         val messageComponent = Component.text(message)
         val messageId = UUID.randomUUID()
         val messageData = MessageData(
             messageComponent,
             messageId,
-            player.user() ?: return@playerExecutor,
+            player.uniqueId,
             null,
-            System.currentTimeMillis(),
+            OffsetDateTime.now(),
             surfCoreApi.getCurrentServerName(),
             null,
             MessageType.TEAM
@@ -41,10 +40,8 @@ fun teamchatCommand() = commandAPICommand("teamchat", plugin) {
             TeamchatMessageRedisEvent(
                 messageData
             )
-        )
+        ).await()
 
-        plugin.launch {
-            historyService.logMessage(messageData)
-        }
+        historyService.logMessage(messageData)
     }
 }

@@ -11,12 +11,12 @@ object FormatPreChatProcessor : PreChatProcessor {
 
     override fun process(context: MessageContext): MessageContext {
         val data = context.messageData
-        val messageFormatter = MessageFormatter()
+        val messageFormatter = MessageFormatter
 
         if (data.type == MessageType.GLOBAL) {
-            context.render = { viewer ->
+            context.render = { viewerUuid, _ ->
                 messageFormatter.formatGlobal(
-                    data.withReceiver(viewer)
+                    data.withReceiver(viewerUuid)
                 )
             }
         }

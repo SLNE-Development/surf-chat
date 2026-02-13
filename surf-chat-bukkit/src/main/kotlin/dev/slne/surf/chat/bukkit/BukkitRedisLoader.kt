@@ -7,10 +7,9 @@ val redisLoader = BukkitRedisLoader()
 val redisApi get() = redisLoader.redisApi
 
 class BukkitRedisLoader {
-    lateinit var redisApi: RedisApi
+    val redisApi = RedisApi.create()
 
     fun connect() {
-        redisApi = RedisApi.create()
         redisApi.subscribeToEvents(RedisEventListener)
         redisApi.freezeAndConnect()
     }

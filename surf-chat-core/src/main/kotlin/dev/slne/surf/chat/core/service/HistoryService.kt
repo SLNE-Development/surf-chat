@@ -4,7 +4,9 @@ import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.surfapi.core.api.util.requiredService
+import it.unimi.dsi.fastutil.objects.ObjectList
 import it.unimi.dsi.fastutil.objects.ObjectSet
+import java.time.OffsetDateTime
 import java.util.*
 
 /**
@@ -28,14 +30,17 @@ interface HistoryService {
      * @param filter The filter criteria to use for querying the chat history.
      * @return An ObjectSet containing the history entries that match the filter.
      */
-    suspend fun findHistoryEntry(filter: HistoryFilter): ObjectSet<HistoryEntry>
+    suspend fun findHistoryEntry(filter: HistoryFilter): ObjectList<HistoryEntry>
 
     /**
-     * Checks if a lookup operation is currently running in the system.
+     * Retrieves the count of available lookup attempts or operations allowed.
      *
-     * @return `true` if a lookup operation is in progress, `false` otherwise.
+     * This method is intended to provide a numerical representation of how many
+     * lookup actions can currently be performed without exceeding any configured limitations.
+     *
+     * @return The number of lookup operations currently available.
      */
-    suspend fun isLookupRunning(): Boolean
+    suspend fun availableLookups(): Int
 
     /**
      * Marks a message as deleted in the chat history.
@@ -45,7 +50,9 @@ interface HistoryService {
      */
     suspend fun markDeleted(
         messageUuid: UUID,
-        deleter: String
+        deletedBy: UUID?,
+        deletionReason: String? = null,
+        deletedAt: OffsetDateTime = OffsetDateTime.now()
     )
 
     /**

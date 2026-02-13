@@ -1,5 +1,6 @@
 package dev.slne.surf.chat.api.entry
 
+import dev.slne.surf.surfapi.core.api.serializer.java.datetime.datetime.offset.SerializableOffsetDateTime
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import java.util.*
@@ -24,15 +25,6 @@ data class IgnoreListEntry(
     val user: @Contextual UUID,
 
     /**
-     * Represents the name associated with the ignore list entry.
-     *
-     * This property is typically used to store the display name or username
-     * of the individual who is involved in the ignore list operation, whether
-     * as the initiator or target of the action.
-     */
-    val name: String,
-
-    /**
      * Represents the unique identifier of the target user in the ignore list entry.
      *
      * This property corresponds to the user being ignored in the ignore list system.
@@ -42,15 +34,6 @@ data class IgnoreListEntry(
     val target: @Contextual UUID,
 
     /**
-     * Represents the name of the target associated with an ignore list entry.
-     *
-     * This property holds the display name or identifier of the user being ignored. It is used
-     * to provide a human-readable representation of the target user in contexts such as
-     * listing ignored users or retrieving ignore list details.
-     */
-    val targetName: String,
-
-    /**
      * Represents the timestamp (in milliseconds since the epoch) when the entry was created.
      *
      * This property is utilized to record the creation time of an entry, enabling
@@ -58,5 +41,6 @@ data class IgnoreListEntry(
      * It is particularly useful in systems where the chronological order
      * or historical context of entries is relevant.
      */
-    val createdAt: Long
-)
+    val createdAt: SerializableOffsetDateTime
+){
+}

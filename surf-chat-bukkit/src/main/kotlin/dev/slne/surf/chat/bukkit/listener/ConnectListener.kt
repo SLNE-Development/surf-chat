@@ -1,27 +1,29 @@
 package dev.slne.surf.chat.bukkit.listener
 
-import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.bukkit.hook.MiniPlaceholdersHook
 import dev.slne.surf.chat.bukkit.message.MessageFormatter
 import dev.slne.surf.chat.bukkit.plugin
-import dev.slne.surf.chat.core.service.userService
+import dev.slne.surf.chat.core.service.ignoreService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
-import kotlinx.coroutines.Dispatchers
+import io.papermc.paper.event.connection.configuration.AsyncPlayerConnectionConfigureEvent
+import kotlinx.coroutines.runBlocking
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 
 object ConnectListener : Listener {
     @EventHandler
-    fun onJoin(event: PlayerJoinEvent) {
+    fun onAsyncPlayerConnectionConfigure(event: AsyncPlayerConnectionConfigureEvent) {
         MessageFormatter.dirty = true
 
-        plugin.launch(Dispatchers.IO) {
-            val user = userService.loadUserOrCreateByUuid(event.player.uniqueId, event.player.name)
-
-            userService.cacheUser(user)
+        runBlocking {
+            val uuid = event.connection.profile.id ?: error("Player has no UUID")
+            ignoreService.loadIgnoreList(uuid)
         }
+    }
 
+    @EventHandler
+    fun onPlayerJoin(event: PlayerJoinEvent) {
         if (plugin.connectionMessageConfig.enabled) {
             event.joinMessage(
                 MiniPlaceholdersHook.parse(

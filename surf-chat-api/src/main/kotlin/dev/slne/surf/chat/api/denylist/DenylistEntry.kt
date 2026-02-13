@@ -1,5 +1,9 @@
 package dev.slne.surf.chat.api.denylist
 
+import dev.slne.surf.core.api.common.surfCoreApi
+import java.time.OffsetDateTime
+import java.util.*
+
 /**
  * Represents an entry in the denylist system.
  *
@@ -12,7 +16,9 @@ package dev.slne.surf.chat.api.denylist
 data class DenylistEntry(
     val word: String,
     val reason: String,
-    val addedBy: String,
-    val addedAt: Long,
+    val addedBy: UUID?,
+    val addedAt: OffsetDateTime,
     val action: DenylistAction
-)
+) {
+    suspend fun addedBy() = addedBy?.let { surfCoreApi.getOfflinePlayer(it) }
+}

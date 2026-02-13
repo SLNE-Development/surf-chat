@@ -4,136 +4,85 @@ import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.denylist.DenylistAction
 import dev.slne.surf.chat.api.denylist.DenylistEntry
 import dev.slne.surf.chat.core.service.DenylistService
-import dev.slne.surf.chat.core.service.denylistActionService
-import dev.slne.surf.chat.fallback.table.DenylistActionsTable
-import dev.slne.surf.chat.fallback.table.DenylistTable
-import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.eq
-import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.deleteAll
-import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.deleteWhere
-import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.insert
-import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.selectAll
-import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.transactions.suspendTransaction
-import dev.slne.surf.surfapi.core.api.util.mutableObjectListOf
+import dev.slne.surf.chat.fallback.repository.denylist.DenyListRepository
 import dev.slne.surf.surfapi.core.api.util.toObjectList
+import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import it.unimi.dsi.fastutil.objects.ObjectList
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
 import net.kyori.adventure.util.Services
+import java.time.OffsetDateTime
+import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 @AutoService(DenylistService::class)
 class DenylistServiceImpl : DenylistService, Services.Fallback {
-    val entries = mutableObjectListOf<DenylistEntry>()
+    private val cache = ConcurrentHashMap<String, DenylistEntry>()
 
     override suspend fun addEntry(
         word: String,
         reason: String,
-        addedBy: String,
-        addedAt: Long,
+        addedByUuid: UUID?,
         action: DenylistAction
-    ) = suspendTransaction {
-        val action =
-            DenylistActionsTable.selectAll().where(DenylistActionsTable.name eq action.name)
-                .map { row -> row[DenylistActionsTable.id] }
-                .firstOrNull() ?: error("Denylist action not found: ${action.name}")
-
-        DenylistTable.insert {
-            it[this.word] = word
-            it[this.reason] = reason
-            it[this.addedBy] = addedBy
-            it[this.addedAt] = addedAt
-            it[this.action] = action.value
-        }
-
-        return@suspendTransaction
+    ) {
+        DenyListRepository.createDenylistEntry(word, reason, addedByUuid, action.name)
     }
 
     override fun addLocalEntry(
         word: String,
         reason: String,
-        addedBy: String,
-        addedAt: Long,
+        addedBy: UUID?,
+        addedAt: OffsetDateTime,
         action: DenylistAction
     ) {
-        entries.add(
-            DenylistEntry(
-                word, reason, addedBy, addedAt, action
-            )
-        )
+        val entry = DenylistEntry(word, reason, addedBy, addedAt, action)
+        val old = cache.put(word, entry)
+        if (old != null) {
+            error("Denylist entry already exists: $word")
+        }
     }
 
     override fun removeLocalEntry(word: String) {
-        entries.removeIf { it.word == word }
+        cache.remove(word)
     }
 
     override fun hasLocalEntry(word: String): Boolean {
-        return entries.any { it.word == word }
+        return cache.containsKey(word)
     }
 
     override fun getLocalEntry(word: String): DenylistEntry? {
-        return entries.find { it.word == word }
+        return cache[word]
     }
 
     override fun clearLocalEntries() {
-        entries.clear()
+        cache.clear()
     }
 
-    override suspend fun clearEntries() = suspendTransaction {
-        DenylistTable.deleteAll()
+    override suspend fun clearEntries(): Int {
+        return DenyListRepository.deleteAll()
     }
 
     override fun getLocalEntries(): ObjectList<DenylistEntry> {
-        return entries
+        return ObjectArrayList(cache.values)
     }
 
-    override suspend fun removeEntry(word: String) = suspendTransaction {
-
-        DenylistTable.deleteWhere {
-            DenylistTable.word eq word
-        }
-        return@suspendTransaction
+    override suspend fun removeEntry(word: String) {
+        DenyListRepository.deleteByWord(word)
     }
 
-    override suspend fun hasEntry(word: String) = suspendTransaction {
-        DenylistTable.selectAll().where(DenylistTable.word eq word).map {
-            it[DenylistTable.word]
-        }.firstOrNull() != null
+    override suspend fun hasEntry(word: String): Boolean {
+        return DenyListRepository.existsEntryByWord(word)
     }
 
-    override suspend fun getEntry(word: String) = suspendTransaction {
-        DenylistTable.selectAll().where(DenylistTable.word eq word).map {
-            val denylistAction = denylistActionService.getActionById(it[DenylistTable.action])
-                ?: error("Denylist action not found with id: ${it[DenylistTable.action]}")
-
-            DenylistEntry(
-                word = it[DenylistTable.word],
-                reason = it[DenylistTable.reason],
-                addedBy = it[DenylistTable.addedBy],
-                addedAt = it[DenylistTable.addedAt],
-                action = denylistAction
-            )
-        }.firstOrNull()
+    override suspend fun getEntry(word: String): DenylistEntry? {
+        return DenyListRepository.findEntryByWord(word)
     }
 
-    override suspend fun getEntries(): ObjectList<DenylistEntry> =
-        suspendTransaction {
-            DenylistTable.selectAll().map {
-                val denylistAction = denylistActionService.getActionById(it[DenylistTable.action])
-                    ?: error("Denylist action not found with id: ${it[DenylistTable.action]}")
+    override suspend fun getEntries(): ObjectList<DenylistEntry> {
+        return DenyListRepository.findAllEntries().toObjectList()
+    }
 
-                DenylistEntry(
-                    word = it[DenylistTable.word],
-                    reason = it[DenylistTable.reason],
-                    addedBy = it[DenylistTable.addedBy],
-                    addedAt = it[DenylistTable.addedAt],
-                    action = denylistAction
-                )
-            }.toList().toObjectList()
-        }
-
-    override suspend fun fetch() = suspendTransaction {
-        entries.clear()
-        entries.addAll(getEntries())
-        return@suspendTransaction
+    override suspend fun fetch() {
+        val newEntries = getEntries().associateBy { it.word }
+        clearLocalEntries()
+        cache.putAll(newEntries)
     }
 }

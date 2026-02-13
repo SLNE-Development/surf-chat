@@ -2,11 +2,11 @@ package dev.slne.surf.chat.fallback.table
 
 import dev.slne.surf.chat.api.denylist.DenylistActionType
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.dao.id.LongIdTable
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.dao.id.ULongIdTable
 
-object DenylistActionsTable : LongIdTable("chat_denylist_actions") {
-    var name = varchar("name", 64).uniqueIndex()
-    var actionType =
-        varchar("action_type", 16).transform({ DenylistActionType.valueOf(it) }, { it.toString() })
-    var reason = largeText("reason")
-    var duration = long("duration")
+object DenylistActionsTable : ULongIdTable("chat_denylist_actions") {
+    val name = char("name", 255).uniqueIndex()
+    val actionType = enumerationByName<DenylistActionType>("action_type", 16)
+    val reason = largeText("reason")
+    val duration = long("duration")
 }

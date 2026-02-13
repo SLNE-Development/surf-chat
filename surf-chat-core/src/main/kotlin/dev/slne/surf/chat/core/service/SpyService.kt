@@ -1,7 +1,6 @@
 package dev.slne.surf.chat.core.service
 
 import dev.slne.surf.surfapi.core.api.util.requiredService
-import it.unimi.dsi.fastutil.objects.ObjectList
 import java.util.*
 
 /**
@@ -13,45 +12,37 @@ interface SpyService {
     /**
      * Retrieves the list of spies monitoring a specific player's private messages.
      *
-     * @param player The UUID of the player whose private message spies are to be fetched.
+     * @param observed The UUID of the player whose private message spies are to be fetched.
      * @return A list of UUIDs representing the spies currently monitoring the player's private messages.
      */
-    fun getPrivateMessageSpies(player: UUID): ObjectList<UUID>
+    fun getObservingPlayers(observed: UUID): Set<UUID>
 
     /**
      * Adds a spy for monitoring private messages between a specified player and target.
      *
-     * @param player The UUID of the player who will act as the spy.
-     * @param target The UUID of the target player whose private messages will be monitored by the spy.
+     * @param spy The UUID of the player who will act as the spy.
+     * @param observed The UUID of the target player whose private messages will be monitored by the spy.
      * @return `true` if the spy was successfully added, `false` otherwise.
      */
-    fun addPrivateMessageSpy(player: UUID, target: UUID): Boolean
+    fun addPrivateMessageSpy(spy: UUID, observed: UUID): Boolean
 
     /**
      * Removes spying on private messages between the specified player and target.
      *
-     * @param player The UUID of the player who previously had spying access.
-     * @param target The UUID of the target whose private messages were being spied on.
+     * @param spy The UUID of the player who previously had spying access.
+     * @param observed The UUID of the target whose private messages were being spied on.
      * @return `true` if the spying access was successfully removed, otherwise `false`.
      */
-    fun removePrivateMessageSpy(player: UUID, target: UUID): Boolean
+    fun removePrivateMessageSpy(spy: UUID, observed: UUID): Boolean
 
-
-    /**
-     * Checks if the specified player has spies monitoring their private messages.
-     *
-     * @param player The UUID of the player to check for private message spies.
-     * @return `true` if the player has private message spies, `false` otherwise.
-     */
-    fun hasPrivateMessageSpies(player: UUID): Boolean
 
     /**
      * Checks if the specified player is currently set as spying on private messages.
      *
-     * @param player The UUID of the player to check for private message spying status.
+     * @param spy The UUID of the player to check for private message spying status.
      * @return `true` if the player is spying on private messages, `false` otherwise.
      */
-    fun isPrivateMessageSpying(player: UUID): Boolean
+    fun isPrivateMessageSpying(spy: UUID): Boolean
 
     /**
      * Clears all spies monitoring private messages for the specified player.
@@ -59,9 +50,9 @@ interface SpyService {
      * This method removes all spying access associated with the player's private messages,
      * ensuring that no spies are currently monitoring their communications.
      *
-     * @param player The UUID of the player whose private message spies are to be cleared.
+     * @param spy The UUID of the player whose private message spies are to be cleared.
      */
-    fun clearPrivateMessageSpies(player: UUID)
+    fun clearPrivateMessageSpies(spy: UUID)
 
     /**
      * Cleans up spy-related tracking or data associated with the specified player.

@@ -1,11 +1,11 @@
 package dev.slne.surf.chat.fallback.table
 
-import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.dao.id.LongIdTable
+import dev.slne.surf.database.columns.nativeUuid
+import dev.slne.surf.database.table.AuditableLongIdTable
 
-object DenylistTable : LongIdTable("chat_denylist_entries") {
-    val word = varchar("word", 255).uniqueIndex()
+object DenylistTable : AuditableLongIdTable("chat_denylist_entries") {
+    val word = char("word", 255).uniqueIndex()
     val reason = text("reason")
-    val addedBy = varchar("added_by", 16)
-    val addedAt = long("added_at")
-    val action = long("action_id").references(DenylistActionsTable.id)
+    val addedBy = nativeUuid("added_by_uuid").nullable().default(null)
+    val action = reference("action_id", DenylistActionsTable.id)
 }

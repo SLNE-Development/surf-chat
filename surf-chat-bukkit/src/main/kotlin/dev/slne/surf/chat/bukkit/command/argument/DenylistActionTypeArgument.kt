@@ -12,7 +12,7 @@ class DenylistActionTypeArgument(nodeName: String) :
     CustomArgument<DenylistActionType, String>(StringArgument(nodeName), { info ->
         when (info.input()) {
             "kick" -> DenylistActionType.KICK
-            "ban" -> DenylistActionType.EXPIREABLE_BAN
+            "ban" -> DenylistActionType.EXPIRABLE_BAN
             "mute" -> DenylistActionType.MUTE
             "warn" -> DenylistActionType.WARN
             "communityban" -> DenylistActionType.COMMUNITY_BAN

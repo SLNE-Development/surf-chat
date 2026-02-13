@@ -4,12 +4,12 @@ package dev.slne.surf.chat.bukkit.message
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.sksamuel.aedile.core.expireAfterWrite
-import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.bukkit.hook.SettingsHook
 import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.*
+import dev.slne.surf.surfapi.bukkit.api.extensions.server
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.*
 import net.kyori.adventure.text.Component
@@ -19,6 +19,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
+import java.util.UUID
 import kotlin.time.Duration.Companion.minutes
 
 /**
@@ -28,7 +29,7 @@ import kotlin.time.Duration.Companion.minutes
  * Each method accepts message data and returns a formatted `Component` object suitable for the
  * specific context in which the message will be displayed or processed.
  */
-class MessageFormatter {
+object MessageFormatter {
     private val linkRegex = Regex("(?i)\\b((https?://)?[\\w-]+(\\.[\\w-]+)+(/\\S*)?)\\b")
     private val itemRegex = Regex("\\[(?i)item]")
     private val nameRegexCache = Caffeine.newBuilder()
@@ -37,47 +38,56 @@ class MessageFormatter {
             Regex("\\b@?${Regex.escape(name)}\\b")
         }
 
+    @Volatile
+    var cachedRegex: Regex? = null
+
+    @Volatile
+    var cachedPlayerMap: Map<String, Player> = emptyMap()
+
+    @Volatile
+    var dirty = true
+
     fun formatGlobal(messageData: MessageData) = buildText {
         val viewer = messageData.receiver ?: return Component.empty()
-        val player = messageData.sender.player() ?: return Component.empty()
+        val senderPlayer = server.getPlayer(messageData.sender) ?: return Component.empty()
 
         if (viewer.hasPermission(PermissionRegistry.COMMAND_SURFCHAT_DELETE)) {
             appendDelete(messageData)
         }
 
         if (viewer.hasPermission(PermissionRegistry.COMMAND_SURFCHAT_TELEPORT)) {
-            appendTeleport(messageData.sender.name, viewer)
+            appendTeleport(senderPlayer.name, senderPlayer.uniqueId)
         }
 
-        appendName(player)
+        appendName(senderPlayer)
         darkSpacer(" >> ")
         append(
             formatItemTag(
                 updateLinks(highlightPlayers(messageData.message, viewer)),
-                player
+                senderPlayer
             )
         )
-        hoverEvent(buildText { appendMessageData(messageData) })
-        clickSuggestsCommand("/msg ${player.name} ")
+        hoverEvent(buildText { appendMessageData(senderPlayer.name, messageData) })
+        clickSuggestsCommand("/msg ${senderPlayer.name} ")
     }
 
-    fun formatIncomingPm(messageData: MessageData) = buildText {
-        val senderName = messageData.sender.name
+    suspend fun formatIncomingPm(messageData: MessageData) = buildText {
+        val senderUser = messageData.senderUser()
 
         darkSpacer(">> ")
         text("PM", Colors.RED)
         darkSpacer(" | ")
-        variableValue(senderName)
+        variableValue(senderUser.lastKnownName ?: senderUser.uuid.toString())
         darkSpacer(" -> ")
         variableValue("Dir")
         darkSpacer(" >> ")
         append(updateLinks(messageData.message))
-        hoverEvent(buildText { appendMessageData(messageData) })
-        clickSuggestsCommand("/msg $senderName ")
+        hoverEvent(buildText { appendMessageData(senderUser.lastKnownName ?: senderUser.uuid.toString(), messageData) })
+        clickSuggestsCommand("/msg ${senderUser.lastKnownName} ")
     }
 
-    fun formatOutgoingPm(messageData: MessageData) = buildText {
-        val receiverName = messageData.receiver?.name ?: "Error"
+    suspend fun formatOutgoingPm(messageData: MessageData) = buildText {
+        val receiverName = messageData.receiverUser()?.lastKnownName ?: "Error"
 
         darkSpacer(">> ")
         text("PM", Colors.RED)
@@ -88,12 +98,12 @@ class MessageFormatter {
         darkSpacer(" >> ")
         append(updateLinks(messageData.message))
 
-        hoverEvent(buildText { appendMessageData(messageData) })
+        hoverEvent(buildText { appendMessageData(receiverName, messageData) })
         clickSuggestsCommand("/msg $receiverName ")
     }
 
     fun formatTeamchat(messageData: MessageData) = buildText {
-        val player = messageData.sender.player() ?: return Component.empty()
+        val player = Bukkit.getPlayer(messageData.sender) ?: return Component.empty()
 
         darkSpacer(">> ")
         text("TEAM", Colors.RED, TextDecoration.BOLD)
@@ -102,30 +112,33 @@ class MessageFormatter {
         darkSpacer(" >> ")
         append(updateLinks(formatItemTag(messageData.message, player)))
 
-        hoverEvent(buildText { appendMessageData(messageData) })
+        hoverEvent(buildText { appendMessageData(player.name, messageData) })
         clickSuggestsCommand("/teamchat ")
     }
 
-    fun formatPmSpy(messageData: MessageData) = buildText {
+    suspend fun formatPmSpy(messageData: MessageData) = buildText {
         val receiver = messageData.receiver ?: return Component.empty()
+        val receiverUser = messageData.receiverUser()
+        val receiverName = receiverUser?.lastKnownName ?: return Component.empty()
+        val senderName = messageData.senderUser().lastKnownName ?: return Component.empty()
 
         appendSpyIcon()
         appendSpace()
 
         if (receiver.hasPermission(PermissionRegistry.COMMAND_SURFCHAT_TELEPORT)) {
-            appendTeleport(messageData.sender.name, receiver)
+            appendTeleport(receiverName, receiver)
         }
 
-        variableValue(messageData.sender.name)
+        variableValue(senderName)
         appendSpace()
         darkSpacer("-->")
         appendSpace()
-        variableValue(receiver.name)
+        variableValue(receiverName)
         spacer(":")
         appendSpace()
         append(updateLinks(messageData.message))
-        hoverEvent(buildText { appendMessageData(messageData) })
-        clickSuggestsCommand("/msg ${messageData.sender.name} ")
+        hoverEvent(buildText { appendMessageData(senderName, messageData) })
+        clickSuggestsCommand("/msg $senderName ")
     }
 
 
@@ -187,7 +200,7 @@ class MessageFormatter {
     }
 
 
-    private fun highlightPlayers(rawMessage: Component, viewer: User): Component {
+    private fun highlightPlayers(rawMessage: Component, viewerUuid: UUID): Component {
         ensureMentionCache()
 
         val regex = cachedRegex ?: return rawMessage
@@ -206,7 +219,7 @@ class MessageFormatter {
                     val clean = raw.removePrefix("@").lowercase()
                     val player = playerMap[clean] ?: return@replacement match
 
-                    if (player.uniqueId == viewer.uuid) {
+                    if (player.uniqueId == viewerUuid) {
                         viewerMentioned = true
                     }
 
@@ -220,8 +233,8 @@ class MessageFormatter {
                 .build()
         )
 
-        if (viewerMentioned && SettingsHook.hasChatPingsEnabled(viewer.uuid)) {
-            Bukkit.getPlayer(viewer.uuid)?.playSound(true) {
+        if (viewerMentioned && SettingsHook.hasChatPingsEnabled(viewerUuid)) {
+            Bukkit.getPlayer(viewerUuid)?.playSound(true) {
                 type(Sound.ENTITY_CHICKEN_EGG)
             }
         }
@@ -254,15 +267,4 @@ class MessageFormatter {
         return message
     }
 
-    companion object {
-        @Volatile
-        var cachedRegex: Regex? = null
-
-        @Volatile
-        var cachedPlayerMap: Map<String, Player> = emptyMap()
-
-        @Volatile
-        var dirty = true
-
-    }
 }

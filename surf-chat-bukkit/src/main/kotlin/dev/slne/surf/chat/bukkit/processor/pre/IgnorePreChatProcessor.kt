@@ -1,11 +1,11 @@
 package dev.slne.surf.chat.bukkit.processor.pre
 
-import dev.slne.surf.chat.api.entity.User
 import dev.slne.surf.chat.api.message.MessageContext
 import dev.slne.surf.chat.api.processor.PreChatProcessor
 import dev.slne.surf.chat.bukkit.processor.ProcessorOrder
-import dev.slne.surf.chat.bukkit.util.ignores
 import dev.slne.surf.chat.bukkit.util.sendText
+import dev.slne.surf.chat.core.service.ignoreService
+import java.util.*
 
 object IgnorePreChatProcessor : PreChatProcessor {
     override val order = ProcessorOrder.IGNORE
@@ -25,11 +25,11 @@ object IgnorePreChatProcessor : PreChatProcessor {
         return context
     }
 
-    private fun isIgnored(player: User?, sender: User): Boolean {
-        if (player == null) {
+    private fun isIgnored(receiver: UUID?, sender: UUID): Boolean {
+        if (receiver == null) {
             return false
         }
 
-        return player.ignores(sender.uuid)
+        return ignoreService.isIgnored(receiver, sender)
     }
 }

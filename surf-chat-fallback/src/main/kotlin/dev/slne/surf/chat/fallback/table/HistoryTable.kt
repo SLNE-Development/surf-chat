@@ -1,15 +1,20 @@
 package dev.slne.surf.chat.fallback.table
 
 import dev.slne.surf.chat.api.message.MessageType
-import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.dao.id.LongIdTable
+import dev.slne.surf.database.columns.nativeUuid
+import dev.slne.surf.database.columns.time.offsetDateTime
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.dao.id.ULongIdTable
 
-object HistoryTable : LongIdTable("chat_history") {
-    val messageUuid = uuid("message_uuid").uniqueIndex()
-    val senderUuid = uuid("sender_uuid")
-    val receiverUuid = uuid("receiver_uuid").nullable()
+object HistoryTable : ULongIdTable("chat_histories") {
+    val messageUuid = nativeUuid("message_uuid").uniqueIndex()
+    val senderUuid = nativeUuid("sender_uuid")
+    val receiverUuid = nativeUuid("receiver_uuid").nullable()
     val message = text("message")
-    val sentAt = long("sent_at")
-    val type = enumeration<MessageType>("type")
-    val server = text("server")
-    val deletedBy = text("deleted_by").nullable()
+    val sentAt = offsetDateTime("sent_at")
+    val type = enumerationByName<MessageType>("type", 16)
+    val server = char("server", 255)
+
+    val deletedAt = offsetDateTime("deleted_at").nullable().default(null)
+    val deletedBy = nativeUuid("deleted_by_uuid").nullable().default(null)
+    val deletionReason = text("deletion_reason").nullable().default(null)
 }

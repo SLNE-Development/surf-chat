@@ -7,18 +7,19 @@ import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.api.processor.chatProcessorRegistry
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.bukkit.util.cancel
-import dev.slne.surf.chat.bukkit.util.toUserOrThrow
+import dev.slne.surf.chat.bukkit.util.uuidOrNull
 import dev.slne.surf.core.api.common.surfCoreApi
 import io.papermc.paper.event.player.AsyncChatEvent
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import java.time.OffsetDateTime
 import java.util.*
 
 class AsyncChatListener : Listener {
     @EventHandler
     fun onAsyncChat(event: AsyncChatEvent) {
-        val time = System.currentTimeMillis()
-        val player = event.player.toUserOrThrow()
+        val sentAt = OffsetDateTime.now()
+        val sender = event.player
 
         val message = event.message()
         val messageId = UUID.randomUUID()
@@ -26,9 +27,9 @@ class AsyncChatListener : Listener {
         var data = MessageData(
             message,
             messageId,
-            player,
+            sender.uniqueId,
             null,
-            time,
+            sentAt,
             surfCoreApi.getCurrentServerName(),
             event.signedMessage().signature(),
             MessageType.GLOBAL
@@ -42,9 +43,7 @@ class AsyncChatListener : Listener {
         }
 
         event.renderer { _, _, _, viewer ->
-            viewer.toUserOrThrow().let {
-                result.render.invoke(it)
-            }
+            viewer.uuidOrNull()?.let { result.render(it, viewer) } ?: event.message()
         }
 
         plugin.launch {

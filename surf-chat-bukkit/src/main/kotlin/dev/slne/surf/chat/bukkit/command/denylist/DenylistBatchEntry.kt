@@ -5,6 +5,10 @@ import dev.slne.surf.chat.api.denylist.DenylistActionType
 import dev.slne.surf.chat.api.denylist.DenylistEntry
 import dev.slne.surf.chat.core.service.denylistActionService
 import dev.slne.surf.chat.core.service.denylistService
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import java.time.OffsetDateTime
+import java.util.*
 import kotlin.time.Duration
 
 /**
@@ -25,28 +29,33 @@ class DenylistBatchEntry private constructor(
     suspend fun execute() {
         denylistActionService.addAction(action)
         denylistActionService.addLocalAction(action)
-        entries.forEach {
-            denylistService.addEntry(
-                it.word,
-                it.reason,
-                it.addedBy,
-                it.addedAt,
-                it.action
-            )
-            denylistService.addLocalEntry(
-                it.word,
-                it.reason,
-                it.addedBy,
-                it.addedAt,
-                it.action
-            )
+
+        coroutineScope {
+            entries.forEach {
+                launch {
+                    denylistService.addEntry(
+                        it.word,
+                        it.reason,
+                        it.addedBy,
+                        it.action
+                    )
+                }
+
+                denylistService.addLocalEntry(
+                    it.word,
+                    it.reason,
+                    it.addedBy,
+                    it.addedAt,
+                    it.action
+                )
+            }
         }
     }
 
     class Builder {
         private val words = mutableListOf<String>()
         private var reason: String = "No reason specified"
-        private var staff: String = "System"
+        private var staff: UUID? = null
         private var actionType: DenylistActionType = DenylistActionType.WARN
         private var punishReason: String = "No punish reason specified"
         private var duration: Long = 0L
@@ -59,7 +68,7 @@ class DenylistBatchEntry private constructor(
             this.reason = reason
         }
 
-        fun withStaff(staff: String) = apply {
+        fun withStaff(staff: UUID) = apply {
             this.staff = staff
         }
 
@@ -76,7 +85,6 @@ class DenylistBatchEntry private constructor(
         }
 
         fun build(): DenylistBatchEntry {
-            val now = System.currentTimeMillis()
             val action = DenylistAction(
                 name = "${actionType.name.lowercase()}-$reason",
                 actionType = actionType,
@@ -89,7 +97,7 @@ class DenylistBatchEntry private constructor(
                     word = word,
                     reason = reason,
                     addedBy = staff,
-                    addedAt = now,
+                    addedAt = OffsetDateTime.now(),
                     action = action
                 )
             }

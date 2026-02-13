@@ -13,7 +13,7 @@ fun CommandAPICommand.functionalityStatusCommand() = subcommand("status") {
         player.sendText {
             appendInfoPrefix()
             info("Der Chat ist derzeit ")
-            variableValue(if (functionalityService.isLocalChatEnabled()) "aktiviert" else "deaktiviert")
+            variableValue(if (functionalityService.getFunctionalities().localChatEnabled) "aktiviert" else "deaktiviert")
             info(".")
         }
     }

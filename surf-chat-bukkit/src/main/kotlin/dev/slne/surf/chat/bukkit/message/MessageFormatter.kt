@@ -2,8 +2,6 @@
 
 package dev.slne.surf.chat.bukkit.message
 
-import com.github.benmanes.caffeine.cache.Caffeine
-import com.sksamuel.aedile.core.expireAfterWrite
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.bukkit.hook.SettingsHook
 import dev.slne.surf.chat.bukkit.permission.PermissionRegistry
@@ -19,8 +17,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
-import java.util.UUID
-import kotlin.time.Duration.Companion.minutes
+import java.util.*
 
 /**
  * Interface for formatting messages in various contexts within the chat system.
@@ -32,11 +29,6 @@ import kotlin.time.Duration.Companion.minutes
 object MessageFormatter {
     private val linkRegex = Regex("(?i)\\b((https?://)?[\\w-]+(\\.[\\w-]+)+(/\\S*)?)\\b")
     private val itemRegex = Regex("\\[(?i)item]")
-    private val nameRegexCache = Caffeine.newBuilder()
-        .expireAfterWrite(15.minutes)
-        .build<String, Regex> { name ->
-            Regex("\\b@?${Regex.escape(name)}\\b")
-        }
 
     @Volatile
     var cachedRegex: Regex? = null
@@ -82,7 +74,11 @@ object MessageFormatter {
         variableValue("Dir")
         darkSpacer(" >> ")
         append(updateLinks(messageData.message))
-        hoverEvent(buildText { appendMessageData(senderUser.lastKnownName ?: senderUser.uuid.toString(), messageData) })
+        hoverEvent(buildText {
+            appendMessageData(
+                senderUser.lastKnownName ?: senderUser.uuid.toString(), messageData
+            )
+        })
         clickSuggestsCommand("/msg ${senderUser.lastKnownName} ")
     }
 
@@ -196,7 +192,7 @@ object MessageFormatter {
             Regex.escape(it.name)
         }
 
-        cachedRegex = Regex("\\b@?($pattern)\\b", RegexOption.IGNORE_CASE)
+        cachedRegex = Regex("@?($pattern)\\b", RegexOption.IGNORE_CASE)
     }
 
 
@@ -215,16 +211,19 @@ object MessageFormatter {
             TextReplacementConfig.builder()
                 .match(regex.toPattern())
                 .replacement { match ->
-                    val raw = match.build().plain()
-                    val clean = raw.removePrefix("@").lowercase()
-                    val player = playerMap[clean] ?: return@replacement match
+                    val fullMatch = match.build().plain()
+                    val hasAt = fullMatch.startsWith("@")
+                    val name = fullMatch.removePrefix("@").lowercase()
+
+                    val player = playerMap[name] ?: return@replacement match
 
                     if (player.uniqueId == viewerUuid) {
                         viewerMentioned = true
                     }
 
                     buildText {
-                        text("@${player.name}")
+                        text("@")
+                        text(player.name)
                         color(Colors.VARIABLE_VALUE)
                         decorate(TextDecoration.BOLD)
                         clickSuggestsCommand("/msg ${player.name} ")
@@ -232,6 +231,8 @@ object MessageFormatter {
                 }
                 .build()
         )
+
+
 
         if (viewerMentioned && SettingsHook.hasChatPingsEnabled(viewerUuid)) {
             Bukkit.getPlayer(viewerUuid)?.playSound(true) {

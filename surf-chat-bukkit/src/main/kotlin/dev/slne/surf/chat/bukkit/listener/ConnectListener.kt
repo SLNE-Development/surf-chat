@@ -32,7 +32,7 @@ object ConnectListener : Listener {
                 buildText {
                     darkSpacer("[")
                     success("+")
-                    darkSpacer("]")
+                    darkSpacer("] ")
                     append(miniMessage.deserialize(LuckPermsHook.getPrefix(event.player) + event.player.name))
                 }
             )

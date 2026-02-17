@@ -24,7 +24,7 @@ class DisconnectListener : Listener {
                 buildText {
                     darkSpacer("[")
                     error("-")
-                    darkSpacer("]")
+                    darkSpacer("] ")
                     append(miniMessage.deserialize(LuckPermsHook.getPrefix(event.player) + event.player.name))
                 }
             )

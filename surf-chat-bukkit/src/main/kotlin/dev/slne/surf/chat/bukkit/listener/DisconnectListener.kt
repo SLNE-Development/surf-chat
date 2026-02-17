@@ -2,11 +2,13 @@ package dev.slne.surf.chat.bukkit.listener
 
 import com.destroystokyo.paper.event.player.PlayerConnectionCloseEvent
 import com.github.shynixn.mccoroutine.folia.launch
-import dev.slne.surf.chat.bukkit.hook.MiniPlaceholdersHook
+import dev.slne.surf.chat.bukkit.hook.LuckPermsHook
 import dev.slne.surf.chat.bukkit.message.MessageFormatter
 import dev.slne.surf.chat.bukkit.plugin
 import dev.slne.surf.chat.core.service.ignoreService
 import dev.slne.surf.chat.core.service.spyService
+import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import dev.slne.surf.surfapi.core.api.minimessage.miniMessage
 import kotlinx.coroutines.launch
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -19,10 +21,12 @@ class DisconnectListener : Listener {
 
         if (plugin.connectionMessageConfig.enabled) {
             event.quitMessage(
-                MiniPlaceholdersHook.parse(
-                    event.player,
-                    plugin.connectionMessageConfig.leaveMessage
-                )
+                buildText {
+                    darkSpacer("[")
+                    error("-")
+                    darkSpacer("]")
+                    append(miniMessage.deserialize(LuckPermsHook.getPrefix(event.player) + event.player.name))
+                }
             )
         } else {
             event.quitMessage(null)

@@ -10,7 +10,6 @@ class PaperLoader(
     val rabbitApi = ClientRabbitMQApi.create("surf-playtime", dataPath)
     val redisApi = RedisApi.create()
 
-    @Suppress("UnusedExpression")
     suspend fun onLoad() {
         // Rabbit
         rabbitApi.freezeAndConnect()

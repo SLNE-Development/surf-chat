@@ -1,0 +1,38 @@
+package dev.slne.surf.chat.paper.command.denylist.action
+
+import com.github.shynixn.mccoroutine.folia.launch
+import dev.jorel.commandapi.CommandAPICommand
+import dev.jorel.commandapi.kotlindsl.anyExecutor
+import dev.jorel.commandapi.kotlindsl.subcommand
+import dev.slne.surf.chat.paper.permission.PermissionRegistry
+import dev.slne.surf.chat.paper.plugin
+import dev.slne.surf.chat.paper.util.coloredComponent
+import dev.slne.surf.chat.core.service.denylistActionService
+import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
+import kotlin.system.measureTimeMillis
+
+fun CommandAPICommand.denylistActionFetchCommand() = subcommand("fetch") {
+    withPermission(PermissionRegistry.COMMAND_DENYLIST_ACTION_FETCH)
+    anyExecutor { executor, _ ->
+        executor.sendText {
+            appendInfoPrefix()
+            info("Die Denylist Aktionen werden aktualisiert...")
+        }
+
+        plugin.launch {
+            val ms = measureTimeMillis {
+                denylistActionService.fetchActions()
+            }
+
+            executor.sendText {
+                appendSuccessPrefix()
+                success("Die Denylist Aktionen wurde erfolgreich aktualisiert")
+                appendSpace()
+                spacer("(")
+                append(ms.coloredComponent(250))
+                spacer(")")
+                success("!")
+            }
+        }
+    }
+}

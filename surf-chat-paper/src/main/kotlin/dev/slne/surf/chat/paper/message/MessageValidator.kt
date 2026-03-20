@@ -1,0 +1,55 @@
+package dev.slne.surf.chat.paper.message
+
+import dev.slne.surf.chat.api.message.MessageData
+import dev.slne.surf.chat.api.message.MessageValidationResult
+import dev.slne.surf.chat.paper.permission.PermissionRegistry
+import dev.slne.surf.chat.paper.plugin
+import dev.slne.surf.chat.paper.util.hasPermission
+import dev.slne.surf.chat.core.service.denylistService
+import dev.slne.surf.chat.core.service.functionalityService
+import org.bukkit.Bukkit
+import java.util.*
+
+object MessageValidator {
+    fun validate(messageData: MessageData): MessageValidationResult {
+        val sender = messageData.sender
+        val message = messageData.plainMessage
+
+        if (sender.hasPermission(PermissionRegistry.BYPASS_FILTER)) {
+            return MessageValidationResult.Success()
+        }
+
+        if (this.checkAutoDisabling(sender)) {
+            return MessageValidationResult.Failure(MessageValidationResult.MessageValidationError.AutoDisabled())
+        }
+
+        if (!functionalityService.getFunctionalities().localChatEnabled && !sender.hasPermission(
+                PermissionRegistry.BYPASS_FUNCTIONALITY
+            )
+        ) {
+            return MessageValidationResult.Failure(MessageValidationResult.MessageValidationError.ChatDisabled())
+        }
+
+        if (message.isBlank()) {
+            return MessageValidationResult.Failure(MessageValidationResult.MessageValidationError.EmptyContent())
+        }
+
+        denylistService.getLocalEntries().find { message.contains(it.word, true) }
+            ?.let { entry ->
+                return MessageValidationResult.Failure(
+                    MessageValidationResult.MessageValidationError.DenylistedWord(
+                        entry
+                    )
+                )
+            }
+
+        return MessageValidationResult.Success()
+    }
+
+
+    fun checkAutoDisabling(player: UUID): Boolean =
+        !player.hasPermission(PermissionRegistry.BYPASS_DISABLING)
+                && Bukkit.getOnlinePlayers()
+            .count() > plugin.autoDisablingConfig.maximumPlayersBeforeDisable
+                && plugin.autoDisablingConfig.enabled
+}

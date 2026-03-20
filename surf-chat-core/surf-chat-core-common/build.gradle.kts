@@ -5,6 +5,11 @@ plugins {
     id("dev.slne.surf.microservice")
 }
 
+surfCoreApi {
+    withCoreCommon()
+    withSurfRedis()
+}
+
 dependencies {
     api(projects.surfChatApi)
 }

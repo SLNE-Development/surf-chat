@@ -2,7 +2,6 @@ package dev.slne.surf.chat.microservice.repository.history
 
 import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
-import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.microservice.table.HistoryTable
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.*
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.andWhere
@@ -17,14 +16,8 @@ import java.util.*
 
 object HistoryRepository {
     suspend fun createHistoryEntry(
-        messageUuid: UUID,
-        senderUuid: UUID,
-        receiverUuid: UUID?,
-        message: String,
-        sentAt: OffsetDateTime,
-        type: MessageType,
-        server: String
-    ): Unit = suspendTransaction {
+        entry: HistoryEntry
+    ) = suspendTransaction {
         HistoryTable.insert {
             it[this.messageUuid] = messageUuid
             it[this.senderUuid] = senderUuid
@@ -34,6 +27,8 @@ object HistoryRepository {
             it[this.type] = type
             it[this.server] = server
         }
+
+        return@suspendTransaction true
     }
 
     suspend fun findHistories(filter: HistoryFilter): List<HistoryEntry> = suspendTransaction {
@@ -69,12 +64,12 @@ object HistoryRepository {
         deletedBy: UUID?,
         deletionReason: String?,
         deletedAt: OffsetDateTime
-    ): Unit = suspendTransaction {
+    ) = suspendTransaction {
         HistoryTable.update({ HistoryTable.messageUuid eq messageUuid }) {
             it[this.deletedBy] = deletedBy
             it[this.deletionReason] = deletionReason
             it[this.deletedAt] = deletedAt
-        }
+        } > 0
     }
 
     fun createByRow(row: ResultRow) = HistoryEntry(

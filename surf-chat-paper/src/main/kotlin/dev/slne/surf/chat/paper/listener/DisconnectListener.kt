@@ -3,7 +3,7 @@ package dev.slne.surf.chat.paper.listener
 import com.destroystokyo.paper.event.player.PlayerConnectionCloseEvent
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.core.common.service.ignoreService
-import dev.slne.surf.chat.core.service.spyService
+import dev.slne.surf.chat.core.common.service.spyService
 import dev.slne.surf.chat.paper.hook.LuckPermsHook
 import dev.slne.surf.chat.paper.message.MessageFormatter
 import dev.slne.surf.chat.paper.plugin

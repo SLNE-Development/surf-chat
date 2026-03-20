@@ -8,6 +8,7 @@ import dev.slne.surf.chat.api.message.MessageContext
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.api.processor.chatProcessorRegistry
+import dev.slne.surf.chat.core.paper.redisApi
 import dev.slne.surf.chat.paper.message.MessageFormatter
 import dev.slne.surf.chat.paper.redis.event.DirectMessageRedisEvent
 import dev.slne.surf.core.api.common.player.SurfPlayer

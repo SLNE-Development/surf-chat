@@ -1,87 +1,65 @@
 package dev.slne.surf.chat.core.common.service
 
-import dev.slne.surf.surfapi.core.api.util.requiredService
 import java.util.*
-
-/**
- * Service responsible for managing spying operations within the chat system.
- * Allows tracking and controlling spying activities on private messages.
- */
-interface SpyService {
-
-    /**
-     * Retrieves the list of spies monitoring a specific player's private messages.
-     *
-     * @param observed The UUID of the player whose private message spies are to be fetched.
-     * @return A list of UUIDs representing the spies currently monitoring the player's private messages.
-     */
-    fun getObservingPlayers(observed: UUID): Set<UUID>
-
-    /**
-     * Adds a spy for monitoring private messages between a specified player and target.
-     *
-     * @param spy The UUID of the player who will act as the spy.
-     * @param observed The UUID of the target player whose private messages will be monitored by the spy.
-     * @return `true` if the spy was successfully added, `false` otherwise.
-     */
-    fun addPrivateMessageSpy(spy: UUID, observed: UUID): Boolean
-
-    /**
-     * Removes spying on private messages between the specified player and target.
-     *
-     * @param spy The UUID of the player who previously had spying access.
-     * @param observed The UUID of the target whose private messages were being spied on.
-     * @return `true` if the spying access was successfully removed, otherwise `false`.
-     */
-    fun removePrivateMessageSpy(spy: UUID, observed: UUID): Boolean
+import java.util.concurrent.ConcurrentHashMap
 
 
-    /**
-     * Checks if the specified player is currently set as spying on private messages.
-     *
-     * @param spy The UUID of the player to check for private message spying status.
-     * @return `true` if the player is spying on private messages, `false` otherwise.
-     */
-    fun isPrivateMessageSpying(spy: UUID): Boolean
+object SpyService {
+    private val privateMessageSpies = ConcurrentHashMap<UUID, MutableSet<UUID>>()
+    private val observedToSpies = ConcurrentHashMap<UUID, MutableSet<UUID>>()
 
-    /**
-     * Clears all spies monitoring private messages for the specified player.
-     *
-     * This method removes all spying access associated with the player's private messages,
-     * ensuring that no spies are currently monitoring their communications.
-     *
-     * @param spy The UUID of the player whose private message spies are to be cleared.
-     */
-    fun clearPrivateMessageSpies(spy: UUID)
+    fun getObservingPlayers(observed: UUID) = observedToSpies[observed] ?: emptySet()
 
-    /**
-     * Cleans up spy-related tracking or data associated with the specified player.
-     *
-     * The cleanup operation ensures that any references to the player's spying activities,
-     * such as spying on private messages, are removed to maintain data consistency.
-     *
-     * @param player The UUID of the player whose spy data is to be cleaned up.
-     */
-    fun cleanup(player: UUID)
+    fun addPrivateMessageSpy(spy: UUID, observed: UUID): Boolean {
+        val added = privateMessageSpies
+            .computeIfAbsent(spy) { ConcurrentHashMap.newKeySet() }
+            .add(observed)
 
-    /**
-     * Companion object for accessing the singleton instance of the SpyService.
-     * SpyService is responsible for managing spying operations in the system,
-     * including tracking players spying on private messages.
-     */
-    companion object {
-        /**
-         * Singleton instance of the SpyService interface.
-         *
-         * SpyService is responsible for managing spying operations within the system.
-         * This includes tracking users who are spying on private messages,
-         * adding or removing spies, and cleaning up spying data for specific users.
-         */
-        val INSTANCE = requiredService<SpyService>()
+        if (added) {
+            observedToSpies
+                .computeIfAbsent(observed) { ConcurrentHashMap.newKeySet() }
+                .add(spy)
+        }
+
+        return added
+    }
+
+    fun removePrivateMessageSpy(spy: UUID, observed: UUID): Boolean {
+        var removed = false
+
+        privateMessageSpies.computeIfPresent(spy) { _, spies ->
+            removed = spies.remove(observed)
+            if (spies.isEmpty()) null else spies
+        }
+
+        if (removed) {
+            observedToSpies.computeIfPresent(observed) { _, spies ->
+                spies.remove(spy)
+                if (spies.isEmpty()) null else spies
+            }
+        }
+
+        return removed
+    }
+
+    fun isPrivateMessageSpying(spy: UUID) = privateMessageSpies.containsKey(spy)
+
+    fun clearPrivateMessageSpies(spy: UUID) {
+        privateMessageSpies.remove(spy)?.forEach { observed ->
+            observedToSpies.computeIfPresent(observed) { _, spies ->
+                spies.remove(spy)
+                if (spies.isEmpty()) null else spies
+            }
+        }
+    }
+
+    fun cleanup(player: UUID) {
+        clearPrivateMessageSpies(player)
+        observedToSpies.remove(player)?.forEach { spy ->
+            privateMessageSpies.computeIfPresent(spy) { _, targets ->
+                targets.remove(player)
+                if (targets.isEmpty()) null else targets
+            }
+        }
     }
 }
-
-/**
- *
- */
-val spyService get() = SpyService.INSTANCE

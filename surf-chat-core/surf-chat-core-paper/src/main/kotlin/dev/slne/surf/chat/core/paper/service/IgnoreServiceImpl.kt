@@ -1,9 +1,12 @@
-package dev.slne.surf.chat.microservice.service
+package dev.slne.surf.chat.core.paper.service
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.entry.IgnoreListEntry
+import dev.slne.surf.chat.core.common.rabbit.packet.request.ignore.FindIgnoreListEntriesRequestPacket
+import dev.slne.surf.chat.core.common.rabbit.packet.request.ignore.UpdateIgnoreRequestPacket
 import dev.slne.surf.chat.core.common.service.IgnoreService
+import dev.slne.surf.chat.core.paper.rabbiApi
 import java.time.OffsetDateTime
 import java.util.*
 
@@ -14,7 +17,11 @@ class IgnoreServiceImpl : IgnoreService {
         .build<UUID, List<IgnoreListEntry>>()
 
     override suspend fun ignore(uuid: UUID, ignoredUUID: UUID): Boolean {
-        val ignored = IgnoreRepository.ignore(uuid, ignoredUUID)
+        val ignored = rabbiApi.sendRequest(
+            UpdateIgnoreRequestPacket(
+                uuid, ignoredUUID, true
+            )
+        ).value
         if (ignored) {
             cache.asMap().compute(uuid) { _, ignoreList ->
                 if (ignoreList == null) {
@@ -29,7 +36,11 @@ class IgnoreServiceImpl : IgnoreService {
     }
 
     override suspend fun unignore(uuid: UUID, ignoredUUID: UUID): Boolean {
-        val unignored = IgnoreRepository.unignore(uuid, ignoredUUID)
+        val unignored = rabbiApi.sendRequest(
+            UpdateIgnoreRequestPacket(
+                uuid, ignoredUUID, false
+            )
+        ).value
         if (unignored) {
             cache.asMap().compute(uuid) { _, ignoreList ->
                 ignoreList?.filterNot { it.target == ignoredUUID }
@@ -48,7 +59,7 @@ class IgnoreServiceImpl : IgnoreService {
     }
 
     override suspend fun loadIgnoreList(uuid: UUID): List<IgnoreListEntry> {
-        val ignoreList = IgnoreRepository.findAllByUuid(uuid)
+        val ignoreList = rabbiApi.sendRequest(FindIgnoreListEntriesRequestPacket(uuid)).entries
         cache.put(uuid, ignoreList)
         return ignoreList
     }

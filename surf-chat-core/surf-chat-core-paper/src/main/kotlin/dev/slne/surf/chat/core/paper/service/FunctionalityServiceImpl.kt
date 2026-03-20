@@ -1,19 +1,22 @@
-package dev.slne.surf.chat.microservice.service
+package dev.slne.surf.chat.core.paper.service
 
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.functionality.Functionalities
+import dev.slne.surf.chat.core.common.rabbit.packet.request.functionality.FindAllFunctionalitiesRequestPacket
+import dev.slne.surf.chat.core.common.rabbit.packet.request.functionality.FindFunctionalityRequestPacket
+import dev.slne.surf.chat.core.common.rabbit.packet.request.functionality.UpsertFunctionalityRequestPacket
 import dev.slne.surf.chat.core.common.service.FunctionalityService
-import dev.slne.surf.chat.microservice.repository.functionality.FunctionalityRepository
+import dev.slne.surf.chat.core.paper.rabbiApi
 import dev.slne.surf.core.api.common.surfCoreApi
 import net.kyori.adventure.util.Services
 
 @AutoService(FunctionalityService::class)
 class FunctionalityServiceImpl : FunctionalityService, Services.Fallback {
-    private var functionalities = Functionalities.EMPTY
+    private var functionalities = Functionalities.Companion.EMPTY
 
     override suspend fun fetch(localServer: String) {
-        val fetched = FunctionalityRepository.findByServerOrCreate(localServer)
-        functionalities = fetched
+        val fetched = rabbiApi.sendRequest(FindFunctionalityRequestPacket(localServer))
+        functionalities = fetched.functionalities
     }
 
     override fun getFunctionalities(): Functionalities {
@@ -28,17 +31,17 @@ class FunctionalityServiceImpl : FunctionalityService, Services.Fallback {
         functionalities: Functionalities,
         localServer: String
     ) {
-        FunctionalityRepository.updateOrCreate(localServer, functionalities)
+        rabbiApi.sendRequest(UpsertFunctionalityRequestPacket(localServer, functionalities))
         if (localServer == surfCoreApi.getCurrentServerName()) {
             this.functionalities = functionalities
         }
     }
 
     override suspend fun getFunctionalities(localServer: String): Functionalities {
-        return FunctionalityRepository.findByServerOrCreate(localServer)
+        return rabbiApi.sendRequest(FindFunctionalityRequestPacket(localServer)).functionalities
     }
 
     override suspend fun getFunctionalitiesForAllServers(): Map<String, Functionalities> {
-        return FunctionalityRepository.findAll()
+        return rabbiApi.sendRequest(FindAllFunctionalitiesRequestPacket).functionalities
     }
 }

@@ -16,9 +16,9 @@ data class HistoryEntry(
     val message: String,
     val server: String,
     val deleted: Boolean,
-    val deletedAt: SerializableOffsetDateTime?,
-    val deletedBy: SerializableUUID?,
-    val deletionReason: String?
+    val deletedAt: SerializableOffsetDateTime? = null,
+    val deletedBy: SerializableUUID? = null,
+    val deletionReason: String? = null
 ) {
     suspend fun sender() = surfCoreApi.getOfflinePlayer(senderUuid) ?: error("Sender user $senderUuid not found")
     suspend fun receiver() = receiverUuid?.let { surfCoreApi.getOfflinePlayer(it) }

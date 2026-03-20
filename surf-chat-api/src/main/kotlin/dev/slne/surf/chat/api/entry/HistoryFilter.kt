@@ -13,7 +13,6 @@ data class HistoryFilter(
     val receiverUuid: SerializableUUID?,
     val messageType: MessageType?,
     val after: SerializableOffsetDateTime?,
-    val messageLike: String?,
     val server: String?,
     val deleted: Boolean?,
     val deletedBy: SerializableUUID?,
@@ -21,7 +20,7 @@ data class HistoryFilter(
 ) {
     companion object {
         fun empty() = HistoryFilter(
-            null, null, null, null, null, null, null, null, null, 50
+            null, null, null, null, null, null, null, null, 50
         )
     }
 }

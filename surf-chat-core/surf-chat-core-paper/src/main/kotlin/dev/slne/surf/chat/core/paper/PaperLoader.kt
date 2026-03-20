@@ -7,7 +7,7 @@ import java.nio.file.Path
 class PaperLoader(
     dataPath: Path
 ) {
-    val rabbitApi = ClientRabbitMQApi.create("surf-playtime", dataPath)
+    val rabbitApi = ClientRabbitMQApi.create("surf-chat", dataPath)
     val redisApi = RedisApi.create()
 
     suspend fun onLoad() {

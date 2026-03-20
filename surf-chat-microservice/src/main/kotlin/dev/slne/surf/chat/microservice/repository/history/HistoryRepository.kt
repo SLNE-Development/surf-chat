@@ -19,13 +19,13 @@ object HistoryRepository {
         entry: HistoryEntry
     ) = suspendTransaction {
         HistoryTable.insert {
-            it[this.messageUuid] = messageUuid
-            it[this.senderUuid] = senderUuid
-            it[this.receiverUuid] = receiverUuid
-            it[this.message] = message
-            it[this.sentAt] = sentAt
-            it[this.type] = type
-            it[this.server] = server
+            it[this.messageUuid] = entry.messageUuid
+            it[this.senderUuid] = entry.senderUuid
+            it[this.receiverUuid] = entry.receiverUuid
+            it[this.message] = entry.message
+            it[this.sentAt] = entry.sentAt
+            it[this.type] = entry.messageType
+            it[this.server] = entry.server
         }
 
         return@suspendTransaction true
@@ -39,7 +39,6 @@ object HistoryRepository {
         filter.receiverUuid?.let { query.andWhere { HistoryTable.receiverUuid eq it } }
         filter.messageType?.let { query.andWhere { HistoryTable.type eq it } }
         filter.after?.let { query.andWhere { HistoryTable.sentAt greaterEq it } }
-        filter.messageLike?.let { query.andWhere { HistoryTable.message like "%$it%" } }
         filter.deletedBy?.let { query.andWhere { HistoryTable.deletedBy eq it } }
         filter.deleted?.let {
             query.andWhere {

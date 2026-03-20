@@ -218,10 +218,9 @@ private suspend fun Map<String, String>.parseFilters(): HistoryFilter {
                 OffsetDateTime.now().minus(amountToSubtract, java.time.temporal.ChronoUnit.MILLIS)
             }
         },
-        messageLike = this["--message"],
         server = this["--server"],
-        deletedBy = deletedBy,
         deleted = deleted,
+        deletedBy = deletedBy,
         limit = this["--limit"]?.toIntOrNull() ?: 50,
     )
 }

@@ -6,8 +6,6 @@ import com.sksamuel.aedile.core.expireAfterWrite
 import dev.slne.surf.chat.api.denylist.DenylistAction
 import dev.slne.surf.chat.api.denylist.DenylistActionType
 import dev.slne.surf.chat.api.denylist.DenylistEntry
-import dev.slne.surf.chat.microservice.table.DenylistActionsTable
-import dev.slne.surf.chat.microservice.table.DenylistTable
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.ResultRow
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.eq
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.*

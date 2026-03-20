@@ -1,12 +1,20 @@
+import dev.slne.surf.microservice.gradle.plugin.rabbit.RabbitModule
+
 plugins {
-    id("dev.slne.surf.surfapi.gradle.paper-raw")
+    id("dev.slne.surf.surfapi.gradle.standalone")
+    id("dev.slne.surf.microservice")
 }
 
-surfRawPaperApi {
-    withSurfDatabaseR2dbc("1.3.0", "dev.slne.surf.chat.libs.db")
+surfStandaloneApi {
+    withSurfDatabaseR2dbc("1.3.0", "dev.slne.surf.playtime.libs.database")
     withCoreCommon()
 }
 
+surfMicroservice {
+    withMicroserviceApi()
+    withRabbitModule(RabbitModule.SERVER_API, true)
+}
+
 dependencies {
-    api(project(":surf-chat-core"))
+    api(projects.surfChatCore.surfChatCoreCommon)
 }

@@ -1,9 +1,8 @@
 package dev.slne.surf.chat.api.message
 
 import dev.slne.surf.chat.api.serializer.SerializableSignature
-import dev.slne.surf.core.api.common.surfCoreApi
+import dev.slne.surf.core.api.common.SurfCoreApi
 import dev.slne.surf.surfapi.core.api.messages.adventure.plain
-import dev.slne.surf.surfapi.core.api.serializer.java.datetime.datetime.offset.SerializableOffsetDateTime
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import net.kyori.adventure.text.Component
@@ -97,8 +96,8 @@ data class MessageData(
         message.plain()
     }
 
-    suspend fun senderUser() = surfCoreApi.getOfflinePlayer(sender) ?: error("Sender user $sender not found")
-    suspend fun receiverUser() = receiver?.let { surfCoreApi.getOfflinePlayer(it) }
+    suspend fun senderUser() = SurfCoreApi.getOfflinePlayer(sender) ?: error("Sender user $sender not found")
+    suspend fun receiverUser() = receiver?.let { SurfCoreApi.getOfflinePlayer(it) }
 
     fun withReceiver(receiver: UUID?) = copy(receiver = receiver)
 }

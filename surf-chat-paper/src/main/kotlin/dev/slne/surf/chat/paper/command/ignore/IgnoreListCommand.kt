@@ -6,7 +6,7 @@ import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.core.common.service.ignoreService
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.chat.paper.util.unixTime
-import dev.slne.surf.core.api.common.surfCoreApi
+import dev.slne.surf.core.api.common.SurfCoreApi
 import dev.slne.surf.surfapi.bukkit.api.command.executors.playerExecutorSuspend
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.CommonComponents
@@ -41,7 +41,7 @@ fun CommandAPICommand.ignoreListCommand() = subcommand("#list") {
         val ignoreList = ignoreService.getCachedIgnoreList(player.uniqueId)
             .mapAsync {
                 IgnoreListPaginationEntry(
-                    targetName = surfCoreApi.getOfflinePlayer(it.target)?.lastKnownName ?: it.target.toString(),
+                    targetName = SurfCoreApi.getOfflinePlayer(it.target)?.lastKnownName ?: it.target.toString(),
                     targetUuid = it.target.toString(),
                     createdAt = it.createdAt
                 )

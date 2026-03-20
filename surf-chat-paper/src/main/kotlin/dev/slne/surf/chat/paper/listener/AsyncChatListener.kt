@@ -8,14 +8,14 @@ import dev.slne.surf.chat.api.processor.chatProcessorRegistry
 import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.chat.paper.util.cancel
 import dev.slne.surf.chat.paper.util.uuidOrNull
-import dev.slne.surf.core.api.common.surfCoreApi
+import dev.slne.surf.core.api.common.SurfCoreApi
 import io.papermc.paper.event.player.AsyncChatEvent
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import java.time.OffsetDateTime
 import java.util.*
 
-class AsyncChatListener : Listener {
+object AsyncChatListener : Listener {
     @EventHandler
     fun onAsyncChat(event: AsyncChatEvent) {
         val sentAt = OffsetDateTime.now()
@@ -30,7 +30,7 @@ class AsyncChatListener : Listener {
             sender.uniqueId,
             null,
             sentAt,
-            surfCoreApi.getCurrentServerName(),
+            SurfCoreApi.getCurrentServerName(),
             event.signedMessage().signature(),
             MessageType.GLOBAL
         )

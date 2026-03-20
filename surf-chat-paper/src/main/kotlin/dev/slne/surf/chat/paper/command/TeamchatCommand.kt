@@ -10,7 +10,7 @@ import dev.slne.surf.chat.core.paper.redisApi
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.chat.paper.redis.event.TeamchatMessageRedisEvent
-import dev.slne.surf.core.api.common.surfCoreApi
+import dev.slne.surf.core.api.common.SurfCoreApi
 import dev.slne.surf.surfapi.bukkit.api.command.executors.playerExecutorSuspend
 import net.kyori.adventure.text.Component
 import java.time.OffsetDateTime
@@ -31,7 +31,7 @@ fun teamchatCommand() = commandAPICommand("teamchat", plugin) {
             player.uniqueId,
             null,
             OffsetDateTime.now(),
-            surfCoreApi.getCurrentServerName(),
+            SurfCoreApi.getCurrentServerName(),
             null,
             MessageType.TEAM
         )

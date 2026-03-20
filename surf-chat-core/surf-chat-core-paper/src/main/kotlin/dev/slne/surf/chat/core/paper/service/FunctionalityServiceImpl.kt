@@ -7,16 +7,16 @@ import dev.slne.surf.chat.core.common.rabbit.packet.request.functionality.FindFu
 import dev.slne.surf.chat.core.common.rabbit.packet.request.functionality.UpsertFunctionalityRequestPacket
 import dev.slne.surf.chat.core.common.service.FunctionalityService
 import dev.slne.surf.chat.core.paper.rabbiApi
-import dev.slne.surf.core.api.common.surfCoreApi
+import dev.slne.surf.core.api.common.SurfCoreApi
 import net.kyori.adventure.util.Services
 
 @AutoService(FunctionalityService::class)
 class FunctionalityServiceImpl : FunctionalityService, Services.Fallback {
-    private var functionalities = Functionalities.Companion.EMPTY
+    private var functionalities = Functionalities.EMPTY
 
     override suspend fun fetch(localServer: String) {
-        val fetched = rabbiApi.sendRequest(FindFunctionalityRequestPacket(localServer))
-        functionalities = fetched.functionalities
+        val fetched = rabbiApi.sendRequest(FindFunctionalityRequestPacket(localServer)).functionalities
+        functionalities = fetched
     }
 
     override fun getFunctionalities(): Functionalities {
@@ -24,7 +24,7 @@ class FunctionalityServiceImpl : FunctionalityService, Services.Fallback {
     }
 
     override suspend fun updateLocalFunctionalities(functionalities: Functionalities) {
-        updateFunctionalities(functionalities, surfCoreApi.getCurrentServerName())
+        updateFunctionalities(functionalities, SurfCoreApi.getCurrentServerName())
     }
 
     override suspend fun updateFunctionalities(
@@ -32,7 +32,7 @@ class FunctionalityServiceImpl : FunctionalityService, Services.Fallback {
         localServer: String
     ) {
         rabbiApi.sendRequest(UpsertFunctionalityRequestPacket(localServer, functionalities))
-        if (localServer == surfCoreApi.getCurrentServerName()) {
+        if (localServer == SurfCoreApi.getCurrentServerName()) {
             this.functionalities = functionalities
         }
     }

@@ -11,8 +11,8 @@ import dev.slne.surf.chat.api.processor.chatProcessorRegistry
 import dev.slne.surf.chat.core.paper.redisApi
 import dev.slne.surf.chat.paper.message.MessageFormatter
 import dev.slne.surf.chat.paper.redis.event.DirectMessageRedisEvent
+import dev.slne.surf.core.api.common.SurfCoreApi
 import dev.slne.surf.core.api.common.player.SurfPlayer
-import dev.slne.surf.core.api.common.surfCoreApi
 import dev.slne.surf.core.api.paper.command.argument.surfPlayerArgument
 import dev.slne.surf.surfapi.bukkit.api.command.executors.playerExecutorSuspend
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
@@ -43,7 +43,7 @@ fun directMessageCommand() = commandAPICommand("msg") {
             player.uniqueId,
             target.uuid,
             sentAt,
-            surfCoreApi.getCurrentServerName(),
+            SurfCoreApi.getCurrentServerName(),
             null,
             MessageType.DIRECT
         )

@@ -2,9 +2,9 @@ package dev.slne.surf.chat.paper.util
 
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.api.message.MessageData
+import dev.slne.surf.chat.core.common.service.deletionService
 import dev.slne.surf.chat.paper.hook.LuckPermsHook
 import dev.slne.surf.chat.paper.plugin
-import dev.slne.surf.chat.core.service.deletionService
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText

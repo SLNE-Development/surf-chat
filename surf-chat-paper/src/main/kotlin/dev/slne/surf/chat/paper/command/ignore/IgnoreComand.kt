@@ -2,9 +2,9 @@ package dev.slne.surf.chat.paper.command.ignore
 
 import dev.jorel.commandapi.CommandAPI
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
+import dev.slne.surf.chat.core.common.service.ignoreService
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.chat.paper.plugin
-import dev.slne.surf.chat.core.service.ignoreService
 import dev.slne.surf.core.api.common.player.SurfPlayer
 import dev.slne.surf.core.api.paper.command.argument.surfOfflinePlayerArgument
 import dev.slne.surf.surfapi.bukkit.api.command.executors.playerExecutorSuspend

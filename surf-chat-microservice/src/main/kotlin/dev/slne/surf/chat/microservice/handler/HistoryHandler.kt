@@ -4,5 +4,5 @@ import dev.slne.surf.rabbitmq.api.handler.RabbitHandler
 
 object HistoryHandler {
     @RabbitHandler
-
+    fun handle
 }

@@ -1,4 +1,4 @@
-package dev.slne.surf.chat.core.service
+package dev.slne.surf.chat.core.common.service
 
 import dev.slne.surf.chat.core.functionality.Functionalities
 import dev.slne.surf.surfapi.core.api.util.requiredService

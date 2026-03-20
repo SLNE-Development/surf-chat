@@ -9,11 +9,11 @@ import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.api.message.MessageType
+import dev.slne.surf.chat.core.common.service.historyService
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.chat.paper.util.appendLinePrefix
 import dev.slne.surf.chat.paper.util.formatAgo
 import dev.slne.surf.chat.paper.util.formatTime
-import dev.slne.surf.chat.core.service.historyService
 import dev.slne.surf.surfapi.bukkit.api.command.executors.playerExecutorSuspend
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.Colors

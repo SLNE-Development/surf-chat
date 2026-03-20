@@ -3,7 +3,7 @@ package dev.slne.surf.chat.microservice.service
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.api.entry.IgnoreListEntry
-import dev.slne.surf.chat.core.service.IgnoreService
+import dev.slne.surf.chat.core.common.service.IgnoreService
 import dev.slne.surf.chat.microservice.repository.ignore.IgnoreRepository
 import java.time.OffsetDateTime
 import java.util.*

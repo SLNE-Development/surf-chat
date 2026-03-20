@@ -3,9 +3,9 @@ package dev.slne.surf.chat.paper.command.surfchat.functionality
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.integerArgument
 import dev.jorel.commandapi.kotlindsl.subcommand
+import dev.slne.surf.chat.core.common.service.functionalityService
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.chat.paper.util.appendStatusIcon
-import dev.slne.surf.chat.core.service.functionalityService
 import dev.slne.surf.surfapi.bukkit.api.command.executors.anyExecutorSuspend
 import dev.slne.surf.surfapi.core.api.messages.CommonComponents
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText

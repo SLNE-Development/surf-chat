@@ -3,9 +3,9 @@ package dev.slne.surf.chat.paper.command.ignore
 import dev.jorel.commandapi.CommandAPI
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.subcommand
+import dev.slne.surf.chat.core.common.service.ignoreService
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.chat.paper.util.unixTime
-import dev.slne.surf.chat.core.service.ignoreService
 import dev.slne.surf.core.api.common.surfCoreApi
 import dev.slne.surf.surfapi.bukkit.api.command.executors.playerExecutorSuspend
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps

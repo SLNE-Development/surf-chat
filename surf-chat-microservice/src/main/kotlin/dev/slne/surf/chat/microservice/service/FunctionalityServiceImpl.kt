@@ -1,8 +1,8 @@
 package dev.slne.surf.chat.microservice.service
 
 import com.google.auto.service.AutoService
+import dev.slne.surf.chat.core.common.service.FunctionalityService
 import dev.slne.surf.chat.core.functionality.Functionalities
-import dev.slne.surf.chat.core.service.FunctionalityService
 import dev.slne.surf.chat.microservice.repository.functionality.FunctionalityRepository
 import dev.slne.surf.core.api.common.surfCoreApi
 import net.kyori.adventure.util.Services

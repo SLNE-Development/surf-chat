@@ -2,10 +2,10 @@ package dev.slne.surf.chat.paper
 
 import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
 import dev.slne.surf.chat.api.processor.chatProcessorRegistry
+import dev.slne.surf.chat.core.common.service.functionalityService
 import dev.slne.surf.chat.core.databaseLoader
 import dev.slne.surf.chat.core.service.denylistActionService
 import dev.slne.surf.chat.core.service.denylistService
-import dev.slne.surf.chat.core.service.functionalityService
 import dev.slne.surf.chat.paper.config.AiModerationConfig
 import dev.slne.surf.chat.paper.config.SurfChatConfigProvider
 import dev.slne.surf.chat.paper.listener.AsyncChatListener

@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-    api(project(":surf-chat-core"))
+    api(projects.surfChatCore.surfChatCorePaper)
 
     compileOnly(libs.playerholder.api)
     compileOnly(libs.miniplaceholder.api)

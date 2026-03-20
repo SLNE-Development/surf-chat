@@ -2,11 +2,11 @@ package dev.slne.surf.chat.paper.message
 
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.api.message.MessageValidationResult
+import dev.slne.surf.chat.core.common.service.functionalityService
+import dev.slne.surf.chat.core.service.denylistService
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.chat.paper.util.hasPermission
-import dev.slne.surf.chat.core.service.denylistService
-import dev.slne.surf.chat.core.service.functionalityService
 import org.bukkit.Bukkit
 import java.util.*
 

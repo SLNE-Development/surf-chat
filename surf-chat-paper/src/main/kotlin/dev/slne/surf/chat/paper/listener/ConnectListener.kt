@@ -1,10 +1,10 @@
 package dev.slne.surf.chat.paper.listener
 
+import dev.slne.surf.chat.core.common.service.ignoreService
 import dev.slne.surf.chat.paper.hook.LuckPermsHook
 import dev.slne.surf.chat.paper.hook.MiniPlaceholdersHook
 import dev.slne.surf.chat.paper.message.MessageFormatter
 import dev.slne.surf.chat.paper.plugin
-import dev.slne.surf.chat.core.service.ignoreService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.surfapi.core.api.minimessage.miniMessage

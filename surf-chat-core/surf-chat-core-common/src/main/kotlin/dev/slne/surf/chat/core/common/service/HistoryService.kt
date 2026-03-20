@@ -1,11 +1,10 @@
-package dev.slne.surf.chat.core.service
+package dev.slne.surf.chat.core.common.service
 
 import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectList
-import it.unimi.dsi.fastutil.objects.ObjectSet
 import java.time.OffsetDateTime
 import java.util.*
 

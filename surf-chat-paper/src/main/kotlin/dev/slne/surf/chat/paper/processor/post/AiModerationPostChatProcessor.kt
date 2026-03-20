@@ -4,6 +4,7 @@ import com.github.shynixn.mccoroutine.folia.launch
 import de.maxbossing.webhookbuilder.sendWebhook
 import dev.slne.surf.chat.api.message.MessageContext
 import dev.slne.surf.chat.api.processor.PostChatProcessor
+import dev.slne.surf.chat.core.common.service.deletionService
 import dev.slne.surf.chat.paper.ai.OpenAiService
 import dev.slne.surf.chat.paper.ai.openAiService
 import dev.slne.surf.chat.paper.config.aiModerationConfig
@@ -13,7 +14,6 @@ import dev.slne.surf.chat.paper.redis.event.TeamMessageRedisEvent
 import dev.slne.surf.chat.paper.redisApi
 import dev.slne.surf.chat.paper.util.appendBotIcon
 import dev.slne.surf.chat.paper.util.hasPermission
-import dev.slne.surf.chat.core.service.deletionService
 import dev.slne.surf.punish.api.punishment.PunishType
 import dev.slne.surf.punish.api.user.PunishmentUser
 import dev.slne.surf.surfapi.core.api.messages.Colors

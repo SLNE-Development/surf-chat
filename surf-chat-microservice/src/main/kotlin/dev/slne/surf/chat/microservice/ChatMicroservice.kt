@@ -3,6 +3,7 @@ package dev.slne.surf.chat.microservice
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.microservice.handler.FunctionalityHandler
 import dev.slne.surf.chat.microservice.handler.HistoryHandler
+import dev.slne.surf.chat.microservice.handler.IgnoreListHandler
 import dev.slne.surf.chat.microservice.table.FunctionalityTable
 import dev.slne.surf.chat.microservice.table.HistoryTable
 import dev.slne.surf.chat.microservice.table.IgnoreListTable
@@ -27,6 +28,7 @@ class ChatMicroservice : Microservice() {
 
         rabbitApi.registerRequestHandler(HistoryHandler)
         rabbitApi.registerRequestHandler(FunctionalityHandler)
+        rabbitApi.registerRequestHandler(IgnoreListHandler)
         rabbitApi.freezeAndConnect()
     }
 

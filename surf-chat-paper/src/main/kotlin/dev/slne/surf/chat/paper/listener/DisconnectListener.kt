@@ -2,14 +2,13 @@ package dev.slne.surf.chat.paper.listener
 
 import com.destroystokyo.paper.event.player.PlayerConnectionCloseEvent
 import com.github.shynixn.mccoroutine.folia.launch
+import dev.slne.surf.chat.core.common.service.SpyService
 import dev.slne.surf.chat.core.common.service.ignoreService
-import dev.slne.surf.chat.core.common.service.spyService
 import dev.slne.surf.chat.paper.hook.LuckPermsHook
 import dev.slne.surf.chat.paper.message.MessageFormatter
 import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.minimessage.miniMessage
-import kotlinx.coroutines.launch
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerQuitEvent
@@ -37,8 +36,8 @@ class DisconnectListener : Listener {
     fun onPlayerConnectionClose(event: PlayerConnectionCloseEvent) {
         plugin.launch {
             val uuid = event.playerUniqueId
-            launch { ignoreService.cleanup(uuid) }
-            spyService.cleanup(uuid)
+            ignoreService.cleanup(uuid)
+            SpyService.cleanup(uuid)
         }
     }
 }

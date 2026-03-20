@@ -5,7 +5,7 @@ import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.entitySelectorArgumentOnePlayer
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.chat.core.common.service.spyService
+import dev.slne.surf.chat.core.common.service.SpyService
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import org.bukkit.entity.Player
@@ -29,8 +29,8 @@ fun directMessageSpyCommand() = commandAPICommand("spy") {
             return@playerExecutor
         }
 
-        if (spyService.getObservingPlayers(target.uniqueId).contains(player.uniqueId)) {
-            spyService.removePrivateMessageSpy(player.uniqueId, target.uniqueId)
+        if (SpyService.getObservingPlayers(target.uniqueId).contains(player.uniqueId)) {
+            SpyService.removePrivateMessageSpy(player.uniqueId, target.uniqueId)
 
             player.sendText {
                 appendSuccessPrefix()
@@ -39,7 +39,7 @@ fun directMessageSpyCommand() = commandAPICommand("spy") {
                 success("s private Nachrichten nicht mehr.")
             }
         } else {
-            spyService.addPrivateMessageSpy(player.uniqueId, target.uniqueId)
+            SpyService.addPrivateMessageSpy(player.uniqueId, target.uniqueId)
             player.sendText {
                 appendSuccessPrefix()
                 success("Du spionierst nun ")

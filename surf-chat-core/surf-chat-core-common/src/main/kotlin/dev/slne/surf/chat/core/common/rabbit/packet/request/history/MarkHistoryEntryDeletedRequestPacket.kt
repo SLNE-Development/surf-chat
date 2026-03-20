@@ -1,4 +1,4 @@
-package dev.slne.surf.chat.core.common.rabbit.packet.request
+package dev.slne.surf.chat.core.common.rabbit.packet.request.history
 
 import dev.slne.surf.rabbitmq.api.packet.RabbitRequestPacket
 import dev.slne.surf.rabbitmq.api.packet.standard.response.primitive.PrimitiveResponse

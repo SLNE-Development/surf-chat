@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.microservice.repository.functionality
 
-import dev.slne.surf.chat.core.functionality.Functionalities
+import dev.slne.surf.chat.api.functionality.Functionalities
 import dev.slne.surf.chat.microservice.table.FunctionalityTable
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.ResultRow
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.eq

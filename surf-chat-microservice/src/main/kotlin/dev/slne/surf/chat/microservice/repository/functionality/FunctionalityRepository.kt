@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.microservice.repository.functionality
 
-import dev.slne.surf.chat.core.functionality.Functionalities
+import dev.slne.surf.chat.api.functionality.Functionalities
 
 interface FunctionalityRepository {
 

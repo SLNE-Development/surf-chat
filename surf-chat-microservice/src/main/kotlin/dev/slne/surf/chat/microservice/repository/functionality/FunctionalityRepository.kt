@@ -25,11 +25,12 @@ object FunctionalityRepository {
             .let(::createByRow)
     }
 
-    suspend fun updateOrCreate(server: String, functionalities: Functionalities): Unit = suspendTransaction {
+    suspend fun updateOrCreate(server: String, functionalities: Functionalities) = suspendTransaction {
         FunctionalityTable.upsert {
             it[this.server] = server
             it[this.chatEnabled] = functionalities.localChatEnabled
         }
+        return@suspendTransaction true
     }
 
     suspend fun findAll(): Map<String, Functionalities> = suspendTransaction {

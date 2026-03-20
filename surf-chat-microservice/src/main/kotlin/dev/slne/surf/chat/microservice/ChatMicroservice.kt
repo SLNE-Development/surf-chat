@@ -2,7 +2,9 @@ package dev.slne.surf.chat.microservice
 
 import com.google.auto.service.AutoService
 import dev.slne.surf.chat.microservice.handler.HistoryHandler
-import dev.slne.surf.chat.microservice.table.*
+import dev.slne.surf.chat.microservice.table.FunctionalityTable
+import dev.slne.surf.chat.microservice.table.HistoryTable
+import dev.slne.surf.chat.microservice.table.IgnoreListTable
 import dev.slne.surf.database.DatabaseApi
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.SchemaUtils
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.transactions.suspendTransaction
@@ -13,12 +15,12 @@ import kotlin.io.path.Path
 @AutoService(Microservice::class)
 class ChatMicroservice : Microservice() {
     private val databaseApi = DatabaseApi.create(Path("config"))
-    private val rabbitApi = ServerRabbitMQApi.create(1, "surf-chat")
+    private val rabbitApi = ServerRabbitMQApi.create("surf-chat", Path("config"))
 
     override suspend fun onBootstrap(args: List<String>) {
         suspendTransaction {
             SchemaUtils.create(
-                DenylistTable, DenylistActionsTable, FunctionalityTable, HistoryTable, IgnoreListTable
+                FunctionalityTable, HistoryTable, IgnoreListTable
             )
         }
 

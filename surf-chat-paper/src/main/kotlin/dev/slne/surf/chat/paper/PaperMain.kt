@@ -3,9 +3,7 @@ package dev.slne.surf.chat.paper
 import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
 import dev.slne.surf.chat.api.processor.chatProcessorRegistry
 import dev.slne.surf.chat.core.common.service.functionalityService
-import dev.slne.surf.chat.core.databaseLoader
-import dev.slne.surf.chat.core.service.denylistActionService
-import dev.slne.surf.chat.core.service.denylistService
+import dev.slne.surf.chat.core.paper.PaperChatInstance
 import dev.slne.surf.chat.paper.config.AiModerationConfig
 import dev.slne.surf.chat.paper.config.SurfChatConfigProvider
 import dev.slne.surf.chat.paper.listener.AsyncChatListener
@@ -30,6 +28,7 @@ val plugin get() = JavaPlugin.getPlugin(PaperMain::class.java)
 class PaperMain : SuspendingJavaPlugin() {
 
     override suspend fun onLoadAsync() {
+        PaperChatInstance.paperLoader.onLoad()
         AiModerationConfig.init()
 
         chatProcessorRegistry.register(CharPreChatProcessor)
@@ -46,23 +45,18 @@ class PaperMain : SuspendingJavaPlugin() {
     }
 
     override suspend fun onEnableAsync() {
+        PaperChatInstance.paperLoader.onEnable()
         BukkitCommandManager.registerCommands()
 
         AsyncChatListener().register()
         DisconnectListener().register()
         ConnectListener.register()
 
-        databaseLoader.connect(plugin.dataPath)
-        redisLoader.connect()
-
-        denylistService.fetch()
-        denylistActionService.fetchActions()
         functionalityService.fetch(surfCoreApi.getCurrentServerName())
     }
 
     override suspend fun onDisableAsync() {
-        redisLoader.disconnect()
-        databaseLoader.disconnect()
+        PaperChatInstance.paperLoader.onDisable()
     }
 
     val surfChatConfig = SurfChatConfigProvider()

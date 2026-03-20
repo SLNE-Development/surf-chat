@@ -23,3 +23,6 @@ class PaperLoader(
         rabbitApi.disconnect()
     }
 }
+
+val redisApi get() = PaperChatInstance.redisApi
+val rabbiApi get() = PaperChatInstance.rabbitApi

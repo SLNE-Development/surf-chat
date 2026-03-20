@@ -10,7 +10,6 @@ import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.api.processor.chatProcessorRegistry
 import dev.slne.surf.chat.paper.message.MessageFormatter
 import dev.slne.surf.chat.paper.redis.event.DirectMessageRedisEvent
-import dev.slne.surf.chat.paper.redisApi
 import dev.slne.surf.core.api.common.player.SurfPlayer
 import dev.slne.surf.core.api.common.surfCoreApi
 import dev.slne.surf.core.api.paper.command.argument.surfPlayerArgument

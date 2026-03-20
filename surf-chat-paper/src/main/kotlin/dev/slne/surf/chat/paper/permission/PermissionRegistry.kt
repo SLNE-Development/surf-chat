@@ -32,20 +32,6 @@ object PermissionRegistry : PermissionRegistry() {
     val COMMAND_IGNORE = create("$PREFIX_COMMAND.ignore")
 
     val COMMAND_IGNORE_LIST = create("$PREFIX_COMMAND.ignore.list")
-    val COMMAND_DENYLIST = create("$PREFIX_COMMAND.denylist")
-    val COMMAND_DENYLIST_ADD = create("$PREFIX_COMMAND.denylist.add")
-    val COMMAND_DENYLIST_REMOVE = create("$PREFIX_COMMAND.denylist.remove")
-    val COMMAND_DENYLIST_LIST = create("$PREFIX_COMMAND.denylist.list")
-    val COMMAND_DENYLIST_FETCH = create("$PREFIX_COMMAND.denylist.fetch")
-
-    val COMMAND_DENYLIST_ACTION = create("$PREFIX_COMMAND.denylist.action")
-    val COMMAND_DENYLIST_ACTION_ADD = create("$PREFIX_COMMAND.denylist.action.add")
-    val COMMAND_DENYLIST_ACTION_REMOVE = create("$PREFIX_COMMAND.denylist.action.remove")
-    val COMMAND_DENYLIST_ACTION_LIST = create("$PREFIX_COMMAND.denylist.action.list")
-    val COMMAND_DENYLIST_ACTION_FETCH = create("$PREFIX_COMMAND.denylist.action.fetch")
-    val COMMAND_DENYLIST_ACTION_CLEAR = create("$PREFIX_COMMAND.denylist.action.clear")
-    val COMMAND_DENYLIST_DEFAULTS = create("$PREFIX_COMMAND.denylist.defaults")
-    val COMMAND_DENYLIST_CLEAR = create("$PREFIX_COMMAND.denylist.clear")
 
     val COMMAND_DIRECT_SPY = create("$PREFIX_COMMAND.direct-spy")
     val COMMAND_DIRECT_SPY_CLEAR = create("$PREFIX_COMMAND.direct-spy.clear")

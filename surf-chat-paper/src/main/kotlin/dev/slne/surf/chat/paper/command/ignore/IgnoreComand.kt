@@ -4,14 +4,13 @@ import dev.jorel.commandapi.CommandAPI
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.slne.surf.chat.core.common.service.ignoreService
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
-import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.core.api.common.player.SurfPlayer
 import dev.slne.surf.core.api.paper.command.argument.surfOfflinePlayerArgument
 import dev.slne.surf.surfapi.bukkit.api.command.executors.playerExecutorSuspend
 import dev.slne.surf.surfapi.core.api.command.args.awaitingOrNull
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
-fun ignoreCommand() = commandAPICommand("ignore", plugin) {
+fun ignoreCommand() = commandAPICommand("ignore") {
     withPermission(PermissionRegistry.COMMAND_IGNORE)
     ignoreListCommand()
     surfOfflinePlayerArgument("target")

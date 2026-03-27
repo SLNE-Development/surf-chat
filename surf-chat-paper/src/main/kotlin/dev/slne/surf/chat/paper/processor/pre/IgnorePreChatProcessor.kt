@@ -4,7 +4,6 @@ import dev.slne.surf.chat.api.message.MessageContext
 import dev.slne.surf.chat.api.processor.PreChatProcessor
 import dev.slne.surf.chat.core.common.service.ignoreService
 import dev.slne.surf.chat.paper.processor.ProcessorOrder
-import dev.slne.surf.chat.paper.util.sendText
 import java.util.*
 
 object IgnorePreChatProcessor : PreChatProcessor {
@@ -14,10 +13,6 @@ object IgnorePreChatProcessor : PreChatProcessor {
         val data = context.messageData
 
         if (isIgnored(data.receiver, data.sender)) {
-            data.sender.sendText {
-                appendErrorPrefix()
-                error("Deine Nachricht konnte nicht zugestellt werden.")
-            }
             context.cancel()
             return context
         }

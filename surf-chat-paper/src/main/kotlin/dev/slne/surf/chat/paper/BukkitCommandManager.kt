@@ -1,6 +1,7 @@
 package dev.slne.surf.chat.paper
 
-import dev.slne.surf.chat.paper.command.directMessageCommand
+import dev.slne.surf.chat.paper.command.direct.directMessageCommand
+import dev.slne.surf.chat.paper.command.direct.replyCommand
 import dev.slne.surf.chat.paper.command.ignore.ignoreCommand
 import dev.slne.surf.chat.paper.command.spy.directMessageSpyCommand
 import dev.slne.surf.chat.paper.command.surfchat.surfChatCommand
@@ -13,5 +14,6 @@ object BukkitCommandManager {
         ignoreCommand()
         directMessageSpyCommand()
         directMessageCommand()
+        replyCommand()
     }
 }

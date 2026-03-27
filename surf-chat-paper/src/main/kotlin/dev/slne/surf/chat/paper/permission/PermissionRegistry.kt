@@ -29,12 +29,15 @@ object PermissionRegistry : PermissionRegistry() {
     val COMMAND_SURFCHAT_FUNCTIONALITY_LIST = create("$PREFIX_COMMAND.surfchat.functionality.list")
 
     val COMMAND_SURFCHAT_LOOKUP_HELP = create("$PREFIX_COMMAND.surfchat.lookup.help")
-    val COMMAND_IGNORE = create("$PREFIX_COMMAND.ignore")
 
+    val COMMAND_IGNORE = create("$PREFIX_COMMAND.ignore")
     val COMMAND_IGNORE_LIST = create("$PREFIX_COMMAND.ignore.list")
 
     val COMMAND_DIRECT_SPY = create("$PREFIX_COMMAND.direct-spy")
     val COMMAND_DIRECT_SPY_CLEAR = create("$PREFIX_COMMAND.direct-spy.clear")
 
     val COMMAND_TEAMCHAT = create("$PREFIX_COMMAND.teamchat")
+
+    val COMMAND_PM = create("$PREFIX_COMMAND.msg")
+    val COMMAND_REPLY = create("$PREFIX_COMMAND.reply")
 }

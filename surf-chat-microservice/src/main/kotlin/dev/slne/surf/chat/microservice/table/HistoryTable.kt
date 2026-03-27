@@ -17,4 +17,14 @@ object HistoryTable : ULongIdTable("chat_histories") {
     val deletedAt = offsetDateTime("deleted_at").nullable().default(null)
     val deletedBy = nativeUuid("deleted_by_uuid").nullable().default(null)
     val deletionReason = text("deletion_reason").nullable().default(null)
+
+    init {
+        index(false, senderUuid, sentAt)
+        index(false, receiverUuid, sentAt)
+        index(false, server, sentAt)
+        index(false, senderUuid, type, sentAt)
+
+        index(false, deletedAt)
+        index(false, deletedBy)
+    }
 }

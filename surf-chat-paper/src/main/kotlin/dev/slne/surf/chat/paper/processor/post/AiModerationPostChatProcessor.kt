@@ -227,7 +227,7 @@ object AiModerationPostChatProcessor : PostChatProcessor {
 
                     field {
                         name("Type")
-                        value(messageContext.messageData.type.name)
+                        value(messageContext.messageData.type.value)
                         inline = true
                     }
                 }

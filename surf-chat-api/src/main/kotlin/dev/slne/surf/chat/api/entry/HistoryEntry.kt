@@ -1,7 +1,7 @@
 package dev.slne.surf.chat.api.entry
 
 import dev.slne.surf.chat.api.message.MessageType
-import dev.slne.surf.core.api.common.surfCoreApi
+import dev.slne.surf.core.api.common.SurfCoreApi
 import dev.slne.surf.surfapi.core.api.serializer.java.datetime.datetime.offset.SerializableOffsetDateTime
 import dev.slne.surf.surfapi.core.api.serializer.java.uuid.SerializableUUID
 import kotlinx.serialization.Serializable
@@ -20,6 +20,6 @@ data class HistoryEntry(
     val deletedBy: SerializableUUID? = null,
     val deletionReason: String? = null
 ) {
-    suspend fun sender() = surfCoreApi.getOfflinePlayer(senderUuid) ?: error("Sender user $senderUuid not found")
-    suspend fun receiver() = receiverUuid?.let { surfCoreApi.getOfflinePlayer(it) }
+    suspend fun sender() = SurfCoreApi.getOfflinePlayer(senderUuid) ?: error("Sender user $senderUuid not found")
+    suspend fun receiver() = receiverUuid?.let { SurfCoreApi.getOfflinePlayer(it) }
 }

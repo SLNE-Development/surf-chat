@@ -105,7 +105,7 @@ private val pagination = Pagination<RenderData> {
                 }
                 appendSpace()
                 spacer("(")
-                variableValue(entry.messageType.name)
+                variableValue(entry.messageType.value)
                 spacer(")")
             }
         )
@@ -212,7 +212,7 @@ private suspend fun Map<String, String>.parseFilters(): HistoryFilter {
         messageUuid = this["--messageUuid"]?.let { runCatching { UUID.fromString(it) }.getOrNull() },
         senderUuid = senderUuid,
         receiverUuid = receiverUuid,
-        messageType = this["--type"]?.let { runCatching { MessageType.valueOf(it.uppercase()) }.getOrNull() },
+        messageType = this["--type"]?.let { runCatching { MessageType(it.uppercase()) }.getOrNull() },
         after = this["--range"]?.let {
             parseRangeToMillis(it)?.let { amountToSubtract ->
                 OffsetDateTime.now().minus(amountToSubtract, java.time.temporal.ChronoUnit.MILLIS)

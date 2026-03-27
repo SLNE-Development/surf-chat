@@ -3,7 +3,6 @@ package dev.slne.surf.chat.paper.command.surfchat
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
-import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.CommonComponents
@@ -49,11 +48,7 @@ fun CommandAPICommand.surfChatLookupHelpCommand() = subcommand("lookuphelp") {
                     listOf(
                         HelpEntry(
                             "type",
-                            "Nach Nachrichtentyp filtern. Mögliche Werte: ${
-                                MessageType.entries.joinToString(
-                                    ", "
-                                ) { it.name.lowercase() }
-                            }", "--type team"
+                            "Nach Nachrichtentyp filtern. Mögliche Werte: TEAM, GLOBAL, DIRECT, ...", "--type team"
                         ),
                         HelpEntry(
                             "range",

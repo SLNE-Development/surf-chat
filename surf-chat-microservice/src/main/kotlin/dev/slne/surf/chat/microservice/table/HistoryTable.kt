@@ -11,7 +11,7 @@ object HistoryTable : ULongIdTable("chat_histories") {
     val receiverUuid = nativeUuid("receiver_uuid").nullable()
     val message = text("message")
     val sentAt = offsetDateTime("sent_at")
-    val type = enumerationByName<MessageType>("type", 16)
+    val type = varchar("type", 16).transform({ MessageType(it) }, { it.value })
     val server = char("server", 255)
 
     val deletedAt = offsetDateTime("deleted_at").nullable().default(null)

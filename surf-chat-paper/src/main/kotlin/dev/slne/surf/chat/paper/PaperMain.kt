@@ -4,6 +4,13 @@ import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
 import dev.slne.surf.chat.api.processor.chatProcessorRegistry
 import dev.slne.surf.chat.core.common.service.functionalityService
 import dev.slne.surf.chat.core.paper.PaperChatInstance
+import dev.slne.surf.chat.paper.command.direct.directMessageCommand
+import dev.slne.surf.chat.paper.command.direct.replyCommand
+import dev.slne.surf.chat.paper.command.ignore.ignoreCommand
+import dev.slne.surf.chat.paper.command.slowchat.slowChatCommand
+import dev.slne.surf.chat.paper.command.spy.directMessageSpyCommand
+import dev.slne.surf.chat.paper.command.surfchat.surfChatCommand
+import dev.slne.surf.chat.paper.command.teamchatCommand
 import dev.slne.surf.chat.paper.config.AiModerationConfig
 import dev.slne.surf.chat.paper.config.SurfChatConfigProvider
 import dev.slne.surf.chat.paper.listener.AsyncChatListener
@@ -12,10 +19,7 @@ import dev.slne.surf.chat.paper.listener.DisconnectListener
 import dev.slne.surf.chat.paper.processor.post.AiModerationPostChatProcessor
 import dev.slne.surf.chat.paper.processor.post.LogPostChatProcessor
 import dev.slne.surf.chat.paper.processor.post.PrivateMessageSpyPostChatProcessor
-import dev.slne.surf.chat.paper.processor.pre.CorrectViewersPreChatProcessor
-import dev.slne.surf.chat.paper.processor.pre.FormatPreChatProcessor
-import dev.slne.surf.chat.paper.processor.pre.IgnorePreChatProcessor
-import dev.slne.surf.chat.paper.processor.pre.ValidatorPreChatProcessor
+import dev.slne.surf.chat.paper.processor.pre.*
 import dev.slne.surf.chat.paper.processor.pre.validate.CharPreChatProcessor
 import dev.slne.surf.chat.paper.processor.pre.validate.LinkPreChatProcessor
 import dev.slne.surf.chat.paper.processor.pre.validate.SpamPreChatProcessor
@@ -38,6 +42,7 @@ class PaperMain : SuspendingJavaPlugin() {
         chatProcessorRegistry.register(FormatPreChatProcessor)
         chatProcessorRegistry.register(IgnorePreChatProcessor)
         chatProcessorRegistry.register(ValidatorPreChatProcessor)
+        chatProcessorRegistry.register(SlowChatPreChatProcessor)
 
         chatProcessorRegistry.register(LogPostChatProcessor)
         chatProcessorRegistry.register(AiModerationPostChatProcessor)
@@ -47,7 +52,14 @@ class PaperMain : SuspendingJavaPlugin() {
     override suspend fun onEnableAsync() {
         PaperChatInstance.redisApi.subscribeToEvents(RedisEventListener)
         PaperChatInstance.paperLoader.onEnable()
-        BukkitCommandManager.registerCommands()
+
+        surfChatCommand()
+        teamchatCommand()
+        ignoreCommand()
+        directMessageSpyCommand()
+        directMessageCommand()
+        replyCommand()
+        slowChatCommand()
 
         AsyncChatListener.register()
         DisconnectListener.register()

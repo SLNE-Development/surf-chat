@@ -42,6 +42,6 @@ class FunctionalityServiceImpl : FunctionalityService, Services.Fallback {
     }
 
     override suspend fun getFunctionalitiesForAllServers(): Map<String, Functionalities> {
-        return rabbiApi.sendRequest(FindAllFunctionalitiesRequestPacket).functionalities
+        return rabbiApi.sendRequest(FindAllFunctionalitiesRequestPacket()).functionalities
     }
 }

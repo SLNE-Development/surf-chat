@@ -5,4 +5,4 @@ import dev.slne.surf.rabbitmq.api.packet.RabbitRequestPacket
 import kotlinx.serialization.Serializable
 
 @Serializable
-object FindAllFunctionalitiesRequestPacket : RabbitRequestPacket<ManyFunctionalitiesResponsePacket>()
+class FindAllFunctionalitiesRequestPacket : RabbitRequestPacket<ManyFunctionalitiesResponsePacket>()

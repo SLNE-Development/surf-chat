@@ -23,9 +23,9 @@ fun Audience.hasPermission(permission: String) = getPointer(PermissionChecker.PO
 
 fun CommandSender.realName() = when (this) {
     is ConsoleCommandSender -> "Console"
-    is BlockCommandSender -> "Block"
+    is BlockCommandSender -> "CommandBlock"
     is CommandMinecart -> "CommandBlockMinecart"
-    else -> nameOrNull() ?: "#Error"
+    else -> nameOrNull() ?: "#null"
 }
 
 inline fun UUID.sendText(block: SurfComponentBuilder.() -> Unit) = server.getPlayer(this)?.sendText(block)

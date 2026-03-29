@@ -1,6 +1,5 @@
 package dev.slne.surf.chat.paper.command.ignore
 
-import dev.jorel.commandapi.CommandAPI
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.slne.surf.chat.core.common.service.ignoreService
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
@@ -15,18 +14,27 @@ fun ignoreCommand() = commandAPICommand("ignore") {
     ignoreListCommand()
     surfOfflinePlayerArgument("target")
     playerExecutorSuspend { player, args ->
-        val target = args.awaitingOrNull<SurfPlayer?>("target")
-            ?: throw CommandAPI.failWithString("Der Spieler wurde nicht gefunden.")
+        val target = args.awaitingOrNull<SurfPlayer?>("target") ?: run {
+            player.sendText {
+                appendErrorPrefix()
+                error("Der Spieler wurde nicht gefunden.")
+            }
+            return@playerExecutorSuspend
+        }
 
         if (player.uniqueId == target.uuid) {
-            throw CommandAPI.failWithString("Du kannst dich nicht selbst ignorieren.")
+            player.sendText {
+                appendErrorPrefix()
+                error("Du kannst dich nicht selbst ignorieren.")
+            }
+            return@playerExecutorSuspend
         }
 
         if (ignoreService.unignore(player.uniqueId, target.uuid)) {
             player.sendText {
                 appendSuccessPrefix()
                 success("Du ignorierst nun nicht mehr ")
-                variableValue(target.lastKnownName ?: target.uuid.toString())
+                variableValue(target.username)
                 success(".")
             }
         } else {
@@ -34,7 +42,7 @@ fun ignoreCommand() = commandAPICommand("ignore") {
             player.sendText {
                 appendSuccessPrefix()
                 success("Du ignorierst nun ")
-                variableValue(target.lastKnownName ?: target.uuid.toString())
+                variableValue(target.username)
                 success(".")
             }
         }

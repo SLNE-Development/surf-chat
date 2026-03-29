@@ -33,7 +33,7 @@ object SpamPreChatProcessor : PreChatProcessor {
 
         if (lastMessage != null && lastMessage.equals(message, ignoreCase = true)) {
             sender.sendText {
-                appendWarningPrefix()
+                appendErrorPrefix()
                 error("Du darfst nicht zweimal hintereinander die gleiche Nachricht senden.")
             }
             context.cancel()
@@ -46,7 +46,7 @@ object SpamPreChatProcessor : PreChatProcessor {
 
         if (messagesSent >= plugin.surfChatConfig.config.spamConfig.amount) {
             sender.sendText {
-                appendWarningPrefix()
+                appendErrorPrefix()
                 error("Du sendest Nachrichten zu schnell. Bitte warte einen Moment.")
             }
             context.cancel()

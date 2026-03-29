@@ -12,6 +12,10 @@ object PermissionRegistry : PermissionRegistry() {
     val BYPASS_SPY = create("$PREFIX.bypass.spy")
     val BYPASS_FUNCTIONALITY = create("$PREFIX.bypass.functionality")
 
+    val SLOW_CHAT_BYPASS = create("$PREFIX.slowchat.bypass")
+    val SLOW_CHAT_NOTIFY = create("$PREFIX.slowchat.notify")
+    val SLOW_CHAT_COMMAND = create("$PREFIX.slowchat.command")
+
     val TEAM_NOTIFY_FUNCTIONALITY = create("$PREFIX_TEAM.notify.functionality")
     val TEAM_NOTIFY_DELETION = create("$PREFIX_TEAM.notify.deletion")
 

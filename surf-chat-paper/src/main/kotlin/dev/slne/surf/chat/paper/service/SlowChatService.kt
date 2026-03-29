@@ -1,7 +1,9 @@
 package dev.slne.surf.chat.paper.service
 
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
+import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
@@ -52,17 +54,19 @@ object SlowChatService {
 
             appendNewInfoPrefixedLine()
             if (enabled) {
-                info("Der Slow Chat wurde aktiviert,")
+                info("Der Slow Chat wurde aktiviert,".toSmallCaps())
                 appendNewInfoPrefixedLine()
-                variableValue("du kannst nur alle 30 Sekunden eine Nachricht senden.")
+                variableValue("du kannst nur alle 30 Sekunden ".toSmallCaps(), TextDecoration.BOLD)
+                appendNewInfoPrefixedLine()
+                variableValue("eine Nachricht senden.".toSmallCaps(), TextDecoration.BOLD)
             } else {
-                info("Der Slow Chat wurde deaktiviert,")
+                info("Der Slow Chat wurde deaktiviert,".toSmallCaps())
                 appendNewInfoPrefixedLine()
-                variableValue("du kannst wieder normal chatten.")
+                variableValue("du kannst wieder normal chatten.".toSmallCaps(), TextDecoration.BOLD)
             }
             appendNewInfoPrefixedLine()
 
-            appendInfoPrefix()
+            appendNewInfoPrefixedLine()
             spacer("-".repeat(30))
         })
     }

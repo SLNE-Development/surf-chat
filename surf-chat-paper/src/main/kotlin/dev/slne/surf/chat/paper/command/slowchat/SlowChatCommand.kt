@@ -30,10 +30,10 @@ fun slowChatCommand() = commandTree("slowchat") {
 
             if (change == SlowChatService.isSlowChat()) {
                 sender.sendText {
-                    appendWarningPrefix()
-                    info("Der Slowchat ist bereits ")
-                    variableValue(if (change) "aktiviert" else "deaktiviert")
-                    info(".")
+                    appendErrorPrefix()
+                    error("Der Slowchat ist bereits ")
+                    error(if (change) "aktiviert" else "deaktiviert")
+                    error(".")
                 }
                 return@anyExecutor
             }
@@ -51,9 +51,9 @@ fun slowChatCommand() = commandTree("slowchat") {
 
             sender.sendText {
                 appendSuccessPrefix()
-                info("Der Slowchat wurde erfolgreich ")
+                success("Der Slowchat wurde erfolgreich ")
                 variableValue(if (change) "aktiviert" else "deaktiviert")
-                info(".")
+                success(".")
             }
         }
     }

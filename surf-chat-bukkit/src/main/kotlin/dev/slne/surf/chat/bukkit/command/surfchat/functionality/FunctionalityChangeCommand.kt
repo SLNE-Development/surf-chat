@@ -47,7 +47,7 @@ fun CommandAPICommand.functionalityChangeCommand() = subcommand("change") {
             }
 
             val message = buildText {
-                appendSuccessPrefix()
+                appendInfoPrefix()
                 variableValue(player.name)
                 info(" hat den Chat für den Server ")
                 variableValue(surfCoreApi.getCurrentServerName())

@@ -251,7 +251,13 @@ object MessageFormatter {
 
         linkRegex.findAll(text).forEach { match ->
             runCatching {
-                val uri = URI(match.value)
+                val url = if (match.value.startsWith("http://") || match.value.startsWith("https://")) {
+                    match.value
+                } else {
+                    "https://${match.value}"
+                }
+
+                val uri = URI(url)
                 uri.toURL()
 
                 message = message.replaceText(
@@ -263,7 +269,7 @@ object MessageFormatter {
                                 hoverEvent(buildText {
                                     info("Klicke hier, um den Link zu öffnen.")
                                 })
-                                clickOpensUrl(match.value)
+                                clickOpensUrl(url)
                             }
                         )
                         .build()

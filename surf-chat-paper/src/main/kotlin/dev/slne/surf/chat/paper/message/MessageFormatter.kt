@@ -17,6 +17,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
+import java.net.URI
 import java.util.*
 
 /**
@@ -248,21 +249,26 @@ object MessageFormatter {
         var message = rawMessage
         val text = rawMessage.plain()
 
-        linkRegex.findAll(text).filter { text.contains(it.value) }.forEach {
-            message = message.replaceText(
-                TextReplacementConfig.builder()
-                    .match(Regex.escape(it.value))
-                    .replacement(
-                        buildText {
-                            text(it.value)
-                            hoverEvent(buildText {
-                                info("Klicke hier, um den Link zu öffnen.")
-                            })
-                            clickOpensUrl(it.value)
-                        }
-                    )
-                    .build()
-            )
+        linkRegex.findAll(text).forEach { match ->
+            runCatching {
+                val uri = URI(match.value)
+                uri.toURL()
+
+                message = message.replaceText(
+                    TextReplacementConfig.builder()
+                        .match(Regex.escape(match.value))
+                        .replacement(
+                            buildText {
+                                text(match.value)
+                                hoverEvent(buildText {
+                                    info("Klicke hier, um den Link zu öffnen.")
+                                })
+                                clickOpensUrl(match.value)
+                            }
+                        )
+                        .build()
+                )
+            }
         }
 
         return message

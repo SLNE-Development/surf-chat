@@ -1,13 +1,13 @@
 package dev.slne.surf.chat.paper.command.ignore
 
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
-import dev.slne.surf.chat.core.common.service.ignoreService
+import dev.slne.surf.api.core.command.args.awaitingOrNull
+import dev.slne.surf.api.core.messages.adventure.sendText
+import dev.slne.surf.api.paper.command.executors.playerExecutorSuspend
+import dev.slne.surf.chat.core.common.service.IgnoreService
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.core.api.common.player.SurfPlayer
 import dev.slne.surf.core.api.paper.command.argument.surfOfflinePlayerArgument
-import dev.slne.surf.surfapi.bukkit.api.command.executors.playerExecutorSuspend
-import dev.slne.surf.surfapi.core.api.command.args.awaitingOrNull
-import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 fun ignoreCommand() = commandAPICommand("ignore") {
     withPermission(PermissionRegistry.COMMAND_IGNORE)
@@ -30,7 +30,7 @@ fun ignoreCommand() = commandAPICommand("ignore") {
             return@playerExecutorSuspend
         }
 
-        if (ignoreService.unignore(player.uniqueId, target.uuid)) {
+        if (IgnoreService.unignore(player.uniqueId, target.uuid)) {
             player.sendText {
                 appendSuccessPrefix()
                 success("Du ignorierst nun nicht mehr ")
@@ -38,7 +38,7 @@ fun ignoreCommand() = commandAPICommand("ignore") {
                 success(".")
             }
         } else {
-            ignoreService.ignore(player.uniqueId, target.uuid)
+            IgnoreService.ignore(player.uniqueId, target.uuid)
             player.sendText {
                 appendSuccessPrefix()
                 success("Du ignorierst nun ")

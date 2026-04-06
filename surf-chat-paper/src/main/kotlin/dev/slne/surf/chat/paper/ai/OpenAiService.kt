@@ -5,8 +5,8 @@ import com.openai.client.okhttp.OpenAIOkHttpClientAsync
 import com.openai.models.moderations.Moderation
 import com.openai.models.moderations.ModerationCreateParams
 import com.sksamuel.aedile.core.asLoadingCache
+import dev.slne.surf.api.core.util.emptyObject2DoubleMap
 import dev.slne.surf.chat.paper.config.aiModerationConfig
-import dev.slne.surf.surfapi.core.api.util.emptyObject2DoubleMap
 import it.unimi.dsi.fastutil.objects.Object2DoubleMap
 import it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap
 import kotlinx.coroutines.future.await

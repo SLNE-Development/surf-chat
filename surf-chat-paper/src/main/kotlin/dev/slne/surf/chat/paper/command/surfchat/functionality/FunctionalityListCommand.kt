@@ -3,14 +3,14 @@ package dev.slne.surf.chat.paper.command.surfchat.functionality
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.integerArgument
 import dev.jorel.commandapi.kotlindsl.subcommand
-import dev.slne.surf.chat.core.common.service.functionalityService
+import dev.slne.surf.api.core.messages.CommonComponents
+import dev.slne.surf.api.core.messages.adventure.buildText
+import dev.slne.surf.api.core.messages.adventure.sendText
+import dev.slne.surf.api.core.messages.pagination.Pagination
+import dev.slne.surf.api.paper.command.executors.anyExecutorSuspend
+import dev.slne.surf.chat.core.common.service.FunctionalityService
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.chat.paper.util.appendStatusIcon
-import dev.slne.surf.surfapi.bukkit.api.command.executors.anyExecutorSuspend
-import dev.slne.surf.surfapi.core.api.messages.CommonComponents
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
-import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
-import dev.slne.surf.surfapi.core.api.messages.pagination.Pagination
 import net.kyori.adventure.text.format.TextDecoration
 
 fun CommandAPICommand.functionalityListCommand() = subcommand("list") {
@@ -40,7 +40,7 @@ fun CommandAPICommand.functionalityListCommand() = subcommand("list") {
         }
 
 
-        val content = functionalityService.getFunctionalitiesForAllServers().map { (server, functionalities) ->
+        val content = FunctionalityService.getFunctionalitiesForAllServers().map { (server, functionalities) ->
             FunctionalityStatusEntry(
                 server,
                 functionalities.localChatEnabled

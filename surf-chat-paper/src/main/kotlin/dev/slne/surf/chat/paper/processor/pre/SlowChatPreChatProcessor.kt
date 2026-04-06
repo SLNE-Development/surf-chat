@@ -1,11 +1,11 @@
 package dev.slne.surf.chat.paper.processor.pre
 
+import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.chat.api.message.MessageContext
 import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.api.processor.PreChatProcessor
 import dev.slne.surf.chat.paper.processor.ProcessorOrder
 import dev.slne.surf.chat.paper.service.SlowChatService
-import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import org.bukkit.Bukkit
 
 object SlowChatPreChatProcessor : PreChatProcessor {
@@ -26,7 +26,7 @@ object SlowChatPreChatProcessor : PreChatProcessor {
             context.cancel()
             return context
         }
-        
+
         return context
     }
 }

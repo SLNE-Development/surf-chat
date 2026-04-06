@@ -2,7 +2,7 @@ package dev.slne.surf.chat.paper.processor.pre
 
 import dev.slne.surf.chat.api.message.MessageContext
 import dev.slne.surf.chat.api.processor.PreChatProcessor
-import dev.slne.surf.chat.core.common.service.ignoreService
+import dev.slne.surf.chat.core.common.service.IgnoreService
 import dev.slne.surf.chat.paper.processor.ProcessorOrder
 import java.util.*
 
@@ -25,6 +25,6 @@ object IgnorePreChatProcessor : PreChatProcessor {
             return false
         }
 
-        return ignoreService.isIgnored(receiver, sender)
+        return IgnoreService.isIgnored(receiver, sender)
     }
 }

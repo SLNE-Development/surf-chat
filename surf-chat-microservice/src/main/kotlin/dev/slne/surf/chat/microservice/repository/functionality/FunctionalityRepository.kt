@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.toList
 
 object FunctionalityRepository {
     suspend fun findByServerOrCreate(server: String): Functionalities = suspendTransaction {
-        FunctionalityTable.insertIgnore { // ensure row exists
+        FunctionalityTable.insertIgnore {
             it[this.server] = server
             it[this.chatEnabled] = Functionalities.EMPTY.localChatEnabled
         }

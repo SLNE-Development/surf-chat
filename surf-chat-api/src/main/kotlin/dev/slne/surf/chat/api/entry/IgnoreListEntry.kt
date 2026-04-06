@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.api.entry
 
-import dev.slne.surf.surfapi.core.api.serializer.java.datetime.datetime.offset.SerializableOffsetDateTime
+import dev.slne.surf.api.core.serializer.java.datetime.datetime.offset.SerializableOffsetDateTime
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import java.util.*
@@ -42,5 +42,5 @@ data class IgnoreListEntry(
      * or historical context of entries is relevant.
      */
     val createdAt: SerializableOffsetDateTime
-){
+) {
 }

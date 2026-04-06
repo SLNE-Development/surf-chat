@@ -2,7 +2,7 @@ package dev.slne.surf.chat.paper.processor.pre
 
 import dev.slne.surf.chat.api.message.MessageContext
 import dev.slne.surf.chat.api.processor.PreChatProcessor
-import dev.slne.surf.chat.core.common.service.ignoreService
+import dev.slne.surf.chat.core.common.service.IgnoreService
 import dev.slne.surf.chat.paper.processor.ProcessorOrder
 import dev.slne.surf.chat.paper.util.isConsole
 import dev.slne.surf.chat.paper.util.uuidOrNull
@@ -23,6 +23,6 @@ object CorrectViewersPreChatProcessor : PreChatProcessor {
             return false
         }
 
-        return ignoreService.isIgnored(viewer, sender)
+        return IgnoreService.isIgnored(viewer, sender)
     }
 }

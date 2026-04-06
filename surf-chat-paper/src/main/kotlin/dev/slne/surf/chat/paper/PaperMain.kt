@@ -1,8 +1,9 @@
 package dev.slne.surf.chat.paper
 
 import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
+import dev.slne.surf.api.paper.event.register
 import dev.slne.surf.chat.api.processor.chatProcessorRegistry
-import dev.slne.surf.chat.core.common.service.functionalityService
+import dev.slne.surf.chat.core.common.service.FunctionalityService
 import dev.slne.surf.chat.core.paper.PaperChatInstance
 import dev.slne.surf.chat.paper.command.direct.directMessageCommand
 import dev.slne.surf.chat.paper.command.direct.replyCommand
@@ -25,7 +26,6 @@ import dev.slne.surf.chat.paper.processor.pre.validate.LinkPreChatProcessor
 import dev.slne.surf.chat.paper.processor.pre.validate.SpamPreChatProcessor
 import dev.slne.surf.chat.paper.redis.listener.RedisEventListener
 import dev.slne.surf.core.api.common.SurfCoreApi
-import dev.slne.surf.surfapi.bukkit.api.event.register
 import org.bukkit.plugin.java.JavaPlugin
 
 val plugin get() = JavaPlugin.getPlugin(PaperMain::class.java)
@@ -65,7 +65,7 @@ class PaperMain : SuspendingJavaPlugin() {
         DisconnectListener.register()
         ConnectListener.register()
 
-        functionalityService.fetch(SurfCoreApi.getCurrentServerName())
+        FunctionalityService.fetch(SurfCoreApi.getCurrentServerName())
     }
 
     override suspend fun onDisableAsync() {

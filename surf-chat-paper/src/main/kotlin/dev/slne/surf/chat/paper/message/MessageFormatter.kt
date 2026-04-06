@@ -2,14 +2,14 @@
 
 package dev.slne.surf.chat.paper.message
 
+import dev.slne.surf.api.core.messages.Colors
+import dev.slne.surf.api.core.messages.adventure.*
+import dev.slne.surf.api.paper.extensions.server
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.paper.hook.SettingsHook
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.chat.paper.util.*
-import dev.slne.surf.surfapi.bukkit.api.extensions.server
-import dev.slne.surf.surfapi.core.api.messages.Colors
-import dev.slne.surf.surfapi.core.api.messages.adventure.*
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextReplacementConfig
 import net.kyori.adventure.text.format.TextDecoration

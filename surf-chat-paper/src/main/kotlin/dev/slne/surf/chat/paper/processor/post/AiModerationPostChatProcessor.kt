@@ -2,9 +2,12 @@ package dev.slne.surf.chat.paper.processor.post
 
 import com.github.shynixn.mccoroutine.folia.launch
 import de.maxbossing.webhookbuilder.sendWebhook
+import dev.slne.surf.api.core.messages.Colors
+import dev.slne.surf.api.core.messages.adventure.buildText
+import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.chat.api.message.MessageContext
 import dev.slne.surf.chat.api.processor.PostChatProcessor
-import dev.slne.surf.chat.core.common.service.deletionService
+import dev.slne.surf.chat.core.common.service.DeletionService
 import dev.slne.surf.chat.core.paper.redisApi
 import dev.slne.surf.chat.paper.ai.OpenAiService
 import dev.slne.surf.chat.paper.ai.openAiService
@@ -14,11 +17,8 @@ import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.chat.paper.redis.event.TeamMessageRedisEvent
 import dev.slne.surf.chat.paper.util.appendBotIcon
 import dev.slne.surf.chat.paper.util.hasPermission
-import dev.slne.surf.punish.api.punishment.PunishType
-import dev.slne.surf.punish.api.user.PunishmentUser
-import dev.slne.surf.surfapi.core.api.messages.Colors
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
-import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
+import dev.slne.surf.punish.api.common.punishment.PunishType
+import dev.slne.surf.punish.api.common.user.PunishmentUser
 import net.kyori.adventure.text.event.ClickEvent
 import org.bukkit.Bukkit
 import java.awt.Color
@@ -83,7 +83,7 @@ object AiModerationPostChatProcessor : PostChatProcessor {
                             )
                             clickEvent(ClickEvent.callback { clicked ->
                                 plugin.launch {
-                                    val deleted = deletionService.deleteMessage(
+                                    val deleted = DeletionService.deleteMessage(
                                         messageData,
                                         deleter = clicked,
                                         deletionReason = "AI classification: ${classification.action.name}",
@@ -105,7 +105,7 @@ object AiModerationPostChatProcessor : PostChatProcessor {
 
         when (classification.action) {
             OpenAiService.ClassificationAction.DELETE -> {
-                deletionService.deleteMessage(
+                DeletionService.deleteMessage(
                     messageData,
                     deletionReason = "AI classification: ${classification.action.name}",
                 )

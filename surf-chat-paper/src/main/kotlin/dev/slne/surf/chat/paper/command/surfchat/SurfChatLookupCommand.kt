@@ -6,22 +6,22 @@ import dev.jorel.commandapi.arguments.MapArgumentBuilder
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.optionalArgument
 import dev.jorel.commandapi.kotlindsl.subcommand
+import dev.slne.surf.api.core.font.toSmallCaps
+import dev.slne.surf.api.core.messages.Colors
+import dev.slne.surf.api.core.messages.adventure.buildText
+import dev.slne.surf.api.core.messages.adventure.clickOpensUrl
+import dev.slne.surf.api.core.messages.adventure.sendText
+import dev.slne.surf.api.core.messages.pagination.Pagination
+import dev.slne.surf.api.core.service.PlayerLookupService
+import dev.slne.surf.api.paper.command.executors.playerExecutorSuspend
 import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.api.message.MessageType
-import dev.slne.surf.chat.core.common.service.historyService
+import dev.slne.surf.chat.core.common.service.HistoryService
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.chat.paper.util.appendLinePrefix
 import dev.slne.surf.chat.paper.util.formatAgo
 import dev.slne.surf.chat.paper.util.formatTime
-import dev.slne.surf.surfapi.bukkit.api.command.executors.playerExecutorSuspend
-import dev.slne.surf.surfapi.core.api.font.toSmallCaps
-import dev.slne.surf.surfapi.core.api.messages.Colors
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
-import dev.slne.surf.surfapi.core.api.messages.adventure.clickOpensUrl
-import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
-import dev.slne.surf.surfapi.core.api.messages.pagination.Pagination
-import dev.slne.surf.surfapi.core.api.service.PlayerLookupService
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -148,7 +148,7 @@ fun CommandAPICommand.surfChatLookupCommand() = subcommand("lookup") {
         val filter = query?.parseFilters() ?: HistoryFilter.empty()
         val page = query?.get("--page")?.toIntOrNull() ?: 1
         val history = try {
-            historyService.findHistoryEntry(filter)
+            HistoryService.findHistoryEntry(filter)
         } catch (e: TimeoutCancellationException) {
             throw CommandAPI.failWithString("Die Suche hat zu lange gedauert und wurde abgebrochen.")
         }

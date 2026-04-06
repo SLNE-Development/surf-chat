@@ -2,7 +2,7 @@ package dev.slne.surf.chat.paper.message
 
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.api.message.MessageValidationResult
-import dev.slne.surf.chat.core.common.service.functionalityService
+import dev.slne.surf.chat.core.common.service.FunctionalityService
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.chat.paper.util.hasPermission
@@ -22,7 +22,7 @@ object MessageValidator {
             return MessageValidationResult.Failure(MessageValidationResult.MessageValidationError.AutoDisabled())
         }
 
-        if (!functionalityService.getFunctionalities().localChatEnabled && !sender.hasPermission(
+        if (!FunctionalityService.getFunctionalities().localChatEnabled && !sender.hasPermission(
                 PermissionRegistry.BYPASS_FUNCTIONALITY
             )
         ) {

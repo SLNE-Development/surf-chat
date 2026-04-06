@@ -13,7 +13,6 @@ class PaperLoader(
     val redisApi = RedisApi.create()
 
     suspend fun onLoad() {
-        // Rabbit
         rabbitApi.freezeAndConnect()
 
     }

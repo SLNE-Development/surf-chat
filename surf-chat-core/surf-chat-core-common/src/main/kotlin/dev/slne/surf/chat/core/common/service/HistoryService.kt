@@ -1,19 +1,15 @@
 package dev.slne.surf.chat.core.common.service
 
+import dev.slne.surf.api.core.util.requiredService
 import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.api.message.MessageData
-import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectList
 import java.time.OffsetDateTime
 import java.util.*
 
-/**
- * Represents a service for managing chat history, including logging, retrieval, and deletion
- * of messages. This interface defines methods to interact with the history of messages within
- * the chat system, including querying based on various filters, monitoring log status, and
- * marking messages as deleted.
- */
+private val service = requiredService<HistoryService>()
+
 interface HistoryService {
     /**
      * Logs the provided message data into the system's history.
@@ -58,21 +54,5 @@ interface HistoryService {
      * Companion object for the `HistoryService` interface.
      * Provides access to the singleton instance of `HistoryService`.
      */
-    companion object {
-        /**
-         * Singleton instance of the HistoryService.
-         *
-         * This property provides access to the centralized HistoryService instance, which manages
-         * operations related to logging messages, querying history entries, checking lookup statuses,
-         * and marking messages as deleted in the system.
-         */
-        val INSTANCE = requiredService<HistoryService>()
-    }
+    companion object : HistoryService by service
 }
-
-/**
- * Provides access to the singleton instance of HistoryService.
- * HistoryService is responsible for handling operations and interactions
- * related to maintaining historical data within the system.
- */
-val historyService get() = HistoryService.INSTANCE

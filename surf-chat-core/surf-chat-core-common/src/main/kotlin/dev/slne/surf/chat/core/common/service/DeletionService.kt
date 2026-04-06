@@ -1,11 +1,12 @@
 package dev.slne.surf.chat.core.common.service
 
+import dev.slne.surf.api.core.util.requiredService
 import dev.slne.surf.chat.api.message.MessageData
-import dev.slne.surf.surfapi.core.api.util.requiredService
 import net.kyori.adventure.audience.Audience
 
-interface DeletionService {
+private val service = requiredService<DeletionService>()
 
+interface DeletionService {
     suspend fun deleteMessage(
         message: MessageData,
         deleter: Audience? = null,
@@ -13,9 +14,5 @@ interface DeletionService {
         notifyTeam: Boolean = true
     ): Boolean
 
-    companion object {
-        val INSTANCE = requiredService<DeletionService>()
-    }
+    companion object : DeletionService by service
 }
-
-val deletionService get() = DeletionService.INSTANCE

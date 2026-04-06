@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.api.message
 
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import dev.slne.surf.api.core.messages.adventure.buildText
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.Component
 import java.util.*

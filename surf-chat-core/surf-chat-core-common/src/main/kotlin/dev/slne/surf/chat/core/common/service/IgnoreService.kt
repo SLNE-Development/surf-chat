@@ -1,8 +1,10 @@
 package dev.slne.surf.chat.core.common.service
 
+import dev.slne.surf.api.core.util.requiredService
 import dev.slne.surf.chat.api.entry.IgnoreListEntry
-import dev.slne.surf.surfapi.core.api.util.requiredService
 import java.util.*
+
+private val service = requiredService<IgnoreService>()
 
 interface IgnoreService {
 
@@ -15,9 +17,5 @@ interface IgnoreService {
     suspend fun loadIgnoreList(uuid: UUID): List<IgnoreListEntry>
     suspend fun cleanup(uuid: UUID)
 
-    companion object {
-        val INSTANCE = requiredService<IgnoreService>()
-    }
+    companion object : IgnoreService by service
 }
-
-val ignoreService get() = IgnoreService.INSTANCE

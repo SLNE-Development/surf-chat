@@ -1,13 +1,13 @@
 package dev.slne.surf.chat.paper.listener
 
-import dev.slne.surf.chat.core.common.service.ignoreService
+import dev.slne.surf.api.core.messages.adventure.buildText
+import dev.slne.surf.api.core.messages.adventure.sendText
+import dev.slne.surf.api.core.minimessage.miniMessage
+import dev.slne.surf.chat.core.common.service.IgnoreService
 import dev.slne.surf.chat.paper.hook.LuckPermsHook
 import dev.slne.surf.chat.paper.hook.MiniPlaceholdersHook
 import dev.slne.surf.chat.paper.message.MessageFormatter
 import dev.slne.surf.chat.paper.plugin
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
-import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
-import dev.slne.surf.surfapi.core.api.minimessage.miniMessage
 import io.papermc.paper.event.connection.configuration.AsyncPlayerConnectionConfigureEvent
 import kotlinx.coroutines.runBlocking
 import org.bukkit.event.EventHandler
@@ -21,7 +21,7 @@ object ConnectListener : Listener {
 
         runBlocking {
             val uuid = event.connection.profile.id ?: error("Player has no UUID")
-            ignoreService.loadIgnoreList(uuid)
+            IgnoreService.loadIgnoreList(uuid)
         }
     }
 

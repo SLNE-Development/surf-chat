@@ -3,17 +3,17 @@ package dev.slne.surf.chat.paper.command.ignore
 import dev.jorel.commandapi.CommandAPI
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.subcommand
-import dev.slne.surf.chat.core.common.service.ignoreService
+import dev.slne.surf.api.core.font.toSmallCaps
+import dev.slne.surf.api.core.messages.CommonComponents
+import dev.slne.surf.api.core.messages.adventure.buildText
+import dev.slne.surf.api.core.messages.adventure.sendText
+import dev.slne.surf.api.core.messages.pagination.Pagination
+import dev.slne.surf.api.core.util.mapAsync
+import dev.slne.surf.api.paper.command.executors.playerExecutorSuspend
+import dev.slne.surf.chat.core.common.service.IgnoreService
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.chat.paper.util.unixTime
 import dev.slne.surf.core.api.common.SurfCoreApi
-import dev.slne.surf.surfapi.bukkit.api.command.executors.playerExecutorSuspend
-import dev.slne.surf.surfapi.core.api.font.toSmallCaps
-import dev.slne.surf.surfapi.core.api.messages.CommonComponents
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
-import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
-import dev.slne.surf.surfapi.core.api.messages.pagination.Pagination
-import dev.slne.surf.surfapi.core.api.util.mapAsync
 import net.kyori.adventure.text.format.TextDecoration
 import java.time.OffsetDateTime
 
@@ -38,7 +38,7 @@ private val pagination = Pagination<IgnoreListPaginationEntry> {
 fun CommandAPICommand.ignoreListCommand() = subcommand("#list") {
     withPermission(PermissionRegistry.COMMAND_IGNORE_LIST)
     playerExecutorSuspend { player, _ ->
-        val ignoreList = ignoreService.getCachedIgnoreList(player.uniqueId)
+        val ignoreList = IgnoreService.getCachedIgnoreList(player.uniqueId)
             .mapAsync {
                 IgnoreListPaginationEntry(
                     targetName = SurfCoreApi.getOfflinePlayer(it.target)?.lastKnownName ?: it.target.toString(),

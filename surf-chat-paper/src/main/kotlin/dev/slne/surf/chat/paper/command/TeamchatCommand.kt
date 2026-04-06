@@ -3,14 +3,14 @@ package dev.slne.surf.chat.paper.command
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.greedyStringArgument
+import dev.slne.surf.api.paper.command.executors.playerExecutorSuspend
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.api.message.MessageType
-import dev.slne.surf.chat.core.common.service.historyService
+import dev.slne.surf.chat.core.common.service.HistoryService
 import dev.slne.surf.chat.core.paper.redisApi
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.chat.paper.redis.event.TeamchatMessageRedisEvent
 import dev.slne.surf.core.api.common.SurfCoreApi
-import dev.slne.surf.surfapi.bukkit.api.command.executors.playerExecutorSuspend
 import net.kyori.adventure.text.Component
 import java.time.OffsetDateTime
 import java.util.*
@@ -41,6 +41,6 @@ fun teamchatCommand() = commandAPICommand("teamchat") {
             )
         ).await()
 
-        historyService.logMessage(messageData)
+        HistoryService.logMessage(messageData)
     }
 }

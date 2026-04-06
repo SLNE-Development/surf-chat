@@ -9,8 +9,8 @@ import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.api.processor.PostChatProcessor
 import dev.slne.surf.chat.api.processor.PreChatProcessor
 import dev.slne.surf.chat.api.processor.chatProcessorRegistry
-import dev.slne.surf.chat.core.common.service.historyService
-import dev.slne.surf.chat.core.common.service.ignoreService
+import dev.slne.surf.chat.core.common.service.HistoryService
+import dev.slne.surf.chat.core.common.service.IgnoreService
 import it.unimi.dsi.fastutil.objects.ObjectList
 import net.kyori.adventure.util.Services
 import java.util.*
@@ -18,7 +18,7 @@ import java.util.*
 @AutoService(SurfChatApi::class)
 class PaperSurfChatApiImpl : SurfChatApi, Services.Fallback {
     override suspend fun logMessage(data: MessageData) {
-        historyService.logMessage(data)
+        HistoryService.logMessage(data)
     }
 
     override fun registerChatProcessor(processor: PreChatProcessor) {
@@ -29,11 +29,11 @@ class PaperSurfChatApiImpl : SurfChatApi, Services.Fallback {
         chatProcessorRegistry.register(processor)
     }
 
-    override fun getCachedIgnoreList(uuid: UUID): List<IgnoreListEntry> = ignoreService.getCachedIgnoreList(uuid)
+    override fun getCachedIgnoreList(uuid: UUID): List<IgnoreListEntry> = IgnoreService.getCachedIgnoreList(uuid)
 
-    override suspend fun getIgnoreList(uuid: UUID): List<IgnoreListEntry> = ignoreService.loadIgnoreList(uuid)
+    override suspend fun getIgnoreList(uuid: UUID): List<IgnoreListEntry> = IgnoreService.loadIgnoreList(uuid)
 
     override suspend fun lookupHistory(filter: HistoryFilter): ObjectList<HistoryEntry> =
-        historyService.findHistoryEntry(filter)
+        HistoryService.findHistoryEntry(filter)
 
 }

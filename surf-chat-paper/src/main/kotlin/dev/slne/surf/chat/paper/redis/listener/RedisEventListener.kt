@@ -2,6 +2,8 @@ package dev.slne.surf.chat.paper.redis.listener
 
 import com.github.shynixn.mccoroutine.folia.entityDispatcher
 import com.github.shynixn.mccoroutine.folia.launch
+import dev.slne.surf.api.core.messages.adventure.playSound
+import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.chat.paper.hook.SettingsHook
 import dev.slne.surf.chat.paper.message.MessageFormatter
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
@@ -10,8 +12,6 @@ import dev.slne.surf.chat.paper.redis.event.DirectMessageRedisEvent
 import dev.slne.surf.chat.paper.redis.event.TeamMessageRedisEvent
 import dev.slne.surf.chat.paper.redis.event.TeamchatMessageRedisEvent
 import dev.slne.surf.redis.event.OnRedisEvent
-import dev.slne.surf.surfapi.core.api.messages.adventure.playSound
-import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import org.bukkit.Bukkit
 import org.bukkit.Sound
 

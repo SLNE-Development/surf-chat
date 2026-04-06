@@ -1,6 +1,8 @@
 package dev.slne.surf.chat.core.paper.service
 
 import com.google.auto.service.AutoService
+import dev.slne.surf.api.core.messages.adventure.plain
+import dev.slne.surf.api.core.util.toObjectList
 import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.api.message.MessageData
@@ -9,8 +11,6 @@ import dev.slne.surf.chat.core.common.rabbit.packet.request.history.FindHistorie
 import dev.slne.surf.chat.core.common.rabbit.packet.request.history.MarkHistoryEntryDeletedRequestPacket
 import dev.slne.surf.chat.core.common.service.HistoryService
 import dev.slne.surf.chat.core.paper.rabbiApi
-import dev.slne.surf.surfapi.core.api.messages.adventure.plain
-import dev.slne.surf.surfapi.core.api.util.toObjectList
 import it.unimi.dsi.fastutil.objects.ObjectList
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit

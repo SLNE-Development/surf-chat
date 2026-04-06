@@ -1,15 +1,17 @@
 package dev.slne.surf.chat.api
 
+import dev.slne.surf.api.core.util.requiredService
 import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.api.entry.IgnoreListEntry
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.api.processor.PostChatProcessor
 import dev.slne.surf.chat.api.processor.PreChatProcessor
-import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectList
 import kotlinx.coroutines.TimeoutCancellationException
 import java.util.*
+
+private val api = requiredService<SurfChatApi>()
 
 interface SurfChatApi {
     suspend fun logMessage(data: MessageData)
@@ -23,9 +25,5 @@ interface SurfChatApi {
     @Throws(TimeoutCancellationException::class)
     suspend fun lookupHistory(filter: HistoryFilter): ObjectList<HistoryEntry>
 
-    companion object {
-        val INSTANCE = requiredService<SurfChatApi>()
-    }
+    companion object : SurfChatApi by api
 }
-
-val surfChatApi get() = SurfChatApi.INSTANCE

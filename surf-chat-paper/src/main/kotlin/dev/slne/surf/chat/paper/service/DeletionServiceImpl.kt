@@ -1,13 +1,13 @@
 package dev.slne.surf.chat.paper.service
 
 import com.google.auto.service.AutoService
+import dev.slne.surf.api.paper.extensions.server
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.core.common.service.DeletionService
-import dev.slne.surf.chat.core.common.service.historyService
+import dev.slne.surf.chat.core.common.service.HistoryService
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.chat.paper.util.Components
 import dev.slne.surf.chat.paper.util.uuidOrNull
-import dev.slne.surf.surfapi.bukkit.api.extensions.server
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import net.kyori.adventure.audience.Audience
@@ -26,7 +26,7 @@ class DeletionServiceImpl : DeletionService {
 
         coroutineScope {
             launch {
-                historyService.markDeleted(message.messageUuid, deleter?.uuidOrNull(), deletionReason)
+                HistoryService.markDeleted(message.messageUuid, deleter?.uuidOrNull(), deletionReason)
             }
 
             if (notifyTeam) {

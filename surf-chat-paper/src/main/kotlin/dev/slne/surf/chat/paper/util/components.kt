@@ -1,14 +1,14 @@
 package dev.slne.surf.chat.paper.util
 
 import com.github.shynixn.mccoroutine.folia.launch
+import dev.slne.surf.api.core.messages.Colors
+import dev.slne.surf.api.core.messages.adventure.buildText
+import dev.slne.surf.api.core.messages.adventure.sendText
+import dev.slne.surf.api.core.messages.builder.SurfComponentBuilder
 import dev.slne.surf.chat.api.message.MessageData
-import dev.slne.surf.chat.core.common.service.deletionService
+import dev.slne.surf.chat.core.common.service.DeletionService
 import dev.slne.surf.chat.paper.hook.LuckPermsHook
 import dev.slne.surf.chat.paper.plugin
-import dev.slne.surf.surfapi.core.api.messages.Colors
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
-import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
-import dev.slne.surf.surfapi.core.api.messages.builder.SurfComponentBuilder
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.event.ClickCallback
 import net.kyori.adventure.text.event.ClickEvent
@@ -29,7 +29,7 @@ fun SurfComponentBuilder.appendDelete(messageData: MessageData) = append(buildTe
     darkSpacer(" ")
     clickEvent(ClickEvent.callback { clicked ->
         plugin.launch {
-            val deleted = deletionService.deleteMessage(
+            val deleted = DeletionService.deleteMessage(
                 messageData,
                 deleter = clicked,
             )

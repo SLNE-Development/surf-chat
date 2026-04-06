@@ -3,11 +3,11 @@ package dev.slne.surf.chat.paper.command.direct
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.greedyStringArgument
+import dev.slne.surf.api.core.messages.adventure.sendText
+import dev.slne.surf.api.core.util.mutableObject2ObjectMapOf
+import dev.slne.surf.api.paper.command.executors.playerExecutorSuspend
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.core.api.common.SurfCoreApi
-import dev.slne.surf.surfapi.bukkit.api.command.executors.playerExecutorSuspend
-import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
-import dev.slne.surf.surfapi.core.api.util.mutableObject2ObjectMapOf
 import java.util.*
 
 

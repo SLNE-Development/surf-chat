@@ -3,13 +3,13 @@ package dev.slne.surf.chat.paper.command.spy
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
+import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.chat.core.common.service.SpyService
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
-import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 fun CommandAPICommand.directMessageSpyClearCommand() = subcommand("#clear") {
     withPermission(PermissionRegistry.COMMAND_DIRECT_SPY_CLEAR)
-    playerExecutor { player, args ->
+    playerExecutor { player, _ ->
         if (!SpyService.isPrivateMessageSpying(player.uniqueId)) {
             player.sendText {
                 appendErrorPrefix()

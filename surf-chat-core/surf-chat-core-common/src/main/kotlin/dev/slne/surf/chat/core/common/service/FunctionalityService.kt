@@ -1,13 +1,10 @@
 package dev.slne.surf.chat.core.common.service
 
+import dev.slne.surf.api.core.util.requiredService
 import dev.slne.surf.chat.api.functionality.Functionalities
-import dev.slne.surf.surfapi.core.api.util.requiredService
 
-/**
- * Provides functionality for managing server-specific features and their states.
- * This service allows enabling or disabling features for specific servers,
- * fetching server states, and managing local server configurations.
- */
+private val service = requiredService<FunctionalityService>()
+
 interface FunctionalityService {
     /**
      * Fetches data or performs operations for the specified chat server.
@@ -37,18 +34,5 @@ interface FunctionalityService {
      * This singleton can be used to interact with functionalities related to server configurations,
      * enabling and disabling local chat, and managing the state of chat servers.
      */
-    companion object {
-        /**
-         * Singleton instance of the `FunctionalityService`.
-         * The `FunctionalityService` provides functionality related to managing and querying server-level chat capabilities.
-         * It includes methods for checking server configurations, enabling or disabling chat functionalities,
-         * toggling chat states, and fetching associated data about servers within the system.
-         */
-        val INSTANCE = requiredService<FunctionalityService>()
-    }
+    companion object : FunctionalityService by service
 }
-
-/**
- *
- */
-val functionalityService get() = FunctionalityService.INSTANCE

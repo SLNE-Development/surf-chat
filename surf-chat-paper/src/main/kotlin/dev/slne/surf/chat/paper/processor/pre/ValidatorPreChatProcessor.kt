@@ -1,11 +1,11 @@
 package dev.slne.surf.chat.paper.processor.pre
 
+import dev.slne.surf.api.core.messages.Colors
 import dev.slne.surf.chat.api.message.MessageContext
 import dev.slne.surf.chat.api.processor.PreChatProcessor
 import dev.slne.surf.chat.paper.message.MessageValidator
 import dev.slne.surf.chat.paper.processor.ProcessorOrder
 import dev.slne.surf.chat.paper.util.sendText
-import dev.slne.surf.surfapi.core.api.messages.Colors
 
 object ValidatorPreChatProcessor : PreChatProcessor {
     override val order = ProcessorOrder.VALIDATE

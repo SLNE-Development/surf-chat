@@ -3,6 +3,9 @@ package dev.slne.surf.chat.paper.command.direct
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.greedyStringArgument
+import dev.slne.surf.api.core.messages.adventure.sendText
+import dev.slne.surf.api.core.util.mutableObjectSetOf
+import dev.slne.surf.api.paper.command.executors.playerExecutorSuspend
 import dev.slne.surf.chat.api.message.MessageContext
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.api.message.MessageType
@@ -14,9 +17,6 @@ import dev.slne.surf.chat.paper.redis.event.DirectMessageRedisEvent
 import dev.slne.surf.core.api.common.SurfCoreApi
 import dev.slne.surf.core.api.common.player.SurfPlayer
 import dev.slne.surf.core.api.paper.command.argument.surfPlayerArgument
-import dev.slne.surf.surfapi.bukkit.api.command.executors.playerExecutorSuspend
-import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
-import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
 import java.time.OffsetDateTime

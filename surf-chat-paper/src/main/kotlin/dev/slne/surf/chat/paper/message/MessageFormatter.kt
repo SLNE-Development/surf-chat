@@ -234,10 +234,11 @@ object MessageFormatter {
         )
 
 
-
-        if (viewerMentioned && SettingsHook.hasChatPingsEnabled(viewerUuid)) {
-            Bukkit.getPlayer(viewerUuid)?.playSound(true) {
-                type(Sound.ENTITY_CHICKEN_EGG)
+        if (viewerMentioned) {
+            if (plugin.checkSettingsHook() && SettingsHook.hasChatPingsEnabled(viewerUuid)) {
+                Bukkit.getPlayer(viewerUuid)?.playSound(true) {
+                    type(Sound.ENTITY_CHICKEN_EGG)
+                }
             }
         }
 

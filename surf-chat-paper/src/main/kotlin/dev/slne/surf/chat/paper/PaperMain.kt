@@ -2,6 +2,7 @@ package dev.slne.surf.chat.paper
 
 import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
 import dev.slne.surf.api.paper.event.register
+import dev.slne.surf.api.paper.extensions.pluginManager
 import dev.slne.surf.chat.api.processor.chatProcessorRegistry
 import dev.slne.surf.chat.core.common.service.FunctionalityService
 import dev.slne.surf.chat.core.paper.PaperChatInstance
@@ -71,6 +72,9 @@ class PaperMain : SuspendingJavaPlugin() {
     override suspend fun onDisableAsync() {
         PaperChatInstance.paperLoader.onDisable()
     }
+
+    fun checkMiniPlaceholdersHook() = pluginManager.isPluginEnabled("MiniPlaceholders")
+    fun checkSettingsHook() = pluginManager.isPluginEnabled("surf-settings-paper")
 
     val surfChatConfig = SurfChatConfigProvider()
     val connectionMessageConfig get() = surfChatConfig.config.connectionMessageConfig

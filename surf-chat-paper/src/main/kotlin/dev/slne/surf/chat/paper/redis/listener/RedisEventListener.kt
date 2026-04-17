@@ -33,11 +33,11 @@ object RedisEventListener {
         val targetPlayer = Bukkit.getPlayer(event.messageData.receiver ?: return) ?: return
         val formatter = MessageFormatter
 
-        if (!SettingsHook.hasDirectMessagesEnabled(targetPlayer.uniqueId)) {
+        if (plugin.checkSettingsHook() && !SettingsHook.hasDirectMessagesEnabled(targetPlayer.uniqueId)) {
             return
         }
 
-        if (SettingsHook.hasChatPingsEnabled(targetPlayer.uniqueId)) {
+        if (plugin.checkSettingsHook() && SettingsHook.hasChatPingsEnabled(targetPlayer.uniqueId)) {
             plugin.launch(plugin.entityDispatcher(targetPlayer)) {
                 targetPlayer.playSound(true) {
                     type(Sound.ENTITY_CHICKEN_EGG)

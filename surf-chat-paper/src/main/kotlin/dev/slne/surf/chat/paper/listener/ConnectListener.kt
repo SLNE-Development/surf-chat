@@ -43,10 +43,14 @@ object ConnectListener : Listener {
         if (plugin.chatMotdConfig.enabled) {
             event.player.sendText {
                 append(
-                    MiniPlaceholdersHook.parse(
-                        event.player,
-                        plugin.chatMotdConfig.message
-                    )
+                    if (plugin.checkMiniPlaceholdersHook()) {
+                        MiniPlaceholdersHook.parse(
+                            event.player,
+                            plugin.chatMotdConfig.message
+                        )
+                    } else {
+                        miniMessage.deserialize(plugin.chatMotdConfig.message)
+                    }
                 )
             }
         }

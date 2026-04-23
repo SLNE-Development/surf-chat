@@ -10,6 +10,7 @@ import dev.slne.surf.chat.paper.hook.SettingsHook
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.chat.paper.util.*
+import dev.slne.surf.core.api.paper.CorePlayerStatusAccess
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextReplacementConfig
 import net.kyori.adventure.text.format.TextDecoration
@@ -199,9 +200,15 @@ object MessageFormatter {
 
     private fun highlightPlayers(rawMessage: Component, viewerUuid: UUID): Component {
         ensureMentionCache()
+        val viewer = Bukkit.getPlayer(viewerUuid) ?: return rawMessage
 
         val regex = cachedRegex ?: return rawMessage
-        val playerMap = cachedPlayerMap
+
+        val accessiblePlayers = cachedPlayerMap.filterValues {
+            CorePlayerStatusAccess.hasAccess(viewer, it)
+        }
+
+        if (accessiblePlayers.isEmpty()) return rawMessage
 
         val plain = rawMessage.plain()
         if (!regex.containsMatchIn(plain)) return rawMessage
@@ -213,10 +220,9 @@ object MessageFormatter {
                 .match(regex.toPattern())
                 .replacement { match ->
                     val fullMatch = match.build().plain()
-                    val hasAt = fullMatch.startsWith("@")
                     val name = fullMatch.removePrefix("@").lowercase()
 
-                    val player = playerMap[name] ?: return@replacement match
+                    val player = accessiblePlayers[name] ?: return@replacement match
 
                     if (player.uniqueId == viewerUuid) {
                         viewerMentioned = true
@@ -233,10 +239,9 @@ object MessageFormatter {
                 .build()
         )
 
-
         if (viewerMentioned) {
             if (plugin.checkSettingsHook() && SettingsHook.hasChatPingsEnabled(viewerUuid)) {
-                Bukkit.getPlayer(viewerUuid)?.playSound(true) {
+                viewer.playSound(true) {
                     type(Sound.ENTITY_CHICKEN_EGG)
                 }
             }

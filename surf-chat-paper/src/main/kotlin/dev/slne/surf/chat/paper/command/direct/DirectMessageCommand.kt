@@ -185,9 +185,10 @@ object DirectMessageAccess {
         val message = SurfPaperNmsPlayerBridge.createAdventureChatMessageFromMirror(messageMirror)
         if (!preSignedMessageSend(target)) return true
 
+        val senderUser = data.senderUser()
         SurfPaperNmsPlayerPackets.createNewPlayerInfoUpdate(
             data.sender,
-            server.createProfile(data.sender, data.senderUser().username).also { it.completeFromCache() },
+            server.createProfile(data.sender, senderUser.username).also { it.completeFromCache() },
             false,
             30,
             GameMode.ADVENTURE,
@@ -200,7 +201,7 @@ object DirectMessageAccess {
         SurfPaperNmsPlayerBridge.sendPlayerChatMessage(
             target,
             message,
-            SurfPaperNmsPlayerBridge.getPaperRawChatType().bind(text(data.senderUser().username))
+            SurfPaperNmsPlayerBridge.getPaperRawChatType().bind(text(senderUser.username))
         )
 
         SurfPaperNmsPlayerPackets.removePlayerInfoUpdate(listOf(data.sender)).execute(target)

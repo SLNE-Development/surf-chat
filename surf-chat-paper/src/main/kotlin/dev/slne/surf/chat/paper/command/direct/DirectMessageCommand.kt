@@ -140,10 +140,13 @@ object DirectMessageAccess {
             return false
         }
 
-        plugin.launch(plugin.entityDispatcher(target)) {
-            target.playSound(true) {
-                type(Sound.ENTITY_CHICKEN_EGG)
+        if (plugin.checkSettingsHook() && SettingsHook.hasChatPingsEnabled(target.uniqueId)) {
+            plugin.launch(plugin.entityDispatcher(target)) {
+                target.playSound(true) {
+                    type(Sound.ENTITY_CHICKEN_EGG)
+                }
             }
+
         }
 
         return true

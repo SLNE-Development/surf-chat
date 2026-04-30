@@ -184,7 +184,7 @@ object DirectMessageAccess {
 
         SurfPaperNmsPlayerPackets.createNewPlayerInfoUpdate(
             data.sender,
-            server.createProfile(data.sender, data.senderUser().username),
+            server.createProfile(data.sender, data.senderUser().username).also { it.completeFromCache() },
             false,
             30,
             GameMode.ADVENTURE,

@@ -52,6 +52,7 @@ class PaperMain : SuspendingJavaPlugin() {
 
     override suspend fun onEnableAsync() {
         PaperChatInstance.redisApi.subscribeToEvents(RedisEventListener)
+        PaperChatInstance.redisApi.registerRequestHandler(RedisEventListener)
         PaperChatInstance.paperLoader.onEnable()
 
         surfChatCommand()

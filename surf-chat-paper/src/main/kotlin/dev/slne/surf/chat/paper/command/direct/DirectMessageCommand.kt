@@ -36,7 +36,6 @@ import dev.slne.surf.redis.request.RequestTimeoutException
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import net.kyori.adventure.chat.SignedMessage
-import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Sound
@@ -87,7 +86,7 @@ object DirectMessageAccess {
             SurfPaperNmsPlayerBridge.sendSignedMessageWithChangedContent(
                 sender,
                 message,
-                SurfPaperNmsPlayerBridge.getPaperRawChatType().bind(Component.empty()),
+                SurfPaperNmsPlayerBridge.getPaperRawChatType().bind(sender.name()),
                 MessageFormatter.formatOutgoingPm(messageData)
             )
 
@@ -185,7 +184,7 @@ object DirectMessageAccess {
 
         SurfPaperNmsPlayerPackets.createNewPlayerInfoUpdate(
             data.sender,
-            server.createProfile(data.sender),
+            server.createProfile(data.sender, data.senderUser().username),
             false,
             30,
             GameMode.ADVENTURE,

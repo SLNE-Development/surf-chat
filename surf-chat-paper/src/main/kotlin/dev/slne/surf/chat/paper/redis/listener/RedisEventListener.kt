@@ -31,7 +31,8 @@ object RedisEventListener {
     @HandleRedisRequest
     fun handleSendDirectMessageRedisRequest(context: RequestContext<SendDirectMessageRedisRequest>) {
         val (messageData, senderSession, message) = context.request
-        messageData.receiver?.let { if (Bukkit.getPlayer(it) == null) return }
+        val receiver = messageData.receiver ?: return
+        if (Bukkit.getPlayer(receiver) == null) return
 
         context.launch {
             val handled = DirectMessageAccess.handleSendSignedPm(messageData, message, senderSession)

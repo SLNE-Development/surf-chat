@@ -35,8 +35,8 @@ import dev.slne.surf.core.api.paper.command.argument.surfPlayerArgument
 import dev.slne.surf.redis.request.RequestTimeoutException
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import net.kyori.adventure.chat.ChatType
 import net.kyori.adventure.chat.SignedMessage
+import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Sound
@@ -84,6 +84,13 @@ object DirectMessageAccess {
         messageData = result.messageData
 
         if (!result.isCancelled) {
+            SurfPaperNmsPlayerBridge.sendSignedMessageWithChangedContent(
+                sender,
+                message,
+                SurfPaperNmsPlayerBridge.getPaperRawChatType().bind(Component.empty()),
+                MessageFormatter.formatOutgoingPm(messageData)
+            )
+
             val target = Bukkit.getPlayer(targetUuid)
             if (target != null) {
                 sendSignedPmOnSameServer(sender, target, messageData, message)
@@ -124,7 +131,7 @@ object DirectMessageAccess {
         SurfPaperNmsPlayerBridge.sendSignedMessageWithChangedContent(
             target,
             signedMessage,
-            ChatType.MSG_COMMAND_INCOMING.bind(sender.displayName()),
+            SurfPaperNmsPlayerBridge.getPaperRawChatType().bind(sender.displayName()),
             MessageFormatter.formatIncomingPm(messageData)
         )
     }
@@ -191,7 +198,7 @@ object DirectMessageAccess {
         SurfPaperNmsPlayerBridge.sendPlayerChatMessage(
             target,
             message,
-            ChatType.MSG_COMMAND_INCOMING.bind(text(data.senderUser().username))
+            SurfPaperNmsPlayerBridge.getPaperRawChatType().bind(text(data.senderUser().username))
         )
 
         SurfPaperNmsPlayerPackets.removePlayerInfoUpdate(listOf(data.sender)).execute(target)

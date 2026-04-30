@@ -111,9 +111,11 @@ object DirectMessageAccess {
             )
         )
 
-        coroutineScope {
-            launch { ReplyCache.setLastTarget(sender.uniqueId, targetUuid) }
-            launch { ReplyCache.setLastTarget(targetUuid, sender.uniqueId) }
+        if (!result.isCancelled) {
+            coroutineScope {
+                launch { ReplyCache.setLastTarget(sender.uniqueId, targetUuid) }
+                launch { ReplyCache.setLastTarget(targetUuid, sender.uniqueId) }
+            }
         }
     }
 

@@ -1,19 +1,18 @@
 package dev.slne.surf.chat.paper.redis.listener
 
-import com.github.shynixn.mccoroutine.folia.entityDispatcher
-import com.github.shynixn.mccoroutine.folia.launch
-import dev.slne.surf.api.core.messages.adventure.playSound
-import dev.slne.surf.api.core.messages.adventure.sendText
-import dev.slne.surf.chat.paper.hook.SettingsHook
+import dev.slne.surf.api.paper.nms.NmsUseWithCaution
+import dev.slne.surf.chat.paper.command.direct.DirectMessageAccess
 import dev.slne.surf.chat.paper.message.MessageFormatter
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
-import dev.slne.surf.chat.paper.plugin
-import dev.slne.surf.chat.paper.redis.event.DirectMessageRedisEvent
 import dev.slne.surf.chat.paper.redis.event.TeamMessageRedisEvent
 import dev.slne.surf.chat.paper.redis.event.TeamchatMessageRedisEvent
+import dev.slne.surf.chat.paper.redis.rpc.SendDirectMessageHandledRedisResponse
+import dev.slne.surf.chat.paper.redis.rpc.SendDirectMessageRedisRequest
 import dev.slne.surf.redis.event.OnRedisEvent
+import dev.slne.surf.redis.request.HandleRedisRequest
+import dev.slne.surf.redis.request.RequestContext
+import kotlinx.coroutines.launch
 import org.bukkit.Bukkit
-import org.bukkit.Sound
 
 object RedisEventListener {
     @OnRedisEvent
@@ -28,26 +27,17 @@ object RedisEventListener {
         Bukkit.broadcast(message, PermissionRegistry.PREFIX_TEAM)
     }
 
-    @OnRedisEvent
-    fun onDirectMessage(event: DirectMessageRedisEvent) {
-        val targetPlayer = Bukkit.getPlayer(event.messageData.receiver ?: return) ?: return
-        val formatter = MessageFormatter
+    @OptIn(NmsUseWithCaution::class)
+    @HandleRedisRequest
+    fun handleSendDirectMessageRedisRequest(context: RequestContext<SendDirectMessageRedisRequest>) {
+        val (messageData, senderSession, message) = context.request
+        val receiver = messageData.receiver ?: return
+        if (Bukkit.getPlayer(receiver) == null) return
 
-        if (plugin.checkSettingsHook() && !SettingsHook.hasDirectMessagesEnabled(targetPlayer.uniqueId)) {
-            return
-        }
-
-        if (plugin.checkSettingsHook() && SettingsHook.hasChatPingsEnabled(targetPlayer.uniqueId)) {
-            plugin.launch(plugin.entityDispatcher(targetPlayer)) {
-                targetPlayer.playSound(true) {
-                    type(Sound.ENTITY_CHICKEN_EGG)
-                }
-            }
-        }
-
-        plugin.launch {
-            targetPlayer.sendText {
-                append(formatter.formatIncomingPm(event.messageData))
+        context.launch {
+            val handled = DirectMessageAccess.handleSendSignedPm(messageData, message, senderSession)
+            if (handled) {
+                context.respond(SendDirectMessageHandledRedisResponse()).await()
             }
         }
     }

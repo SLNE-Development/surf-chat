@@ -1,6 +1,7 @@
 package dev.slne.surf.chat.paper.message
 
 import dev.slne.surf.chat.api.message.MessageData
+import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.api.message.MessageValidationResult
 import dev.slne.surf.chat.core.common.service.FunctionalityService
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
@@ -22,11 +23,13 @@ object MessageValidator {
             return MessageValidationResult.Failure(MessageValidationResult.MessageValidationError.AutoDisabled())
         }
 
-        if (!FunctionalityService.getFunctionalities().localChatEnabled && !sender.hasPermission(
-                PermissionRegistry.BYPASS_FUNCTIONALITY
-            )
-        ) {
-            return MessageValidationResult.Failure(MessageValidationResult.MessageValidationError.ChatDisabled())
+        if (messageData.type == MessageType.GLOBAL) {
+            if (!FunctionalityService.getFunctionalities().localChatEnabled && !sender.hasPermission(
+                    PermissionRegistry.BYPASS_FUNCTIONALITY
+                )
+            ) {
+                return MessageValidationResult.Failure(MessageValidationResult.MessageValidationError.ChatDisabled())
+            }
         }
 
         if (message.isBlank()) {

@@ -58,7 +58,8 @@ object MessageFormatter {
         append(
             formatItemTag(
                 updateLinks(highlightPlayers(messageData.message, viewer)),
-                senderPlayer
+                senderPlayer,
+                viewer
             )
         )
         hoverEvent(buildText { appendMessageData(senderPlayer.name, messageData) })
@@ -108,7 +109,7 @@ object MessageFormatter {
         darkSpacer(" | ")
         appendName(player)
         darkSpacer(" >> ")
-        append(updateLinks(formatItemTag(messageData.message, player)))
+        append(updateLinks(formatItemTag(messageData.message, player, messageData.receiver)))
 
         hoverEvent(buildText { appendMessageData(player.name, messageData) })
         clickSuggestsCommand("/teamchat ")
@@ -140,7 +141,7 @@ object MessageFormatter {
     }
 
 
-    private fun formatItemTag(rawMessage: Component, player: Player): Component {
+    private fun formatItemTag(rawMessage: Component, player: Player, viewer: UUID?): Component {
         if (!plugin.surfChatConfig.config.itemPlaceholder) {
             return rawMessage
         }
@@ -153,9 +154,11 @@ object MessageFormatter {
         }
 
         if (item.type == Material.AIR) {
-            player.sendText {
-                appendErrorPrefix()
-                error("Du hast kein Item in der Hand!")
+            if (player.uniqueId == viewer) {
+                player.sendText {
+                    appendErrorPrefix()
+                    error("Du hast kein Item in der Hand!")
+                }
             }
             return message
         }

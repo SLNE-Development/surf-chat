@@ -14,12 +14,12 @@ data class ConnectionMessageConfig(
         "Players with the permission 'surf.chat.connection.always-show'\n" +
         "are exempt and their messages are always displayed."
     )
-    val autoDisableOnHighPlayerJoinThreshold: Boolean = true,
+    val autoDisableOnHighConnectionEventThreshold: Boolean = true,
 
     @field:Comment(
         "Maximum number of combined join and quit events per minute before\n" +
         "connection messages are suppressed automatically.\n" +
-        "Only relevant when 'autoDisableOnHighPlayerJoinThreshold' is true."
+        "Only relevant when 'autoDisableOnHighConnectionEventThreshold' is true."
     )
-    val joinsPerMinuteThreshold: Int = 15,
+    val connectionEventsPerMinuteThreshold: Int = 15,
 )

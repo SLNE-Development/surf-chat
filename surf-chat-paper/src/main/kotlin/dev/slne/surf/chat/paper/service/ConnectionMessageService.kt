@@ -48,11 +48,11 @@ object ConnectionMessageService {
      */
     fun isRateLimitExceeded(): Boolean {
         val config = plugin.connectionMessageConfig
-        if (!config.autoDisableOnHighPlayerJoinThreshold) return false
+        if (!config.autoDisableOnHighConnectionEventThreshold) return false
 
         return synchronized(lock) {
             pruneOldTimestamps(System.nanoTime())
-            eventTimestamps.size() >= config.joinsPerMinuteThreshold
+            eventTimestamps.size() >= config.connectionEventsPerMinuteThreshold
         }
     }
 

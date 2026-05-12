@@ -7,9 +7,12 @@ import dev.slne.surf.chat.core.common.service.IgnoreService
 import dev.slne.surf.chat.paper.hook.LuckPermsHook
 import dev.slne.surf.chat.paper.hook.MiniPlaceholdersHook
 import dev.slne.surf.chat.paper.message.MessageFormatter
+import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.chat.paper.plugin
+import dev.slne.surf.chat.paper.service.ConnectionMessageService
 import io.papermc.paper.event.connection.configuration.AsyncPlayerConnectionConfigureEvent
 import kotlinx.coroutines.runBlocking
+import net.kyori.adventure.text.Component
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -27,15 +30,13 @@ object ConnectListener : Listener {
 
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {
-        if (plugin.connectionMessageConfig.enabled) {
-            event.joinMessage(
-                buildText {
-                    darkSpacer("[")
-                    success("+")
-                    darkSpacer("] ")
-                    append(miniMessage.deserialize(LuckPermsHook.getPrefix(event.player) + event.player.name))
-                }
-            )
+        ConnectionMessageService.recordEvent()
+
+        val alwaysShow = event.player.hasPermission(PermissionRegistry.CONNECTION_MESSAGE_ALWAYS_SHOW)
+        val shouldShowMessage = alwaysShow || ConnectionMessageService.shouldShowConnectionMessage()
+
+        if (shouldShowMessage) {
+            event.joinMessage(buildJoinMessage(event))
         } else {
             event.joinMessage(null)
         }
@@ -54,5 +55,12 @@ object ConnectListener : Listener {
                 )
             }
         }
+    }
+
+    private fun buildJoinMessage(event: PlayerJoinEvent): Component = buildText {
+        darkSpacer("[")
+        success("+")
+        darkSpacer("] ")
+        append(miniMessage.deserialize(LuckPermsHook.getPrefix(event.player) + event.player.name))
     }
 }

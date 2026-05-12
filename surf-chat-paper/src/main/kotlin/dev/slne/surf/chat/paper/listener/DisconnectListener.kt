@@ -8,7 +8,10 @@ import dev.slne.surf.chat.core.common.service.IgnoreService
 import dev.slne.surf.chat.core.common.service.SpyService
 import dev.slne.surf.chat.paper.hook.LuckPermsHook
 import dev.slne.surf.chat.paper.message.MessageFormatter
+import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.chat.paper.plugin
+import dev.slne.surf.chat.paper.service.ConnectionMessageService
+import net.kyori.adventure.text.Component
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerQuitEvent
@@ -18,15 +21,13 @@ object DisconnectListener : Listener {
     fun onDisconnect(event: PlayerQuitEvent) {
         MessageFormatter.dirty = true
 
-        if (plugin.connectionMessageConfig.enabled) {
-            event.quitMessage(
-                buildText {
-                    darkSpacer("[")
-                    error("-")
-                    darkSpacer("] ")
-                    append(miniMessage.deserialize(LuckPermsHook.getPrefix(event.player) + event.player.name))
-                }
-            )
+        ConnectionMessageService.recordEvent()
+
+        val alwaysShow = event.player.hasPermission(PermissionRegistry.CONNECTION_MESSAGE_ALWAYS_SHOW)
+        val shouldShowMessage = alwaysShow || ConnectionMessageService.shouldShowConnectionMessage()
+
+        if (shouldShowMessage) {
+            event.quitMessage(buildQuitMessage(event))
         } else {
             event.quitMessage(null)
         }
@@ -39,5 +40,12 @@ object DisconnectListener : Listener {
             IgnoreService.cleanup(uuid)
             SpyService.cleanup(uuid)
         }
+    }
+
+    private fun buildQuitMessage(event: PlayerQuitEvent): Component = buildText {
+        darkSpacer("[")
+        error("-")
+        darkSpacer("] ")
+        append(miniMessage.deserialize(LuckPermsHook.getPrefix(event.player) + event.player.name))
     }
 }

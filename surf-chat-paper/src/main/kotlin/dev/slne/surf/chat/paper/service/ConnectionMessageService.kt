@@ -1,63 +1,59 @@
 package dev.slne.surf.chat.paper.service
 
 import dev.slne.surf.chat.paper.plugin
-import java.util.concurrent.ConcurrentLinkedDeque
-import java.util.concurrent.atomic.AtomicInteger
+import it.unimi.dsi.fastutil.longs.LongArrayFIFOQueue
 
 /**
- * Service responsible for tracking recent player joins and quits in order to
+ * Service responsible for tracking recent player connection events in order to
  * automatically disable connection messages during connection spikes.
  *
  * A sliding one-minute window is used to determine whether the configured
- * threshold has been exceeded.
+ * threshold has been reached.
  */
 object ConnectionMessageService {
+    private val lock = Any()
+
     /**
-     * Stores connection event timestamps in nanoseconds (joins + quits).
+     * Stores connection event timestamps in nanoseconds.
      *
      * Entries are ordered from oldest to newest.
      */
-    private val joinTimestamps = ConcurrentLinkedDeque<Long>()
-
-    /**
-     * Cached amount of currently valid connection events inside the sliding time window.
-     *
-     * Using an [AtomicInteger] avoids the expensive O(n) `Deque.size` call.
-     */
-    private val joinCount = AtomicInteger(0)
+    private val eventTimestamps = LongArrayFIFOQueue()
 
     /**
      * Duration of the sliding rate-limit window.
      */
-    private const val WINDOW_NANO = 60_000_000_000L // 1 minute
+    private const val WINDOW_NANOS = 60_000_000_000L // 1 minute
 
     /**
-     * Records a player connection event (join or quit) and updates the current sliding window state.
+     * Records a player connection event and updates the current sliding window state.
      */
     fun recordEvent() {
         val now = System.nanoTime()
 
-        joinTimestamps.addLast(now)
-        joinCount.incrementAndGet()
-
-        pruneOldTimestamps(now)
+        synchronized(lock) {
+            eventTimestamps.enqueue(now)
+            pruneOldTimestamps(now)
+        }
     }
 
     /**
-     * Returns whether the configured join threshold has been exceeded.
+     * Returns whether connection messages should currently be suppressed because
+     * the configured threshold has been reached.
      *
      * Old timestamps are cleaned up before evaluating the threshold.
      *
-     * @return `true` if the join rate exceeds the configured limit,
-     * otherwise `false`
+     * @return `true` if the amount of recent connection events is at or above
+     * the configured threshold, otherwise `false`
      */
     fun isRateLimitExceeded(): Boolean {
         val config = plugin.connectionMessageConfig
         if (!config.autoDisableOnHighPlayerJoinThreshold) return false
 
-        pruneOldTimestamps(System.nanoTime())
-
-        return joinCount.get() >= config.joinsPerMinuteThreshold
+        return synchronized(lock) {
+            pruneOldTimestamps(System.nanoTime())
+            eventTimestamps.size() >= config.joinsPerMinuteThreshold
+        }
     }
 
     /**
@@ -65,7 +61,7 @@ object ConnectionMessageService {
      *
      * Connection messages are hidden if:
      * - the feature is disabled in the configuration
-     * - the join rate limit is exceeded
+     * - the connection event threshold has been reached
      *
      * @return `true` if connection messages should be displayed,
      * otherwise `false`
@@ -78,20 +74,13 @@ object ConnectionMessageService {
     /**
      * Removes timestamps that are outside the sliding one-minute window.
      *
-     * Every removed timestamp also decrements the cached join counter.
-     *
      * @param now the current timestamp in nanoseconds
      */
     private fun pruneOldTimestamps(now: Long) {
-        val cutoff = now - WINDOW_NANO
+        val cutoff = now - WINDOW_NANOS
 
-        while (true) {
-            val first = joinTimestamps.peekFirst() ?: break
-            if (first >= cutoff) break
-
-            if (joinTimestamps.pollFirst() != null) {
-                joinCount.decrementAndGet()
-            }
+        while (!eventTimestamps.isEmpty && eventTimestamps.firstLong() < cutoff) {
+            eventTimestamps.dequeueLong()
         }
     }
 }

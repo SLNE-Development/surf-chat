@@ -11,8 +11,11 @@ import dev.slne.surf.chat.api.processor.PreChatProcessor
 import dev.slne.surf.chat.api.processor.chatProcessorRegistry
 import dev.slne.surf.chat.core.common.service.HistoryService
 import dev.slne.surf.chat.core.common.service.IgnoreService
+import dev.slne.surf.chat.paper.command.direct.DirectMessageAccess
 import it.unimi.dsi.fastutil.objects.ObjectList
+import net.kyori.adventure.chat.SignedMessage
 import net.kyori.adventure.util.Services
+import org.bukkit.Bukkit
 import java.util.*
 
 @AutoService(SurfChatApi::class)
@@ -35,5 +38,10 @@ class PaperSurfChatApiImpl : SurfChatApi, Services.Fallback {
 
     override suspend fun lookupHistory(filter: HistoryFilter): ObjectList<HistoryEntry> =
         HistoryService.findHistoryEntry(filter)
+
+    override suspend fun sendDirectMessage(sender: UUID, message: SignedMessage, targetUuid: UUID) {
+        val player = Bukkit.getPlayer(sender) ?: return
+        DirectMessageAccess.sendMessage(player, message, targetUuid)
+    }
 
 }

@@ -18,6 +18,7 @@ import dev.slne.surf.api.paper.nms.bridges.SurfPaperNmsPlayerBridge
 import dev.slne.surf.api.paper.nms.bridges.data.chat.PlayerChatMessageMirror
 import dev.slne.surf.api.paper.nms.bridges.data.chat.RemoteChatSessionData
 import dev.slne.surf.api.paper.nms.bridges.packets.player.SurfPaperNmsPlayerPackets
+import dev.slne.surf.chat.api.SurfChatApi
 import dev.slne.surf.chat.api.message.MessageContext
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.api.message.MessageType
@@ -61,7 +62,7 @@ fun directMessageCommand() = commandAPICommand("msg") {
             return@playerExecutorSuspend
         }
 
-        DirectMessageAccess.sendMessage(player, message, target.uuid)
+        SurfChatApi.sendDirectMessage(player.uniqueId, message, target.uuid)
     }
 }
 

@@ -5,6 +5,7 @@ import dev.slne.surf.api.core.command.args.awaiting
 import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.api.paper.command.args.asyncSignedMessageArgument
 import dev.slne.surf.api.paper.command.executors.playerExecutorSuspend
+import dev.slne.surf.chat.api.SurfChatApi
 import dev.slne.surf.chat.core.paper.redisApi
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.core.api.common.SurfCoreApi
@@ -65,6 +66,6 @@ fun replyCommand() = commandAPICommand("reply") {
             return@playerExecutorSuspend
         }
 
-        DirectMessageAccess.sendMessage(player, message, lastMessagedUuid)
+        SurfChatApi.sendDirectMessage(player.uniqueId, message, lastMessagedUuid)
     }
 }

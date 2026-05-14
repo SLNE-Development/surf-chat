@@ -39,7 +39,7 @@ class PaperSurfChatApiImpl : SurfChatApi, Services.Fallback {
     override suspend fun lookupHistory(filter: HistoryFilter): ObjectList<HistoryEntry> =
         HistoryService.findHistoryEntry(filter)
 
-    override suspend fun sendDirectMessage(sender: UUID, message: SignedMessage, targetUuid: UUID) {
+    override suspend fun sendSignedMessage(sender: UUID, message: SignedMessage, targetUuid: UUID) {
         val player = Bukkit.getPlayer(sender) ?: return
         DirectMessageAccess.sendMessage(player, message, targetUuid)
     }

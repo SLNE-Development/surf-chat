@@ -62,7 +62,7 @@ fun directMessageCommand() = commandAPICommand("msg") {
             return@playerExecutorSuspend
         }
 
-        SurfChatApi.sendDirectMessage(player.uniqueId, message, target.uuid)
+        SurfChatApi.sendSignedMessage(player.uniqueId, message, target.uuid)
     }
 }
 

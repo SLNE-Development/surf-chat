@@ -26,7 +26,7 @@ interface SurfChatApi {
     @Throws(TimeoutCancellationException::class)
     suspend fun lookupHistory(filter: HistoryFilter): ObjectList<HistoryEntry>
 
-    suspend fun sendDirectMessage(sender: UUID, message: SignedMessage, targetUuid: UUID)
+    suspend fun sendSignedMessage(sender: UUID, message: SignedMessage, targetUuid: UUID)
 
     companion object : SurfChatApi by api
 }

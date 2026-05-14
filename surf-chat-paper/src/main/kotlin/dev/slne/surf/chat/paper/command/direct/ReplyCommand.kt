@@ -66,6 +66,6 @@ fun replyCommand() = commandAPICommand("reply") {
             return@playerExecutorSuspend
         }
 
-        SurfChatApi.sendDirectMessage(player.uniqueId, message, lastMessagedUuid)
+        SurfChatApi.sendSignedMessage(player.uniqueId, message, lastMessagedUuid)
     }
 }

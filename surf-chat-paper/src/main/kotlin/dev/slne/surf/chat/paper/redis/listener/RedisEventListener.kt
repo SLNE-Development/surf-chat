@@ -8,6 +8,7 @@ import dev.slne.surf.chat.paper.redis.event.TeamMessageRedisEvent
 import dev.slne.surf.chat.paper.redis.event.TeamchatMessageRedisEvent
 import dev.slne.surf.chat.paper.redis.rpc.SendDirectMessageHandledRedisResponse
 import dev.slne.surf.chat.paper.redis.rpc.SendDirectMessageRedisRequest
+import dev.slne.surf.chat.paper.redis.rpc.SendSignedMessageHandledRedisResponse
 import dev.slne.surf.chat.paper.redis.rpc.SendSignedMessageRedisRequest
 import dev.slne.surf.chat.paper.service.SignedMessageSender
 import dev.slne.surf.redis.event.OnRedisEvent
@@ -56,7 +57,7 @@ object RedisEventListener {
         )
 
         if (handled) {
-            context.respond(SendDirectMessageHandledRedisResponse()).await()
+            context.respond(SendSignedMessageHandledRedisResponse()).await()
         }
     }
 }

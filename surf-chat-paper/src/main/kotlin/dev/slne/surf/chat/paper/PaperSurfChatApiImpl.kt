@@ -6,7 +6,6 @@ import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.api.entry.IgnoreListEntry
 import dev.slne.surf.chat.api.message.MessageData
-import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.api.processor.PostChatProcessor
 import dev.slne.surf.chat.api.processor.PreChatProcessor
 import dev.slne.surf.chat.api.processor.chatProcessorRegistry
@@ -44,12 +43,12 @@ class PaperSurfChatApiImpl : SurfChatApi, Services.Fallback {
     override suspend fun sendSignedMessage(
         sender: UUID,
         message: SignedMessage,
-        targetUuid: UUID,
+        targetUuids: Collection<UUID>,
         outgoingFormatter: (suspend (MessageData) -> Component)?,
         incomingFormatter: (suspend (MessageData) -> Component)?,
     ) {
         val player = Bukkit.getPlayer(sender) ?: return
-        DirectMessageAccess.sendMessage(player, message, targetUuid, outgoingFormatter, incomingFormatter)
+        DirectMessageAccess.sendMessage(player, message, targetUuids, outgoingFormatter, incomingFormatter)
     }
 
 }

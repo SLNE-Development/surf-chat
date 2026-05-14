@@ -63,7 +63,13 @@ fun directMessageCommand() = commandAPICommand("msg") {
             return@playerExecutorSuspend
         }
 
-        SurfChatApi.sendSignedMessage(player.uniqueId, message, target.uuid)
+        SurfChatApi.sendSignedMessage(
+            player.uniqueId,
+            message,
+            listOf(target.uuid),
+            outgoingFormatter = { MessageFormatter.formatOutgoingPm(it) },
+            incomingFormatter = { MessageFormatter.formatIncomingPm(it) }
+        )
     }
 }
 
@@ -72,15 +78,17 @@ object DirectMessageAccess {
     suspend fun sendMessage(
         sender: Player,
         message: SignedMessage,
-        targetUuid: UUID,
+        targetUuids: Collection<UUID>,
         outgoingFormatter: (suspend (MessageData) -> Component)? = null,
         incomingFormatter: (suspend (MessageData) -> Component)? = null,
     ) {
+        val singleTarget = targetUuids.singleOrNull()
+
         var messageData = MessageData(
             message.unsignedContent() ?: text(message.message()),
             UUID.randomUUID(),
             sender.uniqueId,
-            targetUuid,
+            targetUuids.firstOrNull(),
             OffsetDateTime.now(),
             SurfCoreApi.getCurrentServerName(),
             null,
@@ -91,18 +99,23 @@ object DirectMessageAccess {
         messageData = result.messageData
 
         if (!result.isCancelled) {
-            SurfPaperNmsPlayerBridge.sendSignedMessageWithChangedContent(
-                sender,
-                message,
-                SurfPaperNmsPlayerBridge.getPaperRawChatType().bind(sender.name()),
-                outgoingFormatter?.invoke(messageData) ?: MessageFormatter.formatOutgoingPm(messageData)
-            )
+            if (outgoingFormatter != null) {
+                SurfPaperNmsPlayerBridge.sendSignedMessageWithChangedContent(
+                    sender,
+                    message,
+                    SurfPaperNmsPlayerBridge.getPaperRawChatType().bind(sender.name()),
+                    outgoingFormatter.invoke(messageData)
+                )
+            }
 
-            val target = Bukkit.getPlayer(targetUuid)
-            if (target != null) {
-                sendSignedPmOnSameServer(sender, target, messageData, message, incomingFormatter)
-            } else {
-                sendSignedPmOnDifferentServer(sender, messageData, message, incomingFormatter)
+            for (targetUuid in targetUuids) {
+                val targetMessageData = messageData.withReceiver(targetUuid)
+                val target = Bukkit.getPlayer(targetUuid)
+                if (target != null) {
+                    sendSignedPmOnSameServer(sender, target, targetMessageData, message, incomingFormatter)
+                } else {
+                    sendSignedPmOnDifferentServer(sender, targetMessageData, message, incomingFormatter)
+                }
             }
         } else {
             sender.sendText {
@@ -119,10 +132,10 @@ object DirectMessageAccess {
             )
         )
 
-        if (!result.isCancelled) {
+        if (!result.isCancelled && singleTarget != null) {
             coroutineScope {
-                launch { ReplyCache.setLastTarget(sender.uniqueId, targetUuid) }
-                launch { ReplyCache.setLastTarget(targetUuid, sender.uniqueId) }
+                launch { ReplyCache.setLastTarget(sender.uniqueId, singleTarget) }
+                launch { ReplyCache.setLastTarget(singleTarget, sender.uniqueId) }
             }
         }
     }

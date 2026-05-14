@@ -30,7 +30,7 @@ interface SurfChatApi {
     suspend fun sendSignedMessage(
         sender: UUID,
         message: SignedMessage,
-        targetUuid: UUID,
+        targetUuids: Collection<UUID>,
         outgoingFormatter: (suspend (MessageData) -> Component)? = null,
         incomingFormatter: (suspend (MessageData) -> Component)? = null,
     )

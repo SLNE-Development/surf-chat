@@ -9,6 +9,8 @@ import dev.slne.surf.chat.api.processor.PostChatProcessor
 import dev.slne.surf.chat.api.processor.PreChatProcessor
 import it.unimi.dsi.fastutil.objects.ObjectList
 import kotlinx.coroutines.TimeoutCancellationException
+import net.kyori.adventure.chat.SignedMessage
+import net.kyori.adventure.text.Component
 import java.util.*
 
 private val api = requiredService<SurfChatApi>()
@@ -24,6 +26,13 @@ interface SurfChatApi {
 
     @Throws(TimeoutCancellationException::class)
     suspend fun lookupHistory(filter: HistoryFilter): ObjectList<HistoryEntry>
+
+    suspend fun sendSignedMessage(
+        signedMessage: SignedMessage,
+        senderUuid: UUID,
+        targetUuid: UUID,
+        contentComponent: Component
+    )
 
     companion object : SurfChatApi by api
 }

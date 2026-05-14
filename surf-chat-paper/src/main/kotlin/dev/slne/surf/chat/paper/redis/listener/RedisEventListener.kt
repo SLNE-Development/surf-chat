@@ -8,12 +8,15 @@ import dev.slne.surf.chat.paper.redis.event.TeamMessageRedisEvent
 import dev.slne.surf.chat.paper.redis.event.TeamchatMessageRedisEvent
 import dev.slne.surf.chat.paper.redis.rpc.SendDirectMessageHandledRedisResponse
 import dev.slne.surf.chat.paper.redis.rpc.SendDirectMessageRedisRequest
+import dev.slne.surf.chat.paper.redis.rpc.SendSignedMessageRedisRequest
+import dev.slne.surf.chat.paper.service.SignedMessageSender
 import dev.slne.surf.redis.event.OnRedisEvent
 import dev.slne.surf.redis.request.HandleRedisRequest
 import dev.slne.surf.redis.request.RequestContext
 import kotlinx.coroutines.launch
 import org.bukkit.Bukkit
 
+@OptIn(NmsUseWithCaution::class)
 object RedisEventListener {
     @OnRedisEvent
     fun onTeamchatMessage(event: TeamchatMessageRedisEvent) {
@@ -27,7 +30,7 @@ object RedisEventListener {
         Bukkit.broadcast(message, PermissionRegistry.PREFIX_TEAM)
     }
 
-    @OptIn(NmsUseWithCaution::class)
+
     @HandleRedisRequest
     fun handleSendDirectMessageRedisRequest(context: RequestContext<SendDirectMessageRedisRequest>) {
         val (messageData, senderSession, message) = context.request
@@ -39,6 +42,21 @@ object RedisEventListener {
             if (handled) {
                 context.respond(SendDirectMessageHandledRedisResponse()).await()
             }
+        }
+    }
+
+    @HandleRedisRequest
+    fun handleSendSignedMessageRedisRequest(context: RequestContext<SendSignedMessageRedisRequest>) = context.launch {
+        val handled = SignedMessageSender.handleRemoteSignedMessage(
+            context.request.sender,
+            context.request.senderName,
+            context.request.target,
+            context.request.messageMirror,
+            context.request.senderSession
+        )
+
+        if (handled) {
+            context.respond(SendDirectMessageHandledRedisResponse()).await()
         }
     }
 }

@@ -6,6 +6,7 @@ import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.api.entry.IgnoreListEntry
 import dev.slne.surf.chat.api.message.MessageData
+import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.api.processor.PostChatProcessor
 import dev.slne.surf.chat.api.processor.PreChatProcessor
 import dev.slne.surf.chat.api.processor.chatProcessorRegistry
@@ -14,6 +15,7 @@ import dev.slne.surf.chat.core.common.service.IgnoreService
 import dev.slne.surf.chat.paper.command.direct.DirectMessageAccess
 import it.unimi.dsi.fastutil.objects.ObjectList
 import net.kyori.adventure.chat.SignedMessage
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.util.Services
 import org.bukkit.Bukkit
 import java.util.*
@@ -39,9 +41,15 @@ class PaperSurfChatApiImpl : SurfChatApi, Services.Fallback {
     override suspend fun lookupHistory(filter: HistoryFilter): ObjectList<HistoryEntry> =
         HistoryService.findHistoryEntry(filter)
 
-    override suspend fun sendSignedMessage(sender: UUID, message: SignedMessage, targetUuid: UUID) {
+    override suspend fun sendSignedMessage(
+        sender: UUID,
+        message: SignedMessage,
+        targetUuid: UUID,
+        outgoingFormatter: (suspend (MessageData) -> Component)?,
+        incomingFormatter: (suspend (MessageData) -> Component)?,
+    ) {
         val player = Bukkit.getPlayer(sender) ?: return
-        DirectMessageAccess.sendMessage(player, message, targetUuid)
+        DirectMessageAccess.sendMessage(player, message, targetUuid, outgoingFormatter, incomingFormatter)
     }
 
 }

@@ -37,6 +37,7 @@ import dev.slne.surf.redis.request.RequestTimeoutException
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import net.kyori.adventure.chat.SignedMessage
+import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Sound
@@ -68,7 +69,13 @@ fun directMessageCommand() = commandAPICommand("msg") {
 
 @OptIn(NmsUseWithCaution::class)
 object DirectMessageAccess {
-    suspend fun sendMessage(sender: Player, message: SignedMessage, targetUuid: UUID) {
+    suspend fun sendMessage(
+        sender: Player,
+        message: SignedMessage,
+        targetUuid: UUID,
+        outgoingFormatter: (suspend (MessageData) -> Component)? = null,
+        incomingFormatter: (suspend (MessageData) -> Component)? = null,
+    ) {
         var messageData = MessageData(
             message.unsignedContent() ?: text(message.message()),
             UUID.randomUUID(),
@@ -88,14 +95,14 @@ object DirectMessageAccess {
                 sender,
                 message,
                 SurfPaperNmsPlayerBridge.getPaperRawChatType().bind(sender.name()),
-                MessageFormatter.formatOutgoingPm(messageData)
+                outgoingFormatter?.invoke(messageData) ?: MessageFormatter.formatOutgoingPm(messageData)
             )
 
             val target = Bukkit.getPlayer(targetUuid)
             if (target != null) {
-                sendSignedPmOnSameServer(sender, target, messageData, message)
+                sendSignedPmOnSameServer(sender, target, messageData, message, incomingFormatter)
             } else {
-                sendSignedPmOnDifferentServer(sender, messageData, message)
+                sendSignedPmOnDifferentServer(sender, messageData, message, incomingFormatter)
             }
         } else {
             sender.sendText {
@@ -125,6 +132,7 @@ object DirectMessageAccess {
         target: Player,
         messageData: MessageData,
         signedMessage: SignedMessage,
+        incomingFormatter: (suspend (MessageData) -> Component)? = null,
     ) {
         if (!preSignedMessageSend(target)) {
             return
@@ -134,7 +142,7 @@ object DirectMessageAccess {
             target,
             signedMessage,
             SurfPaperNmsPlayerBridge.getPaperRawChatType().bind(sender.displayName()),
-            MessageFormatter.formatIncomingPm(messageData)
+            incomingFormatter?.invoke(messageData) ?: MessageFormatter.formatIncomingPm(messageData)
         )
     }
 
@@ -159,10 +167,11 @@ object DirectMessageAccess {
         sender: Player,
         messageData: MessageData,
         signedMessage: SignedMessage,
+        incomingFormatter: (suspend (MessageData) -> Component)? = null,
     ) {
         val messageMirror = SurfPaperNmsPlayerBridge.createPlayerChatMessageMirrorFromAdventure(
             signedMessage,
-            MessageFormatter.formatIncomingPm(messageData)
+            incomingFormatter?.invoke(messageData) ?: MessageFormatter.formatIncomingPm(messageData)
         )
 
         requireNotNull(messageMirror) { "Failed to create message mirror." }

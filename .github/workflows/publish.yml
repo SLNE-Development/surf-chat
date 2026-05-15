@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - version/*
+      - feat/signed-message-sending-pai
   workflow_dispatch:
 
 jobs:

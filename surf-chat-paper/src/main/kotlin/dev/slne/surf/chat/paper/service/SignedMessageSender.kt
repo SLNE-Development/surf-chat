@@ -50,6 +50,10 @@ object SignedMessageSender {
 
         requireNotNull(messageMirror) { "Failed to create message mirror." }
 
+        if (SurfCoreApi.getPlayer(targetUuid) == null) {
+            return
+        }
+
         SurfPaperNmsPlayerBridge.runOnChatMessageChain(sender, plugin.scope) {
             val session = SurfPaperNmsPlayerBridge.getRemoteChatSessionData(sender)
 
@@ -69,10 +73,6 @@ object SignedMessageSender {
         messageMirror: PlayerChatMessageMirror,
         senderSession: RemoteChatSessionData?
     ): Boolean {
-        if (SurfCoreApi.getPlayer(target) == null) {
-            return true
-        }
-
         val target = Bukkit.getPlayer(target) ?: return false
         val message = SurfPaperNmsPlayerBridge.createAdventureChatMessageFromMirror(messageMirror)
 

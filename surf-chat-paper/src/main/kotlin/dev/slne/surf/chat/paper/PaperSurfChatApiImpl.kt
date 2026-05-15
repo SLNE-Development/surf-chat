@@ -60,5 +60,4 @@ class PaperSurfChatApiImpl : SurfChatApi, Services.Fallback {
             SignedMessageSender.sendRemoteSignedMessage(sender, targetUuid, contentComponent, signedMessage)
         }
     }
-
 }

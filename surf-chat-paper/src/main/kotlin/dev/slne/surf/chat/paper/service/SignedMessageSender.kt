@@ -12,6 +12,7 @@ import dev.slne.surf.chat.core.paper.redisApi
 import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.chat.paper.redis.rpc.SendSignedMessageHandledRedisResponse
 import dev.slne.surf.chat.paper.redis.rpc.SendSignedMessageRedisRequest
+import dev.slne.surf.core.api.common.SurfCoreApi
 import dev.slne.surf.redis.request.RequestTimeoutException
 import net.kyori.adventure.chat.SignedMessage
 import net.kyori.adventure.text.Component
@@ -68,6 +69,10 @@ object SignedMessageSender {
         messageMirror: PlayerChatMessageMirror,
         senderSession: RemoteChatSessionData?
     ): Boolean {
+        if (SurfCoreApi.getPlayer(target) == null) {
+            return true
+        }
+
         val target = Bukkit.getPlayer(target) ?: return false
         val message = SurfPaperNmsPlayerBridge.createAdventureChatMessageFromMirror(messageMirror)
 

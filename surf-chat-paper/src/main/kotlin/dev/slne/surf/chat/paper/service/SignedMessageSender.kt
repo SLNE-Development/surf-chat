@@ -57,7 +57,6 @@ object SignedMessageSender {
                     SendSignedMessageRedisRequest(sender.uniqueId, sender.name, targetUuid, messageMirror, session),
                 )
             } catch (_: RequestTimeoutException) {
-                plugin.logger.severe("Failed to send signed message to player with UUID $targetUuid: Request timed out.")
             }
         }
     }

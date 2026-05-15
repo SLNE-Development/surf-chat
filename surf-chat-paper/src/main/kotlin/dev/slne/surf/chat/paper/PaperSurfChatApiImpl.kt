@@ -11,6 +11,7 @@ import dev.slne.surf.chat.api.processor.PreChatProcessor
 import dev.slne.surf.chat.api.processor.chatProcessorRegistry
 import dev.slne.surf.chat.core.common.service.HistoryService
 import dev.slne.surf.chat.core.common.service.IgnoreService
+import dev.slne.surf.chat.paper.processor.post.AiModerationPostChatProcessor
 import dev.slne.surf.chat.paper.service.SignedMessageSender
 import it.unimi.dsi.fastutil.objects.ObjectList
 import net.kyori.adventure.chat.SignedMessage
@@ -59,5 +60,9 @@ class PaperSurfChatApiImpl : SurfChatApi, Services.Fallback {
         } else {
             SignedMessageSender.sendRemoteSignedMessage(sender, targetUuid, contentComponent, signedMessage)
         }
+    }
+
+    override suspend fun passAutoMod(messageData: MessageData) {
+        AiModerationPostChatProcessor.processMessage(messageData)
     }
 }

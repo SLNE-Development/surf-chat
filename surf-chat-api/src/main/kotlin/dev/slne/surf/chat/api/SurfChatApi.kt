@@ -34,5 +34,8 @@ interface SurfChatApi {
         contentComponent: Component
     )
 
+
+    suspend fun passAutoMod(messageData: MessageData)
+
     companion object : SurfChatApi by api
 }

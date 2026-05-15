@@ -6,6 +6,7 @@ import dev.slne.surf.api.core.messages.Colors
 import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.chat.api.message.MessageContext
+import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.api.processor.PostChatProcessor
 import dev.slne.surf.chat.core.common.service.DeletionService
 import dev.slne.surf.chat.core.paper.redisApi
@@ -36,7 +37,112 @@ object AiModerationPostChatProcessor : PostChatProcessor {
             return
         }
 
-        val messageData = messageContext.messageData
+        processMessage(messageContext.messageData)
+    }
+
+    private fun postWebhook(
+        messageData: MessageData,
+        classification: OpenAiService.ClassificationResult
+    ) {
+        val senderUuid = messageData.sender
+
+        runCatching {
+            sendWebhook(URI.create(aiModerationConfig.webhookUrl).toURL()) {
+                name("Arty AI Moderation")
+                avatar(aiModerationConfig.webhookAvatarUrl)
+                embed {
+                    thumbnail {
+                        url("https://mc-heads.net/avatar/$senderUuid")
+                    }
+                    title("Chat Nachricht moderiert")
+
+                    when (classification.action) {
+                        OpenAiService.ClassificationAction.SILENT_FLAG -> {
+                            content("Nachricht wurde als unangemessen markiert — bitte überprüfen und ggf. handeln")
+                        }
+
+                        OpenAiService.ClassificationAction.DELETE -> {
+                            content("Die Chat Nachricht wurde gelöscht.")
+                        }
+
+                        OpenAiService.ClassificationAction.MUTE -> {
+                            content("Die Chat Nachricht wurde gelöscht und der Absender wurde für 7 Tage stumm geschaltet — bitte überprüfen")
+                        }
+
+                        else -> Unit
+                    }
+
+                    color(
+                        when (classification.action) {
+                            OpenAiService.ClassificationAction.SILENT_FLAG -> Color.YELLOW
+                            OpenAiService.ClassificationAction.DELETE -> Color.RED
+                            OpenAiService.ClassificationAction.MUTE -> Color.MAGENTA
+                            else -> Color.WHITE
+                        }
+                    )
+
+                    field {
+                        name("Nachricht")
+                        value(messageData.plainMessage)
+                        inline = false
+                    }
+
+                    field {
+                        name("Kategorien")
+                        value(buildString {
+                            classification.flaggedScores.object2DoubleEntrySet()
+                                .sortedByDescending { it.doubleValue }
+                                .forEachIndexed { index, entry ->
+                                    val category = entry.key
+                                    val scorePercent = entry.doubleValue * 100
+                                    append("- ${category.name} (${"%.2f".format(scorePercent)} %)")
+                                    if (index != classification.flaggedScores.size - 1) {
+                                        append("\n")
+                                    }
+                                }
+                        })
+                        inline = false
+                    }
+
+                    field {
+                        name("Sender")
+                        value("[${nameOrUuid(senderUuid)}](${aiModerationConfig.userPanelPrefix}$senderUuid)")
+                        inline = true
+                    }
+
+                    val receiverUuid = messageData.receiver
+                    if (receiverUuid != null) {
+                        field {
+                            name("Receiver")
+                            value("[${nameOrUuid(receiverUuid)}](${aiModerationConfig.userPanelPrefix}$receiverUuid)")
+                            inline = true
+                        }
+                    }
+
+                    field {
+                        name("Server")
+                        value(messageData.server)
+                        inline = true
+                    }
+
+                    field {
+                        name("Type")
+                        value(messageData.type.value)
+                        inline = true
+                    }
+                }
+            }
+        }.onFailure {
+            plugin.logger.warning("Failed to send webhook for AI moderation!")
+        }
+    }
+
+    private fun nameOrUuid(uuid: UUID): String {
+        return Bukkit.getOfflinePlayer(uuid).name ?: uuid.toString()
+    }
+
+
+    suspend fun processMessage(messageData: MessageData) {
         if (messageData.sender.hasPermission(PermissionRegistry.BYPASS_FILTER)) {
             return
         }
@@ -50,7 +156,7 @@ object AiModerationPostChatProcessor : PostChatProcessor {
 
         val name = messageData.senderUser().lastKnownName ?: messageData.sender.toString()
 
-        postWebhook(messageContext, classification)
+        postWebhook(messageData, classification)
 
         redisApi.publishEvent(
             TeamMessageRedisEvent(
@@ -59,6 +165,7 @@ object AiModerationPostChatProcessor : PostChatProcessor {
                     info("Die Nachricht von ")
                     variableValue(name)
                     info(" wurde als bedrohlich eingestuft: ")
+                    spacer("(${messageData.type}) ")
 
                     append {
                         text(plain.take(20), Colors.WHITE)
@@ -138,106 +245,5 @@ object AiModerationPostChatProcessor : PostChatProcessor {
 
             else -> Unit
         }
-    }
-
-    private fun postWebhook(
-        messageContext: MessageContext,
-        classification: OpenAiService.ClassificationResult
-    ) {
-        val senderUuid = messageContext.messageData.sender
-
-        runCatching {
-            sendWebhook(URI.create(aiModerationConfig.webhookUrl).toURL()) {
-                name("Arty AI Moderation")
-                avatar(aiModerationConfig.webhookAvatarUrl)
-                embed {
-                    thumbnail {
-                        url("https://mc-heads.net/avatar/$senderUuid")
-                    }
-                    title("Chat Nachricht moderiert")
-
-                    when (classification.action) {
-                        OpenAiService.ClassificationAction.SILENT_FLAG -> {
-                            content("Nachricht wurde als unangemessen markiert — bitte überprüfen und ggf. handeln")
-                        }
-
-                        OpenAiService.ClassificationAction.DELETE -> {
-                            content("Die Chat Nachricht wurde gelöscht.")
-                        }
-
-                        OpenAiService.ClassificationAction.MUTE -> {
-                            content("Die Chat Nachricht wurde gelöscht und der Absender wurde für 7 Tage stumm geschaltet — bitte überprüfen")
-                        }
-
-                        else -> Unit
-                    }
-
-                    color(
-                        when (classification.action) {
-                            OpenAiService.ClassificationAction.SILENT_FLAG -> Color.YELLOW
-                            OpenAiService.ClassificationAction.DELETE -> Color.RED
-                            OpenAiService.ClassificationAction.MUTE -> Color.MAGENTA
-                            else -> Color.WHITE
-                        }
-                    )
-
-                    field {
-                        name("Nachricht")
-                        value(messageContext.messageData.plainMessage)
-                        inline = false
-                    }
-
-                    field {
-                        name("Kategorien")
-                        value(buildString {
-                            classification.flaggedScores.object2DoubleEntrySet()
-                                .sortedByDescending { it.doubleValue }
-                                .forEachIndexed { index, entry ->
-                                    val category = entry.key
-                                    val scorePercent = entry.doubleValue * 100
-                                    append("- ${category.name} (${"%.2f".format(scorePercent)} %)")
-                                    if (index != classification.flaggedScores.size - 1) {
-                                        append("\n")
-                                    }
-                                }
-                        })
-                        inline = false
-                    }
-
-                    field {
-                        name("Sender")
-                        value("[${nameOrUuid(senderUuid)}](${aiModerationConfig.userPanelPrefix}$senderUuid)")
-                        inline = true
-                    }
-
-                    val receiverUuid = messageContext.messageData.receiver
-                    if (receiverUuid != null) {
-                        field {
-                            name("Receiver")
-                            value("[${nameOrUuid(receiverUuid)}](${aiModerationConfig.userPanelPrefix}$receiverUuid)")
-                            inline = true
-                        }
-                    }
-
-                    field {
-                        name("Server")
-                        value(messageContext.messageData.server)
-                        inline = true
-                    }
-
-                    field {
-                        name("Type")
-                        value(messageContext.messageData.type.value)
-                        inline = true
-                    }
-                }
-            }
-        }.onFailure {
-            plugin.logger.warning("Failed to send webhook for AI moderation!")
-        }
-    }
-
-    private fun nameOrUuid(uuid: UUID): String {
-        return Bukkit.getOfflinePlayer(uuid).name ?: uuid.toString()
     }
 }

@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.paper.service
 
-import com.github.shynixn.mccoroutine.folia.scope
+import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.api.core.messages.adventure.text
 import dev.slne.surf.api.paper.extensions.server
 import dev.slne.surf.api.paper.nms.NmsUseWithCaution
@@ -45,11 +45,9 @@ object SignedMessageSender {
         val messageMirror = SurfPaperNmsPlayerBridge.createPlayerChatMessageMirrorFromAdventure(
             signedMessage,
             component
-        )
+        ) ?: return
 
-        requireNotNull(messageMirror) { "Failed to create message mirror." }
-
-        SurfPaperNmsPlayerBridge.runOnChatMessageChain(sender, plugin.scope) {
+        plugin.launch {
             val session = SurfPaperNmsPlayerBridge.getRemoteChatSessionData(sender)
 
             try {

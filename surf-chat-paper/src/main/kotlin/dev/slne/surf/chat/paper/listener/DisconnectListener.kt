@@ -3,33 +3,48 @@ package dev.slne.surf.chat.paper.listener
 import com.destroystokyo.paper.event.player.PlayerConnectionCloseEvent
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.api.core.messages.adventure.buildText
+import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.api.core.minimessage.miniMessage
+import dev.slne.surf.api.paper.util.forEachPlayer
 import dev.slne.surf.chat.core.common.service.IgnoreService
 import dev.slne.surf.chat.core.common.service.SpyService
 import dev.slne.surf.chat.paper.hook.LuckPermsHook
-import dev.slne.surf.chat.paper.message.MessageFormatter
+import dev.slne.surf.chat.paper.hook.SettingsHook
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.chat.paper.plugin
-import dev.slne.surf.chat.paper.service.ConnectionMessageService
 import net.kyori.adventure.text.Component
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerQuitEvent
 
 object DisconnectListener : Listener {
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     fun onDisconnect(event: PlayerQuitEvent) {
-        MessageFormatter.dirty = true
+        if (event.quitMessage() == null) {
+            return
+        }
 
-        ConnectionMessageService.recordEvent()
+        if (!plugin.connectionMessageConfig.enabled) {
+            return
+        }
 
         val alwaysShow = event.player.hasPermission(PermissionRegistry.CONNECTION_MESSAGE_ALWAYS_SHOW)
-        val shouldShowMessage = alwaysShow || ConnectionMessageService.shouldShowConnectionMessage()
 
-        if (shouldShowMessage) {
-            event.quitMessage(buildQuitMessage(event))
+        if (alwaysShow) {
+            forEachPlayer {
+                it.sendText {
+                    append(buildQuitMessage(event))
+                }
+            }
         } else {
-            event.quitMessage(null)
+            forEachPlayer {
+                if (plugin.checkSettingsHook() && SettingsHook.hasConnectionMessagesEnabled(event.player.uniqueId)) {
+                    it.sendText {
+                        append(buildQuitMessage(event))
+                    }
+                }
+            }
         }
     }
 

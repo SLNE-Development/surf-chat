@@ -3,17 +3,19 @@ package dev.slne.surf.chat.paper.listener
 import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.api.core.minimessage.miniMessage
+import dev.slne.surf.api.paper.util.forEachPlayer
 import dev.slne.surf.chat.core.common.service.IgnoreService
 import dev.slne.surf.chat.paper.hook.LuckPermsHook
 import dev.slne.surf.chat.paper.hook.MiniPlaceholdersHook
+import dev.slne.surf.chat.paper.hook.SettingsHook
 import dev.slne.surf.chat.paper.message.MessageFormatter
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.chat.paper.plugin
-import dev.slne.surf.chat.paper.service.ConnectionMessageService
 import io.papermc.paper.event.connection.configuration.AsyncPlayerConnectionConfigureEvent
 import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.Component
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 
@@ -28,17 +30,32 @@ object ConnectListener : Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     fun onPlayerJoin(event: PlayerJoinEvent) {
-        ConnectionMessageService.recordEvent()
+        if (event.joinMessage() == null) {
+            return
+        }
+
+        if (!plugin.connectionMessageConfig.enabled) {
+            return
+        }
 
         val alwaysShow = event.player.hasPermission(PermissionRegistry.CONNECTION_MESSAGE_ALWAYS_SHOW)
-        val shouldShowMessage = alwaysShow || ConnectionMessageService.shouldShowConnectionMessage()
 
-        if (shouldShowMessage) {
-            event.joinMessage(buildJoinMessage(event))
+        if (alwaysShow) {
+            forEachPlayer {
+                it.sendText {
+                    append(buildJoinMessage(event))
+                }
+            }
         } else {
-            event.joinMessage(null)
+            forEachPlayer {
+                if (plugin.checkSettingsHook() && SettingsHook.hasConnectionMessagesEnabled(event.player.uniqueId)) {
+                    it.sendText {
+                        append(buildJoinMessage(event))
+                    }
+                }
+            }
         }
 
         if (plugin.chatMotdConfig.enabled) {

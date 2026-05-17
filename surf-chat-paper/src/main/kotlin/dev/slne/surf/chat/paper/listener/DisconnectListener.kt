@@ -10,6 +10,7 @@ import dev.slne.surf.chat.core.common.service.IgnoreService
 import dev.slne.surf.chat.core.common.service.SpyService
 import dev.slne.surf.chat.paper.hook.LuckPermsHook
 import dev.slne.surf.chat.paper.hook.SettingsHook
+import dev.slne.surf.chat.paper.message.MessageFormatter
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.chat.paper.plugin
 import net.kyori.adventure.text.Component
@@ -21,6 +22,8 @@ import org.bukkit.event.player.PlayerQuitEvent
 object DisconnectListener : Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     fun onDisconnect(event: PlayerQuitEvent) {
+        MessageFormatter.dirty = true
+        
         if (event.quitMessage() == null) {
             return
         }
@@ -31,17 +34,21 @@ object DisconnectListener : Listener {
 
         val alwaysShow = event.player.hasPermission(PermissionRegistry.CONNECTION_MESSAGE_ALWAYS_SHOW)
 
+        event.quitMessage(null)
+
+        val message = buildQuitMessage(event)
+
         if (alwaysShow) {
             forEachPlayer {
                 it.sendText {
-                    append(buildQuitMessage(event))
+                    append(message)
                 }
             }
         } else {
             forEachPlayer {
                 if (plugin.checkSettingsHook() && SettingsHook.hasConnectionMessagesEnabled(event.player.uniqueId)) {
                     it.sendText {
-                        append(buildQuitMessage(event))
+                        append(message)
                     }
                 }
             }

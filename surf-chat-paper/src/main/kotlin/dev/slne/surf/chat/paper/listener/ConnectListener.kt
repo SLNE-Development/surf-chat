@@ -41,18 +41,21 @@ object ConnectListener : Listener {
         }
 
         val alwaysShow = event.player.hasPermission(PermissionRegistry.CONNECTION_MESSAGE_ALWAYS_SHOW)
+        val message = buildJoinMessage(event)
+
+        event.joinMessage(null)
 
         if (alwaysShow) {
             forEachPlayer {
                 it.sendText {
-                    append(buildJoinMessage(event))
+                    append(message)
                 }
             }
         } else {
             forEachPlayer {
                 if (plugin.checkSettingsHook() && SettingsHook.hasConnectionMessagesEnabled(event.player.uniqueId)) {
                     it.sendText {
-                        append(buildJoinMessage(event))
+                        append(message)
                     }
                 }
             }

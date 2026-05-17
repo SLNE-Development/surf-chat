@@ -12,7 +12,5 @@ object SettingsHook {
         SurfSettingsApi.getSettingValue(playerUuid, SettingKeys.CHAT_PINGS)
 
     fun hasConnectionMessagesEnabled(playerUuid: UUID): Boolean =
-        SurfSettingsApi.getSettingValue(playerUuid, SettingKeys.CONNECTION_MESSAGES).also {
-            println("Player $playerUuid has connection messages enabled: $it")
-        }
+        SurfSettingsApi.getSettingValue(playerUuid, SettingKeys.CONNECTION_MESSAGES)
 }

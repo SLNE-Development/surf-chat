@@ -23,18 +23,18 @@ object DisconnectListener : Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     fun onDisconnect(event: PlayerQuitEvent) {
         MessageFormatter.dirty = true
-        
+
         if (event.quitMessage() == null) {
             return
         }
+
+        event.quitMessage(null)
 
         if (!plugin.connectionMessageConfig.enabled) {
             return
         }
 
         val alwaysShow = event.player.hasPermission(PermissionRegistry.CONNECTION_MESSAGE_ALWAYS_SHOW)
-
-        event.quitMessage(null)
 
         val message = buildQuitMessage(event)
 

@@ -36,14 +36,14 @@ object ConnectListener : Listener {
             return
         }
 
+        event.joinMessage(null)
+
         if (!plugin.connectionMessageConfig.enabled) {
             return
         }
 
         val alwaysShow = event.player.hasPermission(PermissionRegistry.CONNECTION_MESSAGE_ALWAYS_SHOW)
         val message = buildJoinMessage(event)
-
-        event.joinMessage(null)
 
         if (alwaysShow) {
             forEachPlayer {

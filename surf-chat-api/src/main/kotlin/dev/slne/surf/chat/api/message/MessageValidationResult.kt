@@ -85,6 +85,12 @@ sealed class MessageValidationResult {
                 "Kein Inhalt"
             )
 
+
+        class TooManyCaps : MessageValidationError(
+            buildText { error("Deine Nachricht enthält zu viele Großbuchstaben.") },
+            "Zu viele Großbuchstaben"
+        )
+
         /**
          *
          */

@@ -32,11 +32,33 @@ object MessageValidator {
             }
         }
 
+        if (hasTooManyCapsInARow(message)) {
+            return MessageValidationResult.Failure(MessageValidationResult.MessageValidationError.TooManyCaps())
+        }
+
         if (message.isBlank()) {
             return MessageValidationResult.Failure(MessageValidationResult.MessageValidationError.EmptyContent())
         }
 
         return MessageValidationResult.Success()
+    }
+
+
+    fun hasTooManyCapsInARow(message: String): Boolean {
+        var consecutiveCaps = 0
+
+        for (char in message) {
+            if (char.isUpperCase()) {
+                consecutiveCaps++
+                if (consecutiveCaps >= 3) {
+                    return true
+                }
+            } else {
+                consecutiveCaps = 0
+            }
+        }
+
+        return false
     }
 
 

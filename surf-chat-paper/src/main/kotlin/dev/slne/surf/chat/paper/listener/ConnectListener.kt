@@ -30,7 +30,7 @@ object ConnectListener : Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGH)
     fun onPlayerJoin(event: PlayerJoinEvent) {
         if (event.joinMessage() == null) {
             return
@@ -53,7 +53,14 @@ object ConnectListener : Listener {
             }
         } else {
             forEachPlayer {
-                if (plugin.checkSettingsHook() && SettingsHook.hasConnectionMessagesEnabled(event.player.uniqueId)) {
+                if (plugin.checkSettingsHook()) {
+                    if (!SettingsHook.hasConnectionMessagesEnabled(it.uniqueId)) {
+                        return@forEachPlayer
+                    }
+                    it.sendText {
+                        append(message)
+                    }
+                } else {
                     it.sendText {
                         append(message)
                     }

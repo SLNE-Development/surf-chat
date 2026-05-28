@@ -50,7 +50,7 @@ object MessageValidator {
         for (char in message) {
             if (char.isUpperCase()) {
                 consecutiveCaps++
-                if (consecutiveCaps >= 3) {
+                if (consecutiveCaps >= plugin.spamConfig.maxUppercaseCharsInRow) {
                     return true
                 }
             } else {

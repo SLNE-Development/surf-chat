@@ -20,7 +20,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerQuitEvent
 
 object DisconnectListener : Listener {
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGH)
     fun onDisconnect(event: PlayerQuitEvent) {
         MessageFormatter.dirty = true
 
@@ -46,7 +46,14 @@ object DisconnectListener : Listener {
             }
         } else {
             forEachPlayer {
-                if (plugin.checkSettingsHook() && SettingsHook.hasConnectionMessagesEnabled(event.player.uniqueId)) {
+                if (plugin.checkSettingsHook()) {
+                    if (!SettingsHook.hasConnectionMessagesEnabled(it.uniqueId)) {
+                        return@forEachPlayer
+                    }
+                    it.sendText {
+                        append(message)
+                    }
+                } else {
                     it.sendText {
                         append(message)
                     }

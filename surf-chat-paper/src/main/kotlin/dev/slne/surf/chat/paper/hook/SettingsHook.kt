@@ -10,4 +10,7 @@ object SettingsHook {
 
     fun hasChatPingsEnabled(playerUuid: UUID): Boolean =
         SurfSettingsApi.getSettingValue(playerUuid, SettingKeys.CHAT_PINGS)
+
+    fun hasConnectionMessagesEnabled(playerUuid: UUID): Boolean =
+        SurfSettingsApi.getSettingValue(playerUuid, SettingKeys.CONNECTION_MESSAGES)
 }

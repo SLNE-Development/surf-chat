@@ -165,7 +165,7 @@ object AiModerationPostChatProcessor : PostChatProcessor {
                     info("Die Nachricht von ")
                     variableValue(name)
                     info(" wurde als bedrohlich eingestuft: ")
-                    spacer("(${messageData.type}) ")
+                    spacer("(${messageData.type.value}) ")
 
                     append {
                         text(plain.take(20), Colors.WHITE)

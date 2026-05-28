@@ -43,7 +43,6 @@ object MessageValidator {
         return MessageValidationResult.Success()
     }
 
-
     fun hasTooManyCapsInARow(message: String): Boolean {
         var consecutiveCaps = 0
 

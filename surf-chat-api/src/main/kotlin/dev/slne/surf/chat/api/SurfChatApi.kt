@@ -28,6 +28,9 @@ interface SurfChatApi {
     fun getCachedIgnoreList(uuid: UUID): List<IgnoreListEntry>
     suspend fun getIgnoreList(uuid: UUID): List<IgnoreListEntry>
 
+    fun deleteMessage(signature: SignedMessage.Signature)
+    suspend fun deleteRemoteMessage(deleter: UUID?, messageData: MessageData)
+
     @Throws(TimeoutCancellationException::class)
     suspend fun lookupHistory(filter: HistoryFilter): ObjectList<HistoryEntry>
 

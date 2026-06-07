@@ -5,6 +5,8 @@ import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
 import dev.slne.surf.chat.api.entry.IgnoreListEntry
 import dev.slne.surf.chat.api.message.MessageData
+import dev.slne.surf.chat.api.message.redirector.MessageRedirector
+import dev.slne.surf.chat.api.message.redirector.MessageRedirectorRegistry
 import dev.slne.surf.chat.api.processor.PostChatProcessor
 import dev.slne.surf.chat.api.processor.PreChatProcessor
 import it.unimi.dsi.fastutil.objects.ObjectList
@@ -20,6 +22,8 @@ interface SurfChatApi {
 
     fun registerChatProcessor(processor: PreChatProcessor)
     fun registerChatProcessor(processor: PostChatProcessor)
+
+    fun registerMessageRedirector(redirector: MessageRedirector) = MessageRedirectorRegistry.register(redirector)
 
     fun getCachedIgnoreList(uuid: UUID): List<IgnoreListEntry>
     suspend fun getIgnoreList(uuid: UUID): List<IgnoreListEntry>

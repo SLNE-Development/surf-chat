@@ -4,6 +4,7 @@ import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.chat.api.message.MessageContext
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.api.message.MessageType
+import dev.slne.surf.chat.api.message.redirector.MessageRedirectorRegistry
 import dev.slne.surf.chat.api.processor.chatProcessorRegistry
 import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.chat.paper.util.cancel
@@ -48,6 +49,10 @@ object AsyncChatListener : Listener {
 
         plugin.launch {
             runPostProcessors(MessageContext(data, event.isCancelled, event.viewers()))
+
+            MessageRedirectorRegistry.redirectors.forEach {
+                it.redirectMessage(event.signedMessage(), data)
+            }
         }
     }
 

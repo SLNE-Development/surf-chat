@@ -11,7 +11,9 @@ import dev.slne.surf.chat.api.processor.PreChatProcessor
 import dev.slne.surf.chat.api.processor.chatProcessorRegistry
 import dev.slne.surf.chat.core.common.service.HistoryService
 import dev.slne.surf.chat.core.common.service.IgnoreService
+import dev.slne.surf.chat.core.paper.redisApi
 import dev.slne.surf.chat.paper.processor.post.AiModerationPostChatProcessor
+import dev.slne.surf.chat.paper.redis.event.DeleteRemoteMessageRedisEvent
 import dev.slne.surf.chat.paper.service.SignedMessageSender
 import it.unimi.dsi.fastutil.objects.ObjectList
 import net.kyori.adventure.chat.SignedMessage
@@ -24,6 +26,16 @@ import java.util.*
 class PaperSurfChatApiImpl : SurfChatApi, Services.Fallback {
     override suspend fun logMessage(data: MessageData) {
         HistoryService.logMessage(data)
+    }
+
+    override fun deleteMessage(signature: SignedMessage.Signature) = Bukkit.getServer().deleteMessage(signature)
+
+    override suspend fun deleteRemoteMessage(deleter: UUID?, messageData: MessageData) {
+        messageData.signature?.let {
+            redisApi.publishEvent(DeleteRemoteMessageRedisEvent(it))
+        }
+        
+        HistoryService.markDeleted(messageData.messageUuid, deleter, null)
     }
 
     override fun registerChatProcessor(processor: PreChatProcessor) {

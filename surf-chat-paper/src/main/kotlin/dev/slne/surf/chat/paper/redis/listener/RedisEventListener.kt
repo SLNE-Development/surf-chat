@@ -4,6 +4,7 @@ import dev.slne.surf.api.paper.nms.NmsUseWithCaution
 import dev.slne.surf.chat.paper.command.direct.DirectMessageAccess
 import dev.slne.surf.chat.paper.message.MessageFormatter
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
+import dev.slne.surf.chat.paper.redis.event.DeleteRemoteMessageRedisEvent
 import dev.slne.surf.chat.paper.redis.event.TeamMessageRedisEvent
 import dev.slne.surf.chat.paper.redis.event.TeamchatMessageRedisEvent
 import dev.slne.surf.chat.paper.redis.rpc.SendDirectMessageHandledRedisResponse
@@ -59,5 +60,10 @@ object RedisEventListener {
         if (handled) {
             context.respond(SendSignedMessageHandledRedisResponse()).await()
         }
+    }
+
+    @OnRedisEvent
+    fun handleDeleteRemoteChatMessage(event: DeleteRemoteMessageRedisEvent) {
+        Bukkit.getServer().deleteMessage(event.messageSignature)
     }
 }

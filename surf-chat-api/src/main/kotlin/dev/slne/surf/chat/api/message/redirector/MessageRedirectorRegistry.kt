@@ -5,7 +5,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 object MessageRedirectorRegistry {
     val redirectors = CopyOnWriteArrayList<MessageRedirector>()
 
-    fun clearProcessors() {
+    fun clear() {
         redirectors.clear()
     }
 

@@ -6,4 +6,5 @@ interface PreChatProcessor {
     val order: Int
 
     fun process(context: MessageContext): MessageContext
+    suspend fun processAsync(context: MessageContext): MessageContext = process(context)
 }

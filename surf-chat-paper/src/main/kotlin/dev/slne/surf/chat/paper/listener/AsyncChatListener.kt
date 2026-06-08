@@ -11,6 +11,7 @@ import dev.slne.surf.chat.paper.util.cancel
 import dev.slne.surf.chat.paper.util.uuidOrNull
 import dev.slne.surf.core.api.common.SurfCoreApi
 import io.papermc.paper.event.player.AsyncChatEvent
+import kotlinx.coroutines.runBlocking
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import java.time.OffsetDateTime
@@ -36,15 +37,17 @@ object AsyncChatListener : Listener {
             MessageType.GLOBAL
         )
 
-        val result = runPreProcessors(MessageContext(data, event.isCancelled, event.viewers()))
-        data = result.messageData
+        runBlocking {
+            val result = runPreProcessors(MessageContext(data, event.isCancelled, event.viewers()))
+            data = result.messageData
 
-        if (result.isCancelled) {
-            event.cancel()
-        }
+            if (result.isCancelled) {
+                event.cancel()
+            }
 
-        event.renderer { _, _, _, viewer ->
-            viewer.uuidOrNull()?.let { result.render(it, viewer) } ?: event.message()
+            event.renderer { _, _, _, viewer ->
+                viewer.uuidOrNull()?.let { result.render(it, viewer) } ?: event.message()
+            }
         }
 
         plugin.launch {
@@ -56,13 +59,13 @@ object AsyncChatListener : Listener {
         }
     }
 
-    private fun runPreProcessors(
+    private suspend fun runPreProcessors(
         original: MessageContext
     ): MessageContext {
         var context = original
 
         chatProcessorRegistry.preChatProcessors.sortedBy { it.order }.forEach { processor ->
-            context = processor.process(context)
+            context = processor.processAsync(context)
 
             if (context.isCancelled) {
                 return context

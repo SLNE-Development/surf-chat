@@ -212,13 +212,13 @@ object DirectMessageAccess {
     }
 }
 
-private fun runPreProcessors(
+private suspend fun runPreProcessors(
     original: MessageContext
 ): MessageContext {
     var context = original
 
     chatProcessorRegistry.preChatProcessors.sortedBy { it.order }.forEach { processor ->
-        context = processor.process(context)
+        context = processor.processAsync(context)
 
         if (context.isCancelled) {
             return context

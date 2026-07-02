@@ -3,8 +3,9 @@ package dev.slne.surf.chat.paper.listener
 import com.destroystokyo.paper.event.player.PlayerConnectionCloseEvent
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.api.core.messages.adventure.buildText
-import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.api.core.minimessage.miniMessage
+import dev.slne.surf.api.paper.event.common.connection.PlayerQuitMessageEvent
+import dev.slne.surf.api.paper.extensions.server
 import dev.slne.surf.api.paper.util.forEachPlayer
 import dev.slne.surf.chat.core.common.service.IgnoreService
 import dev.slne.surf.chat.core.common.service.SpyService
@@ -34,29 +35,28 @@ object DisconnectListener : Listener {
             return
         }
 
-        val alwaysShow = event.player.hasPermission(PermissionRegistry.CONNECTION_MESSAGE_ALWAYS_SHOW)
+        val player = event.player
+        val alwaysShow = player.hasPermission(PermissionRegistry.CONNECTION_MESSAGE_ALWAYS_SHOW)
+        var message = buildQuitMessage(event)
 
-        val message = buildQuitMessage(event)
+        val messageEvent = PlayerQuitMessageEvent(player, message)
+
+        if (!messageEvent.call()) {
+            return
+        }
+
+        message = messageEvent.message
 
         if (alwaysShow) {
-            forEachPlayer {
-                it.sendText {
-                    append(message)
-                }
-            }
+            server.broadcast(message)
         } else {
-            forEachPlayer {
+            forEachPlayer { player ->
                 if (plugin.checkSettingsHook()) {
-                    if (!SettingsHook.hasConnectionMessagesEnabled(it.uniqueId)) {
-                        return@forEachPlayer
-                    }
-                    it.sendText {
-                        append(message)
+                    if (SettingsHook.hasConnectionMessagesEnabled(player.uniqueId)) {
+                        player.sendMessage(message)
                     }
                 } else {
-                    it.sendText {
-                        append(message)
-                    }
+                    player.sendMessage(message)
                 }
             }
         }

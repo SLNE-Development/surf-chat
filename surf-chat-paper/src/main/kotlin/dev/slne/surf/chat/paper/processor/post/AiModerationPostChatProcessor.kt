@@ -20,6 +20,7 @@ import dev.slne.surf.chat.paper.util.appendBotIcon
 import dev.slne.surf.chat.paper.util.hasPermission
 import dev.slne.surf.punish.api.common.punishment.PunishType
 import dev.slne.surf.punish.api.common.user.PunishmentUser
+import it.unimi.dsi.fastutil.objects.Object2DoubleMap
 import net.kyori.adventure.text.event.ClickEvent
 import org.bukkit.Bukkit
 import java.awt.Color
@@ -65,8 +66,19 @@ object AiModerationPostChatProcessor : PostChatProcessor {
                             content("Die Chat Nachricht wurde gelöscht.")
                         }
 
-                        OpenAiService.ClassificationAction.MUTE -> {
-                            content("Die Chat Nachricht wurde gelöscht und der Absender wurde für 7 Tage stumm geschaltet — bitte überprüfen")
+                        OpenAiService.ClassificationAction.SEVERE -> {
+                            if (aiModerationConfig.autoMuteEnabled) {
+                                content(
+                                    "Die Chat Nachricht wurde gelöscht und der Absender wurde für " +
+                                        "${aiModerationConfig.autoMuteDurationDays.coerceAtLeast(1)} Tage " +
+                                        "stumm geschaltet — bitte überprüfen"
+                                )
+                            } else {
+                                content(
+                                    "Die Chat Nachricht wurde gelöscht und als schwerwiegend markiert — " +
+                                        "bitte zeitnah überprüfen"
+                                )
+                            }
                         }
 
                         else -> Unit
@@ -76,7 +88,7 @@ object AiModerationPostChatProcessor : PostChatProcessor {
                         when (classification.action) {
                             OpenAiService.ClassificationAction.SILENT_FLAG -> Color.YELLOW
                             OpenAiService.ClassificationAction.DELETE -> Color.RED
-                            OpenAiService.ClassificationAction.MUTE -> Color.MAGENTA
+                            OpenAiService.ClassificationAction.SEVERE -> Color.MAGENTA
                             else -> Color.WHITE
                         }
                     )
@@ -88,19 +100,14 @@ object AiModerationPostChatProcessor : PostChatProcessor {
                     }
 
                     field {
-                        name("Kategorien")
-                        value(buildString {
-                            classification.flaggedScores.object2DoubleEntrySet()
-                                .sortedByDescending { it.doubleValue }
-                                .forEachIndexed { index, entry ->
-                                    val category = entry.key
-                                    val scorePercent = entry.doubleValue * 100
-                                    append("- ${category.name} (${"%.2f".format(scorePercent)} %)")
-                                    if (index != classification.flaggedScores.size - 1) {
-                                        append("\n")
-                                    }
-                                }
-                        })
+                        name("Auslösende Kategorien")
+                        value(formatScores(classification.matchedScores))
+                        inline = false
+                    }
+
+                    field {
+                        name("Höchste Modellwerte")
+                        value(formatScores(classification.categoryScores, limit = 5))
                         inline = false
                     }
 
@@ -137,10 +144,20 @@ object AiModerationPostChatProcessor : PostChatProcessor {
         }
     }
 
+    private fun formatScores(
+        scores: Object2DoubleMap<OpenAiService.Category>,
+        limit: Int = Int.MAX_VALUE
+    ): String = scores.object2DoubleEntrySet()
+        .sortedByDescending { it.doubleValue }
+        .take(limit)
+        .joinToString("\n") { entry ->
+            val scorePercent = entry.doubleValue * 100
+            "- ${entry.key.name} (${"%.2f".format(scorePercent)} %)"
+        }
+
     private fun nameOrUuid(uuid: UUID): String {
         return Bukkit.getOfflinePlayer(uuid).name ?: uuid.toString()
     }
-
 
     suspend fun processMessage(messageData: MessageData) {
         if (messageData.sender.hasPermission(PermissionRegistry.BYPASS_FILTER)) {
@@ -148,7 +165,7 @@ object AiModerationPostChatProcessor : PostChatProcessor {
         }
 
         val plain = messageData.plainMessage
-        val classification = openAiService.classifyChatMessage(plain)
+        val classification = openAiService.classifyChatMessage(plain, messageData.type.value)
 
         if (classification.action == OpenAiService.ClassificationAction.NONE) {
             return
@@ -164,7 +181,7 @@ object AiModerationPostChatProcessor : PostChatProcessor {
                     appendBotIcon()
                     info("Die Nachricht von ")
                     variableValue(name)
-                    info(" wurde als bedrohlich eingestuft: ")
+                    info(" wurde von der KI-Moderation markiert: ")
                     spacer("(${messageData.type.value}) ")
 
                     append {
@@ -178,7 +195,7 @@ object AiModerationPostChatProcessor : PostChatProcessor {
                         })
                     }
 
-                    if (classification.action != OpenAiService.ClassificationAction.DELETE) {
+                    if (classification.action == OpenAiService.ClassificationAction.SILENT_FLAG) {
                         append {
                             spacer(" [")
                             text("LÖSCHEN", Colors.RED)
@@ -212,38 +229,56 @@ object AiModerationPostChatProcessor : PostChatProcessor {
 
         when (classification.action) {
             OpenAiService.ClassificationAction.DELETE -> {
-                DeletionService.deleteMessage(
-                    messageData,
-                    deletionReason = "AI classification: ${classification.action.name}",
-                )
+                deleteMessage(messageData, classification.action)
             }
 
-            OpenAiService.ClassificationAction.MUTE -> {
-                val sender = messageData.sender
-                val note = buildString {
-                    append("[AI MODERATION] Unangemessenes Chat verhalten: [")
-                    val scores = classification.flaggedScores.object2DoubleEntrySet()
-                        .sortedByDescending { it.doubleValue }
+            OpenAiService.ClassificationAction.SEVERE -> {
+                deleteMessage(messageData, classification.action)
 
-                    for (entry in scores) {
-                        val category = entry.key
-                        val scorePercent = entry.doubleValue * 100
-                        append("${category.name}=${"%.2f".format(scorePercent)} %")
-                        if (entry != scores.last()) {
-                            append(", ")
-                        }
-                    }
-
-                    append("]")
+                if (aiModerationConfig.autoMuteEnabled) {
+                    mutePlayer(messageData, classification)
                 }
-
-                PunishmentUser.byUuid(sender)
-                    .punish(PunishType.MUTE.Expirable(OffsetDateTime.now().plusDays(7)) {
-                        note(note)
-                    }, "Unangemessenes Chat verhalten")
             }
 
             else -> Unit
         }
+    }
+
+    private suspend fun deleteMessage(
+        messageData: MessageData,
+        action: OpenAiService.ClassificationAction
+    ) {
+        DeletionService.deleteMessage(
+            messageData,
+            deletionReason = "AI classification: ${action.name}",
+        )
+    }
+
+    private suspend fun mutePlayer(
+        messageData: MessageData,
+        classification: OpenAiService.ClassificationResult
+    ) {
+        val sender = messageData.sender
+        val durationDays = aiModerationConfig.autoMuteDurationDays.coerceAtLeast(1)
+        val note = buildString {
+            append("[AI MODERATION] Schwerwiegendes Chatverhalten: [")
+            val scores = classification.matchedScores.object2DoubleEntrySet()
+                .sortedByDescending { it.doubleValue }
+
+            for (entry in scores) {
+                val scorePercent = entry.doubleValue * 100
+                append("${entry.key.name}=${"%.2f".format(scorePercent)} %")
+                if (entry != scores.last()) {
+                    append(", ")
+                }
+            }
+
+            append("]")
+        }
+
+        PunishmentUser.byUuid(sender)
+            .punish(PunishType.MUTE.Expirable(OffsetDateTime.now().plusDays(durationDays)) {
+                note(note)
+            }, "Schwerwiegendes unangemessenes Chatverhalten")
     }
 }

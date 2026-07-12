@@ -15,11 +15,8 @@ dependencies {
     compileOnly(libs.playerholder.api)
     compileOnly(libs.miniplaceholder.api)
     compileOnly(libs.luckperms.api)
-
-    implementation("de.maxbossing:kotlin-discord-webhook:1") {
-        exclude("org.jetbrains.kotlin")
-    }
-    implementation("com.openai:openai-java:4.11.0") {
+    
+    implementation("com.openai:openai-java:4.42.0") {
         exclude(group = "org.apache.httpcomponents.client5")
         exclude(group = "org.apache.httpcomponents.core5")
         exclude(group = "org.jetbrains.kotlin")

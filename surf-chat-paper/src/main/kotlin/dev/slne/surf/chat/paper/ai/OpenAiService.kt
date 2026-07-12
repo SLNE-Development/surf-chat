@@ -14,10 +14,11 @@ import java.util.*
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.toJavaDuration
 
-val openAiService = OpenAiService()
-
-class OpenAiService {
-    private val client = OpenAIOkHttpClientAsync.builder().apiKey(aiModerationConfig.apiKey).build()
+object OpenAiService {
+    private val client = OpenAIOkHttpClientAsync.builder()
+        .apiKey(aiModerationConfig.apiKey)
+        .logLevel(aiModerationConfig.logLevel)
+        .build()
 
     private val resultCache = Caffeine
         .newBuilder()

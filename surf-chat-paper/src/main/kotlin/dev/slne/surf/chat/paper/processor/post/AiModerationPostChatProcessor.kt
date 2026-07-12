@@ -1,7 +1,6 @@
 package dev.slne.surf.chat.paper.processor.post
 
 import com.github.shynixn.mccoroutine.folia.launch
-import de.maxbossing.webhookbuilder.sendWebhook
 import dev.slne.surf.api.core.messages.Colors
 import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.messages.adventure.sendText
@@ -11,18 +10,18 @@ import dev.slne.surf.chat.api.processor.PostChatProcessor
 import dev.slne.surf.chat.core.common.service.DeletionService
 import dev.slne.surf.chat.core.paper.redisApi
 import dev.slne.surf.chat.paper.ai.OpenAiService
-import dev.slne.surf.chat.paper.ai.openAiService
 import dev.slne.surf.chat.paper.config.aiModerationConfig
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.chat.paper.redis.event.TeamMessageRedisEvent
 import dev.slne.surf.chat.paper.util.appendBotIcon
 import dev.slne.surf.chat.paper.util.hasPermission
+import dev.slne.surf.chat.paper.util.webhook.DiscordClient
+import dev.slne.surf.chat.paper.util.webhook.DiscordMessages
 import dev.slne.surf.punish.api.common.punishment.PunishType
 import dev.slne.surf.punish.api.common.user.PunishmentUser
 import net.kyori.adventure.text.event.ClickEvent
 import org.bukkit.Bukkit
-import java.awt.Color
 import java.net.URI
 import java.time.OffsetDateTime
 import java.util.*
@@ -40,101 +39,29 @@ object AiModerationPostChatProcessor : PostChatProcessor {
         processMessage(messageContext.messageData)
     }
 
-    private fun postWebhook(
+    private suspend fun postWebhook(
         messageData: MessageData,
         classification: OpenAiService.ClassificationResult
-    ) {
-        val senderUuid = messageData.sender
+    ) = runCatching {
+        val senderName = nameOrUuid(messageData.sender)
+        val receiverName = messageData.receiver?.let { nameOrUuid(it) }
 
-        runCatching {
-            sendWebhook(URI.create(aiModerationConfig.webhookUrl).toURL()) {
-                name("Arty AI Moderation")
-                avatar(aiModerationConfig.webhookAvatarUrl)
-                embed {
-                    thumbnail {
-                        url("https://mc-heads.net/avatar/$senderUuid")
-                    }
-                    title("Chat Nachricht moderiert")
+        val discordClient = DiscordClient(URI.create(aiModerationConfig.webhookUrl).toURL())
 
-                    when (classification.action) {
-                        OpenAiService.ClassificationAction.SILENT_FLAG -> {
-                            content("Nachricht wurde als unangemessen markiert — bitte überprüfen und ggf. handeln")
-                        }
+        val jsonPayload = DiscordMessages.moderationModerated(
+            messageData,
+            classification,
+            senderName,
+            receiverName
+        )
 
-                        OpenAiService.ClassificationAction.DELETE -> {
-                            content("Die Chat Nachricht wurde gelöscht.")
-                        }
-
-                        OpenAiService.ClassificationAction.MUTE -> {
-                            content("Die Chat Nachricht wurde gelöscht und der Absender wurde für 7 Tage stumm geschaltet — bitte überprüfen")
-                        }
-
-                        else -> Unit
-                    }
-
-                    color(
-                        when (classification.action) {
-                            OpenAiService.ClassificationAction.SILENT_FLAG -> Color.YELLOW
-                            OpenAiService.ClassificationAction.DELETE -> Color.RED
-                            OpenAiService.ClassificationAction.MUTE -> Color.MAGENTA
-                            else -> Color.WHITE
-                        }
-                    )
-
-                    field {
-                        name("Nachricht")
-                        value(messageData.plainMessage)
-                        inline = false
-                    }
-
-                    field {
-                        name("Kategorien")
-                        value(buildString {
-                            classification.flaggedScores.object2DoubleEntrySet()
-                                .sortedByDescending { it.doubleValue }
-                                .forEachIndexed { index, entry ->
-                                    val category = entry.key
-                                    val scorePercent = entry.doubleValue * 100
-                                    append("- ${category.name} (${"%.2f".format(scorePercent)} %)")
-                                    if (index != classification.flaggedScores.size - 1) {
-                                        append("\n")
-                                    }
-                                }
-                        })
-                        inline = false
-                    }
-
-                    field {
-                        name("Sender")
-                        value("[${nameOrUuid(senderUuid)}](${aiModerationConfig.userPanelPrefix}$senderUuid)")
-                        inline = true
-                    }
-
-                    val receiverUuid = messageData.receiver
-                    if (receiverUuid != null) {
-                        field {
-                            name("Receiver")
-                            value("[${nameOrUuid(receiverUuid)}](${aiModerationConfig.userPanelPrefix}$receiverUuid)")
-                            inline = true
-                        }
-                    }
-
-                    field {
-                        name("Server")
-                        value(messageData.server)
-                        inline = true
-                    }
-
-                    field {
-                        name("Type")
-                        value(messageData.type.value)
-                        inline = true
-                    }
-                }
+        discordClient.use { client ->
+            if (!client.sendJson(jsonPayload)) {
+                plugin.logger.warning("Discord API rejected the AI moderation webhook request.")
             }
-        }.onFailure {
-            plugin.logger.warning("Failed to send webhook for AI moderation!")
         }
+    }.onFailure {
+        plugin.logger.warning("Failed to send webhook for AI moderation: ${it.message}")
     }
 
     private fun nameOrUuid(uuid: UUID): String {
@@ -148,7 +75,7 @@ object AiModerationPostChatProcessor : PostChatProcessor {
         }
 
         val plain = messageData.plainMessage
-        val classification = openAiService.classifyChatMessage(plain)
+        val classification = OpenAiService.classifyChatMessage(plain)
 
         if (classification.action == OpenAiService.ClassificationAction.NONE) {
             return

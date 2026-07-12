@@ -43,7 +43,7 @@ object DiscordMessages {
         return componentsV2Message {
             container(accentColor = accentColor) {
                 section {
-                    textDisplay("## Automod")
+                    textDisplay("## Arty AI Moderation")
                     textDisplay(buildString {
                         appendLine("**Aktion:** $actionText")
                         append("**Spieler:** $senderName")

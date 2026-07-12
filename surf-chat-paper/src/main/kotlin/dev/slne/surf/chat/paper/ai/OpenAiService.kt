@@ -5,12 +5,11 @@ import com.openai.client.okhttp.OpenAIOkHttpClientAsync
 import com.openai.models.moderations.Moderation
 import com.openai.models.moderations.ModerationCreateParams
 import com.sksamuel.aedile.core.asLoadingCache
-import dev.slne.surf.api.core.util.emptyObject2DoubleMap
+import dev.slne.surf.chat.paper.config.AiModerationThresholds
 import dev.slne.surf.chat.paper.config.aiModerationConfig
 import it.unimi.dsi.fastutil.objects.Object2DoubleMap
 import it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap
 import kotlinx.coroutines.future.await
-import java.util.*
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.toJavaDuration
 
@@ -19,18 +18,56 @@ val openAiService = OpenAiService()
 class OpenAiService {
     private val client = OpenAIOkHttpClientAsync.builder().apiKey(aiModerationConfig.apiKey).build()
 
-    private val resultCache = Caffeine
+    private val scoreCache = Caffeine
         .newBuilder()
         .expireAfterWrite(3.hours.toJavaDuration())
-        .asLoadingCache<String, ClassificationResult> {
-            classifyChatMessage0(it)
+        .asLoadingCache<ModerationInput, Object2DoubleMap<Category>> {
+            fetchCategoryScores(it)
         }
 
-    suspend fun classifyChatMessage(message: String): ClassificationResult = resultCache.get(message)
+    suspend fun classifyChatMessage(
+        message: String,
+        messageType: String
+    ): ClassificationResult {
+        val config = aiModerationConfig
+        val categoryScores = scoreCache.get(
+            ModerationInput(
+                model = config.model,
+                message = message,
+                messageType = messageType
+            )
+        )
+        val matchedScores = Object2DoubleOpenHashMap<Category>()
 
-    private suspend fun classifyChatMessage0(message: String): ClassificationResult {
+        for (category in Category.entries) {
+            val threshold = category.threshold(config.thresholds) ?: continue
+            val score = categoryScores.getDouble(category)
+
+            if (score >= threshold.coerceIn(0.0, 1.0)) {
+                matchedScores.put(category, score)
+            }
+        }
+
+        val action = matchedScores.keys
+            .maxByOrNull { it.action.ordinal }
+            ?.action
+            ?: ClassificationAction.NONE
+
+        return ClassificationResult(action, matchedScores, categoryScores)
+    }
+
+    private suspend fun fetchCategoryScores(
+        input: ModerationInput
+    ): Object2DoubleMap<Category> {
         val params = ModerationCreateParams.builder()
-            .input("[GAME_CHAT: MINECRAFT]\n$message")
+            .model(input.model)
+            .input(
+                buildString {
+                    appendLine("[GAME_CHAT: MINECRAFT]")
+                    appendLine("[MESSAGE_TYPE: ${input.messageType}]")
+                    append(input.message)
+                }
+            )
             .build()
 
         val result = client.moderations()
@@ -39,115 +76,80 @@ class OpenAiService {
             .results()
             .single()
 
-        val flaggedCategoryScores =
-            Category.categoriesByCategories(result.categories(), result.categoryScores())
-
-        if (!result.flagged()) {
-            return ClassificationResult(
-                ClassificationAction.NONE,
-                emptyObject2DoubleMap()
-            )
-        }
-
-        return ClassificationResult(decideAction(flaggedCategoryScores.keys), flaggedCategoryScores)
+        return Category.categoryScores(result.categoryScores())
     }
+
+    private data class ModerationInput(
+        val model: String,
+        val message: String,
+        val messageType: String
+    )
 
     data class ClassificationResult(
         val action: ClassificationAction,
-        val flaggedScores: Object2DoubleMap<Category>
+        val matchedScores: Object2DoubleMap<Category>,
+        val categoryScores: Object2DoubleMap<Category>
     )
 
-    private fun decideAction(categories: Set<Category>): ClassificationAction {
-        for (action in ClassificationAction.reversedEntries) {
-            if (action.categories.any { categories.contains(it) }) return action
-        }
-
-        return ClassificationAction.NONE
+    enum class ClassificationAction {
+        NONE,
+        SILENT_FLAG,
+        DELETE,
+        SEVERE
     }
 
-    enum class ClassificationAction(vararg categories: Category) {
-        NONE(
-            Category.VIOLENCE
-        ),
-        SILENT_FLAG(
-            Category.ILLICIT,
-            Category.ILLICIT_VIOLENT,
-            Category.SELF_HARM,
-            Category.SELF_HARM_INSTRUCTIONS,
-            Category.SELF_HARM_INTENT,
-        ),
-        DELETE(
-            Category.HARASSMENT,
-            Category.HARASSMENT_THREATENING,
-            Category.HATE,
-            Category.SEXUAL,
-            Category.VIOLENCE_GRAPHIC
-        ),
-        MUTE(Category.SEXUAL_MINORS, Category.HATE_THREATENING);
+    enum class Category(val action: ClassificationAction) {
+        HARASSMENT(ClassificationAction.DELETE),
+        HARASSMENT_THREATENING(ClassificationAction.DELETE),
+        HATE(ClassificationAction.DELETE),
+        HATE_THREATENING(ClassificationAction.SEVERE),
+        ILLICIT(ClassificationAction.SILENT_FLAG),
+        ILLICIT_VIOLENT(ClassificationAction.SILENT_FLAG),
+        SELF_HARM(ClassificationAction.SILENT_FLAG),
+        SELF_HARM_INSTRUCTIONS(ClassificationAction.SILENT_FLAG),
+        SELF_HARM_INTENT(ClassificationAction.SILENT_FLAG),
+        SEXUAL(ClassificationAction.DELETE),
+        SEXUAL_MINORS(ClassificationAction.SEVERE),
+        VIOLENCE(ClassificationAction.NONE),
+        VIOLENCE_GRAPHIC(ClassificationAction.DELETE);
 
-        val categories: EnumSet<Category> = EnumSet.copyOf(categories.toSet())
-
-        companion object {
-            val reversedEntries = entries.reversed()
+        fun threshold(thresholds: AiModerationThresholds): Double? = when (this) {
+            HARASSMENT -> thresholds.harassment
+            HARASSMENT_THREATENING -> thresholds.harassmentThreatening
+            HATE -> thresholds.hate
+            HATE_THREATENING -> thresholds.hateThreatening
+            ILLICIT -> thresholds.illicit
+            ILLICIT_VIOLENT -> thresholds.illicitViolent
+            SELF_HARM -> thresholds.selfHarm
+            SELF_HARM_INSTRUCTIONS -> thresholds.selfHarmInstructions
+            SELF_HARM_INTENT -> thresholds.selfHarmIntent
+            SEXUAL -> thresholds.sexual
+            SEXUAL_MINORS -> thresholds.sexualMinors
+            VIOLENCE -> null
+            VIOLENCE_GRAPHIC -> thresholds.violenceGraphic
         }
-    }
-
-    enum class Category {
-        HARASSMENT,
-        HARASSMENT_THREATENING,
-        HATE,
-        HATE_THREATENING,
-        ILLICIT,
-        ILLICIT_VIOLENT,
-        SELF_HARM,
-        SELF_HARM_INSTRUCTIONS,
-        SELF_HARM_INTENT,
-        SEXUAL,
-        SEXUAL_MINORS,
-        VIOLENCE,
-        VIOLENCE_GRAPHIC;
 
         companion object {
-            fun categoriesByCategories(
-                categories: Moderation.Categories,
+            fun categoryScores(
                 scores: Moderation.CategoryScores
             ): Object2DoubleMap<Category> {
-                val map = Object2DoubleOpenHashMap<Category>()
+                val map = Object2DoubleOpenHashMap<Category>(entries.size)
 
-                if (categories.harassment()) map.put(HARASSMENT, scores.harassment())
-                if (categories.harassmentThreatening()) map.put(
-                    HARASSMENT_THREATENING,
-                    scores.harassmentThreatening()
-                )
-                if (categories.hate()) map.put(HATE, scores.hate())
-                if (categories.hateThreatening()) map.put(
-                    HATE_THREATENING,
-                    scores.hateThreatening()
-                )
-                categories.illicit().ifTrue { map.put(ILLICIT, scores.illicit()) }
-                categories.illicitViolent()
-                    .ifTrue { map.put(ILLICIT_VIOLENT, scores.illicitViolent()) }
-                if (categories.selfHarm()) map.put(SELF_HARM, scores.selfHarm())
-                if (categories.selfHarmInstructions()) map.put(
-                    SELF_HARM_INSTRUCTIONS,
-                    scores.selfHarmInstructions()
-                )
-                if (categories.selfHarmIntent()) map.put(SELF_HARM_INTENT, scores.selfHarmIntent())
-                if (categories.sexual()) map.put(SEXUAL, scores.sexual())
-                if (categories.sexualMinors()) map.put(SEXUAL_MINORS, scores.sexualMinors())
-                if (categories.violence()) map.put(VIOLENCE, scores.violence())
-                if (categories.violenceGraphic()) map.put(
-                    VIOLENCE_GRAPHIC,
-                    scores.violenceGraphic()
-                )
+                map.put(HARASSMENT, scores.harassment())
+                map.put(HARASSMENT_THREATENING, scores.harassmentThreatening())
+                map.put(HATE, scores.hate())
+                map.put(HATE_THREATENING, scores.hateThreatening())
+                map.put(ILLICIT, scores.illicit())
+                map.put(ILLICIT_VIOLENT, scores.illicitViolent())
+                map.put(SELF_HARM, scores.selfHarm())
+                map.put(SELF_HARM_INSTRUCTIONS, scores.selfHarmInstructions())
+                map.put(SELF_HARM_INTENT, scores.selfHarmIntent())
+                map.put(SEXUAL, scores.sexual())
+                map.put(SEXUAL_MINORS, scores.sexualMinors())
+                map.put(VIOLENCE, scores.violence())
+                map.put(VIOLENCE_GRAPHIC, scores.violenceGraphic())
 
                 return map
-            }
-
-            private inline fun Optional<Boolean>.ifTrue(action: () -> Unit) {
-                if (this.orElse(false)) {
-                    action()
-                }
             }
         }
     }

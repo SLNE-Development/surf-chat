@@ -7,8 +7,8 @@ import kotlinx.serialization.Serializable
 import kotlin.time.Duration.Companion.minutes
 
 object ModerationRedisService {
-    private val moderationCache = redisApi.createSyncList<ModerationCacheEntry>("v1_moderations", ttl = 30.minutes)
-    private val chatMessageCache = redisApi.createSyncList<MessageData>("v1_messages", ttl = 30.minutes)
+    private val moderationCache = redisApi.createSyncList<ModerationCacheEntry>("v2_moderations", ttl = 30.minutes)
+    private val chatMessageCache = redisApi.createSyncList<MessageData>("v2_messages", ttl = 30.minutes)
 
     fun init() = Unit
 

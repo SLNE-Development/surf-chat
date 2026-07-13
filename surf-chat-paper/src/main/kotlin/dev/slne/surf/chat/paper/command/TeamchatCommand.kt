@@ -9,6 +9,7 @@ import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.core.common.service.HistoryService
 import dev.slne.surf.chat.core.paper.redisApi
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
+import dev.slne.surf.chat.paper.redis.ModerationRedisService
 import dev.slne.surf.chat.paper.redis.event.TeamchatMessageRedisEvent
 import dev.slne.surf.core.api.common.SurfCoreApi
 import net.kyori.adventure.text.Component
@@ -42,5 +43,6 @@ fun teamchatCommand() = commandAPICommand("teamchat") {
         ).await()
 
         HistoryService.logMessage(messageData)
+        ModerationRedisService.cache(messageData)
     }
 }

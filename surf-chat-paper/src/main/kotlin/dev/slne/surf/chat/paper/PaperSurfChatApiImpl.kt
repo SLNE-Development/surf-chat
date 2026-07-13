@@ -13,6 +13,7 @@ import dev.slne.surf.chat.core.common.service.HistoryService
 import dev.slne.surf.chat.core.common.service.IgnoreService
 import dev.slne.surf.chat.core.paper.redisApi
 import dev.slne.surf.chat.paper.processor.post.AiModerationPostChatProcessor
+import dev.slne.surf.chat.paper.redis.ModerationRedisService
 import dev.slne.surf.chat.paper.redis.event.DeleteRemoteMessageRedisEvent
 import dev.slne.surf.chat.paper.service.SignedMessageSender
 import it.unimi.dsi.fastutil.objects.ObjectList
@@ -26,6 +27,7 @@ import java.util.*
 class PaperSurfChatApiImpl : SurfChatApi, Services.Fallback {
     override suspend fun logMessage(data: MessageData) {
         HistoryService.logMessage(data)
+        ModerationRedisService.cache(data)
     }
 
     override fun deleteMessage(signature: SignedMessage.Signature) = Bukkit.getServer().deleteMessage(signature)
@@ -34,7 +36,7 @@ class PaperSurfChatApiImpl : SurfChatApi, Services.Fallback {
         messageData.signature?.let {
             redisApi.publishEvent(DeleteRemoteMessageRedisEvent(it))
         }
-        
+
         HistoryService.markDeleted(messageData.messageUuid, deleter, null)
     }
 

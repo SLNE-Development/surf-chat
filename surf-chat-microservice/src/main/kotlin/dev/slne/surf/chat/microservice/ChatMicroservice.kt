@@ -1,12 +1,15 @@
 package dev.slne.surf.chat.microservice
 
 import com.google.auto.service.AutoService
+import dev.slne.surf.chat.core.common.rabbit.rpc.ModerationService
 import dev.slne.surf.chat.microservice.handler.FunctionalityHandler
 import dev.slne.surf.chat.microservice.handler.HistoryHandler
 import dev.slne.surf.chat.microservice.handler.IgnoreListHandler
+import dev.slne.surf.chat.microservice.rpc.ModerationServiceImpl
 import dev.slne.surf.chat.microservice.table.FunctionalityTable
 import dev.slne.surf.chat.microservice.table.HistoryTable
 import dev.slne.surf.chat.microservice.table.IgnoreListTable
+import dev.slne.surf.chat.microservice.table.ModerationsTable
 import dev.slne.surf.database.DatabaseApi
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.SchemaUtils
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.transactions.suspendTransaction
@@ -23,13 +26,15 @@ class ChatMicroservice : Microservice() {
     override suspend fun onBootstrap(args: List<String>) {
         suspendTransaction {
             SchemaUtils.create(
-                FunctionalityTable, HistoryTable, IgnoreListTable
+                FunctionalityTable, HistoryTable, IgnoreListTable, ModerationsTable
             )
         }
 
         rabbitApi.registerRequestHandler(HistoryHandler)
         rabbitApi.registerRequestHandler(FunctionalityHandler)
         rabbitApi.registerRequestHandler(IgnoreListHandler)
+
+        rabbitApi.registerRpcService<ModerationService>(ModerationServiceImpl)
         rabbitApi.freezeAndConnect()
     }
 

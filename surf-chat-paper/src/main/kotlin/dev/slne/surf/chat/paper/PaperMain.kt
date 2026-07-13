@@ -25,6 +25,7 @@ import dev.slne.surf.chat.paper.processor.pre.*
 import dev.slne.surf.chat.paper.processor.pre.validate.CharPreChatProcessor
 import dev.slne.surf.chat.paper.processor.pre.validate.LinkPreChatProcessor
 import dev.slne.surf.chat.paper.processor.pre.validate.SpamPreChatProcessor
+import dev.slne.surf.chat.paper.redis.ModerationRedisService
 import dev.slne.surf.chat.paper.redis.listener.RedisEventListener
 import dev.slne.surf.core.api.common.SurfCoreApi
 import org.bukkit.plugin.java.JavaPlugin
@@ -53,6 +54,7 @@ class PaperMain : SuspendingJavaPlugin() {
     override suspend fun onEnableAsync() {
         PaperChatInstance.redisApi.subscribeToEvents(RedisEventListener)
         PaperChatInstance.redisApi.registerRequestHandler(RedisEventListener)
+        ModerationRedisService.init()
         PaperChatInstance.paperLoader.onEnable()
 
         surfChatCommand()

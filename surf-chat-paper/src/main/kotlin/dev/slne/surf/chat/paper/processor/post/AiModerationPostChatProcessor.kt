@@ -7,12 +7,16 @@ import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.chat.api.message.MessageContext
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.api.processor.PostChatProcessor
+import dev.slne.surf.chat.core.common.aimoderation.ModerationClassificationAction
+import dev.slne.surf.chat.core.common.aimoderation.ModerationClassificationResult
 import dev.slne.surf.chat.core.common.service.DeletionService
+import dev.slne.surf.chat.core.paper.PaperChatInstance
 import dev.slne.surf.chat.core.paper.redisApi
 import dev.slne.surf.chat.paper.ai.OpenAiService
 import dev.slne.surf.chat.paper.config.aiModerationConfig
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.chat.paper.plugin
+import dev.slne.surf.chat.paper.redis.ModerationRedisService
 import dev.slne.surf.chat.paper.redis.event.TeamMessageRedisEvent
 import dev.slne.surf.chat.paper.util.appendBotIcon
 import dev.slne.surf.chat.paper.util.hasPermission
@@ -41,7 +45,7 @@ object AiModerationPostChatProcessor : PostChatProcessor {
 
     private suspend fun postWebhook(
         messageData: MessageData,
-        classification: OpenAiService.ClassificationResult
+        classification: ModerationClassificationResult
     ) = runCatching {
         val senderName = nameOrUuid(messageData.sender)
         val receiverName = messageData.receiver?.let { nameOrUuid(it) }
@@ -77,12 +81,13 @@ object AiModerationPostChatProcessor : PostChatProcessor {
         val plain = messageData.plainMessage
         val classification = OpenAiService.classifyChatMessage(plain)
 
-        if (classification.action == OpenAiService.ClassificationAction.NONE) {
+        if (classification.action == ModerationClassificationAction.NONE) {
             return
         }
 
         val name = messageData.senderUser().lastKnownName ?: messageData.sender.toString()
 
+        ModerationRedisService.cache(messageData, classification)
         postWebhook(messageData, classification)
 
         redisApi.publishEvent(
@@ -105,7 +110,7 @@ object AiModerationPostChatProcessor : PostChatProcessor {
                         })
                     }
 
-                    if (classification.action != OpenAiService.ClassificationAction.DELETE) {
+                    if (classification.action != ModerationClassificationAction.DELETE) {
                         append {
                             spacer(" [")
                             text("LÖSCHEN", Colors.RED)
@@ -138,14 +143,14 @@ object AiModerationPostChatProcessor : PostChatProcessor {
             )).await()
 
         when (classification.action) {
-            OpenAiService.ClassificationAction.DELETE -> {
+            ModerationClassificationAction.DELETE -> {
                 DeletionService.deleteMessage(
                     messageData,
                     deletionReason = "AI classification: ${classification.action.name}",
                 )
             }
 
-            OpenAiService.ClassificationAction.MUTE -> {
+            ModerationClassificationAction.MUTE -> {
                 val sender = messageData.sender
                 val note = buildString {
                     append("[AI MODERATION] Unangemessenes Chat verhalten: [")
@@ -172,5 +177,7 @@ object AiModerationPostChatProcessor : PostChatProcessor {
 
             else -> Unit
         }
+
+        PaperChatInstance.moderationService.logModeration(messageData, classification)
     }
 }

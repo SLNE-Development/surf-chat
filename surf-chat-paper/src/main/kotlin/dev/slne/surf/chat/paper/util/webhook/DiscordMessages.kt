@@ -1,7 +1,8 @@
 package dev.slne.surf.chat.paper.util.webhook
 
 import dev.slne.surf.chat.api.message.MessageData
-import dev.slne.surf.chat.paper.ai.OpenAiService
+import dev.slne.surf.chat.core.common.aimoderation.ModerationClassificationAction
+import dev.slne.surf.chat.core.common.aimoderation.ModerationClassificationResult
 import dev.slne.surf.chat.paper.config.aiModerationConfig
 import dev.slne.surf.chat.paper.util.webhook.components.SeparatorSpacing
 import dev.slne.surf.chat.paper.util.webhook.components.componentsV2Message
@@ -11,21 +12,21 @@ object DiscordMessages {
 
     fun moderationModerated(
         messageData: MessageData,
-        classification: OpenAiService.ClassificationResult,
+        classification: ModerationClassificationResult,
         senderName: String,
         receiverName: String?
     ): String {
         val actionText = when (classification.action) {
-            OpenAiService.ClassificationAction.SILENT_FLAG -> "Markiert (Bitte überprüfen)"
-            OpenAiService.ClassificationAction.DELETE -> "Gelöscht"
-            OpenAiService.ClassificationAction.MUTE -> "Gelöscht & 7 Tage Stummgeschaltet"
+            ModerationClassificationAction.SILENT_FLAG -> "Markiert (Bitte überprüfen)"
+            ModerationClassificationAction.DELETE -> "Gelöscht"
+            ModerationClassificationAction.MUTE -> "Gelöscht & 7 Tage Stummgeschaltet"
             else -> "Information"
         }
 
         val accentColor = when (classification.action) {
-            OpenAiService.ClassificationAction.SILENT_FLAG -> 0xFEE75C
-            OpenAiService.ClassificationAction.DELETE -> 0xED4245
-            OpenAiService.ClassificationAction.MUTE -> 0x992D22
+            ModerationClassificationAction.SILENT_FLAG -> 0xFEE75C
+            ModerationClassificationAction.DELETE -> 0xED4245
+            ModerationClassificationAction.MUTE -> 0x992D22
             else -> 0x5865F2
         }
 

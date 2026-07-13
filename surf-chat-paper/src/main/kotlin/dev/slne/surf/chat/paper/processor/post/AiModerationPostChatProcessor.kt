@@ -154,12 +154,12 @@ object AiModerationPostChatProcessor : PostChatProcessor {
                 val sender = messageData.sender
                 val note = buildString {
                     append("[AI MODERATION] Unangemessenes Chat verhalten: [")
-                    val scores = classification.flaggedScores.object2DoubleEntrySet()
-                        .sortedByDescending { it.doubleValue }
+                    val scores = classification.flaggedScores.entries
+                        .sortedByDescending { it.value }
 
                     for (entry in scores) {
                         val category = entry.key
-                        val scorePercent = entry.doubleValue * 100
+                        val scorePercent = entry.value * 100
                         append("${category.name}=${"%.2f".format(scorePercent)} %")
                         if (entry != scores.last()) {
                             append(", ")

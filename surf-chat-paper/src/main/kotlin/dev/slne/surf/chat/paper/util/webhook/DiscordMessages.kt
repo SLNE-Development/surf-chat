@@ -30,10 +30,10 @@ object DiscordMessages {
             else -> 0x5865F2
         }
 
-        val categories = classification.flaggedScores.object2DoubleEntrySet()
-            .sortedByDescending { it.doubleValue }
+        val categories = classification.flaggedScores.entries
+            .sortedByDescending { it.value }
             .joinToString("\n") { entry ->
-                "- **${entry.key.name}** (${"%.2f".format(entry.doubleValue * 100)}%)"
+                "- **${entry.key.name}** (${"%.2f".format(entry.value * 100)}%)"
             }
             .ifEmpty { "-# Keine Kategorien markiert" }
 
@@ -47,11 +47,11 @@ object DiscordMessages {
                     textDisplay("## Arty AI Moderation")
                     textDisplay(buildString {
                         appendLine("**Aktion:** $actionText")
-                        append("**Spieler:** $senderName")
-                        append("\n-# ${messageData.sender} [View](${aiModerationConfig.userPanelPrefix}${messageData.sender})")
+                        append("**Spieler:** $senderName [View](${aiModerationConfig.userPanelPrefix}${messageData.sender})")
+                        append("\n-# ${messageData.sender}")
                         if (receiverName != null) {
-                            append("\n**Empfänger:** $receiverName")
-                            append("\n-# ${messageData.receiver} [View](${aiModerationConfig.userPanelPrefix}${messageData.receiver})")
+                            append("\n**Empfänger:** $receiverName [View](${aiModerationConfig.userPanelPrefix}${messageData.receiver})")
+                            append("\n-# ${messageData.receiver}")
                         }
                     })
                     thumbnail(

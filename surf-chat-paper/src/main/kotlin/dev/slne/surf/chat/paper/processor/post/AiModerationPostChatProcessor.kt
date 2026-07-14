@@ -158,7 +158,8 @@ object AiModerationPostChatProcessor : PostChatProcessor {
             else -> Unit
         }
 
-        PaperChatInstance.moderationService.logModeration(messageData, classification)
+        runCatching { PaperChatInstance.moderationService.logModeration(messageData, classification) }
+            .onFailure { plugin.logger.warning("Failed to log AI moderation: ${it.message}") }
     }
 
     private suspend fun deleteMessage(

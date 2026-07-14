@@ -6,6 +6,7 @@ import dev.slne.surf.chat.core.common.aimoderation.ModerationClassificationResul
 import dev.slne.surf.chat.core.paper.redisApi
 import dev.slne.surf.redis.codec.JsonKotlinCodec
 import kotlinx.serialization.Serializable
+import java.util.concurrent.TimeUnit
 
 object ModerationRedisService {
     private val log = logger()
@@ -25,16 +26,17 @@ object ModerationRedisService {
     }
 
     fun cache(messageData: MessageData, classificationResult: ModerationClassificationResult) {
-        moderationCache.addAsync(ModerationCacheEntry(messageData, classificationResult)).exceptionally { throwable ->
-            log.atWarning()
-                .withCause(throwable)
-                .log("Failed to cache moderation result for message ${messageData.messageUuid}")
-            null
-        }
+        moderationCache.addAsync(ModerationCacheEntry(messageData, classificationResult), 1, TimeUnit.HOURS)
+            .exceptionally { throwable ->
+                log.atWarning()
+                    .withCause(throwable)
+                    .log("Failed to cache moderation result for message ${messageData.messageUuid}")
+                null
+            }
     }
 
     fun cache(messageData: MessageData) {
-        chatMessageCache.addAsync(messageData).exceptionally { throwable ->
+        chatMessageCache.addAsync(messageData, 1, TimeUnit.HOURS).exceptionally { throwable ->
             log.atWarning()
                 .withCause(throwable)
                 .log("Failed to cache message ${messageData.messageUuid}")

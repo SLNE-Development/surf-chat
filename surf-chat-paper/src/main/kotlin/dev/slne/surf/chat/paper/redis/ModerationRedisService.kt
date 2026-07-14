@@ -4,24 +4,19 @@ import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.core.common.aimoderation.ModerationClassificationResult
 import dev.slne.surf.chat.core.paper.redisApi
 import kotlinx.serialization.Serializable
-import kotlin.time.Duration.Companion.minutes
 
 object ModerationRedisService {
     private val moderationCache =
-        redisApi.createSimpleSetRedisCache<ModerationCacheEntry>("v2:moderations", 30.minutes, {
-            it.messageData.messageUuid.toString()
-        })
-    private val chatMessageCache = redisApi.createSimpleSetRedisCache<MessageData>("v2:messages", 30.minutes, {
-        it.messageUuid.toString()
-    })
+        redisApi.redissonReactive.getSetCache<ModerationCacheEntry>("v3:moderations")
+    private val chatMessageCache = redisApi.redissonReactive.getSetCache<MessageData>("v3:messages")
 
     fun init() = Unit
 
-    suspend fun cache(messageData: MessageData, classificationResult: ModerationClassificationResult) {
+    fun cache(messageData: MessageData, classificationResult: ModerationClassificationResult) {
         moderationCache.add(ModerationCacheEntry(messageData, classificationResult))
     }
 
-    suspend fun cache(messageData: MessageData) {
+    fun cache(messageData: MessageData) {
         chatMessageCache.add(messageData)
     }
 

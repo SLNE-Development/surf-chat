@@ -50,18 +50,18 @@ data class AiModerationConfig(
 
 @ConfigSerializable
 data class AiModerationThresholds(
-    val harassment: Double = 0.85,
-    val harassmentThreatening: Double = 0.90,
-    val hate: Double = 0.90,
-    val hateThreatening: Double = 0.97,
-    val illicit: Double = 0.85,
-    val illicitViolent: Double = 0.90,
-    val selfHarm: Double = 0.90,
-    val selfHarmInstructions: Double = 0.90,
-    val selfHarmIntent: Double = 0.90,
-    val sexual: Double = 0.92,
-    val sexualMinors: Double = 0.98,
-    val violenceGraphic: Double = 0.95
+    val harassment: Double = 0.40,
+    val harassmentThreatening: Double = 0.40,
+    val hate: Double = 0.40,
+    val hateThreatening: Double = 0.50,
+    val illicit: Double = 0.50,
+    val illicitViolent: Double = 0.60,
+    val selfHarm: Double = 0.50,
+    val selfHarmInstructions: Double = 0.50,
+    val selfHarmIntent: Double = 0.50,
+    val sexual: Double = 0.50,
+    val sexualMinors: Double = 0.40,
+    val violenceGraphic: Double = 0.50
 )
 
 val aiModerationConfig get() = AiModerationConfig.getConfig()

@@ -25,6 +25,7 @@ import dev.slne.surf.chat.paper.processor.pre.*
 import dev.slne.surf.chat.paper.processor.pre.validate.CharPreChatProcessor
 import dev.slne.surf.chat.paper.processor.pre.validate.LinkPreChatProcessor
 import dev.slne.surf.chat.paper.processor.pre.validate.SpamPreChatProcessor
+import dev.slne.surf.chat.paper.redis.ModerationRedisService
 import dev.slne.surf.chat.paper.redis.listener.RedisEventListener
 import dev.slne.surf.core.api.common.SurfCoreApi
 import org.bukkit.plugin.java.JavaPlugin

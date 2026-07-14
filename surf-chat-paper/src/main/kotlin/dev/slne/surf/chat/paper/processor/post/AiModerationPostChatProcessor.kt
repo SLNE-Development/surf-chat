@@ -1,28 +1,31 @@
 package dev.slne.surf.chat.paper.processor.post
 
 import com.github.shynixn.mccoroutine.folia.launch
-import de.maxbossing.webhookbuilder.sendWebhook
 import dev.slne.surf.api.core.messages.Colors
 import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.chat.api.message.MessageContext
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.api.processor.PostChatProcessor
+import dev.slne.surf.chat.core.common.aimoderation.ModerationClassificationAction
+import dev.slne.surf.chat.core.common.aimoderation.ModerationClassificationResult
 import dev.slne.surf.chat.core.common.service.DeletionService
+import dev.slne.surf.chat.core.paper.PaperChatInstance
 import dev.slne.surf.chat.core.paper.redisApi
 import dev.slne.surf.chat.paper.ai.OpenAiService
-import dev.slne.surf.chat.paper.ai.openAiService
 import dev.slne.surf.chat.paper.config.aiModerationConfig
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.chat.paper.plugin
+import dev.slne.surf.chat.paper.redis.ModerationRedisService
 import dev.slne.surf.chat.paper.redis.event.TeamMessageRedisEvent
 import dev.slne.surf.chat.paper.util.appendBotIcon
 import dev.slne.surf.chat.paper.util.hasPermission
+import dev.slne.surf.chat.paper.util.webhook.DiscordClient
+import dev.slne.surf.chat.paper.util.webhook.DiscordMessages
 import dev.slne.surf.punish.api.common.punishment.PunishType
 import dev.slne.surf.punish.api.common.user.PunishmentUser
 import net.kyori.adventure.text.event.ClickEvent
 import org.bukkit.Bukkit
-import java.awt.Color
 import java.net.URI
 import java.time.OffsetDateTime
 import java.util.*
@@ -40,101 +43,27 @@ object AiModerationPostChatProcessor : PostChatProcessor {
         processMessage(messageContext.messageData)
     }
 
-    private fun postWebhook(
+    private suspend fun postWebhook(
         messageData: MessageData,
-        classification: OpenAiService.ClassificationResult
-    ) {
-        val senderUuid = messageData.sender
+        classification: ModerationClassificationResult
+    ) = runCatching {
+        val senderName = nameOrUuid(messageData.sender)
+        val receiverName = messageData.receiver?.let { nameOrUuid(it) }
 
-        runCatching {
-            sendWebhook(URI.create(aiModerationConfig.webhookUrl).toURL()) {
-                name("Arty AI Moderation")
-                avatar(aiModerationConfig.webhookAvatarUrl)
-                embed {
-                    thumbnail {
-                        url("https://mc-heads.net/avatar/$senderUuid")
-                    }
-                    title("Chat Nachricht moderiert")
+        val jsonPayload = DiscordMessages.moderationModerated(
+            messageData,
+            classification,
+            senderName,
+            receiverName
+        )
 
-                    when (classification.action) {
-                        OpenAiService.ClassificationAction.SILENT_FLAG -> {
-                            content("Nachricht wurde als unangemessen markiert — bitte überprüfen und ggf. handeln")
-                        }
-
-                        OpenAiService.ClassificationAction.DELETE -> {
-                            content("Die Chat Nachricht wurde gelöscht.")
-                        }
-
-                        OpenAiService.ClassificationAction.MUTE -> {
-                            content("Die Chat Nachricht wurde gelöscht und der Absender wurde für 7 Tage stumm geschaltet — bitte überprüfen")
-                        }
-
-                        else -> Unit
-                    }
-
-                    color(
-                        when (classification.action) {
-                            OpenAiService.ClassificationAction.SILENT_FLAG -> Color.YELLOW
-                            OpenAiService.ClassificationAction.DELETE -> Color.RED
-                            OpenAiService.ClassificationAction.MUTE -> Color.MAGENTA
-                            else -> Color.WHITE
-                        }
-                    )
-
-                    field {
-                        name("Nachricht")
-                        value(messageData.plainMessage)
-                        inline = false
-                    }
-
-                    field {
-                        name("Kategorien")
-                        value(buildString {
-                            classification.flaggedScores.object2DoubleEntrySet()
-                                .sortedByDescending { it.doubleValue }
-                                .forEachIndexed { index, entry ->
-                                    val category = entry.key
-                                    val scorePercent = entry.doubleValue * 100
-                                    append("- ${category.name} (${"%.2f".format(scorePercent)} %)")
-                                    if (index != classification.flaggedScores.size - 1) {
-                                        append("\n")
-                                    }
-                                }
-                        })
-                        inline = false
-                    }
-
-                    field {
-                        name("Sender")
-                        value("[${nameOrUuid(senderUuid)}](${aiModerationConfig.userPanelPrefix}$senderUuid)")
-                        inline = true
-                    }
-
-                    val receiverUuid = messageData.receiver
-                    if (receiverUuid != null) {
-                        field {
-                            name("Receiver")
-                            value("[${nameOrUuid(receiverUuid)}](${aiModerationConfig.userPanelPrefix}$receiverUuid)")
-                            inline = true
-                        }
-                    }
-
-                    field {
-                        name("Server")
-                        value(messageData.server)
-                        inline = true
-                    }
-
-                    field {
-                        name("Type")
-                        value(messageData.type.value)
-                        inline = true
-                    }
-                }
+        DiscordClient(URI.create(aiModerationConfig.webhookUrl).toURL()).use { client ->
+            if (!client.sendJson(jsonPayload)) {
+                plugin.logger.warning("Discord API rejected the AI moderation webhook request.")
             }
-        }.onFailure {
-            plugin.logger.warning("Failed to send webhook for AI moderation!")
         }
+    }.onFailure {
+        plugin.logger.warning("Failed to send webhook for AI moderation: ${it.message}")
     }
 
     private fun nameOrUuid(uuid: UUID): String {
@@ -148,14 +77,15 @@ object AiModerationPostChatProcessor : PostChatProcessor {
         }
 
         val plain = messageData.plainMessage
-        val classification = openAiService.classifyChatMessage(plain)
+        val classification = OpenAiService.classifyChatMessage(plain, messageData.type.value)
 
-        if (classification.action == OpenAiService.ClassificationAction.NONE) {
+        if (classification.action == ModerationClassificationAction.NONE) {
             return
         }
 
         val name = messageData.senderUser().lastKnownName ?: messageData.sender.toString()
 
+        ModerationRedisService.cache(messageData, classification)
         postWebhook(messageData, classification)
 
         redisApi.publishEvent(
@@ -164,7 +94,7 @@ object AiModerationPostChatProcessor : PostChatProcessor {
                     appendBotIcon()
                     info("Die Nachricht von ")
                     variableValue(name)
-                    info(" wurde als bedrohlich eingestuft: ")
+                    info(" wurde von der KI-Moderation markiert: ")
                     spacer("(${messageData.type.value}) ")
 
                     append {
@@ -178,7 +108,7 @@ object AiModerationPostChatProcessor : PostChatProcessor {
                         })
                     }
 
-                    if (classification.action != OpenAiService.ClassificationAction.DELETE) {
+                    if (classification.action == ModerationClassificationAction.SILENT_FLAG) {
                         append {
                             spacer(" [")
                             text("LÖSCHEN", Colors.RED)
@@ -211,39 +141,56 @@ object AiModerationPostChatProcessor : PostChatProcessor {
             )).await()
 
         when (classification.action) {
-            OpenAiService.ClassificationAction.DELETE -> {
-                DeletionService.deleteMessage(
-                    messageData,
-                    deletionReason = "AI classification: ${classification.action.name}",
-                )
+            ModerationClassificationAction.DELETE -> {
+                deleteMessage(messageData, classification.action)
             }
 
-            OpenAiService.ClassificationAction.MUTE -> {
-                val sender = messageData.sender
-                val note = buildString {
-                    append("[AI MODERATION] Unangemessenes Chat verhalten: [")
-                    val scores = classification.flaggedScores.object2DoubleEntrySet()
-                        .sortedByDescending { it.doubleValue }
+            ModerationClassificationAction.MUTE -> {
+                deleteMessage(messageData, classification.action)
+
+                if (aiModerationConfig.autoMuteEnabled) {
+                    mutePlayer(messageData, classification)
+                }
+            }
+
+            else -> Unit
+        }
+
+        runCatching { PaperChatInstance.moderationService.logModeration(messageData, classification) }
+            .onFailure { plugin.logger.warning("Failed to log AI moderation: ${it.message}") }
+    }
+
+    private suspend fun deleteMessage(
+        messageData: MessageData,
+        action: ModerationClassificationAction
+    ) {
+        DeletionService.deleteMessage(
+            messageData,
+            deletionReason = "AI classification: ${action.name}",
+        )
+    }
+
+    private suspend fun mutePlayer(
+        messageData: MessageData,
+        classification: ModerationClassificationResult
+    ) {
+        PunishmentUser.byUuid(messageData.sender)
+            .punish(PunishType.MUTE.Expirable(OffsetDateTime.now().plusDays(aiModerationConfig.autoMuteDurationDays)) {
+                note(buildString {
+                    append("[AI MODERATION] Schwerwiegendes Chatverhalten: [")
+                    val scores = classification.flaggedScores.entries
+                        .sortedByDescending { it.value }
 
                     for (entry in scores) {
-                        val category = entry.key
-                        val scorePercent = entry.doubleValue * 100
-                        append("${category.name}=${"%.2f".format(scorePercent)} %")
+                        val scorePercent = entry.value * 100
+                        append("${entry.key.name}=${"%.2f".format(scorePercent)} %")
                         if (entry != scores.last()) {
                             append(", ")
                         }
                     }
 
                     append("]")
-                }
-
-                PunishmentUser.byUuid(sender)
-                    .punish(PunishType.MUTE.Expirable(OffsetDateTime.now().plusDays(7)) {
-                        note(note)
-                    }, "Unangemessenes Chat verhalten")
-            }
-
-            else -> Unit
-        }
+                })
+            }, "Schwerwiegendes unangemessenes Chatverhalten")
     }
 }

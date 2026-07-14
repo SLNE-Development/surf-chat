@@ -13,7 +13,7 @@ data class AiModerationConfig(
     var enabled: Boolean = true,
     val webhookUrl: String = "",
 
-    @param:Comment("The log level for the OpenAI client. Set to OFF to disable logging. (OFF, INFO, ERROR, DEBUG)")
+    @field:Comment("The log level for the OpenAI client. Set to OFF to disable logging. (OFF, INFO, ERROR, DEBUG)")
     val logLevel: LogLevel = LogLevel.OFF,
     val webhookAvatarUrl: String = "https://i.imgur.com/4vEeYfH.png",
     val userPanelPrefix: String = "https://support.castcrafter.de/core/core-players/",

@@ -1,6 +1,7 @@
 package dev.slne.surf.chat.paper.config
 
 import com.openai.core.LogLevel
+import dev.slne.surf.api.core.config.constraints.PositiveNumber
 import dev.slne.surf.api.core.config.createSpongeYmlConfig
 import dev.slne.surf.api.core.config.manager.SpongeConfigManager
 import dev.slne.surf.api.core.config.surfConfigApi
@@ -20,6 +21,7 @@ data class AiModerationConfig(
     val apiKey: String = "",
     val model: String = "omni-moderation-latest",
     val autoMuteEnabled: Boolean = false,
+    @PositiveNumber
     val autoMuteDurationDays: Long = 7,
     val thresholds: AiModerationThresholds = AiModerationThresholds()
 ) {

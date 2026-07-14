@@ -20,10 +20,11 @@ object DiscordMessages {
             ModerationClassificationAction.SILENT_FLAG -> "Markiert (Bitte überprüfen)"
             ModerationClassificationAction.DELETE -> "Gelöscht"
             ModerationClassificationAction.MUTE -> if (aiModerationConfig.autoMuteEnabled) {
-                "Gelöscht & ${aiModerationConfig.autoMuteDurationDays.coerceAtLeast(1)} Tage Stummgeschaltet"
+                "Gelöscht & ${aiModerationConfig.autoMuteDurationDays} Tage Stummgeschaltet"
             } else {
                 "Gelöscht (schwerwiegend)"
             }
+
             else -> "Information"
         }
 

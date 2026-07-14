@@ -50,8 +50,6 @@ object AiModerationPostChatProcessor : PostChatProcessor {
         val senderName = nameOrUuid(messageData.sender)
         val receiverName = messageData.receiver?.let { nameOrUuid(it) }
 
-        val discordClient = DiscordClient(URI.create(aiModerationConfig.webhookUrl).toURL())
-
         val jsonPayload = DiscordMessages.moderationModerated(
             messageData,
             classification,
@@ -59,7 +57,7 @@ object AiModerationPostChatProcessor : PostChatProcessor {
             receiverName
         )
 
-        discordClient.use { client ->
+        DiscordClient(URI.create(aiModerationConfig.webhookUrl).toURL()).use { client ->
             if (!client.sendJson(jsonPayload)) {
                 plugin.logger.warning("Discord API rejected the AI moderation webhook request.")
             }
@@ -176,27 +174,23 @@ object AiModerationPostChatProcessor : PostChatProcessor {
         messageData: MessageData,
         classification: ModerationClassificationResult
     ) {
-        val sender = messageData.sender
-        val durationDays = aiModerationConfig.autoMuteDurationDays.coerceAtLeast(1)
-        val note = buildString {
-            append("[AI MODERATION] Schwerwiegendes Chatverhalten: [")
-            val scores = classification.flaggedScores.entries
-                .sortedByDescending { it.value }
+        PunishmentUser.byUuid(messageData.sender)
+            .punish(PunishType.MUTE.Expirable(OffsetDateTime.now().plusDays(aiModerationConfig.autoMuteDurationDays)) {
+                note(buildString {
+                    append("[AI MODERATION] Schwerwiegendes Chatverhalten: [")
+                    val scores = classification.flaggedScores.entries
+                        .sortedByDescending { it.value }
 
-            for (entry in scores) {
-                val scorePercent = entry.value * 100
-                append("${entry.key.name}=${"%.2f".format(scorePercent)} %")
-                if (entry != scores.last()) {
-                    append(", ")
-                }
-            }
+                    for (entry in scores) {
+                        val scorePercent = entry.value * 100
+                        append("${entry.key.name}=${"%.2f".format(scorePercent)} %")
+                        if (entry != scores.last()) {
+                            append(", ")
+                        }
+                    }
 
-            append("]")
-        }
-
-        PunishmentUser.byUuid(sender)
-            .punish(PunishType.MUTE.Expirable(OffsetDateTime.now().plusDays(durationDays)) {
-                note(note)
+                    append("]")
+                })
             }, "Schwerwiegendes unangemessenes Chatverhalten")
     }
 }

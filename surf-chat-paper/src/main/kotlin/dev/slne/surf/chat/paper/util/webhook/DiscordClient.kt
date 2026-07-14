@@ -13,7 +13,6 @@ class DiscordClient(
 
     suspend fun sendJson(json: String): Boolean {
         val response = client.post(webhookUrl.toString()) {
-            // Erforderlich, damit Discord Components von Webhooks akzeptiert
             url { parameters.append("with_components", "true") }
             accept(ContentType.Application.Json)
             contentType(ContentType.Application.Json)
@@ -21,7 +20,7 @@ class DiscordClient(
             setBody(json)
         }
 
-        return response.status.value in 200..299
+        return response.status.isSuccess()
     }
 
     override fun close() {

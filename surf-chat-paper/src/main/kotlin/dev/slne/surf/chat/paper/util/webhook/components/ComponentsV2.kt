@@ -26,8 +26,7 @@ import kotlinx.serialization.json.putJsonArray
  * }
  * ```
  *
- * Hinweis: Webhooks benötigen den Query-Parameter `with_components=true` und
- * können nur nicht-interaktive Komponenten (plus Link-Buttons) senden.
+ * Hinweis: Webhooks benötigen den Query-Parameter `with_components=true`. Discord akzeptiert bei Webhooks nur nicht-interaktive Komponenten (plus Link-Buttons) – interaktive Builder in dieser DSL werden von Webhooks abgelehnt.
  */
 fun componentsV2Message(block: MessageBuilder.() -> Unit): JsonObject =
     MessageBuilder().apply(block).build()

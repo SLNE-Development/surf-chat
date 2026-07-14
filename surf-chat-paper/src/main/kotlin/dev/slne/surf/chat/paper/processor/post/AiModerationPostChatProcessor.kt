@@ -79,7 +79,7 @@ object AiModerationPostChatProcessor : PostChatProcessor {
         }
 
         val plain = messageData.plainMessage
-        val classification = OpenAiService.classifyChatMessage(plain)
+        val classification = OpenAiService.classifyChatMessage(plain, messageData.type.value)
 
         if (classification.action == ModerationClassificationAction.NONE) {
             return
@@ -96,7 +96,7 @@ object AiModerationPostChatProcessor : PostChatProcessor {
                     appendBotIcon()
                     info("Die Nachricht von ")
                     variableValue(name)
-                    info(" wurde als bedrohlich eingestuft: ")
+                    info(" wurde von der KI-Moderation markiert: ")
                     spacer("(${messageData.type.value}) ")
 
                     append {
@@ -110,7 +110,7 @@ object AiModerationPostChatProcessor : PostChatProcessor {
                         })
                     }
 
-                    if (classification.action != ModerationClassificationAction.DELETE) {
+                    if (classification.action == ModerationClassificationAction.SILENT_FLAG) {
                         append {
                             spacer(" [")
                             text("LÖSCHEN", Colors.RED)
@@ -144,40 +144,58 @@ object AiModerationPostChatProcessor : PostChatProcessor {
 
         when (classification.action) {
             ModerationClassificationAction.DELETE -> {
-                DeletionService.deleteMessage(
-                    messageData,
-                    deletionReason = "AI classification: ${classification.action.name}",
-                )
+                deleteMessage(messageData, classification.action)
             }
 
             ModerationClassificationAction.MUTE -> {
-                val sender = messageData.sender
-                val note = buildString {
-                    append("[AI MODERATION] Unangemessenes Chat verhalten: [")
-                    val scores = classification.flaggedScores.entries
-                        .sortedByDescending { it.value }
+                deleteMessage(messageData, classification.action)
 
-                    for (entry in scores) {
-                        val category = entry.key
-                        val scorePercent = entry.value * 100
-                        append("${category.name}=${"%.2f".format(scorePercent)} %")
-                        if (entry != scores.last()) {
-                            append(", ")
-                        }
-                    }
-
-                    append("]")
+                if (aiModerationConfig.autoMuteEnabled) {
+                    mutePlayer(messageData, classification)
                 }
-
-                PunishmentUser.byUuid(sender)
-                    .punish(PunishType.MUTE.Expirable(OffsetDateTime.now().plusDays(7)) {
-                        note(note)
-                    }, "Unangemessenes Chat verhalten")
             }
 
             else -> Unit
         }
 
         PaperChatInstance.moderationService.logModeration(messageData, classification)
+    }
+
+    private suspend fun deleteMessage(
+        messageData: MessageData,
+        action: ModerationClassificationAction
+    ) {
+        DeletionService.deleteMessage(
+            messageData,
+            deletionReason = "AI classification: ${action.name}",
+        )
+    }
+
+    private suspend fun mutePlayer(
+        messageData: MessageData,
+        classification: ModerationClassificationResult
+    ) {
+        val sender = messageData.sender
+        val durationDays = aiModerationConfig.autoMuteDurationDays.coerceAtLeast(1)
+        val note = buildString {
+            append("[AI MODERATION] Schwerwiegendes Chatverhalten: [")
+            val scores = classification.flaggedScores.entries
+                .sortedByDescending { it.value }
+
+            for (entry in scores) {
+                val scorePercent = entry.value * 100
+                append("${entry.key.name}=${"%.2f".format(scorePercent)} %")
+                if (entry != scores.last()) {
+                    append(", ")
+                }
+            }
+
+            append("]")
+        }
+
+        PunishmentUser.byUuid(sender)
+            .punish(PunishType.MUTE.Expirable(OffsetDateTime.now().plusDays(durationDays)) {
+                note(note)
+            }, "Schwerwiegendes unangemessenes Chatverhalten")
     }
 }

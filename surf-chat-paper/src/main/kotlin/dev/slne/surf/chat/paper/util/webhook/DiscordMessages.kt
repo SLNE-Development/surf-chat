@@ -19,7 +19,11 @@ object DiscordMessages {
         val actionText = when (classification.action) {
             ModerationClassificationAction.SILENT_FLAG -> "Markiert (Bitte überprüfen)"
             ModerationClassificationAction.DELETE -> "Gelöscht"
-            ModerationClassificationAction.MUTE -> "Gelöscht & 7 Tage Stummgeschaltet"
+            ModerationClassificationAction.MUTE -> if (aiModerationConfig.autoMuteEnabled) {
+                "Gelöscht & ${aiModerationConfig.autoMuteDurationDays.coerceAtLeast(1)} Tage Stummgeschaltet"
+            } else {
+                "Gelöscht (schwerwiegend)"
+            }
             else -> "Information"
         }
 

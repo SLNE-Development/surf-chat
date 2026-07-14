@@ -11,12 +11,12 @@ object ModerationRedisService {
     private val log = logger()
 
     private val moderationCache = redisApi.redisson.getSetCache<ModerationCacheEntry>(
-        "v3:moderations",
+        "surf-chat:v3:moderations",
         JsonKotlinCodec.of<ModerationCacheEntry>()
     )
 
     private val chatMessageCache = redisApi.redisson.getSetCache<MessageData>(
-        "v3:messages",
+        "surf-chat:v3:messages",
         JsonKotlinCodec.of<MessageData>()
     )
 

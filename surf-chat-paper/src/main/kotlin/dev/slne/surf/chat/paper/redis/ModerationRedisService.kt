@@ -10,17 +10,19 @@ import kotlinx.serialization.Serializable
 object ModerationRedisService {
     private val log = logger()
 
-    private val moderationCache = redisApi.redisson.getSetCache<ModerationCacheEntry>(
-        "surf-chat:v3:moderations",
-        JsonKotlinCodec.of<ModerationCacheEntry>()
-    )
+    private val moderationCache by lazy {
+        redisApi.redisson.getSetCache<ModerationCacheEntry>(
+            "surf-chat:v3:moderations",
+            JsonKotlinCodec.of<ModerationCacheEntry>()
+        )
+    }
 
-    private val chatMessageCache = redisApi.redisson.getSetCache<MessageData>(
-        "surf-chat:v3:messages",
-        JsonKotlinCodec.of<MessageData>()
-    )
-
-    fun init() = Unit
+    private val chatMessageCache by lazy {
+        redisApi.redisson.getSetCache<MessageData>(
+            "surf-chat:v3:messages",
+            JsonKotlinCodec.of<MessageData>()
+        )
+    }
 
     fun cache(messageData: MessageData, classificationResult: ModerationClassificationResult) {
         moderationCache.addAsync(ModerationCacheEntry(messageData, classificationResult)).exceptionally { throwable ->

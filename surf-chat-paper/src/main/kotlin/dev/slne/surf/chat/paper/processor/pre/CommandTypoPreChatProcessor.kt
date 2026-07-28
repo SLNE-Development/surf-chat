@@ -2,6 +2,7 @@ package dev.slne.surf.chat.paper.processor.pre
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.benmanes.caffeine.cache.Expiry
+import com.github.benmanes.caffeine.cache.RemovalCause
 import com.sksamuel.aedile.core.expireAfterWrite
 import com.sksamuel.aedile.core.withRemovalListener
 import dev.slne.surf.api.core.messages.adventure.buildText
@@ -39,6 +40,8 @@ object CommandTypoPreChatProcessor : PreChatProcessor {
         })
         .maximumSize(10_000)
         .withRemovalListener { uuid, confirmation, cause ->
+            if (cause != RemovalCause.EXPIRED) return@withRemovalListener
+
             val player = uuid?.let { server.getPlayer(it) } ?: return@withRemovalListener
             val message = confirmation?.data?.plainMessage ?: return@withRemovalListener
             player.sendText {

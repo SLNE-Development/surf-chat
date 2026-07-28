@@ -6,7 +6,7 @@ plugins {
 }
 
 surfStandaloneApi {
-    withSurfDatabaseR2dbc("1.3.0", "dev.slne.surf.playtime.libs.database")
+    withSurfDatabaseR2dbc("2.3.2", "dev.slne.surf.chat.libs.database")
     withCoreCommon()
 }
 

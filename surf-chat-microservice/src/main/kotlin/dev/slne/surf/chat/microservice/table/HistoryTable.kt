@@ -12,7 +12,7 @@ object HistoryTable : ULongIdTable("chat_histories") {
     val message = text("message")
     val sentAt = offsetDateTime("sent_at")
     val type = varchar("type", 16).transform({ MessageType(it) }, { it.value })
-    val server = char("server", 255)
+    val server = varchar("server", 255)
 
     val deletedAt = offsetDateTime("deleted_at").nullable().default(null)
     val deletedBy = nativeUuid("deleted_by_uuid").nullable().default(null)

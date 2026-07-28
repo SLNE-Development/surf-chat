@@ -9,6 +9,7 @@ object PermissionRegistry : PermissionRegistry() {
 
     val BYPASS_DISABLING = create("$PREFIX.disabling.bypass")
     val BYPASS_FILTER = create("$PREFIX.bypass.filter")
+    val BYPASS_COMMAND_TYPO = create("$PREFIX.bypass.command-typo")
 
     val CONNECTION_MESSAGE_ALWAYS_SHOW = create("$PREFIX.connection.always-show")
     val BYPASS_SPY = create("$PREFIX.bypass.spy")

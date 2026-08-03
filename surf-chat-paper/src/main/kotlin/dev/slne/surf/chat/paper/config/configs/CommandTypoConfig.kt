@@ -9,7 +9,7 @@ data class CommandTypoConfig(
     val enabled: Boolean = true,
 
     @field:Comment("List of characters that commonly replace '/' on mistyped keyboard layouts")
-    val prefixCharacters: List<String> = listOf("7", "(", ")"),
+    val prefixCharacters: List<String> = listOf("7", "(", ")", "&"),
 
     @field:Comment("Timeout in seconds before a pending message confirmation expires")
     val confirmationTimeoutSeconds: Long = 45

@@ -23,7 +23,7 @@ import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.entity.Player
 import java.time.Duration
 import java.util.*
-import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Duration.Companion.minutes
 
 object CommandTypoPreChatProcessor : PreChatProcessor {
     override val order = ProcessorOrder.COMMAND_TYPO
@@ -54,7 +54,7 @@ object CommandTypoPreChatProcessor : PreChatProcessor {
         .asMap()
 
     private val bypassContent = Caffeine.newBuilder()
-        .expireAfterWrite(commandTypoConfig().confirmationTimeoutSeconds.seconds + 10.seconds)
+        .expireAfterWrite(30.minutes)
         .removalListener<String, UUID> { message, senderUuid, cause ->
             if (cause != RemovalCause.EXPIRED) return@removalListener
 
@@ -66,7 +66,7 @@ object CommandTypoPreChatProcessor : PreChatProcessor {
                 error("\" wurde automatisch verworfen.")
             }
         }
-        .maximumSize(1_000)
+        .maximumSize(10_000)
         .build<String, UUID>()
 
     private fun commandTypoConfig() = plugin.surfChatConfig.config.commandTypoConfig
@@ -83,7 +83,8 @@ object CommandTypoPreChatProcessor : PreChatProcessor {
             return context
         }
 
-        if (bypassContent.getIfPresent(data.plainMessage) != null) {
+        val storedSender = bypassContent.getIfPresent(data.plainMessage)
+        if (storedSender == data.sender) {
             bypassContent.invalidate(data.plainMessage)
             return context
         }
@@ -112,10 +113,12 @@ object CommandTypoPreChatProcessor : PreChatProcessor {
     private fun sendConfirmationPrompt(data: MessageData, config: CommandTypoConfig) {
         data.sender.sendText {
             appendWarningPrefix()
-            spacer("-".repeat(15))
+            spacer("-".repeat(25))
 
             appendNewWarningPrefixedLine()
-            warning("Wolltest du wirklich eine Chatnachricht senden und keinen Befehl ausführen?")
+            warning("Wolltest du wirklich eine Chatnachricht senden und")
+            appendNewWarningPrefixedLine()
+            warning("keinen Befehl ausführen?")
 
             appendNewWarningPrefixedLine()
             spacer("\"")
@@ -127,8 +130,8 @@ object CommandTypoPreChatProcessor : PreChatProcessor {
             appendSpace()
             append(discardButton(data, config))
 
-            appendWarningPrefix()
-            spacer("-".repeat(15))
+            appendNewWarningPrefixedLine()
+            spacer("-".repeat(25))
         }
     }
 
@@ -174,7 +177,6 @@ object CommandTypoPreChatProcessor : PreChatProcessor {
             appendSuccessPrefix()
             success("Die Nachricht \"")
             variableValue(pending.data.plainMessage)
-            appendSpace()
             success("\" wurde verworfen.")
         }
     }

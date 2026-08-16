@@ -5,10 +5,8 @@ import com.github.benmanes.caffeine.cache.Expiry
 import com.github.benmanes.caffeine.cache.RemovalCause
 import com.sksamuel.aedile.core.expireAfterWrite
 import com.sksamuel.aedile.core.withRemovalListener
-import dev.slne.surf.api.core.component.surfComponentApi
 import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.messages.adventure.sendText
-import dev.slne.surf.api.core.util.dateTimeFormatter
 import dev.slne.surf.api.paper.extensions.server
 import dev.slne.surf.chat.api.message.MessageContext
 import dev.slne.surf.chat.api.message.MessageData
@@ -19,16 +17,12 @@ import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.chat.paper.processor.ProcessorOrder
 import dev.slne.surf.chat.paper.util.hasPermission
 import dev.slne.surf.chat.paper.util.sendText
-import dev.slne.surf.chat.paper.util.timeFormatter
-import io.ktor.client.io.configurePlatform
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.format.TextDecoration
-import okhttp3.internal.concurrent.formatDuration
 import org.bukkit.entity.Player
 import java.time.Duration
 import java.util.*
-import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 object CommandTypoPreChatProcessor : PreChatProcessor {
@@ -40,15 +34,13 @@ object CommandTypoPreChatProcessor : PreChatProcessor {
     )
 
     private val pendingConfirmations = Caffeine.newBuilder()
-        .expireAfter(Expiry.creating<UUID, PendingTypoConfirmation> { _, _ ->
-            Duration.ofSeconds(commandTypoConfig().confirmationTimeoutSeconds)
-        })
+        .expireAfterWrite(commandTypoConfig().confirmationTimeoutSeconds.seconds)
         .maximumSize(10_000)
-        .withRemovalListener { uuid, confirmation, cause ->
-            if (cause != RemovalCause.EXPIRED) return@withRemovalListener
+        .removalListener<UUID, PendingTypoConfirmation> { uuid, confirmation, cause ->
+            if (cause != RemovalCause.EXPIRED) return@removalListener
 
-            val player = uuid?.let { server.getPlayer(it) } ?: return@withRemovalListener
-            val message = confirmation?.data?.plainMessage ?: return@withRemovalListener
+            val player = uuid?.let { server.getPlayer(it) } ?: return@removalListener
+            val message = confirmation?.data?.plainMessage ?: return@removalListener
             player.sendText {
                 appendErrorPrefix()
                 error("Die Nachricht \"")
@@ -141,7 +133,7 @@ object CommandTypoPreChatProcessor : PreChatProcessor {
         }
     }
 
-    private fun confirmButton(data: MessageData,  config: CommandTypoConfig) = buildText {
+    private fun confirmButton(data: MessageData, config: CommandTypoConfig) = buildText {
         darkSpacer("[")
         success("✔ Nachricht senden")
         darkSpacer("]")

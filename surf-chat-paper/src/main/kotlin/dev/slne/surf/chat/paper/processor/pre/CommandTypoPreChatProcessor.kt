@@ -124,34 +124,22 @@ object CommandTypoPreChatProcessor : PreChatProcessor {
             appendNewline()
             appendLinePrefix()
             appendSpace()
-            append(confirmButton(data, config))
+            append(confirmButton(data))
             appendSpace()
             append(discardButton(data, config))
         }
     }
 
-    private fun confirmButton(data: MessageData, config: CommandTypoConfig) = buildText {
+    private fun confirmButton(data: MessageData) = buildText {
         darkSpacer("[")
         success("✔ Nachricht senden")
         darkSpacer("]")
         hoverEvent(buildText {
             success("Klicke, um die Nachricht erneut zu senden.")
         })
-        clickEvent(
-            ClickEvent.callback({ audience ->
-                (audience as? Player)?.let { player ->
-                    onConfirm(player, data.messageUuid)
-                    ClickEvent.suggestCommand(data.plainMessage).run {
-                        player.sendText {
-                            appendSuccessPrefix()
-                            success("Die Nachricht wurde in die Chatleiste eingefügt. Du kannst sie nun erneut senden.")
-                        }
-                    }
-                }
-            }) {
-                it.uses(1).lifetime(Duration.ofSeconds(config.confirmationTimeoutSeconds))
-            }
-        )
+
+        bypassContent.put(data.plainMessage, data.sender)
+        clickEvent(ClickEvent.suggestCommand(data.plainMessage))
     }
 
     private fun discardButton(data: MessageData, config: CommandTypoConfig) = buildText {
@@ -172,25 +160,9 @@ object CommandTypoPreChatProcessor : PreChatProcessor {
         )
     }
 
-    private fun onConfirm(player: Player, messageUuid: UUID) {
-        val pending = pendingConfirmations.remove(messageUuid)
-        if (pending == null) {
-            player.sendText {
-                appendErrorPrefix()
-                error("Diese Bestätigung ist abgelaufen oder wurde bereits verarbeitet.")
-            }
-            return
-        }
-
-        if (player.uniqueId != pending.data.sender) {
-            return
-        }
-
-        bypassContent.put( pending.data.plainMessage, player.uniqueId)
-    }
-
     private fun onDiscard(player: Player, messageUuid: UUID) {
         val pending = pendingConfirmations.remove(messageUuid) ?: return
+        bypassContent.invalidate(pending.data.plainMessage)
 
         if (player.uniqueId != pending.data.sender) {
             return

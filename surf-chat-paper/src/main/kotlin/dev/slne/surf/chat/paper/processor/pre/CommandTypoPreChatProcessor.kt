@@ -15,7 +15,6 @@ import dev.slne.surf.chat.paper.config.configs.CommandTypoConfig
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.chat.paper.processor.ProcessorOrder
-import dev.slne.surf.chat.paper.util.appendLinePrefix
 import dev.slne.surf.chat.paper.util.hasPermission
 import dev.slne.surf.chat.paper.util.sendText
 import net.kyori.adventure.audience.Audience
@@ -25,7 +24,6 @@ import org.bukkit.entity.Player
 import java.time.Duration
 import java.util.*
 import kotlin.time.Duration.Companion.seconds
-
 
 object CommandTypoPreChatProcessor : PreChatProcessor {
     override val order = ProcessorOrder.COMMAND_TYPO
@@ -114,19 +112,23 @@ object CommandTypoPreChatProcessor : PreChatProcessor {
     private fun sendConfirmationPrompt(data: MessageData, config: CommandTypoConfig) {
         data.sender.sendText {
             appendWarningPrefix()
+            spacer("-".repeat(15))
+
+            appendNewWarningPrefixedLine()
             warning("Wolltest du wirklich eine Chatnachricht senden und keinen Befehl ausführen?")
-            appendNewline()
-            appendLinePrefix()
-            appendSpace()
+
+            appendNewWarningPrefixedLine()
             spacer("\"")
             variableValue(data.plainMessage, TextDecoration.ITALIC)
             spacer("\"")
-            appendNewline()
-            appendLinePrefix()
-            appendSpace()
+
+            appendNewWarningPrefixedLine()
             append(confirmButton(data))
             appendSpace()
             append(discardButton(data, config))
+
+            appendWarningPrefix()
+            spacer("-".repeat(15))
         }
     }
 

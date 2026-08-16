@@ -3,6 +3,7 @@ package dev.slne.surf.chat.paper.processor.pre
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.benmanes.caffeine.cache.RemovalCause
 import com.sksamuel.aedile.core.expireAfterWrite
+import dev.slne.surf.api.core.messages.CommonComponents
 import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.api.paper.extensions.server
@@ -191,7 +192,16 @@ object CommandTypoPreChatProcessor : PreChatProcessor {
             appendSuccessPrefix()
             success("Du kannst die Nachricht nun erneut senden. Sie wird für")
             appendSpace()
-            variableValue("${commandTypoConfig().bypassTimeoutSeconds} Sekunden")
+            variableValue(
+                "${
+                    CommonComponents.formatTime(
+                        commandTypoConfig().bypassTimeoutSeconds.seconds,
+                        showSeconds = true,
+                        shortForms = false
+                    )
+                }"
+            )
+
             appendSpace()
             success("nicht mehr als Befehl erkannt.")
         }

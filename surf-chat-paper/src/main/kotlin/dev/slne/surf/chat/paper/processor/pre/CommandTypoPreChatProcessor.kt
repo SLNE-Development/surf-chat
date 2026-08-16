@@ -59,7 +59,7 @@ object CommandTypoPreChatProcessor : PreChatProcessor {
                 appendErrorPrefix()
                 error("Die Nachricht \"")
                 variableValue(message ?: return@sendText)
-                error("\" wurde automatisch verworfen.")
+                error("\" wird nun wieder automatisch als Befehl erkannt.")
             }
         }
         .maximumSize(10_000)
@@ -81,7 +81,6 @@ object CommandTypoPreChatProcessor : PreChatProcessor {
 
         val storedSender = bypassContent.getIfPresent(data.plainMessage)
         if (storedSender == data.sender) {
-            bypassContent.invalidate(data.plainMessage)
             return context
         }
 

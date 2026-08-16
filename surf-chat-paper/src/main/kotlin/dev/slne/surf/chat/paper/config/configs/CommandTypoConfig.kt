@@ -12,5 +12,8 @@ data class CommandTypoConfig(
     val prefixCharacters: List<String> = listOf("7", "(", ")", "&"),
 
     @field:Comment("Timeout in seconds before a pending message confirmation expires")
-    val confirmationTimeoutSeconds: Long = 45
+    val confirmationTimeoutSeconds: Long = 45,
+
+    @field:Comment("Timeout in seconds before a bypassed message expires")
+    val bypassTimeoutSeconds: Long = 1800
 )

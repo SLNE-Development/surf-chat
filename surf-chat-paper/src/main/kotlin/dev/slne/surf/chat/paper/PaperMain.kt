@@ -25,7 +25,6 @@ import dev.slne.surf.chat.paper.processor.pre.*
 import dev.slne.surf.chat.paper.processor.pre.validate.CharPreChatProcessor
 import dev.slne.surf.chat.paper.processor.pre.validate.LinkPreChatProcessor
 import dev.slne.surf.chat.paper.processor.pre.validate.SpamPreChatProcessor
-import dev.slne.surf.chat.paper.redis.ModerationRedisService
 import dev.slne.surf.chat.paper.redis.listener.RedisEventListener
 import dev.slne.surf.core.api.common.SurfCoreApi
 import org.bukkit.plugin.java.JavaPlugin
@@ -45,6 +44,7 @@ class PaperMain : SuspendingJavaPlugin() {
         chatProcessorRegistry.register(IgnorePreChatProcessor)
         chatProcessorRegistry.register(ValidatorPreChatProcessor)
         chatProcessorRegistry.register(SlowChatPreChatProcessor)
+        chatProcessorRegistry.register(CommandTypoPreChatProcessor)
 
         chatProcessorRegistry.register(LogPostChatProcessor)
         chatProcessorRegistry.register(AiModerationPostChatProcessor)
@@ -83,4 +83,5 @@ class PaperMain : SuspendingJavaPlugin() {
     val chatMotdConfig get() = surfChatConfig.config.chatMotdConfig
     val autoDisablingConfig get() = surfChatConfig.config.autoDisablingConfig
     val spamConfig get() = surfChatConfig.config.spamConfig
+    val commandTypoConfig get() = surfChatConfig.config.commandTypoConfig
 }

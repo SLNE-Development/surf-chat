@@ -8,6 +8,8 @@ data class SurfChatConfig(
     val itemPlaceholder: Boolean = true,
     val connectionMessageConfig: ConnectionMessageConfig = ConnectionMessageConfig(),
     val spamConfig: SpamConfig = SpamConfig(),
+    @Setting("commandTypo")
+    val commandTypoConfig: CommandTypoConfig = CommandTypoConfig(),
     @Setting("autoDisabling")
     val autoDisablingConfig: AutoDisablingConfig = AutoDisablingConfig(),
     @Setting("joinMotd")

@@ -54,10 +54,21 @@ object CommandTypoPreChatProcessor : PreChatProcessor {
         .build<UUID, PendingTypoConfirmation>()
         .asMap()
 
-    private val bypassUntil = Caffeine.newBuilder()
-        .expireAfterWrite(10.seconds)
-        .maximumSize(10_000)
-        .build<UUID, Boolean>()
+    private val bypassContent = Caffeine.newBuilder()
+        .expireAfterWrite(commandTypoConfig().confirmationTimeoutSeconds.seconds + 10.seconds)
+        .removalListener<String, UUID> { message, senderUuid, cause ->
+            if (cause != RemovalCause.EXPIRED) return@removalListener
+
+            val player = server.getPlayer(senderUuid ?: return@removalListener) ?: return@removalListener
+            player.sendText {
+                appendErrorPrefix()
+                error("Die Nachricht \"")
+                variableValue(message ?: return@sendText)
+                error("\" wurde automatisch verworfen.")
+            }
+        }
+        .maximumSize(1_000)
+        .build<String, UUID>()
 
     private fun commandTypoConfig() = plugin.surfChatConfig.config.commandTypoConfig
 
@@ -73,7 +84,8 @@ object CommandTypoPreChatProcessor : PreChatProcessor {
             return context
         }
 
-        if (bypassUntil.getIfPresent(data.sender) != null) {
+        if (bypassContent.getIfPresent(data.plainMessage) != null) {
+            bypassContent.invalidate(data.plainMessage)
             return context
         }
 
@@ -126,6 +138,12 @@ object CommandTypoPreChatProcessor : PreChatProcessor {
             ClickEvent.callback({ audience ->
                 (audience as? Player)?.let { player ->
                     onConfirm(player, data.messageUuid)
+                    ClickEvent.suggestCommand(data.plainMessage).run {
+                        player.sendText {
+                            appendSuccessPrefix()
+                            success("Die Nachricht wurde in die Chatleiste eingefügt. Du kannst sie nun erneut senden.")
+                        }
+                    }
                 }
             }) {
                 it.uses(1).lifetime(Duration.ofSeconds(config.confirmationTimeoutSeconds))
@@ -166,13 +184,7 @@ object CommandTypoPreChatProcessor : PreChatProcessor {
             return
         }
 
-        player.sendText {
-            appendSuccessPrefix()
-            success("Du kannst die Nachricht nun erneut im Chat senden.")
-        }
-
-        bypassUntil.put(player.uniqueId, true)
-        player.chat(pending.data.plainMessage)
+        bypassContent.put( pending.data.plainMessage, player.uniqueId)
     }
 
     private fun onDiscard(player: Player, messageUuid: UUID) {

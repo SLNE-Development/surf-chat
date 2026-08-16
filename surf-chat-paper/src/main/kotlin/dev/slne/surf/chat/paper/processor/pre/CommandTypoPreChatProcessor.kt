@@ -1,10 +1,8 @@
 package dev.slne.surf.chat.paper.processor.pre
 
 import com.github.benmanes.caffeine.cache.Caffeine
-import com.github.benmanes.caffeine.cache.Expiry
 import com.github.benmanes.caffeine.cache.RemovalCause
 import com.sksamuel.aedile.core.expireAfterWrite
-import com.sksamuel.aedile.core.withRemovalListener
 import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.api.paper.extensions.server
@@ -150,7 +148,6 @@ object CommandTypoPreChatProcessor : PreChatProcessor {
                 it.uses(1).lifetime(Duration.ofSeconds(config.confirmationTimeoutSeconds))
             }
         )
-        clickEvent(ClickEvent.suggestCommand(data.plainMessage))
     }
 
     private fun discardButton(data: MessageData, config: CommandTypoConfig) = buildText {
@@ -197,7 +194,7 @@ object CommandTypoPreChatProcessor : PreChatProcessor {
             appendSpace()
             variableValue("${commandTypoConfig().bypassTimeoutSeconds} Sekunden")
             appendSpace()
-            success("nicht mehr als befehl erkannt.")
+            success("nicht mehr als Befehl erkannt.")
         }
     }
 }

@@ -169,7 +169,6 @@ object CommandTypoPreChatProcessor : PreChatProcessor {
         )
     }
 
-
     private fun onConfirm(player: Player, messageUuid: UUID) {
         val pending = pendingConfirmations.remove(messageUuid)
         if (pending == null) {

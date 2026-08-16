@@ -20,6 +20,7 @@ import dev.slne.surf.chat.paper.util.hasPermission
 import dev.slne.surf.chat.paper.util.sendText
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.event.ClickEvent
+import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.entity.Player
 import java.time.Duration
 import java.util.*
@@ -117,7 +118,9 @@ object CommandTypoPreChatProcessor : PreChatProcessor {
             appendNewline()
             appendLinePrefix()
             appendSpace()
-            variableValue("\"${data.plainMessage}\"")
+            spacer("\"")
+            variableValue(data.plainMessage, TextDecoration.ITALIC)
+            spacer("\"")
             appendNewline()
             appendLinePrefix()
             appendSpace()
@@ -195,10 +198,10 @@ object CommandTypoPreChatProcessor : PreChatProcessor {
 
         player.sendText {
             appendSuccessPrefix()
-            success("Die Nachricht ")
-            variableValue("\"${pending.data.plainMessage}\"")
+            success("Die Nachricht \"")
+            variableValue(pending.data.plainMessage)
             appendSpace()
-            success("wurde verworfen.")
+            success("\" wurde verworfen.")
         }
     }
 }

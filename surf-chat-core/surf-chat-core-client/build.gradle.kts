@@ -29,6 +29,12 @@ dependencies {
     }
 }
 
+sourceSets.test {
+    compileClasspath += sourceSets.main.get().compileClasspath
+    runtimeClasspath += sourceSets.main.get().compileClasspath
+}
+
+
 publishing {
     repositories {
         slneReleases()

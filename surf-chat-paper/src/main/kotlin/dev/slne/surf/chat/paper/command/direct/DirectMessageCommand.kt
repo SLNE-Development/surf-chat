@@ -15,8 +15,6 @@ import dev.slne.surf.api.paper.command.executors.playerExecutorSuspend
 import dev.slne.surf.api.paper.extensions.server
 import dev.slne.surf.api.paper.nms.NmsUseWithCaution
 import dev.slne.surf.api.paper.nms.bridges.SurfPaperNmsPlayerBridge
-import dev.slne.surf.api.paper.nms.bridges.data.chat.PlayerChatMessageMirror
-import dev.slne.surf.api.paper.nms.bridges.data.chat.RemoteChatSessionData
 import dev.slne.surf.api.paper.nms.bridges.packets.player.SurfPaperNmsPlayerPackets
 import dev.slne.surf.chat.api.message.MessageContext
 import dev.slne.surf.chat.api.message.MessageData
@@ -25,13 +23,17 @@ import dev.slne.surf.chat.core.client.message.format.formatIncomingPm
 import dev.slne.surf.chat.core.client.message.format.formatOutgoingPm
 import dev.slne.surf.chat.core.client.processor.runPostProcessors
 import dev.slne.surf.chat.core.client.processor.runPreProcessors
+import dev.slne.surf.chat.core.client.redis.rpc.SendDirectMessageHandledRedisResponse
+import dev.slne.surf.chat.core.client.redis.rpc.SendDirectMessageRedisRequest
+import dev.slne.surf.chat.core.client.redis.rpc.SignedChatMessage
 import dev.slne.surf.chat.core.client.redisApi
 import dev.slne.surf.chat.core.client.service.ReplyCache
 import dev.slne.surf.chat.core.client.hook.SettingsHook
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.chat.paper.plugin
-import dev.slne.surf.chat.paper.redis.rpc.SendDirectMessageHandledRedisResponse
-import dev.slne.surf.chat.paper.redis.rpc.SendDirectMessageRedisRequest
+import dev.slne.surf.chat.paper.redis.rpc.chatSession
+import dev.slne.surf.chat.paper.redis.rpc.toMirror
+import dev.slne.surf.chat.paper.redis.rpc.toWire
 import dev.slne.surf.core.api.common.SurfCoreApi
 import dev.slne.surf.core.api.common.player.SurfPlayer
 import dev.slne.surf.core.api.paper.command.argument.surfPlayerArgument
@@ -174,20 +176,17 @@ object DirectMessageAccess {
 
             try {
                 redisApi.sendRequest<SendDirectMessageHandledRedisResponse>(
-                    SendDirectMessageRedisRequest(messageData, session, messageMirror),
+                    SendDirectMessageRedisRequest(messageData, messageMirror.toWire(session)),
                 )
             } catch (_: RequestTimeoutException) {
             }
         }
     }
 
-    suspend fun handleSendSignedPm(
-        data: MessageData,
-        messageMirror: PlayerChatMessageMirror,
-        senderSession: RemoteChatSessionData?
-    ): Boolean {
+    suspend fun handleSendSignedPm(data: MessageData, signed: SignedChatMessage): Boolean {
         val target = data.receiver?.let { Bukkit.getPlayer(it) } ?: return false
-        val message = SurfPaperNmsPlayerBridge.createAdventureChatMessageFromMirror(messageMirror)
+        val message =
+            SurfPaperNmsPlayerBridge.createAdventureChatMessageFromMirror(signed.toMirror())
         if (!preSignedMessageSend(target)) return true
 
         val senderUser = data.senderUser()
@@ -200,7 +199,7 @@ object DirectMessageAccess {
             null,
             false,
             1,
-            senderSession
+            signed.chatSession()
         ).execute(target)
 
         SurfPaperNmsPlayerBridge.sendPlayerChatMessage(

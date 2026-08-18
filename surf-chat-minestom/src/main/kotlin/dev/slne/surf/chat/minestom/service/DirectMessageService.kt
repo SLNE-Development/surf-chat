@@ -1,5 +1,6 @@
 package dev.slne.surf.chat.minestom.service
 
+import dev.slne.minestom.lobby.api.chat.RemoteChatSender
 import dev.slne.minestom.lobby.api.extension.ConnectionManager
 import dev.slne.minestom.lobby.api.player.LobbyPlayer
 import dev.slne.minestom.lobby.api.player.getOnlineLobbyPlayerByUuid
@@ -15,8 +16,16 @@ import dev.slne.surf.chat.core.client.message.format.formatOutgoingPm
 import dev.slne.surf.chat.core.client.platform.ChatPlatform
 import dev.slne.surf.chat.core.client.processor.runPostProcessors
 import dev.slne.surf.chat.core.client.processor.runPreProcessors
+import dev.slne.surf.chat.core.client.redis.rpc.SendDirectMessageHandledRedisResponse
+import dev.slne.surf.chat.core.client.redis.rpc.SendDirectMessageRedisRequest
+import dev.slne.surf.chat.core.client.redis.rpc.SignedChatMessage
+import dev.slne.surf.chat.core.client.redisApi
 import dev.slne.surf.chat.core.client.service.ReplyCache
+import dev.slne.surf.chat.minestom.redis.rpc.chatSession
+import dev.slne.surf.chat.minestom.redis.rpc.toLobby
+import dev.slne.surf.chat.minestom.redis.rpc.toWire
 import dev.slne.surf.core.api.common.SurfCoreApi
+import dev.slne.surf.redis.request.RequestTimeoutException
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import net.kyori.adventure.chat.SignedMessage
@@ -24,7 +33,7 @@ import java.time.OffsetDateTime
 import java.util.*
 
 /**
- * Delivers direct messages between players that are connected to this server.
+ * Delivers direct messages between players, no matter which server of the network they are on.
  */
 object DirectMessageService {
 
@@ -43,41 +52,24 @@ object DirectMessageService {
         val result = runPreProcessors(MessageContext(messageData, false, mutableObjectSetOf()))
         messageData = result.messageData
 
-        var delivered = false
-
         if (result.isCancelled) {
             sender.sendText {
                 appendErrorPrefix()
                 error("Deine Nachricht konnte nicht zugestellt werden.")
             }
         } else {
+            sender.sendSignedMessage(
+                message,
+                sender.displayName(),
+                formatOutgoingPm(messageData)
+            )
+
             val target = ConnectionManager.getOnlineLobbyPlayerByUuid(targetUuid)
 
-            if (target == null) {
-                sender.sendText {
-                    appendErrorPrefix()
-                    error("Der Spieler ist nicht auf diesem Server.")
-                }
+            if (target != null) {
+                sendPmOnSameServer(sender, target, messageData, message)
             } else {
-                sender.sendSignedMessage(
-                    message,
-                    sender.displayName(),
-                    formatOutgoingPm(messageData)
-                )
-
-                if (SettingsHook.hasDirectMessagesEnabled(target.uuid)) {
-                    target.sendSignedMessage(
-                        message,
-                        sender.displayName(),
-                        formatIncomingPm(messageData)
-                    )
-
-                    if (SettingsHook.hasChatPingsEnabled(target.uuid)) {
-                        ChatPlatform.playPingSound(targetUuid)
-                    }
-                }
-
-                delivered = true
+                sendPmOnDifferentServer(sender, messageData, message)
             }
         }
 
@@ -89,11 +81,73 @@ object DirectMessageService {
             )
         )
 
-        if (delivered) {
+        if (!result.isCancelled) {
             coroutineScope {
                 launch { ReplyCache.setLastTarget(sender.uuid, targetUuid) }
                 launch { ReplyCache.setLastTarget(targetUuid, sender.uuid) }
             }
         }
+    }
+
+    private suspend fun sendPmOnSameServer(
+        sender: LobbyPlayer,
+        target: LobbyPlayer,
+        messageData: MessageData,
+        message: SignedMessage,
+    ) {
+        if (!SettingsHook.hasDirectMessagesEnabled(target.uuid)) return
+
+        target.sendSignedMessage(
+            message,
+            sender.displayName(),
+            formatIncomingPm(messageData)
+        )
+
+        if (SettingsHook.hasChatPingsEnabled(target.uuid)) {
+            ChatPlatform.playPingSound(target.uuid)
+        }
+    }
+
+    private suspend fun sendPmOnDifferentServer(
+        sender: LobbyPlayer,
+        messageData: MessageData,
+        message: SignedMessage,
+    ) {
+        val captured = sender.captureSignedMessage(message, formatIncomingPm(messageData))
+
+        requireNotNull(captured) { "Failed to capture the signed message." }
+
+        try {
+            redisApi.sendRequest<SendDirectMessageHandledRedisResponse>(
+                SendDirectMessageRedisRequest(messageData, captured.toWire(sender.chatSession())),
+            )
+        } catch (_: RequestTimeoutException) {
+        }
+    }
+
+    /**
+     * Shows a direct message that was sent on another server to its receiver here.
+     *
+     * @return whether the receiver is on this server, no matter if they wanted to see the message
+     */
+    suspend fun handleRemotePm(messageData: MessageData, message: SignedChatMessage): Boolean {
+        val target = messageData.receiver
+            ?.let { ConnectionManager.getOnlineLobbyPlayerByUuid(it) } ?: return false
+
+        if (!SettingsHook.hasDirectMessagesEnabled(target.uuid)) return true
+
+        val senderUser = messageData.senderUser()
+
+        target.sendRemoteSignedMessage(
+            RemoteChatSender(messageData.sender, senderUser.username, message.chatSession()),
+            message.toLobby(),
+            text(senderUser.username)
+        )
+
+        if (SettingsHook.hasChatPingsEnabled(target.uuid)) {
+            ChatPlatform.playPingSound(target.uuid)
+        }
+
+        return true
     }
 }

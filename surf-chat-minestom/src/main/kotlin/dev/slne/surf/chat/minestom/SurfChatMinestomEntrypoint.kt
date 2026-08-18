@@ -29,6 +29,7 @@ class SurfChatMinestomEntrypoint @Inject constructor(
         MinestomChatInstance.chatClientLoader.onLoad()
 
         MinestomChatInstance.redisApi.subscribeToEvents(MinestomRedisEventListener)
+        MinestomChatInstance.redisApi.registerRequestHandler(MinestomRedisEventListener)
 
         MinestomChatInstance.chatClientLoader.onEnable()
 

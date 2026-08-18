@@ -5,13 +5,15 @@ import dev.slne.surf.api.core.messages.adventure.text
 import dev.slne.surf.api.paper.extensions.server
 import dev.slne.surf.api.paper.nms.NmsUseWithCaution
 import dev.slne.surf.api.paper.nms.bridges.SurfPaperNmsPlayerBridge
-import dev.slne.surf.api.paper.nms.bridges.data.chat.PlayerChatMessageMirror
-import dev.slne.surf.api.paper.nms.bridges.data.chat.RemoteChatSessionData
 import dev.slne.surf.api.paper.nms.bridges.packets.player.SurfPaperNmsPlayerPackets
+import dev.slne.surf.chat.core.client.redis.rpc.SendSignedMessageHandledRedisResponse
+import dev.slne.surf.chat.core.client.redis.rpc.SendSignedMessageRedisRequest
+import dev.slne.surf.chat.core.client.redis.rpc.SignedChatMessage
 import dev.slne.surf.chat.core.client.redisApi
 import dev.slne.surf.chat.paper.plugin
-import dev.slne.surf.chat.paper.redis.rpc.SendSignedMessageHandledRedisResponse
-import dev.slne.surf.chat.paper.redis.rpc.SendSignedMessageRedisRequest
+import dev.slne.surf.chat.paper.redis.rpc.chatSession
+import dev.slne.surf.chat.paper.redis.rpc.toMirror
+import dev.slne.surf.chat.paper.redis.rpc.toWire
 import dev.slne.surf.core.api.common.SurfCoreApi
 import dev.slne.surf.redis.request.RequestTimeoutException
 import net.kyori.adventure.chat.SignedMessage
@@ -59,7 +61,12 @@ object SignedMessageSender {
 
             try {
                 redisApi.sendRequest<SendSignedMessageHandledRedisResponse>(
-                    SendSignedMessageRedisRequest(sender.uniqueId, sender.name, targetUuid, messageMirror, session),
+                    SendSignedMessageRedisRequest(
+                        sender.uniqueId,
+                        sender.name,
+                        targetUuid,
+                        messageMirror.toWire(session)
+                    ),
                 )
             } catch (_: RequestTimeoutException) {
             }
@@ -70,11 +77,11 @@ object SignedMessageSender {
         sender: UUID,
         senderName: String,
         target: UUID,
-        messageMirror: PlayerChatMessageMirror,
-        senderSession: RemoteChatSessionData?
+        signedChatMessage: SignedChatMessage
     ): Boolean {
         val target = Bukkit.getPlayer(target) ?: return false
-        val message = SurfPaperNmsPlayerBridge.createAdventureChatMessageFromMirror(messageMirror)
+        val message =
+            SurfPaperNmsPlayerBridge.createAdventureChatMessageFromMirror(signedChatMessage.toMirror())
 
         SurfPaperNmsPlayerPackets.createNewPlayerInfoUpdate(
             sender,
@@ -85,7 +92,7 @@ object SignedMessageSender {
             null,
             false,
             1,
-            senderSession
+            signedChatMessage.chatSession()
         ).execute(target)
 
         SurfPaperNmsPlayerBridge.sendPlayerChatMessage(

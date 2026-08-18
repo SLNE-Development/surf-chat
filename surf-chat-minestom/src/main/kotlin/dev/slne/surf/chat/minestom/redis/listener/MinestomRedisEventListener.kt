@@ -10,7 +10,10 @@ import dev.slne.surf.chat.core.client.redis.event.TeamMessageRedisEvent
 import dev.slne.surf.chat.core.client.redis.event.TeamchatMessageRedisEvent
 import dev.slne.surf.chat.core.client.redis.rpc.SendDirectMessageHandledRedisResponse
 import dev.slne.surf.chat.core.client.redis.rpc.SendDirectMessageRedisRequest
+import dev.slne.surf.chat.core.client.redis.rpc.SendSignedMessageHandledRedisResponse
+import dev.slne.surf.chat.core.client.redis.rpc.SendSignedMessageRedisRequest
 import dev.slne.surf.chat.minestom.service.DirectMessageService
+import dev.slne.surf.chat.minestom.service.SignedMessageService
 import dev.slne.surf.redis.event.OnRedisEvent
 import dev.slne.surf.redis.request.HandleRedisRequest
 import dev.slne.surf.redis.request.RequestContext
@@ -51,6 +54,21 @@ object MinestomRedisEventListener {
             val handled = DirectMessageService.handleRemotePm(messageData, message)
             if (handled) {
                 context.respond(SendDirectMessageHandledRedisResponse()).await()
+            }
+        }
+    }
+
+    @HandleRedisRequest
+    fun handleSendSignedMessageRedisRequest(context: RequestContext<SendSignedMessageRedisRequest>) {
+        val (sender, senderName, target, message) = context.request
+        if (ConnectionManager.getOnlineLobbyPlayerByUuid(target) == null) return
+
+        context.launch {
+            val handled =
+                SignedMessageService.handleRemoteSignedMessage(sender, senderName, target, message)
+
+            if (handled) {
+                context.respond(SendSignedMessageHandledRedisResponse()).await()
             }
         }
     }

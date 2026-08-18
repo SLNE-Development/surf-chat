@@ -19,6 +19,8 @@ import dev.slne.surf.chat.core.client.redis.event.DeleteRemoteMessageRedisEvent
 import dev.slne.surf.chat.core.client.redisApi
 import dev.slne.surf.chat.core.common.service.HistoryService
 import dev.slne.surf.chat.core.common.service.IgnoreService
+import dev.slne.surf.chat.minestom.service.SignedMessageService
+import dev.slne.surf.core.api.common.SurfCoreApi
 import it.unimi.dsi.fastutil.objects.ObjectList
 import net.kyori.adventure.chat.SignedMessage
 import net.kyori.adventure.text.Component
@@ -78,13 +80,23 @@ class MinestomSurfChatApiImpl : SurfChatApi, Services.Fallback {
 
         val target = ConnectionManager.getOnlineLobbyPlayerByUuid(targetUuid)
 
-        if (target == null) {
+        if (target != null) {
+            target.sendSignedMessage(signedMessage, sender.displayName(), contentComponent)
+            return
+        }
+
+        if (SurfCoreApi.getPlayer(targetUuid) == null) {
             log.atWarning()
                 .log("Tried to send signed message from $senderUuid to offline player $targetUuid!")
             return
         }
 
-        target.sendSignedMessage(signedMessage, sender.displayName(), contentComponent)
+        SignedMessageService.sendRemoteSignedMessage(
+            sender,
+            targetUuid,
+            contentComponent,
+            signedMessage
+        )
     }
 
     override suspend fun passAutoMod(messageData: MessageData) {

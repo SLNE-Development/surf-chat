@@ -8,11 +8,11 @@ import dev.slne.surf.chat.core.client.redis.event.TeamMessageRedisEvent
 import dev.slne.surf.chat.core.client.redis.event.TeamchatMessageRedisEvent
 import dev.slne.surf.chat.core.client.redis.rpc.SendDirectMessageHandledRedisResponse
 import dev.slne.surf.chat.core.client.redis.rpc.SendDirectMessageRedisRequest
+import dev.slne.surf.chat.core.client.redis.rpc.SendSignedMessageHandledRedisResponse
+import dev.slne.surf.chat.core.client.redis.rpc.SendSignedMessageRedisRequest
 import dev.slne.surf.chat.paper.command.direct.DirectMessageAccess
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.chat.paper.plugin
-import dev.slne.surf.chat.paper.redis.rpc.SendSignedMessageHandledRedisResponse
-import dev.slne.surf.chat.paper.redis.rpc.SendSignedMessageRedisRequest
 import dev.slne.surf.chat.paper.service.SignedMessageSender
 import dev.slne.surf.redis.event.OnRedisEvent
 import dev.slne.surf.redis.request.HandleRedisRequest
@@ -57,8 +57,7 @@ object RedisEventListener {
             context.request.sender,
             context.request.senderName,
             context.request.target,
-            context.request.messageMirror,
-            context.request.senderSession
+            context.request.message
         )
 
         if (handled) {

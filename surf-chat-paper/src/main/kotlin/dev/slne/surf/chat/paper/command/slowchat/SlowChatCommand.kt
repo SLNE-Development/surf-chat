@@ -5,7 +5,7 @@ import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.chat.paper.command.argument.NiceToggleArgument
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
-import dev.slne.surf.chat.paper.service.SlowChatService
+import dev.slne.surf.chat.core.client.service.SlowChatService
 import dev.slne.surf.chat.paper.util.realName
 import org.bukkit.Bukkit
 

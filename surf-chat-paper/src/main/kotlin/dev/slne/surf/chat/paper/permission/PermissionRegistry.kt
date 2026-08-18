@@ -1,49 +1,48 @@
 package dev.slne.surf.chat.paper.permission
 
-import dev.slne.surf.api.paper.permission.PermissionRegistry
+import dev.slne.surf.chat.core.client.permission.ChatPermissions
 
-object PermissionRegistry : PermissionRegistry() {
-    private const val PREFIX = "surf.chat"
-    private const val PREFIX_COMMAND = "$PREFIX.command"
-    val PREFIX_TEAM = create("$PREFIX.team")
+object PermissionRegistry : dev.slne.surf.api.paper.permission.PermissionRegistry() {
+    val PREFIX_TEAM = create(ChatPermissions.PREFIX_TEAM)
 
-    val BYPASS_DISABLING = create("$PREFIX.disabling.bypass")
-    val BYPASS_FILTER = create("$PREFIX.bypass.filter")
+    val BYPASS_DISABLING = create(ChatPermissions.BYPASS_DISABLING)
+    val BYPASS_FILTER = create(ChatPermissions.BYPASS_FILTER)
 
-    val CONNECTION_MESSAGE_ALWAYS_SHOW = create("$PREFIX.connection.always-show")
-    val BYPASS_SPY = create("$PREFIX.bypass.spy")
-    val BYPASS_FUNCTIONALITY = create("$PREFIX.bypass.functionality")
+    val CONNECTION_MESSAGE_ALWAYS_SHOW = create(ChatPermissions.CONNECTION_MESSAGE_ALWAYS_SHOW)
+    val BYPASS_SPY = create(ChatPermissions.BYPASS_SPY)
+    val BYPASS_FUNCTIONALITY = create(ChatPermissions.BYPASS_FUNCTIONALITY)
 
-    val SLOW_CHAT_BYPASS = create("$PREFIX.slowchat.bypass")
-    val SLOW_CHAT_NOTIFY = create("$PREFIX.slowchat.notify")
-    val SLOW_CHAT_COMMAND = create("$PREFIX.slowchat.command")
+    val SLOW_CHAT_BYPASS = create(ChatPermissions.SLOW_CHAT_BYPASS)
+    val SLOW_CHAT_NOTIFY = create(ChatPermissions.SLOW_CHAT_NOTIFY)
+    val SLOW_CHAT_COMMAND = create(ChatPermissions.SLOW_CHAT_COMMAND)
 
-    val TEAM_NOTIFY_FUNCTIONALITY = create("$PREFIX_TEAM.notify.functionality")
-    val TEAM_NOTIFY_DELETION = create("$PREFIX_TEAM.notify.deletion")
+    val TEAM_NOTIFY_FUNCTIONALITY = create(ChatPermissions.TEAM_NOTIFY_FUNCTIONALITY)
+    val TEAM_NOTIFY_DELETION = create(ChatPermissions.TEAM_NOTIFY_DELETION)
 
-    val COMMAND_SURFCHAT = create("$PREFIX_COMMAND.surfchat")
-    val COMMAND_SURFCHAT_RELOAD = create("$PREFIX_COMMAND.surfchat.reload")
-    val COMMAND_SURFCHAT_DELETE = create("$PREFIX_COMMAND.surfchat.delete")
-    val COMMAND_SURFCHAT_TELEPORT = create("$PREFIX_COMMAND.surfchat.teleport")
-    val COMMAND_SURFCHAT_LOOKUP = create("$PREFIX_COMMAND.surfchat.lookup")
+    val COMMAND_SURFCHAT = create(ChatPermissions.COMMAND_SURFCHAT)
+    val COMMAND_SURFCHAT_RELOAD = create(ChatPermissions.COMMAND_SURFCHAT_RELOAD)
+    val COMMAND_SURFCHAT_DELETE = create(ChatPermissions.COMMAND_SURFCHAT_DELETE)
+    val COMMAND_SURFCHAT_TELEPORT = create(ChatPermissions.COMMAND_SURFCHAT_TELEPORT)
+    val COMMAND_SURFCHAT_LOOKUP = create(ChatPermissions.COMMAND_SURFCHAT_LOOKUP)
 
-    val COMMAND_SURFCHAT_FUNCTIONALITY = create("$PREFIX_COMMAND.surfchat.functionality")
+    val COMMAND_SURFCHAT_FUNCTIONALITY = create(ChatPermissions.COMMAND_SURFCHAT_FUNCTIONALITY)
     val COMMAND_SURFCHAT_FUNCTIONALITY_TOGGLE =
-        create("$PREFIX_COMMAND.surfchat.functionality.toggle")
+        create(ChatPermissions.COMMAND_SURFCHAT_FUNCTIONALITY_TOGGLE)
     val COMMAND_SURFCHAT_FUNCTIONALITY_STATUS =
-        create("$PREFIX_COMMAND.surfchat.functionality.status")
-    val COMMAND_SURFCHAT_FUNCTIONALITY_LIST = create("$PREFIX_COMMAND.surfchat.functionality.list")
+        create(ChatPermissions.COMMAND_SURFCHAT_FUNCTIONALITY_STATUS)
+    val COMMAND_SURFCHAT_FUNCTIONALITY_LIST =
+        create(ChatPermissions.COMMAND_SURFCHAT_FUNCTIONALITY_LIST)
 
-    val COMMAND_SURFCHAT_LOOKUP_HELP = create("$PREFIX_COMMAND.surfchat.lookup.help")
+    val COMMAND_SURFCHAT_LOOKUP_HELP = create(ChatPermissions.COMMAND_SURFCHAT_LOOKUP_HELP)
 
-    val COMMAND_IGNORE = create("$PREFIX_COMMAND.ignore")
-    val COMMAND_IGNORE_LIST = create("$PREFIX_COMMAND.ignore.list")
+    val COMMAND_IGNORE = create(ChatPermissions.COMMAND_IGNORE)
+    val COMMAND_IGNORE_LIST = create(ChatPermissions.COMMAND_IGNORE_LIST)
 
-    val COMMAND_DIRECT_SPY = create("$PREFIX_COMMAND.direct-spy")
-    val COMMAND_DIRECT_SPY_CLEAR = create("$PREFIX_COMMAND.direct-spy.clear")
+    val COMMAND_DIRECT_SPY = create(ChatPermissions.COMMAND_DIRECT_SPY)
+    val COMMAND_DIRECT_SPY_CLEAR = create(ChatPermissions.COMMAND_DIRECT_SPY_CLEAR)
 
-    val COMMAND_TEAMCHAT = create("$PREFIX_COMMAND.teamchat")
+    val COMMAND_TEAMCHAT = create(ChatPermissions.COMMAND_TEAMCHAT)
 
-    val COMMAND_PM = create("$PREFIX_COMMAND.msg")
-    val COMMAND_REPLY = create("$PREFIX_COMMAND.reply")
+    val COMMAND_PM = create(ChatPermissions.COMMAND_PM)
+    val COMMAND_REPLY = create(ChatPermissions.COMMAND_REPLY)
 }

@@ -7,10 +7,10 @@ import dev.slne.surf.api.paper.command.executors.playerExecutorSuspend
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.core.common.service.HistoryService
-import dev.slne.surf.chat.core.paper.redisApi
+import dev.slne.surf.chat.core.client.redisApi
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
-import dev.slne.surf.chat.paper.redis.ModerationRedisService
-import dev.slne.surf.chat.paper.redis.event.TeamchatMessageRedisEvent
+import dev.slne.surf.chat.core.client.redis.ModerationRedisService
+import dev.slne.surf.chat.core.client.redis.event.TeamchatMessageRedisEvent
 import dev.slne.surf.core.api.common.SurfCoreApi
 import net.kyori.adventure.text.Component
 import java.time.OffsetDateTime

@@ -10,17 +10,12 @@ repositories {
 }
 
 dependencies {
-    api(projects.surfChatCore.surfChatCorePaper)
+    api(projects.surfChatCore.surfChatCoreClient)
 
     compileOnly(libs.playerholder.api)
     compileOnly(libs.miniplaceholder.api)
     compileOnly(libs.luckperms.api)
-    
-    implementation("com.openai:openai-java:4.42.0") {
-        exclude(group = "org.apache.httpcomponents.client5")
-        exclude(group = "org.apache.httpcomponents.core5")
-        exclude(group = "org.jetbrains.kotlin")
-    }
+
     compileOnly("dev.slne.surf.settings:surf-settings-api:+")
     compileOnly("dev.slne.surf.punish:surf-punish-api-common:+")
 }

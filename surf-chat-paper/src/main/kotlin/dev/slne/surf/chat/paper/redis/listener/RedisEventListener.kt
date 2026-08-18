@@ -1,12 +1,14 @@
 package dev.slne.surf.chat.paper.redis.listener
 
+import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.api.paper.nms.NmsUseWithCaution
+import dev.slne.surf.chat.core.client.message.format.formatTeamchat
+import dev.slne.surf.chat.core.client.redis.event.DeleteRemoteMessageRedisEvent
+import dev.slne.surf.chat.core.client.redis.event.TeamMessageRedisEvent
+import dev.slne.surf.chat.core.client.redis.event.TeamchatMessageRedisEvent
 import dev.slne.surf.chat.paper.command.direct.DirectMessageAccess
-import dev.slne.surf.chat.paper.message.MessageFormatter
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
-import dev.slne.surf.chat.paper.redis.event.DeleteRemoteMessageRedisEvent
-import dev.slne.surf.chat.paper.redis.event.TeamMessageRedisEvent
-import dev.slne.surf.chat.paper.redis.event.TeamchatMessageRedisEvent
+import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.chat.paper.redis.rpc.SendDirectMessageHandledRedisResponse
 import dev.slne.surf.chat.paper.redis.rpc.SendDirectMessageRedisRequest
 import dev.slne.surf.chat.paper.redis.rpc.SendSignedMessageHandledRedisResponse
@@ -22,8 +24,10 @@ import org.bukkit.Bukkit
 object RedisEventListener {
     @OnRedisEvent
     fun onTeamchatMessage(event: TeamchatMessageRedisEvent) {
-        val message = MessageFormatter.formatTeamchat(event.messageData)
-        Bukkit.broadcast(message, PermissionRegistry.COMMAND_TEAMCHAT)
+        plugin.launch {
+            val message = formatTeamchat(event.messageData)
+            Bukkit.broadcast(message, PermissionRegistry.COMMAND_TEAMCHAT)
+        }
     }
 
     @OnRedisEvent

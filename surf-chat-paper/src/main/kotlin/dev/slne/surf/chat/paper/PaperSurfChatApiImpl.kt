@@ -11,10 +11,10 @@ import dev.slne.surf.chat.api.processor.PreChatProcessor
 import dev.slne.surf.chat.api.processor.chatProcessorRegistry
 import dev.slne.surf.chat.core.common.service.HistoryService
 import dev.slne.surf.chat.core.common.service.IgnoreService
-import dev.slne.surf.chat.core.paper.redisApi
-import dev.slne.surf.chat.paper.processor.post.AiModerationPostChatProcessor
-import dev.slne.surf.chat.paper.redis.ModerationRedisService
-import dev.slne.surf.chat.paper.redis.event.DeleteRemoteMessageRedisEvent
+import dev.slne.surf.chat.core.client.redisApi
+import dev.slne.surf.chat.core.client.processor.post.AiModerationPostChatProcessor
+import dev.slne.surf.chat.core.client.redis.ModerationRedisService
+import dev.slne.surf.chat.core.client.redis.event.DeleteRemoteMessageRedisEvent
 import dev.slne.surf.chat.paper.service.SignedMessageSender
 import it.unimi.dsi.fastutil.objects.ObjectList
 import net.kyori.adventure.chat.SignedMessage

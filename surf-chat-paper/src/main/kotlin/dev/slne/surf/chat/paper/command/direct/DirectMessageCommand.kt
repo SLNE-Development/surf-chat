@@ -21,10 +21,13 @@ import dev.slne.surf.api.paper.nms.bridges.packets.player.SurfPaperNmsPlayerPack
 import dev.slne.surf.chat.api.message.MessageContext
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.api.message.MessageType
-import dev.slne.surf.chat.api.processor.chatProcessorRegistry
-import dev.slne.surf.chat.core.paper.redisApi
-import dev.slne.surf.chat.paper.hook.SettingsHook
-import dev.slne.surf.chat.paper.message.MessageFormatter
+import dev.slne.surf.chat.core.client.message.format.formatIncomingPm
+import dev.slne.surf.chat.core.client.message.format.formatOutgoingPm
+import dev.slne.surf.chat.core.client.processor.runPostProcessors
+import dev.slne.surf.chat.core.client.processor.runPreProcessors
+import dev.slne.surf.chat.core.client.redisApi
+import dev.slne.surf.chat.core.client.service.ReplyCache
+import dev.slne.surf.chat.core.client.hook.SettingsHook
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.chat.paper.redis.rpc.SendDirectMessageHandledRedisResponse
@@ -87,7 +90,7 @@ object DirectMessageAccess {
                 sender,
                 message,
                 SurfPaperNmsPlayerBridge.getPaperRawChatType().bind(sender.name()),
-                MessageFormatter.formatOutgoingPm(messageData)
+                formatOutgoingPm(messageData)
             )
 
             val target = Bukkit.getPlayer(targetUuid)
@@ -133,7 +136,7 @@ object DirectMessageAccess {
             target,
             signedMessage,
             SurfPaperNmsPlayerBridge.getPaperRawChatType().bind(sender.displayName()),
-            MessageFormatter.formatIncomingPm(messageData)
+            formatIncomingPm(messageData)
         )
     }
 
@@ -161,7 +164,7 @@ object DirectMessageAccess {
     ) {
         val messageMirror = SurfPaperNmsPlayerBridge.createPlayerChatMessageMirrorFromAdventure(
             signedMessage,
-            MessageFormatter.formatIncomingPm(messageData)
+            formatIncomingPm(messageData)
         )
 
         requireNotNull(messageMirror) { "Failed to create message mirror." }
@@ -211,24 +214,3 @@ object DirectMessageAccess {
         return true
     }
 }
-
-private suspend fun runPreProcessors(
-    original: MessageContext
-): MessageContext {
-    var context = original
-
-    chatProcessorRegistry.preChatProcessors.sortedBy { it.order }.forEach { processor ->
-        context = processor.processAsync(context)
-
-        if (context.isCancelled) {
-            return context
-        }
-    }
-
-    return context
-}
-
-private suspend fun runPostProcessors(context: MessageContext) =
-    chatProcessorRegistry.postChatProcessors.forEach { processor ->
-        processor.process(context)
-    }

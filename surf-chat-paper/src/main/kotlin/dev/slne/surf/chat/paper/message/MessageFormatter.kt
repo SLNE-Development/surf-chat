@@ -6,10 +6,16 @@ import dev.slne.surf.api.core.messages.Colors
 import dev.slne.surf.api.core.messages.adventure.*
 import dev.slne.surf.api.paper.extensions.server
 import dev.slne.surf.chat.api.message.MessageData
-import dev.slne.surf.chat.paper.hook.SettingsHook
+import dev.slne.surf.chat.core.client.config.chatConfig
+import dev.slne.surf.chat.core.client.message.format.appendDelete
+import dev.slne.surf.chat.core.client.message.format.appendMessageData
+import dev.slne.surf.chat.core.client.message.format.appendTeleport
+import dev.slne.surf.chat.core.client.util.hasPermission
+import dev.slne.surf.chat.core.client.util.updateLinks
+import dev.slne.surf.chat.core.client.hook.SettingsHook
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.chat.paper.plugin
-import dev.slne.surf.chat.paper.util.*
+import dev.slne.surf.chat.paper.util.appendName
 import dev.slne.surf.core.api.paper.CorePlayerStatusAccess
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextReplacementConfig
@@ -18,18 +24,12 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
-import java.net.URI
 import java.util.*
 
 /**
- * Interface for formatting messages in various contexts within the chat system.
- *
- * This interface defines methods for formatting global, private, team, and spy messages.
- * Each method accepts message data and returns a formatted `Component` object suitable for the
- * specific context in which the message will be displayed or processed.
+ * Formats messages that require access to Paper specific player state.
  */
 object MessageFormatter {
-    private val linkRegex = Regex("(?i)\\b((https?://)?[\\w-]+(\\.[\\w-]+)+(/\\S*)?)\\b")
     private val itemRegex = Regex("\\[(?i)item]")
 
     @Volatile
@@ -66,83 +66,8 @@ object MessageFormatter {
         clickSuggestsCommand("/msg ${senderPlayer.name} ")
     }
 
-    suspend fun formatIncomingPm(messageData: MessageData) = buildText {
-        val senderUser = messageData.senderUser()
-
-        darkSpacer(">> ")
-        text("PM", Colors.RED)
-        darkSpacer(" | ")
-        variableValue(senderUser.lastKnownName ?: senderUser.uuid.toString())
-        darkSpacer(" -> ")
-        variableValue("Dir")
-        darkSpacer(" >> ")
-        append(updateLinks(messageData.message))
-        hoverEvent(buildText {
-            appendMessageData(
-                senderUser.lastKnownName ?: senderUser.uuid.toString(), messageData
-            )
-        })
-        clickSuggestsCommand("/msg ${senderUser.lastKnownName} ")
-    }
-
-    suspend fun formatOutgoingPm(messageData: MessageData) = buildText {
-        val receiverName = messageData.receiverUser()?.lastKnownName ?: "Error"
-
-        darkSpacer(">> ")
-        text("PM", Colors.RED)
-        darkSpacer(" | ")
-        variableValue("Du")
-        darkSpacer(" -> ")
-        variableValue(receiverName)
-        darkSpacer(" >> ")
-        append(updateLinks(messageData.message))
-
-        hoverEvent(buildText { appendMessageData(receiverName, messageData) })
-        clickSuggestsCommand("/msg $receiverName ")
-    }
-
-    fun formatTeamchat(messageData: MessageData) = buildText {
-        val player = Bukkit.getPlayer(messageData.sender) ?: return Component.empty()
-
-        darkSpacer(">> ")
-        text("TEAM", Colors.RED, TextDecoration.BOLD)
-        darkSpacer(" | ")
-        appendName(player)
-        darkSpacer(" >> ")
-        append(updateLinks(formatItemTag(messageData.message, player, messageData.receiver)))
-
-        hoverEvent(buildText { appendMessageData(player.name, messageData) })
-        clickSuggestsCommand("/teamchat ")
-    }
-
-    suspend fun formatPmSpy(messageData: MessageData) = buildText {
-        val receiver = messageData.receiver ?: return Component.empty()
-        val receiverUser = messageData.receiverUser()
-        val receiverName = receiverUser?.lastKnownName ?: return Component.empty()
-        val senderName = messageData.senderUser().lastKnownName ?: return Component.empty()
-
-        appendSpyIcon()
-        appendSpace()
-
-        if (receiver.hasPermission(PermissionRegistry.COMMAND_SURFCHAT_TELEPORT)) {
-            appendTeleport(receiverName, receiver)
-        }
-
-        variableValue(senderName)
-        appendSpace()
-        darkSpacer("-->")
-        appendSpace()
-        variableValue(receiverName)
-        spacer(":")
-        appendSpace()
-        append(updateLinks(messageData.message))
-        hoverEvent(buildText { appendMessageData(senderName, messageData) })
-        clickSuggestsCommand("/msg $senderName ")
-    }
-
-
     private fun formatItemTag(rawMessage: Component, player: Player, viewer: UUID?): Component {
-        if (!plugin.surfChatConfig.config.itemPlaceholder) {
+        if (!chatConfig.itemPlaceholder) {
             return rawMessage
         }
 
@@ -161,7 +86,7 @@ object MessageFormatter {
                     error("Du hast kein Item in der Hand!")
                 }
             }
-                
+
             return message
         }
 
@@ -249,42 +174,6 @@ object MessageFormatter {
                 viewer.playSound(true) {
                     type(Sound.ENTITY_CHICKEN_EGG)
                 }
-            }
-        }
-
-        return message
-    }
-
-
-    private fun updateLinks(rawMessage: Component): Component {
-        var message = rawMessage
-        val text = rawMessage.plain()
-
-        linkRegex.findAll(text).forEach { match ->
-            runCatching {
-                val url = if (match.value.startsWith("http://") || match.value.startsWith("https://")) {
-                    match.value
-                } else {
-                    "https://${match.value}"
-                }
-
-                val uri = URI(url)
-                uri.toURL()
-
-                message = message.replaceText(
-                    TextReplacementConfig.builder()
-                        .match(Regex.escape(match.value))
-                        .replacement(
-                            buildText {
-                                text(match.value)
-                                hoverEvent(buildText {
-                                    info("Klicke hier, um den Link zu öffnen.")
-                                })
-                                clickOpensUrl(url)
-                            }
-                        )
-                        .build()
-                )
             }
         }
 

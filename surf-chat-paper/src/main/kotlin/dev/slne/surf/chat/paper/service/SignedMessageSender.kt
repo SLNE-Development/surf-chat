@@ -8,7 +8,7 @@ import dev.slne.surf.api.paper.nms.bridges.SurfPaperNmsPlayerBridge
 import dev.slne.surf.api.paper.nms.bridges.data.chat.PlayerChatMessageMirror
 import dev.slne.surf.api.paper.nms.bridges.data.chat.RemoteChatSessionData
 import dev.slne.surf.api.paper.nms.bridges.packets.player.SurfPaperNmsPlayerPackets
-import dev.slne.surf.chat.core.paper.redisApi
+import dev.slne.surf.chat.core.client.redisApi
 import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.chat.paper.redis.rpc.SendSignedMessageHandledRedisResponse
 import dev.slne.surf.chat.paper.redis.rpc.SendSignedMessageRedisRequest

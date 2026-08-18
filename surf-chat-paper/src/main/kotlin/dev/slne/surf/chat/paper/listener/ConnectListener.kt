@@ -1,21 +1,21 @@
 package dev.slne.surf.chat.paper.listener
 
-import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.api.core.minimessage.miniMessage
 import dev.slne.surf.api.paper.event.common.connection.PlayerJoinMessageEvent
 import dev.slne.surf.api.paper.extensions.server
 import dev.slne.surf.api.paper.util.forEachPlayer
+import dev.slne.surf.chat.core.client.config.chatConfig
+import dev.slne.surf.chat.core.client.hook.LuckPermsHook
+import dev.slne.surf.chat.core.client.message.format.buildConnectionMessage
 import dev.slne.surf.chat.core.common.service.IgnoreService
-import dev.slne.surf.chat.paper.hook.LuckPermsHook
 import dev.slne.surf.chat.paper.hook.MiniPlaceholdersHook
-import dev.slne.surf.chat.paper.hook.SettingsHook
+import dev.slne.surf.chat.core.client.hook.SettingsHook
 import dev.slne.surf.chat.paper.message.MessageFormatter
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.chat.paper.plugin
 import io.papermc.paper.event.connection.configuration.AsyncPlayerConnectionConfigureEvent
 import kotlinx.coroutines.runBlocking
-import net.kyori.adventure.text.Component
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -40,13 +40,17 @@ object ConnectListener : Listener {
 
         event.joinMessage(null)
 
-        if (!plugin.connectionMessageConfig.enabled) {
+        if (!chatConfig.connectionMessageConfig.enabled) {
             return
         }
 
         val player = event.player
         val alwaysShow = player.hasPermission(PermissionRegistry.CONNECTION_MESSAGE_ALWAYS_SHOW)
-        var message = buildJoinMessage(event)
+        var message = buildConnectionMessage(
+            player.name,
+            LuckPermsHook.getPrefix(player.uniqueId),
+            joined = true
+        )
 
         val messageEvent = PlayerJoinMessageEvent(player, message)
 
@@ -70,26 +74,19 @@ object ConnectListener : Listener {
             }
         }
 
-        if (plugin.chatMotdConfig.enabled) {
+        if (chatConfig.chatMotdConfig.enabled) {
             player.sendText {
                 append(
                     if (plugin.checkMiniPlaceholdersHook()) {
                         MiniPlaceholdersHook.parse(
                             player,
-                            plugin.chatMotdConfig.message
+                            chatConfig.chatMotdConfig.message
                         )
                     } else {
-                        miniMessage.deserialize(plugin.chatMotdConfig.message)
+                        miniMessage.deserialize(chatConfig.chatMotdConfig.message)
                     }
                 )
             }
         }
-    }
-
-    private fun buildJoinMessage(event: PlayerJoinEvent): Component = buildText {
-        darkSpacer("[")
-        success("+")
-        darkSpacer("] ")
-        append(miniMessage.deserialize(LuckPermsHook.getPrefix(event.player) + event.player.name))
     }
 }

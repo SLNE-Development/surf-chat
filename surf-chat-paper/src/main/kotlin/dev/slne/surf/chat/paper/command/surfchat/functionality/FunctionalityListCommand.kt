@@ -10,7 +10,7 @@ import dev.slne.surf.api.core.messages.pagination.Pagination
 import dev.slne.surf.api.paper.command.executors.anyExecutorSuspend
 import dev.slne.surf.chat.core.common.service.FunctionalityService
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
-import dev.slne.surf.chat.paper.util.appendStatusIcon
+import dev.slne.surf.chat.core.client.message.format.appendStatusIcon
 import net.kyori.adventure.text.format.TextDecoration
 
 fun CommandAPICommand.functionalityListCommand() = subcommand("list") {

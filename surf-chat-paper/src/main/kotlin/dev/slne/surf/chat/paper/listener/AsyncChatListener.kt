@@ -1,14 +1,15 @@
 package dev.slne.surf.chat.paper.listener
 
 import com.github.shynixn.mccoroutine.folia.launch
+import dev.slne.surf.api.core.messages.adventure.uuidOrNull
 import dev.slne.surf.chat.api.message.MessageContext
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.api.message.redirector.MessageRedirectorRegistry
-import dev.slne.surf.chat.api.processor.chatProcessorRegistry
+import dev.slne.surf.chat.core.client.processor.runPostProcessors
+import dev.slne.surf.chat.core.client.processor.runPreProcessors
 import dev.slne.surf.chat.paper.plugin
 import dev.slne.surf.chat.paper.util.cancel
-import dev.slne.surf.chat.paper.util.uuidOrNull
 import dev.slne.surf.core.api.common.SurfCoreApi
 import io.papermc.paper.event.player.AsyncChatEvent
 import kotlinx.coroutines.runBlocking
@@ -58,25 +59,4 @@ object AsyncChatListener : Listener {
             }
         }
     }
-
-    private suspend fun runPreProcessors(
-        original: MessageContext
-    ): MessageContext {
-        var context = original
-
-        chatProcessorRegistry.preChatProcessors.sortedBy { it.order }.forEach { processor ->
-            context = processor.processAsync(context)
-
-            if (context.isCancelled) {
-                return context
-            }
-        }
-
-        return context
-    }
-
-    private suspend fun runPostProcessors(context: MessageContext) =
-        chatProcessorRegistry.postChatProcessors.forEach { processor ->
-            processor.process(context)
-        }
 }

@@ -1,13 +1,13 @@
 package dev.slne.surf.chat.paper.service
 
 import com.google.auto.service.AutoService
+import dev.slne.surf.api.core.messages.adventure.uuidOrNull
 import dev.slne.surf.api.paper.extensions.server
 import dev.slne.surf.chat.api.message.MessageData
+import dev.slne.surf.chat.core.client.message.format.Components
 import dev.slne.surf.chat.core.common.service.DeletionService
 import dev.slne.surf.chat.core.common.service.HistoryService
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
-import dev.slne.surf.chat.paper.util.Components
-import dev.slne.surf.chat.paper.util.uuidOrNull
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import net.kyori.adventure.audience.Audience

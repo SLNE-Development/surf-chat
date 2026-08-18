@@ -11,8 +11,8 @@ import dev.slne.surf.api.core.messages.pagination.Pagination
 import dev.slne.surf.api.core.util.mapAsync
 import dev.slne.surf.api.paper.command.executors.playerExecutorSuspend
 import dev.slne.surf.chat.core.common.service.IgnoreService
+import dev.slne.surf.chat.core.client.util.unixTime
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
-import dev.slne.surf.chat.paper.util.unixTime
 import dev.slne.surf.core.api.common.SurfCoreApi
 import net.kyori.adventure.text.format.TextDecoration
 import java.time.OffsetDateTime

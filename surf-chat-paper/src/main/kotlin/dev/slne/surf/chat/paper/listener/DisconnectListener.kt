@@ -2,19 +2,18 @@ package dev.slne.surf.chat.paper.listener
 
 import com.destroystokyo.paper.event.player.PlayerConnectionCloseEvent
 import com.github.shynixn.mccoroutine.folia.launch
-import dev.slne.surf.api.core.messages.adventure.buildText
-import dev.slne.surf.api.core.minimessage.miniMessage
 import dev.slne.surf.api.paper.event.common.connection.PlayerQuitMessageEvent
 import dev.slne.surf.api.paper.extensions.server
 import dev.slne.surf.api.paper.util.forEachPlayer
+import dev.slne.surf.chat.core.client.config.chatConfig
+import dev.slne.surf.chat.core.client.hook.LuckPermsHook
+import dev.slne.surf.chat.core.client.message.format.buildConnectionMessage
 import dev.slne.surf.chat.core.common.service.IgnoreService
 import dev.slne.surf.chat.core.common.service.SpyService
-import dev.slne.surf.chat.paper.hook.LuckPermsHook
-import dev.slne.surf.chat.paper.hook.SettingsHook
+import dev.slne.surf.chat.core.client.hook.SettingsHook
 import dev.slne.surf.chat.paper.message.MessageFormatter
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.chat.paper.plugin
-import net.kyori.adventure.text.Component
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -31,13 +30,17 @@ object DisconnectListener : Listener {
 
         event.quitMessage(null)
 
-        if (!plugin.connectionMessageConfig.enabled) {
+        if (!chatConfig.connectionMessageConfig.enabled) {
             return
         }
 
         val player = event.player
         val alwaysShow = player.hasPermission(PermissionRegistry.CONNECTION_MESSAGE_ALWAYS_SHOW)
-        var message = buildQuitMessage(event)
+        var message = buildConnectionMessage(
+            player.name,
+            LuckPermsHook.getPrefix(player.uniqueId),
+            joined = false
+        )
 
         val messageEvent = PlayerQuitMessageEvent(player, message)
 
@@ -69,12 +72,5 @@ object DisconnectListener : Listener {
             IgnoreService.cleanup(uuid)
             SpyService.cleanup(uuid)
         }
-    }
-
-    private fun buildQuitMessage(event: PlayerQuitEvent): Component = buildText {
-        darkSpacer("[")
-        error("-")
-        darkSpacer("] ")
-        append(miniMessage.deserialize(LuckPermsHook.getPrefix(event.player) + event.player.name))
     }
 }

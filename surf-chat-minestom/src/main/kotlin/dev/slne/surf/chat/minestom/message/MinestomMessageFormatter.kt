@@ -17,85 +17,136 @@ import dev.slne.surf.chat.core.client.message.format.appendName
 import dev.slne.surf.chat.core.client.message.format.appendTeleport
 import dev.slne.surf.chat.core.client.permission.ChatPermissions
 import dev.slne.surf.chat.core.client.platform.ChatPlatform
-import dev.slne.surf.chat.core.client.util.hasPermission
 import dev.slne.surf.chat.core.client.util.updateLinks
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.TextReplacementConfig
 import net.kyori.adventure.text.format.TextDecoration
 import java.util.*
+import java.util.concurrent.atomic.AtomicLong
+import java.util.regex.Pattern
 
 /**
  * Formats messages that require access to Minestom specific player state.
  */
 object MinestomMessageFormatter {
 
-    @Volatile
-    var cachedRegex: Regex? = null
+    private class MentionCache(
+        val generation: Long,
+        val pattern: Pattern?,
+        val playersByName: Map<String, LobbyPlayer>
+    )
+
+    private val mentionCacheLock = Any()
+    private val mentionGeneration = AtomicLong()
 
     @Volatile
-    var cachedPlayerMap: Map<String, LobbyPlayer> = emptyMap()
+    private var mentionCache: MentionCache? = null
 
-    @Volatile
-    var dirty = true
+    /**
+     * Marks the mention cache stale; the next render rebuilds it.
+     */
+    fun invalidateMentionCache() {
+        mentionGeneration.incrementAndGet()
+    }
 
-    fun formatGlobal(messageData: MessageData) = buildText {
+    /**
+     * Whether [plainMessage] mentions any online player.
+     */
+    fun hasMention(plainMessage: String): Boolean {
+        val pattern = mentionCache().pattern ?: return false
+        return pattern.matcher(plainMessage).find()
+    }
+
+    fun formatGlobal(messageData: MessageData): TextComponent {
         val viewer = messageData.receiver ?: return Component.empty()
+        return formatGlobal(messageData, viewer, hasMention(messageData.plainMessage))
+    }
+
+    fun formatGlobal(messageData: MessageData, viewer: UUID, highlightMentions: Boolean) = buildText {
         val senderPlayer = ConnectionManager.getOnlineLobbyPlayerByUuid(messageData.sender)
             ?: return Component.empty()
 
-        if (viewer.hasPermission(ChatPermissions.COMMAND_SURFCHAT_DELETE)) {
+        val viewerPlayer = ConnectionManager.getOnlineLobbyPlayerByUuid(viewer)
+
+        if (viewerPlayer != null && viewerPlayer.hasPermission(ChatPermissions.COMMAND_SURFCHAT_DELETE)) {
             appendDelete(messageData)
         }
 
-        if (viewer.hasPermission(ChatPermissions.COMMAND_SURFCHAT_TELEPORT)) {
+        if (viewerPlayer != null && viewerPlayer.hasPermission(ChatPermissions.COMMAND_SURFCHAT_TELEPORT)) {
             appendTeleport(senderPlayer.username, senderPlayer.uuid)
         }
 
         appendName(senderPlayer.username, LuckPermsHook.getPrefix(senderPlayer.uuid))
         darkSpacer(" >> ")
-        append(updateLinks(highlightPlayers(messageData.message, viewer)))
+
+        var content = messageData.message
+        if (highlightMentions && viewerPlayer != null) {
+            content = highlightPlayers(content, viewer)
+        }
+
+        append(updateLinks(content))
         hoverEvent(buildText { appendMessageData(senderPlayer.username, messageData) })
         clickSuggestsCommand("/msg ${senderPlayer.username} ")
     }
 
-    private fun ensureMentionCache() {
-        if (!dirty) return
+    private fun mentionCache(): MentionCache {
+        val generation = mentionGeneration.get()
+        val cached = mentionCache
+
+        if (cached != null && cached.generation == generation) {
+            return cached
+        }
+
+        return rebuildMentionCache()
+    }
+
+    private fun rebuildMentionCache(): MentionCache = synchronized(mentionCacheLock) {
+        val generation = mentionGeneration.get()
+        val cached = mentionCache
+
+        if (cached != null && cached.generation == generation) {
+            return cached
+        }
 
         val players = ConnectionManager.onlineLobbyPlayers
-        dirty = false
+        val playersByName = Object2ObjectOpenHashMap<String, LobbyPlayer>(players.size * 2)
+        val patternBuilder = StringBuilder(players.size * 24)
 
-        if (players.isEmpty()) {
-            cachedRegex = null
-            cachedPlayerMap = emptyMap()
-            return
+        for (player in players) {
+            val name = player.username
+            playersByName[name.lowercase()] = player
+
+            if (patternBuilder.isNotEmpty()) {
+                patternBuilder.append('|')
+            }
+            patternBuilder.append(Pattern.quote(name))
         }
 
-        cachedPlayerMap = players.associateBy { it.username.lowercase() }
+        val rebuilt = MentionCache(
+            generation,
+            if (players.isEmpty()) null else Pattern.compile(
+                "@?($patternBuilder)\\b",
+                Pattern.CASE_INSENSITIVE
+            ),
+            playersByName
+        )
 
-        val pattern = players.joinToString("|") {
-            Regex.escape(it.username)
-        }
-
-        cachedRegex = Regex("@?($pattern)\\b", RegexOption.IGNORE_CASE)
+        mentionCache = rebuilt
+        rebuilt
     }
 
     private fun highlightPlayers(rawMessage: Component, viewerUuid: UUID): Component {
-        ensureMentionCache()
-        ConnectionManager.getOnlineLobbyPlayerByUuid(viewerUuid) ?: return rawMessage
-
-        val regex = cachedRegex ?: return rawMessage
-        val players = cachedPlayerMap
-
-        if (players.isEmpty()) return rawMessage
-
-        val plain = rawMessage.plain()
-        if (!regex.containsMatchIn(plain)) return rawMessage
+        val cache = mentionCache()
+        val pattern = cache.pattern ?: return rawMessage
+        val players = cache.playersByName
 
         var viewerMentioned = false
 
         val message = rawMessage.replaceText(
             TextReplacementConfig.builder()
-                .match(regex.toPattern())
+                .match(pattern)
                 .replacement { match ->
                     val fullMatch = match.build().plain()
                     val name = fullMatch.removePrefix("@").lowercase()

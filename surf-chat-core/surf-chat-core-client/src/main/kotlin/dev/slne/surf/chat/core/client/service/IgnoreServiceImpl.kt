@@ -13,7 +13,7 @@ import java.util.*
 @AutoService(IgnoreService::class)
 class IgnoreServiceImpl : IgnoreService {
     private val cache = Caffeine.newBuilder()
-        .maximumSize(1000)
+        .maximumSize(10_000)
         .build<UUID, List<IgnoreListEntry>>()
 
     override suspend fun ignore(uuid: UUID, ignoredUUID: UUID): Boolean {
@@ -51,7 +51,15 @@ class IgnoreServiceImpl : IgnoreService {
     }
 
     override fun isIgnored(uuid: UUID, ignoredUUID: UUID): Boolean {
-        return cache.getIfPresent(uuid)?.any { it.target == ignoredUUID } ?: false
+        val entries = cache.getIfPresent(uuid) ?: return false
+
+        for (index in entries.indices) {
+            if (entries[index].target == ignoredUUID) {
+                return true
+            }
+        }
+
+        return false
     }
 
     override fun getCachedIgnoreList(uuid: UUID): List<IgnoreListEntry> {

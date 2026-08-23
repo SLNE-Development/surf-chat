@@ -22,7 +22,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 object DisconnectListener : Listener {
     @EventHandler(priority = EventPriority.HIGH)
     fun onDisconnect(event: PlayerQuitEvent) {
-        MessageFormatter.dirty = true
+        MessageFormatter.invalidateMentionCache()
 
         if (event.quitMessage() == null) {
             return
@@ -53,12 +53,10 @@ object DisconnectListener : Listener {
         if (alwaysShow) {
             server.broadcast(message)
         } else {
+            val settingsHook = plugin.checkSettingsHook()
+
             forEachPlayer { player ->
-                if (plugin.checkSettingsHook()) {
-                    if (SettingsHook.hasConnectionMessagesEnabled(player.uniqueId)) {
-                        player.sendMessage(message)
-                    }
-                } else {
+                if (!settingsHook || SettingsHook.hasConnectionMessagesEnabled(player.uniqueId)) {
                     player.sendMessage(message)
                 }
             }

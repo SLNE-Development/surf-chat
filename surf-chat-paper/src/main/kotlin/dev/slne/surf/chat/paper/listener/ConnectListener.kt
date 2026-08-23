@@ -24,8 +24,6 @@ import org.bukkit.event.player.PlayerJoinEvent
 object ConnectListener : Listener {
     @EventHandler
     fun onAsyncPlayerConnectionConfigure(event: AsyncPlayerConnectionConfigureEvent) {
-        MessageFormatter.dirty = true
-
         runBlocking {
             val uuid = event.connection.profile.id ?: error("Player has no UUID")
             IgnoreService.loadIgnoreList(uuid)
@@ -34,6 +32,8 @@ object ConnectListener : Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     fun onPlayerJoin(event: PlayerJoinEvent) {
+        MessageFormatter.invalidateMentionCache()
+
         if (event.joinMessage() == null) {
             return
         }
@@ -63,12 +63,10 @@ object ConnectListener : Listener {
         if (alwaysShow) {
             server.broadcast(message)
         } else {
+            val settingsHook = plugin.checkSettingsHook()
+
             forEachPlayer { player ->
-                if (plugin.checkSettingsHook()) {
-                    if (SettingsHook.hasConnectionMessagesEnabled(player.uniqueId)) {
-                        player.sendMessage(message)
-                    }
-                } else {
+                if (!settingsHook || SettingsHook.hasConnectionMessagesEnabled(player.uniqueId)) {
                     player.sendMessage(message)
                 }
             }

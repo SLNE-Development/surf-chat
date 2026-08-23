@@ -24,6 +24,7 @@ object OpenAiService {
 
     private val scoreCache = Caffeine
         .newBuilder()
+        .maximumSize(10_000)
         .expireAfterWrite(3.hours.toJavaDuration())
         .asLoadingCache<ModerationInput, Object2DoubleMap<ModerationCategory>> {
             fetchCategoryScores(it)

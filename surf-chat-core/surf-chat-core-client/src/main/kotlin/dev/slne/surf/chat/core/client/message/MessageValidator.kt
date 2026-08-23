@@ -60,8 +60,11 @@ object MessageValidator {
         return MessageValidationResult.Success()
     }
 
-    fun checkAutoDisabling(player: UUID): Boolean =
-        !player.hasPermission(ChatPermissions.BYPASS_DISABLING)
-                && ChatPlatform.onlinePlayerCount() > chatConfig.autoDisablingConfig.maximumPlayersBeforeDisable
-                && chatConfig.autoDisablingConfig.enabled
+    fun checkAutoDisabling(player: UUID): Boolean {
+        val config = chatConfig.autoDisablingConfig
+
+        return config.enabled
+                && ChatPlatform.onlinePlayerCount() > config.maximumPlayersBeforeDisable
+                && !player.hasPermission(ChatPermissions.BYPASS_DISABLING)
+    }
 }

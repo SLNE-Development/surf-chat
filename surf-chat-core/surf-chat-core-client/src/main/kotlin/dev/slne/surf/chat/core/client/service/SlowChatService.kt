@@ -1,17 +1,29 @@
 package dev.slne.surf.chat.core.client.service
 
+import com.github.benmanes.caffeine.cache.Caffeine
+import com.sksamuel.aedile.core.expireAfterWrite
 import dev.slne.surf.api.core.font.toSmallCaps
 import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.chat.core.client.permission.ChatPermissions
 import dev.slne.surf.chat.core.client.platform.ChatPlatform
+import dev.slne.surf.chat.core.client.service.SlowChatService.slowChatInterval
 import net.kyori.adventure.text.format.TextDecoration
-import java.util.UUID
-import java.util.concurrent.ConcurrentHashMap
+import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.time.Duration.Companion.seconds
 
 object SlowChatService {
+    private val slowChatInterval = 30.seconds
+
     private val slowChat: AtomicBoolean = AtomicBoolean(false)
-    private val lastChecked = ConcurrentHashMap<UUID, Long>()
+
+    /**
+     * Players that already sent a message within [slowChatInterval].
+     */
+    private val cooldowns = Caffeine.newBuilder()
+        .expireAfterWrite(slowChatInterval)
+        .build<UUID, Boolean>()
+        .asMap()
 
     fun isSlowChat(): Boolean {
         return slowChat.get()
@@ -31,15 +43,7 @@ object SlowChatService {
             return true
         }
 
-        val now = System.currentTimeMillis()
-        val lastTime = lastChecked[uuid] ?: 0L
-
-        if (now - lastTime < 30_000) {
-            return false
-        }
-
-        lastChecked[uuid] = now
-        return true
+        return cooldowns.putIfAbsent(uuid, true) == null
     }
 
     private fun handleSlowChatModeChange(enabled: Boolean) {

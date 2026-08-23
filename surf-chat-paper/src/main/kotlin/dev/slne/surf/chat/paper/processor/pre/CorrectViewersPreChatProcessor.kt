@@ -12,8 +12,8 @@ object CorrectViewersPreChatProcessor : PreChatProcessor {
     override val order = ProcessorOrder.CORRECT_VIEWERS
 
     override fun process(context: MessageContext): MessageContext {
-        context.viewers.removeIf { it.isConsole() }
-        context.viewers.removeIf { isIgnored(it.uuidOrNull(), context.messageData.sender) }
+        val sender = context.messageData.sender
+        context.viewers.removeIf { it.isConsole() || isIgnored(it.uuidOrNull(), sender) }
 
         return context
     }

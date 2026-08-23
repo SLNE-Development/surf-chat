@@ -9,14 +9,22 @@ import dev.slne.surf.chat.core.common.service.SpyService
 
 object PrivateMessageSpyPostChatProcessor : PostChatProcessor {
     override suspend fun process(messageContext: MessageContext) {
-        if (messageContext.messageData.type != MessageType.DIRECT) {
+        val messageData = messageContext.messageData
+
+        if (messageData.type != MessageType.DIRECT) {
             return
         }
 
-        SpyService.getObservingPlayers(messageContext.messageData.sender).forEach {
-            it.sendText {
-                append(formatPmSpy(messageContext.messageData))
-            }
+        val spies = SpyService.getObservingPlayers(messageData.sender)
+
+        if (spies.isEmpty()) {
+            return
+        }
+
+        val message = formatPmSpy(messageData)
+
+        for (spy in spies) {
+            spy.sendText { append(message) }
         }
     }
 }

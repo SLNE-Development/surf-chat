@@ -8,17 +8,33 @@ class ChatProcessorRegistry {
     val preChatProcessors = CopyOnWriteArrayList<PreChatProcessor>()
     val postChatProcessors = CopyOnWriteArrayList<PostChatProcessor>()
 
+    private val registrationLock = Any()
+
     fun clearProcessors() {
-        preChatProcessors.clear()
-        postChatProcessors.clear()
+        synchronized(registrationLock) {
+            preChatProcessors.clear()
+            postChatProcessors.clear()
+        }
     }
 
     fun register(preChatProcessor: PreChatProcessor) {
-        preChatProcessors.add(preChatProcessor)
-        preChatProcessors.sortBy { it.order }
+        synchronized(registrationLock) {
+            var index = preChatProcessors.size
+
+            for (existing in preChatProcessors.indices) {
+                if (preChatProcessors[existing].order > preChatProcessor.order) {
+                    index = existing
+                    break
+                }
+            }
+
+            preChatProcessors.add(index, preChatProcessor)
+        }
     }
 
     fun register(postChatProcessor: PostChatProcessor) {
-        postChatProcessors.add(postChatProcessor)
+        synchronized(registrationLock) {
+            postChatProcessors.add(postChatProcessor)
+        }
     }
 }

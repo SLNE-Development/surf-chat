@@ -6,7 +6,7 @@ import dev.slne.surf.chat.api.processor.chatProcessorRegistry
 suspend fun runPreProcessors(context: MessageContext): MessageContext {
     var current = context
 
-    chatProcessorRegistry.preChatProcessors.sortedBy { it.order }.forEach { processor ->
+    for (processor in chatProcessorRegistry.preChatProcessors) {
         current = processor.processAsync(current)
 
         if (current.isCancelled) {
@@ -17,7 +17,8 @@ suspend fun runPreProcessors(context: MessageContext): MessageContext {
     return current
 }
 
-suspend fun runPostProcessors(context: MessageContext) =
-    chatProcessorRegistry.postChatProcessors.forEach { processor ->
+suspend fun runPostProcessors(context: MessageContext) {
+    for (processor in chatProcessorRegistry.postChatProcessors) {
         processor.process(context)
     }
+}

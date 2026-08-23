@@ -27,6 +27,8 @@ object AsyncChatListener : Listener {
         val message = event.message()
         val messageId = UUID.randomUUID()
 
+        val signedMessage = event.signedMessage()
+
         var data = MessageData(
             message,
             messageId,
@@ -34,13 +36,16 @@ object AsyncChatListener : Listener {
             null,
             sentAt,
             SurfCoreApi.getCurrentServerName(),
-            event.signedMessage().signature(),
+            signedMessage.signature(),
             MessageType.GLOBAL
         )
+
+        var cancelled = false
 
         runBlocking {
             val result = runPreProcessors(MessageContext(data, event.isCancelled, event.viewers()))
             data = result.messageData
+            cancelled = result.isCancelled
 
             if (result.isCancelled) {
                 event.cancel()
@@ -51,11 +56,14 @@ object AsyncChatListener : Listener {
             }
         }
 
+        val postContext = MessageContext(data, cancelled, event.viewers())
+        val postData = data
+
         plugin.launch {
-            runPostProcessors(MessageContext(data, event.isCancelled, event.viewers()))
+            runPostProcessors(postContext)
 
             MessageRedirectorRegistry.redirectors.forEach {
-                it.redirectMessage(event.signedMessage(), data)
+                it.redirectMessage(signedMessage, postData)
             }
         }
     }

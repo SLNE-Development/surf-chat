@@ -39,7 +39,7 @@ class ConnectionListener : EventRegistrar {
     }
 
     private fun onJoin(player: Player) {
-        MinestomMessageFormatter.dirty = true
+        MinestomMessageFormatter.invalidateMentionCache()
 
         val uuid = player.uuid
         ChatPlatform.launchAsync { IgnoreService.loadIgnoreList(uuid) }
@@ -56,7 +56,7 @@ class ConnectionListener : EventRegistrar {
     }
 
     private fun onQuit(player: Player) {
-        MinestomMessageFormatter.dirty = true
+        MinestomMessageFormatter.invalidateMentionCache()
 
         val uuid = player.uuid
 

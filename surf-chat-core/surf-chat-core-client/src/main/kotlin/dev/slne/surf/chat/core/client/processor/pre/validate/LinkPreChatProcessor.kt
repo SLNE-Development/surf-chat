@@ -15,6 +15,8 @@ private val urlRegex = Regex(
 )
 
 fun findDisallowedLink(message: String, allowedDomains: List<String>): String? {
+    var lowercasedDomains: Array<String>? = null
+
     for (match in urlRegex.findAll(message)) {
         val rawUrl = match.value
         val url = if ("://" in rawUrl) rawUrl else "http://$rawUrl"
@@ -25,7 +27,11 @@ fun findDisallowedLink(message: String, allowedDomains: List<String>): String? {
             ?.removePrefix("www.")
             ?: continue
 
-        if (allowedDomains.none { domain.endsWith(it.lowercase()) }) {
+        val domains = lowercasedDomains
+            ?: Array(allowedDomains.size) { allowedDomains[it].lowercase() }
+                .also { lowercasedDomains = it }
+
+        if (domains.none { domain.endsWith(it) }) {
             return rawUrl
         }
     }

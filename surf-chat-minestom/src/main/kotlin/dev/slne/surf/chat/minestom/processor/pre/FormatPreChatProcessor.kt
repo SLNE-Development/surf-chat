@@ -13,8 +13,10 @@ object FormatPreChatProcessor : PreChatProcessor {
         val data = context.messageData
 
         if (data.type == MessageType.GLOBAL) {
+            val hasMention = MinestomMessageFormatter.hasMention(data.plainMessage)
+
             context.render = { viewerUuid, _ ->
-                MinestomMessageFormatter.formatGlobal(data.withReceiver(viewerUuid))
+                MinestomMessageFormatter.formatGlobal(data, viewerUuid, hasMention)
             }
         }
 

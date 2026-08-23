@@ -4,6 +4,16 @@ import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.chat.api.denylist.DenylistEntry
 import net.kyori.adventure.text.Component
 
+private val EMPTY_CONTENT_MESSAGE = buildText { error("Deine Nachricht darf nicht leer sein.") }
+private val TOO_MANY_CAPS_MESSAGE = buildText { error("Deine Nachricht enthält zu viele Großbuchstaben.") }
+private val DENYLISTED_WORD_MESSAGE = buildText { error("Bitte achte auf deine Wortwahl.") }
+private val BAD_LINK_MESSAGE = buildText { error("Deine Nachricht enthält einen unerlaubten Link.") }
+private val BAD_CHARACTERS_MESSAGE = buildText { error("Deine Nachricht enthält unerlaubte Zeichen.") }
+private val TOO_OFTEN_MESSAGE =
+    buildText { error("Bitte warte einen Moment, bevor du eine weitere Nachricht sendest.") }
+private val AUTO_DISABLED_MESSAGE = buildText { error("Du kannst zurzeit nicht schreiben.") }
+private val CHAT_DISABLED_MESSAGE = buildText { error("Der Chat ist vorübergehend deaktiviert.") }
+
 /**
  * Represents the result of a message validation process.
  *
@@ -81,13 +91,13 @@ sealed class MessageValidationResult {
          */
         class EmptyContent :
             MessageValidationError(
-                buildText { error("Deine Nachricht darf nicht leer sein.") },
+                EMPTY_CONTENT_MESSAGE,
                 "Kein Inhalt"
             )
 
 
         class TooManyCaps : MessageValidationError(
-            buildText { error("Deine Nachricht enthält zu viele Großbuchstaben.") },
+            TOO_MANY_CAPS_MESSAGE,
             "Zu viele Großbuchstaben"
         )
 
@@ -96,7 +106,7 @@ sealed class MessageValidationResult {
          */
         data class DenylistedWord(val denylistEntry: DenylistEntry) :
             MessageValidationError(
-                buildText { error("Bitte achte auf deine Wortwahl.") },
+                DENYLISTED_WORD_MESSAGE,
                 "Unerlaubtes Wort: ${denylistEntry.word}"
             )
 
@@ -110,7 +120,7 @@ sealed class MessageValidationResult {
          */
         data class BadLink(val url: String) :
             MessageValidationError(
-                buildText { error("Deine Nachricht enthält einen unerlaubten Link.") },
+                BAD_LINK_MESSAGE,
                 "Unerlaubter Link: $url"
             )
 
@@ -119,7 +129,7 @@ sealed class MessageValidationResult {
          */
         data class BadCharacters(val chars: String) :
             MessageValidationError(
-                buildText { error("Deine Nachricht enthält unerlaubte Zeichen.") },
+                BAD_CHARACTERS_MESSAGE,
                 "Unerlaubte Zeichen: $chars"
             )
 
@@ -137,7 +147,7 @@ sealed class MessageValidationResult {
          */
         data class TooOften(val next: Long) :
             MessageValidationError(
-                buildText { error("Bitte warte einen Moment, bevor du eine weitere Nachricht sendest.") },
+                TOO_OFTEN_MESSAGE,
                 "Spam"
             )
 
@@ -153,7 +163,7 @@ sealed class MessageValidationResult {
          */
         class AutoDisabled :
             MessageValidationError(
-                buildText { error("Du kannst zurzeit nicht schreiben.") },
+                AUTO_DISABLED_MESSAGE,
                 "Zu viele Spieler"
             )
 
@@ -168,7 +178,7 @@ sealed class MessageValidationResult {
          */
         class ChatDisabled :
             MessageValidationError(
-                buildText { error("Der Chat ist vorübergehend deaktiviert.") },
+                CHAT_DISABLED_MESSAGE,
                 "Chat deaktiviert"
             )
     }

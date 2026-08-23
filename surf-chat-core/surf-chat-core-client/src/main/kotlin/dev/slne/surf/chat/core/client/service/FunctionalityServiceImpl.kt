@@ -12,6 +12,7 @@ import net.kyori.adventure.util.Services
 
 @AutoService(FunctionalityService::class)
 class FunctionalityServiceImpl : FunctionalityService, Services.Fallback {
+    @Volatile
     private var functionalities = Functionalities.EMPTY
 
     override suspend fun fetch(localServer: String) {

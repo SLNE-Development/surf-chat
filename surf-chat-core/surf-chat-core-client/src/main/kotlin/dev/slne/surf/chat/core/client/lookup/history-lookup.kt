@@ -12,6 +12,7 @@ import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.core.client.message.format.appendLinePrefix
 import dev.slne.surf.chat.core.client.util.formatAgo
 import dev.slne.surf.chat.core.client.util.formatTime
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.format.TextDecoration
@@ -111,12 +112,15 @@ suspend fun resolveSenderNames(history: List<HistoryEntry>): Map<UUID, String> {
     val senderNames = ConcurrentHashMap<UUID, String>()
 
     coroutineScope {
+        val pending = ObjectOpenHashSet<UUID>()
+
         for (entry in history) {
-            if (senderNames.containsKey(entry.senderUuid)) continue
+            val senderUuid = entry.senderUuid
+            if (!pending.add(senderUuid)) continue
+
             launch {
                 val sender = entry.sender()
-                val senderName = sender.lastKnownName ?: entry.senderUuid.toString()
-                senderNames[entry.senderUuid] = senderName
+                senderNames[senderUuid] = sender.lastKnownName ?: senderUuid.toString()
             }
         }
     }

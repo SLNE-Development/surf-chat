@@ -6,11 +6,24 @@ import dev.slne.surf.chat.core.client.permission.ChatPermissions
 import dev.slne.surf.chat.core.client.processor.ProcessorOrder
 import dev.slne.surf.chat.core.client.util.hasPermission
 import dev.slne.surf.chat.core.client.util.sendText
+import it.unimi.dsi.fastutil.chars.CharOpenHashSet
 
-private val validCharactersRegex = "^[\\u0020-\\u007EäöüÄÖÜß€@£¥|²³µ½¼¾«»¡¿°§´`^~¨]+$".toRegex()
+private const val ADDITIONAL_VALID_CHARACTERS = "äöüÄÖÜß€@£¥|²³µ½¼¾«»¡¿°§´`^~¨"
 
-fun containsIllegalCharacters(message: String) =
-    message.any { !validCharactersRegex.matches(it.toString()) }
+private val additionalValidCharacters = CharOpenHashSet(ADDITIONAL_VALID_CHARACTERS.toCharArray())
+
+private fun isValidCharacter(character: Char) =
+    character in ' '..'~' || additionalValidCharacters.contains(character)
+
+fun containsIllegalCharacters(message: String): Boolean {
+    for (index in message.indices) {
+        if (!isValidCharacter(message[index])) {
+            return true
+        }
+    }
+
+    return false
+}
 
 object CharPreChatProcessor : PreChatProcessor {
     override val order = ProcessorOrder.VALIDATE

@@ -7,31 +7,26 @@ import dev.slne.minestom.lobby.api.player.LobbyPlayer
 import dev.slne.minestom.lobby.api.player.getOnlineLobbyPlayerByUuid
 import dev.slne.minestom.lobby.api.player.onlineLobbyPlayers
 import dev.slne.surf.api.core.messages.Colors
-import dev.slne.surf.api.core.messages.adventure.*
+import dev.slne.surf.api.core.messages.adventure.buildText
+import dev.slne.surf.api.core.messages.adventure.plain
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.core.client.hook.LuckPermsHook
 import dev.slne.surf.chat.core.client.hook.SettingsHook
 import dev.slne.surf.chat.core.client.message.format.appendDelete
-import dev.slne.surf.chat.core.client.message.format.appendMessageData
 import dev.slne.surf.chat.core.client.message.format.appendName
-import dev.slne.surf.chat.core.client.message.format.appendTeleport
 import dev.slne.surf.chat.core.client.permission.ChatPermissions
 import dev.slne.surf.chat.core.client.platform.ChatPlatform
+import dev.slne.surf.chat.core.client.util.formatTime
 import dev.slne.surf.chat.core.client.util.updateLinks
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.TextReplacementConfig
 import net.kyori.adventure.text.format.TextDecoration
 import java.util.*
 import java.util.concurrent.atomic.AtomicLong
 import java.util.regex.Pattern
 
-/**
- * Formats messages that require access to Minestom specific player state.
- */
 object MinestomMessageFormatter {
-
     private class MentionCache(
         val generation: Long,
         val pattern: Pattern?,
@@ -59,11 +54,6 @@ object MinestomMessageFormatter {
         return pattern.matcher(plainMessage).find()
     }
 
-    fun formatGlobal(messageData: MessageData): TextComponent {
-        val viewer = messageData.receiver ?: return Component.empty()
-        return formatGlobal(messageData, viewer, hasMention(messageData.plainMessage))
-    }
-
     fun formatGlobal(messageData: MessageData, viewer: UUID, highlightMentions: Boolean) = buildText {
         val senderPlayer = ConnectionManager.getOnlineLobbyPlayerByUuid(messageData.sender)
             ?: return Component.empty()
@@ -74,20 +64,27 @@ object MinestomMessageFormatter {
             appendDelete(messageData)
         }
 
-        if (viewerPlayer != null && viewerPlayer.hasPermission(ChatPermissions.COMMAND_SURFCHAT_TELEPORT)) {
-            appendTeleport(senderPlayer.username, senderPlayer.uuid)
-        }
-
-        appendName(senderPlayer.username, LuckPermsHook.getPrefix(senderPlayer.uuid))
-        darkSpacer(" >> ")
+        appendName(
+            senderPlayer.username,
+            LuckPermsHook.getPrefix(senderPlayer.uuid),
+            allowTeleport = viewerPlayer != null && viewerPlayer.hasPermission(ChatPermissions.COMMAND_SURFCHAT_TELEPORT)
+        )
+        darkSpacer(":")
+        appendSpace()
 
         var content = messageData.message
         if (highlightMentions && viewerPlayer != null) {
             content = highlightPlayers(content, viewer)
         }
 
-        append(updateLinks(content))
-        hoverEvent(buildText { appendMessageData(senderPlayer.username, messageData) })
+        append {
+            append(updateLinks(content))
+            hoverEvent(buildText {
+                spacer("(${messageData.sentAt.formatTime()})")
+                appendSpace()
+                white(messageData.plainMessage)
+            })
+        }
         clickSuggestsCommand("/msg ${senderPlayer.username} ")
     }
 

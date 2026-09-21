@@ -22,11 +22,11 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.MiniMessage
-import java.util.UUID
+import java.util.*
 
 fun SurfComponentBuilder.appendDelete(messageData: MessageData) = append(buildText {
     darkSpacer("[")
-    error("X")
+    error("✘")
     darkSpacer("]")
     darkSpacer(" ")
     clickEvent(ClickEvent.callback { clicked ->
@@ -45,12 +45,20 @@ fun SurfComponentBuilder.appendDelete(messageData: MessageData) = append(buildTe
         }
     })
     hoverEvent(buildText {
-        warning("Klicke, um die Nachricht zu löschen")
+        error("Nachricht löschen")
     })
 })
 
-fun SurfComponentBuilder.appendName(name: String, prefix: String) =
-    append(MiniMessage.miniMessage().deserialize(prefix + name))
+fun SurfComponentBuilder.appendName(name: String, prefix: String, allowTeleport: Boolean) =
+    append {
+        append(MiniMessage.miniMessage().deserialize(prefix + name))
+        if (allowTeleport) {
+            clickRunsCommand("/tp $name")
+            hoverEvent(buildText {
+                info("Teleportiere zu $name")
+            })
+        }
+    }
 
 fun buildConnectionMessage(name: String, prefix: String, joined: Boolean): Component = buildText {
     darkSpacer("[")
@@ -169,7 +177,7 @@ suspend fun formatTeamchat(messageData: MessageData) = buildText {
     darkSpacer(">> ")
     text("TEAM", Colors.RED, TextDecoration.BOLD)
     darkSpacer(" | ")
-    appendName(senderName, LuckPermsHook.getPrefix(sender))
+    appendName(senderName, LuckPermsHook.getPrefix(sender), allowTeleport = false)
     darkSpacer(" >> ")
     append(updateLinks(messageData.message))
 

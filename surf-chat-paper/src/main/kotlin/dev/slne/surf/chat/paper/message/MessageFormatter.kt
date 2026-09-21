@@ -12,8 +12,7 @@ import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.core.client.config.chatConfig
 import dev.slne.surf.chat.core.client.hook.SettingsHook
 import dev.slne.surf.chat.core.client.message.format.appendDelete
-import dev.slne.surf.chat.core.client.message.format.appendMessageData
-import dev.slne.surf.chat.core.client.message.format.appendTeleport
+import dev.slne.surf.chat.core.client.util.formatTime
 import dev.slne.surf.chat.core.client.util.updateLinks
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
 import dev.slne.surf.chat.paper.plugin
@@ -21,10 +20,8 @@ import dev.slne.surf.chat.paper.util.appendName
 import dev.slne.surf.core.api.paper.CorePlayerStatusAccess
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.TextReplacementConfig
 import net.kyori.adventure.text.format.TextDecoration
-import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
@@ -65,11 +62,6 @@ object MessageFormatter {
         return pattern.matcher(plainMessage).find()
     }
 
-    fun formatGlobal(messageData: MessageData): TextComponent {
-        val viewer = messageData.receiver ?: return Component.empty()
-        return formatGlobal(messageData, viewer, hasMention(messageData.plainMessage))
-    }
-
     fun formatGlobal(messageData: MessageData, viewer: UUID, highlightMentions: Boolean) = buildText {
         val senderPlayer = server.getPlayer(messageData.sender) ?: return Component.empty()
         val viewerPlayer = server.getPlayer(viewer)
@@ -78,20 +70,26 @@ object MessageFormatter {
             appendDelete(messageData)
         }
 
-        if (viewerPlayer != null && viewerPlayer.hasPermission(PermissionRegistry.COMMAND_SURFCHAT_TELEPORT)) {
-            appendTeleport(senderPlayer.name, senderPlayer.uniqueId)
-        }
-
-        appendName(senderPlayer)
-        darkSpacer(" >> ")
+        appendName(
+            senderPlayer,
+            allowTeleport = viewerPlayer != null && viewerPlayer.hasPermission(PermissionRegistry.COMMAND_SURFCHAT_TELEPORT)
+        )
+        darkSpacer(":")
+        appendSpace()
 
         var content = messageData.message
         if (highlightMentions && viewerPlayer != null) {
             content = highlightPlayers(content, viewer, viewerPlayer)
         }
 
-        append(formatItemTag(updateLinks(content), senderPlayer, viewer, messageData.plainMessage))
-        hoverEvent(buildText { appendMessageData(senderPlayer.name, messageData) })
+        append {
+            append(formatItemTag(updateLinks(content), senderPlayer, viewer, messageData.plainMessage))
+            hoverEvent(buildText {
+                spacer("(${messageData.sentAt.formatTime()})")
+                appendSpace()
+                white(messageData.plainMessage)
+            })
+        }
         clickSuggestsCommand("/msg ${senderPlayer.name} ")
     }
 

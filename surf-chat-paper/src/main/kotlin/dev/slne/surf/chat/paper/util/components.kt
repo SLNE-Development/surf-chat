@@ -5,5 +5,5 @@ import dev.slne.surf.chat.core.client.hook.LuckPermsHook
 import dev.slne.surf.chat.core.client.message.format.appendName
 import org.bukkit.entity.Player
 
-fun SurfComponentBuilder.appendName(player: Player) =
-    appendName(player.name, LuckPermsHook.getPrefix(player.uniqueId))
+fun SurfComponentBuilder.appendName(player: Player, allowTeleport: Boolean) =
+    appendName(player.name, player.uniqueId, LuckPermsHook.getPrefix(player.uniqueId), allowTeleport)

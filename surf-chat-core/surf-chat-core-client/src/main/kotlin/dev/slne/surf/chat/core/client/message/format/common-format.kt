@@ -58,7 +58,6 @@ fun SurfComponentBuilder.appendName(name: String, senderUuid: UUID, prefix: Stri
                 val who = it.uuidOrNull() ?: return@callback
                 ChatPlatform.teleportToPlayer(who, senderUuid)
             }, ClickCallback.Options.builder().uses(Int.MAX_VALUE).build()))
-            clickRunsCommand("/tp $name")
             hoverEvent(buildText {
                 info("Teleportiere zu $name")
             })

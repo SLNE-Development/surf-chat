@@ -19,6 +19,7 @@ import dev.slne.surf.chat.core.common.service.DeletionService
 import dev.slne.surf.core.api.common.SurfCoreApi
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.event.ClickCallback
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -49,10 +50,14 @@ fun SurfComponentBuilder.appendDelete(messageData: MessageData) = append(buildTe
     })
 })
 
-fun SurfComponentBuilder.appendName(name: String, prefix: String, allowTeleport: Boolean) =
+fun SurfComponentBuilder.appendName(name: String, senderUuid: UUID, prefix: String, allowTeleport: Boolean) =
     append {
         append(MiniMessage.miniMessage().deserialize(prefix + name))
         if (allowTeleport) {
+            clickEvent(ClickEvent.callback({
+                val who = it.uuidOrNull() ?: return@callback
+                ChatPlatform.teleportToPlayer(who, senderUuid)
+            }, ClickCallback.Options.builder().uses(Int.MAX_VALUE).build()))
             clickRunsCommand("/tp $name")
             hoverEvent(buildText {
                 info("Teleportiere zu $name")
@@ -177,7 +182,7 @@ suspend fun formatTeamchat(messageData: MessageData) = buildText {
     darkSpacer(">> ")
     text("TEAM", Colors.RED, TextDecoration.BOLD)
     darkSpacer(" | ")
-    appendName(senderName, LuckPermsHook.getPrefix(sender), allowTeleport = false)
+    appendName(senderName, sender, LuckPermsHook.getPrefix(sender), allowTeleport = false)
     darkSpacer(" >> ")
     append(updateLinks(messageData.message))
 

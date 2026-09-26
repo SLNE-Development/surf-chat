@@ -66,6 +66,7 @@ object MinestomMessageFormatter {
 
         appendName(
             senderPlayer.username,
+            senderPlayer.uuid,
             LuckPermsHook.getPrefix(senderPlayer.uuid),
             allowTeleport = viewerPlayer != null && viewerPlayer.hasPermission(ChatPermissions.COMMAND_SURFCHAT_TELEPORT)
         )

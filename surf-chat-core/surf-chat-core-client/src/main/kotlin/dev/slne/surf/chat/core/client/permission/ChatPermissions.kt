@@ -28,6 +28,8 @@ object ChatPermissions {
     const val COMMAND_SURFCHAT_TELEPORT = "$PREFIX_COMMAND.surfchat.teleport"
     const val COMMAND_SURFCHAT_LOOKUP = "$PREFIX_COMMAND.surfchat.lookup"
 
+    const val MESSAGE_TINT = "$PREFIX.message.tint"
+
     const val COMMAND_SURFCHAT_FUNCTIONALITY = "$PREFIX_COMMAND.surfchat.functionality"
     const val COMMAND_SURFCHAT_FUNCTIONALITY_TOGGLE =
         "$PREFIX_COMMAND.surfchat.functionality.toggle"

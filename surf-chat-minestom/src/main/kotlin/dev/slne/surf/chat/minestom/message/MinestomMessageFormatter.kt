@@ -14,6 +14,7 @@ import dev.slne.surf.chat.core.client.hook.LuckPermsHook
 import dev.slne.surf.chat.core.client.hook.SettingsHook
 import dev.slne.surf.chat.core.client.message.format.appendDelete
 import dev.slne.surf.chat.core.client.message.format.appendName
+import dev.slne.surf.chat.core.client.message.format.rankMessageTint
 import dev.slne.surf.chat.core.client.permission.ChatPermissions
 import dev.slne.surf.chat.core.client.platform.ChatPlatform
 import dev.slne.surf.chat.core.client.util.formatTime
@@ -64,10 +65,12 @@ object MinestomMessageFormatter {
             appendDelete(messageData)
         }
 
+        val senderPrefix = LuckPermsHook.getPrefix(senderPlayer.uuid)
+
         appendName(
             senderPlayer.username,
             senderPlayer.uuid,
-            LuckPermsHook.getPrefix(senderPlayer.uuid),
+            senderPrefix,
             allowTeleport = viewerPlayer != null && viewerPlayer.hasPermission(ChatPermissions.COMMAND_SURFCHAT_TELEPORT)
         )
         darkSpacer(":")
@@ -79,6 +82,10 @@ object MinestomMessageFormatter {
         }
 
         append {
+            if (senderPlayer.hasPermission(ChatPermissions.MESSAGE_TINT)) {
+                rankMessageTint(senderPrefix)?.let { color(it) }
+            }
+
             append(updateLinks(content))
             hoverEvent(buildText {
                 spacer("(${messageData.sentAt.formatTime()})")

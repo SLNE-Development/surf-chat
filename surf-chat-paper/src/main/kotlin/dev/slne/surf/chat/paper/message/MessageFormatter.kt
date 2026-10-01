@@ -12,6 +12,8 @@ import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.core.client.config.chatConfig
 import dev.slne.surf.chat.core.client.hook.SettingsHook
 import dev.slne.surf.chat.core.client.message.format.appendDelete
+import dev.slne.surf.chat.core.client.message.format.rankMessageTint
+import dev.slne.surf.chat.core.client.permission.ChatPermissions
 import dev.slne.surf.chat.core.client.util.formatTime
 import dev.slne.surf.chat.core.client.util.updateLinks
 import dev.slne.surf.chat.paper.permission.PermissionRegistry
@@ -83,6 +85,10 @@ object MessageFormatter {
         }
 
         append {
+            if (senderPlayer.hasPermission(ChatPermissions.MESSAGE_TINT)) {
+                rankMessageTint(senderPlayer.uniqueId)?.let { color(it) }
+            }
+            
             append(formatItemTag(updateLinks(content), senderPlayer, viewer, messageData.plainMessage))
             hoverEvent(buildText {
                 spacer("(${messageData.sentAt.formatTime()})")

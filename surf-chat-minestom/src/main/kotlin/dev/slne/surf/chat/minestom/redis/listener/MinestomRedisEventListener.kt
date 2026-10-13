@@ -1,7 +1,6 @@
 package dev.slne.surf.chat.minestom.redis.listener
 
-import dev.slne.minestom.lobby.api.extension.ConnectionManager
-import dev.slne.minestom.lobby.api.player.getOnlineLobbyPlayerByUuid
+import dev.slne.surf.api.minestom.extension.ConnectionManager
 import dev.slne.surf.chat.core.client.message.format.formatTeamchat
 import dev.slne.surf.chat.core.client.permission.ChatPermissions
 import dev.slne.surf.chat.core.client.platform.ChatPlatform
@@ -48,7 +47,7 @@ object MinestomRedisEventListener {
     fun handleSendDirectMessageRedisRequest(context: RequestContext<SendDirectMessageRedisRequest>) {
         val (messageData, message) = context.request
         val receiver = messageData.receiver ?: return
-        if (ConnectionManager.getOnlineLobbyPlayerByUuid(receiver) == null) return
+        if (ConnectionManager.getOnlinePlayerByUuid(receiver) == null) return
 
         context.launch {
             val handled = DirectMessageService.handleRemotePm(messageData, message)
@@ -61,7 +60,7 @@ object MinestomRedisEventListener {
     @HandleRedisRequest
     fun handleSendSignedMessageRedisRequest(context: RequestContext<SendSignedMessageRedisRequest>) {
         val (sender, senderName, target, message) = context.request
-        if (ConnectionManager.getOnlineLobbyPlayerByUuid(target) == null) return
+        if (ConnectionManager.getOnlinePlayerByUuid(target) == null) return
 
         context.launch {
             val handled =

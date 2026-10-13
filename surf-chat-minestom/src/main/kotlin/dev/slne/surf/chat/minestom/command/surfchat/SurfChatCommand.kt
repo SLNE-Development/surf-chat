@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.minestom.command.surfchat
 
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.commandAPICommand
+import dev.slne.surf.api.minestom.command.dsl.commandAPICommand
 import dev.slne.surf.chat.core.client.permission.ChatPermissions
 import dev.slne.surf.chat.minestom.command.surfchat.functionality.functionalityCommand
 

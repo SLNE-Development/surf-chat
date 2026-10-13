@@ -1,8 +1,8 @@
 package dev.slne.surf.chat.minestom.command.spy
 
-import dev.slne.minestom.lobby.api.command.commandapi.CommandTree
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.literalArgument
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.playerExecutor
+import dev.slne.surf.api.minestom.command.CommandTree
+import dev.slne.surf.api.minestom.command.dsl.literalArgument
+import dev.slne.surf.api.minestom.command.dsl.playerExecutor
 import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.chat.core.client.permission.ChatPermissions
 import dev.slne.surf.chat.core.common.service.SpyService

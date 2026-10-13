@@ -1,11 +1,11 @@
 package dev.slne.surf.chat.minestom
 
 import com.google.auto.service.AutoService
-import dev.slne.minestom.lobby.api.coroutine.minestomAsyncScope
-import dev.slne.minestom.lobby.api.extension.ConnectionManager
-import dev.slne.minestom.lobby.api.player.LobbyPlayer
-import dev.slne.minestom.lobby.api.player.getOnlineLobbyPlayerByUuid
 import dev.slne.surf.api.core.messages.adventure.sound
+import dev.slne.surf.api.minestom.chat.deleteSignedMessage
+import dev.slne.surf.api.minestom.coroutine.minestomAsyncScope
+import dev.slne.surf.api.minestom.extension.ConnectionManager
+import dev.slne.surf.api.minestom.permission.hasPermission
 import dev.slne.surf.chat.core.client.platform.ChatPlatform
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -21,10 +21,10 @@ import java.util.UUID
 @AutoService(ChatPlatform::class)
 class MinestomChatPlatform : ChatPlatform {
     override fun hasPermission(uuid: UUID, permission: String) =
-        ConnectionManager.getOnlineLobbyPlayerByUuid(uuid)?.hasPermission(permission) ?: false
+        ConnectionManager.getOnlinePlayerByUuid(uuid)?.hasPermission(permission) ?: false
 
     override fun sendMessage(uuid: UUID, message: Component) {
-        ConnectionManager.getOnlineLobbyPlayerByUuid(uuid)?.sendMessage(message)
+        ConnectionManager.getOnlinePlayerByUuid(uuid)?.sendMessage(message)
     }
 
     override fun broadcast(message: Component) {
@@ -33,13 +33,13 @@ class MinestomChatPlatform : ChatPlatform {
     }
 
     override fun broadcast(message: Component, permission: String) {
-        Audiences.players { (it as? LobbyPlayer)?.hasPermission(permission) == true }
+        Audiences.players { it.hasPermission(permission) }
             .sendMessage(message)
         Audiences.console().sendMessage(message)
     }
 
     override fun deleteMessage(signature: SignedMessage.Signature) {
-        Audiences.players().deleteMessage(signature)
+        ConnectionManager.onlinePlayers.forEach { it.deleteSignedMessage(signature) }
     }
 
     override fun onlinePlayerCount() = ConnectionManager.onlinePlayerCount
@@ -47,14 +47,14 @@ class MinestomChatPlatform : ChatPlatform {
     override fun isOnline(uuid: UUID) = ConnectionManager.getOnlinePlayerByUuid(uuid) != null
 
     override fun playPingSound(uuid: UUID) {
-        val player = ConnectionManager.getOnlineLobbyPlayerByUuid(uuid) ?: return
+        val player = ConnectionManager.getOnlinePlayerByUuid(uuid) ?: return
 
         player.playSound(PING_SOUND, Sound.Emitter.self())
     }
 
     override fun teleportToPlayer(who: UUID, target: UUID) {
-        val whoPlayer = ConnectionManager.getOnlineLobbyPlayerByUuid(who) ?: return
-        val targetPlayer = ConnectionManager.getOnlineLobbyPlayerByUuid(target) ?: return
+        val whoPlayer = ConnectionManager.getOnlinePlayerByUuid(who) ?: return
+        val targetPlayer = ConnectionManager.getOnlinePlayerByUuid(target) ?: return
 
         whoPlayer.teleport(targetPlayer.position)
     }

@@ -1,6 +1,6 @@
 package dev.slne.surf.chat.minestom.redis.rpc
 
-import dev.slne.minestom.lobby.api.chat.RemoteSignedMessage
+import dev.slne.surf.api.minestom.chat.RemoteSignedMessage
 import dev.slne.surf.chat.core.client.redis.rpc.SignedChatMessage
 import net.minestom.server.crypto.ChatSession
 import net.minestom.server.crypto.MessageSignature
@@ -21,7 +21,7 @@ fun RemoteSignedMessage.toWire(session: ChatSession?) = SignedChatMessage(
     }
 )
 
-fun SignedChatMessage.toLobby() = RemoteSignedMessage(
+fun SignedChatMessage.toRemote() = RemoteSignedMessage(
     sender = sender,
     sessionId = sessionId,
     index = index,

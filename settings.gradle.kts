@@ -7,7 +7,6 @@ include("surf-chat-microservice")
 
 pluginManagement {
     repositories {
-        mavenLocal()
         gradlePluginPortal()
         maven("https://reposilite.slne.dev/releases")
     }

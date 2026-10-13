@@ -11,10 +11,6 @@ surfMinestomApi {
     withSurfRedis()
 }
 
-repositories {
-    mavenLocal()
-}
-
 minestomPluginFile {
     main = "dev.slne.surf.chat.minestom.SurfChatMinestomPlugin"
     authors = listOf("red")

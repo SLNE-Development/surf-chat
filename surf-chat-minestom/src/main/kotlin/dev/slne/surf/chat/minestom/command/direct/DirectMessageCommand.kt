@@ -1,9 +1,8 @@
 package dev.slne.surf.chat.minestom.command.direct
 
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.commandAPICommand
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.playerExecutorSuspend
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.signedMessageArgument
-import dev.slne.minestom.lobby.api.player.LobbyPlayer
+import dev.slne.surf.api.minestom.command.dsl.commandAPICommand
+import dev.slne.surf.api.minestom.command.dsl.playerExecutorSuspend
+import dev.slne.surf.api.minestom.command.dsl.signedMessageArgument
 import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.chat.core.client.permission.ChatPermissions
 import dev.slne.surf.chat.minestom.service.DirectMessageService
@@ -29,6 +28,6 @@ fun directMessageCommand() = commandAPICommand("msg") {
             return@playerExecutorSuspend
         }
 
-        DirectMessageService.sendMessage(player as LobbyPlayer, message, target.uuid)
+        DirectMessageService.sendMessage(player, message, target.uuid)
     }
 }

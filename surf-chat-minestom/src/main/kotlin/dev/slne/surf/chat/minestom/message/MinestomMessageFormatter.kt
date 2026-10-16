@@ -2,13 +2,11 @@
 
 package dev.slne.surf.chat.minestom.message
 
-import dev.slne.minestom.lobby.api.extension.ConnectionManager
-import dev.slne.minestom.lobby.api.player.LobbyPlayer
-import dev.slne.minestom.lobby.api.player.getOnlineLobbyPlayerByUuid
-import dev.slne.minestom.lobby.api.player.onlineLobbyPlayers
 import dev.slne.surf.api.core.messages.Colors
 import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.messages.adventure.plain
+import dev.slne.surf.api.minestom.extension.ConnectionManager
+import dev.slne.surf.api.minestom.permission.hasPermission
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.core.client.hook.LuckPermsHook
 import dev.slne.surf.chat.core.client.hook.SettingsHook
@@ -22,6 +20,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextReplacementConfig
 import net.kyori.adventure.text.format.TextDecoration
+import net.minestom.server.entity.Player
 import java.util.*
 import java.util.concurrent.atomic.AtomicLong
 import java.util.regex.Pattern
@@ -30,7 +29,7 @@ object MinestomMessageFormatter {
     private class MentionCache(
         val generation: Long,
         val pattern: Pattern?,
-        val playersByName: Map<String, LobbyPlayer>
+        val playersByName: Map<String, Player>
     )
 
     private val mentionCacheLock = Any()
@@ -55,10 +54,10 @@ object MinestomMessageFormatter {
     }
 
     fun formatGlobal(messageData: MessageData, viewer: UUID, highlightMentions: Boolean) = buildText {
-        val senderPlayer = ConnectionManager.getOnlineLobbyPlayerByUuid(messageData.sender)
+        val senderPlayer = ConnectionManager.getOnlinePlayerByUuid(messageData.sender)
             ?: return Component.empty()
 
-        val viewerPlayer = ConnectionManager.getOnlineLobbyPlayerByUuid(viewer)
+        val viewerPlayer = ConnectionManager.getOnlinePlayerByUuid(viewer)
 
         if (viewerPlayer != null && viewerPlayer.hasPermission(ChatPermissions.COMMAND_SURFCHAT_DELETE)) {
             appendDelete(messageData)
@@ -108,8 +107,8 @@ object MinestomMessageFormatter {
             return cached
         }
 
-        val players = ConnectionManager.onlineLobbyPlayers
-        val playersByName = Object2ObjectOpenHashMap<String, LobbyPlayer>(players.size * 2)
+        val players = ConnectionManager.onlinePlayers
+        val playersByName = Object2ObjectOpenHashMap<String, Player>(players.size * 2)
         val patternBuilder = StringBuilder(players.size * 24)
 
         for (player in players) {

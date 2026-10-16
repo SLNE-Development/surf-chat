@@ -14,7 +14,7 @@ typealias MinestomChatInstance = ClientChatInstance
 
 @AutoService(ChatInstance::class)
 class MinestomChatInstanceImpl : ClientChatInstance, Services.Fallback {
-    override val chatClientLoader = ChatClientLoader(SurfChatMinestomEntrypoint.dataPath)
+    override val chatClientLoader = ChatClientLoader(SurfChatMinestomPlugin.dataDirectory)
     override val moderationService by lazy {
         rabbitApi.createRpcService<ModerationService>()
     }

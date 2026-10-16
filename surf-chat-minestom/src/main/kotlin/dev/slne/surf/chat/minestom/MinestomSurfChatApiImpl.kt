@@ -1,9 +1,9 @@
 package dev.slne.surf.chat.minestom
 
 import com.google.auto.service.AutoService
-import dev.slne.minestom.lobby.api.extension.ConnectionManager
-import dev.slne.minestom.lobby.api.player.getOnlineLobbyPlayerByUuid
 import dev.slne.surf.api.core.util.logger
+import dev.slne.surf.api.minestom.chat.sendSignedMessage
+import dev.slne.surf.api.minestom.extension.ConnectionManager
 import dev.slne.surf.chat.api.SurfChatApi
 import dev.slne.surf.chat.api.entry.HistoryEntry
 import dev.slne.surf.chat.api.entry.HistoryFilter
@@ -19,6 +19,7 @@ import dev.slne.surf.chat.core.client.redis.event.DeleteRemoteMessageRedisEvent
 import dev.slne.surf.chat.core.client.redisApi
 import dev.slne.surf.chat.core.common.service.HistoryService
 import dev.slne.surf.chat.core.common.service.IgnoreService
+import dev.slne.surf.chat.minestom.player.boundDisplayName
 import dev.slne.surf.chat.minestom.service.SignedMessageService
 import dev.slne.surf.core.api.common.SurfCoreApi
 import it.unimi.dsi.fastutil.objects.ObjectList
@@ -70,7 +71,7 @@ class MinestomSurfChatApiImpl : SurfChatApi, Services.Fallback {
         targetUuid: UUID,
         contentComponent: Component
     ) {
-        val sender = ConnectionManager.getOnlineLobbyPlayerByUuid(senderUuid)
+        val sender = ConnectionManager.getOnlinePlayerByUuid(senderUuid)
 
         if (sender == null) {
             log.atWarning()
@@ -78,10 +79,10 @@ class MinestomSurfChatApiImpl : SurfChatApi, Services.Fallback {
             return
         }
 
-        val target = ConnectionManager.getOnlineLobbyPlayerByUuid(targetUuid)
+        val target = ConnectionManager.getOnlinePlayerByUuid(targetUuid)
 
         if (target != null) {
-            target.sendSignedMessage(signedMessage, sender.displayName(), contentComponent)
+            target.sendSignedMessage(signedMessage, sender.boundDisplayName(), contentComponent)
             return
         }
 

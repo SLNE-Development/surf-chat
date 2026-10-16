@@ -1,20 +1,22 @@
 package dev.slne.surf.chat.minestom.service
 
-import dev.slne.minestom.lobby.api.chat.RemoteChatSender
-import dev.slne.minestom.lobby.api.extension.ConnectionManager
-import dev.slne.minestom.lobby.api.player.LobbyPlayer
-import dev.slne.minestom.lobby.api.player.getOnlineLobbyPlayerByUuid
 import dev.slne.surf.api.core.messages.adventure.text
+import dev.slne.surf.api.minestom.chat.RemoteChatSender
+import dev.slne.surf.api.minestom.chat.captureSignedMessage
+import dev.slne.surf.api.minestom.chat.sendRemoteSignedMessage
+import dev.slne.surf.api.minestom.chat.signedChatSession
+import dev.slne.surf.api.minestom.extension.ConnectionManager
 import dev.slne.surf.chat.core.client.redis.rpc.SendSignedMessageHandledRedisResponse
 import dev.slne.surf.chat.core.client.redis.rpc.SendSignedMessageRedisRequest
 import dev.slne.surf.chat.core.client.redis.rpc.SignedChatMessage
 import dev.slne.surf.chat.core.client.redisApi
 import dev.slne.surf.chat.minestom.redis.rpc.chatSession
-import dev.slne.surf.chat.minestom.redis.rpc.toLobby
+import dev.slne.surf.chat.minestom.redis.rpc.toRemote
 import dev.slne.surf.chat.minestom.redis.rpc.toWire
 import dev.slne.surf.redis.request.RequestTimeoutException
 import net.kyori.adventure.chat.SignedMessage
 import net.kyori.adventure.text.Component
+import net.minestom.server.entity.Player
 import java.util.*
 
 /**
@@ -26,7 +28,7 @@ object SignedMessageService {
      * Asks the server [targetUuid] is on to show [signedMessage] with [component] as its content.
      */
     suspend fun sendRemoteSignedMessage(
-        sender: LobbyPlayer,
+        sender: Player,
         targetUuid: UUID,
         component: Component,
         signedMessage: SignedMessage,
@@ -41,7 +43,7 @@ object SignedMessageService {
                     sender.uuid,
                     sender.username,
                     targetUuid,
-                    captured.toWire(sender.chatSession())
+                    captured.toWire(sender.signedChatSession)
                 ),
             )
         } catch (_: RequestTimeoutException) {
@@ -59,11 +61,11 @@ object SignedMessageService {
         target: UUID,
         message: SignedChatMessage
     ): Boolean {
-        val targetPlayer = ConnectionManager.getOnlineLobbyPlayerByUuid(target) ?: return false
+        val targetPlayer = ConnectionManager.getOnlinePlayerByUuid(target) ?: return false
 
         targetPlayer.sendRemoteSignedMessage(
             RemoteChatSender(sender, senderName, message.chatSession()),
-            message.toLobby(),
+            message.toRemote(),
             text(senderName)
         )
 

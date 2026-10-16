@@ -1,8 +1,8 @@
 package dev.slne.surf.chat.minestom.command
 
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.commandAPICommand
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.greedyStringArgument
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.playerExecutorSuspend
+import dev.slne.surf.api.minestom.command.dsl.commandAPICommand
+import dev.slne.surf.api.minestom.command.dsl.greedyStringArgument
+import dev.slne.surf.api.minestom.command.dsl.playerExecutorSuspend
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.api.message.MessageType
 import dev.slne.surf.chat.core.client.permission.ChatPermissions

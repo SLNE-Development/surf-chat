@@ -1,12 +1,14 @@
 package dev.slne.surf.chat.minestom.service
 
-import dev.slne.minestom.lobby.api.chat.RemoteChatSender
-import dev.slne.minestom.lobby.api.extension.ConnectionManager
-import dev.slne.minestom.lobby.api.player.LobbyPlayer
-import dev.slne.minestom.lobby.api.player.getOnlineLobbyPlayerByUuid
 import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.api.core.messages.adventure.text
 import dev.slne.surf.api.core.util.mutableObjectSetOf
+import dev.slne.surf.api.minestom.chat.RemoteChatSender
+import dev.slne.surf.api.minestom.chat.captureSignedMessage
+import dev.slne.surf.api.minestom.chat.sendRemoteSignedMessage
+import dev.slne.surf.api.minestom.chat.sendSignedMessage
+import dev.slne.surf.api.minestom.chat.signedChatSession
+import dev.slne.surf.api.minestom.extension.ConnectionManager
 import dev.slne.surf.chat.api.message.MessageContext
 import dev.slne.surf.chat.api.message.MessageData
 import dev.slne.surf.chat.api.message.MessageType
@@ -21,14 +23,16 @@ import dev.slne.surf.chat.core.client.redis.rpc.SendDirectMessageRedisRequest
 import dev.slne.surf.chat.core.client.redis.rpc.SignedChatMessage
 import dev.slne.surf.chat.core.client.redisApi
 import dev.slne.surf.chat.core.client.service.ReplyCache
+import dev.slne.surf.chat.minestom.player.boundDisplayName
 import dev.slne.surf.chat.minestom.redis.rpc.chatSession
-import dev.slne.surf.chat.minestom.redis.rpc.toLobby
+import dev.slne.surf.chat.minestom.redis.rpc.toRemote
 import dev.slne.surf.chat.minestom.redis.rpc.toWire
 import dev.slne.surf.core.api.common.SurfCoreApi
 import dev.slne.surf.redis.request.RequestTimeoutException
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import net.kyori.adventure.chat.SignedMessage
+import net.minestom.server.entity.Player
 import java.time.OffsetDateTime
 import java.util.*
 
@@ -37,7 +41,7 @@ import java.util.*
  */
 object DirectMessageService {
 
-    suspend fun sendMessage(sender: LobbyPlayer, message: SignedMessage, targetUuid: UUID) {
+    suspend fun sendMessage(sender: Player, message: SignedMessage, targetUuid: UUID) {
         var messageData = MessageData(
             message.unsignedContent() ?: text(message.message()),
             UUID.randomUUID(),
@@ -60,11 +64,11 @@ object DirectMessageService {
         } else {
             sender.sendSignedMessage(
                 message,
-                sender.displayName(),
+                sender.boundDisplayName(),
                 formatOutgoingPm(messageData)
             )
 
-            val target = ConnectionManager.getOnlineLobbyPlayerByUuid(targetUuid)
+            val target = ConnectionManager.getOnlinePlayerByUuid(targetUuid)
 
             if (target != null) {
                 sendPmOnSameServer(sender, target, messageData, message)
@@ -90,8 +94,8 @@ object DirectMessageService {
     }
 
     private suspend fun sendPmOnSameServer(
-        sender: LobbyPlayer,
-        target: LobbyPlayer,
+        sender: Player,
+        target: Player,
         messageData: MessageData,
         message: SignedMessage,
     ) {
@@ -99,7 +103,7 @@ object DirectMessageService {
 
         target.sendSignedMessage(
             message,
-            sender.displayName(),
+            sender.boundDisplayName(),
             formatIncomingPm(messageData)
         )
 
@@ -109,7 +113,7 @@ object DirectMessageService {
     }
 
     private suspend fun sendPmOnDifferentServer(
-        sender: LobbyPlayer,
+        sender: Player,
         messageData: MessageData,
         message: SignedMessage,
     ) {
@@ -119,7 +123,7 @@ object DirectMessageService {
 
         try {
             redisApi.sendRequest<SendDirectMessageHandledRedisResponse>(
-                SendDirectMessageRedisRequest(messageData, captured.toWire(sender.chatSession())),
+                SendDirectMessageRedisRequest(messageData, captured.toWire(sender.signedChatSession)),
             )
         } catch (_: RequestTimeoutException) {
         }
@@ -132,7 +136,7 @@ object DirectMessageService {
      */
     suspend fun handleRemotePm(messageData: MessageData, message: SignedChatMessage): Boolean {
         val target = messageData.receiver
-            ?.let { ConnectionManager.getOnlineLobbyPlayerByUuid(it) } ?: return false
+            ?.let { ConnectionManager.getOnlinePlayerByUuid(it) } ?: return false
 
         if (!SettingsHook.hasDirectMessagesEnabled(target.uuid)) return true
 
@@ -140,7 +144,7 @@ object DirectMessageService {
 
         target.sendRemoteSignedMessage(
             RemoteChatSender(messageData.sender, senderUser.username, message.chatSession()),
-            message.toLobby(),
+            message.toRemote(),
             text(senderUser.username)
         )
 

@@ -1,7 +1,7 @@
 package dev.slne.surf.chat.minestom.listener
 
-import dev.slne.minestom.lobby.api.chat.AsyncChatEvent
-import dev.slne.minestom.lobby.api.chat.ChatRenderer
+import dev.slne.surf.api.minestom.chat.AsyncPlayerChatEvent
+import dev.slne.surf.api.minestom.chat.ChatRenderer
 import dev.slne.surf.api.core.messages.adventure.uuidOrNull
 import dev.slne.surf.chat.api.message.MessageContext
 import dev.slne.surf.chat.api.message.MessageData
@@ -19,7 +19,7 @@ import java.util.*
  */
 object ChatEventListener {
     fun register() {
-        AsyncChatEvent.addListener { event ->
+        AsyncPlayerChatEvent.addListener { event ->
             val sentAt = OffsetDateTime.now()
             var data = MessageData(
                 event.message,

@@ -31,6 +31,7 @@ surfPaperPluginApi {
     serverDependencies {
         registerSoft("MiniPlaceholders")
         registerSoft("surf-settings-paper")
+        registerSoft("packetevents")
         registerRequired("LuckPerms")
         registerRequired("surf-punish-paper")
     }

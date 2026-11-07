@@ -15,6 +15,8 @@ import dev.slne.surf.chat.paper.command.slowchat.slowChatCommand
 import dev.slne.surf.chat.paper.command.spy.directMessageSpyCommand
 import dev.slne.surf.chat.paper.command.surfchat.surfChatCommand
 import dev.slne.surf.chat.paper.command.teamchatCommand
+import dev.slne.surf.chat.paper.debug.ChatSessionDebugLogger
+import dev.slne.surf.chat.paper.debug.isChatSessionDebugEnabled
 import dev.slne.surf.chat.paper.listener.AsyncChatListener
 import dev.slne.surf.chat.paper.listener.ConnectListener
 import dev.slne.surf.chat.paper.listener.DisconnectListener
@@ -74,10 +76,18 @@ class PaperMain : SuspendingJavaPlugin() {
         DisconnectListener.register()
         ConnectListener.register()
 
+        if (isChatSessionDebugEnabled) {
+            ChatSessionDebugLogger.enable()
+        }
+
         FunctionalityService.fetch(SurfCoreApi.getCurrentServerName())
     }
 
     override suspend fun onDisableAsync() {
+        if (isChatSessionDebugEnabled) {
+            ChatSessionDebugLogger.disable()
+        }
+
         ClientChatInstance.chatClientLoader.onDisable()
     }
 
